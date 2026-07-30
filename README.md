@@ -19,7 +19,7 @@ Fundação concluída até:
 DEV-009 — Autenticação em Dois Fatores
 ```
 
-Próxima task oficial:
+Task atual:
 
 ```text
 REST-001 — Cadastro de Produtos
@@ -65,6 +65,8 @@ A fundação transversal de governança, auditoria, logs e respostas da API est�
 
 A autenticação em dois fatores está documentada em `docs/authentication/mfa-overview.md`.
 
+O cadastro de produtos está documentado em `docs/products/overview.md`.
+
 Endpoints técnicos disponíveis:
 
 - `GET /health`
@@ -93,6 +95,14 @@ Endpoints técnicos disponíveis:
 - `POST /api/v1/users/me/change-password`
 - `GET /api/v1/audit/events`
 - `GET /api/v1/audit/events/{event_id}`
+- `POST /api/v1/products`
+- `GET /api/v1/products`
+- `GET /api/v1/products/{product_id}`
+- `PATCH /api/v1/products/{product_id}`
+- `POST /api/v1/products/{product_id}/activate`
+- `POST /api/v1/products/{product_id}/deactivate`
+- `POST /api/v1/products/{product_id}/availability`
+- `DELETE /api/v1/products/{product_id}`
 - Swagger em `/docs`
 - OpenAPI em `/openapi.json`
 

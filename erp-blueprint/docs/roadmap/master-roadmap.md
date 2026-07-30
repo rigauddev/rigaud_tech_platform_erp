@@ -19,7 +19,7 @@ Roadmap oficial da Rigaud Tech Platform ERP.
 
 Estado atual: concluído até DEV-009.
 
-Próximo passo: REST-001 — Cadastro de Produtos.
+Task atual: REST-001 — Cadastro de Produtos.
 
 ## Fase 2 — MVP Restaurante
 

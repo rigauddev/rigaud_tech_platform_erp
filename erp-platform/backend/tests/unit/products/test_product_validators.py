@@ -1,0 +1,40 @@
+from decimal import Decimal
+
+import pytest
+
+from app.modules.products.application.validators import (
+    normalize_barcode,
+    normalize_internal_code,
+    normalize_money,
+    normalize_text,
+)
+from app.modules.products.domain.exceptions import InvalidProductDataError
+
+
+@pytest.mark.unit
+def test_internal_code_is_normalized() -> None:
+    assert normalize_internal_code(" prd-001 ") == "PRD-001"
+
+
+@pytest.mark.unit
+def test_invalid_internal_code_is_rejected() -> None:
+    with pytest.raises(InvalidProductDataError):
+        normalize_internal_code("@@")
+
+
+@pytest.mark.unit
+def test_null_barcode_is_allowed() -> None:
+    assert normalize_barcode(None) is None
+    assert normalize_barcode("   ") is None
+
+
+@pytest.mark.unit
+def test_money_uses_decimal_and_rejects_negative_values() -> None:
+    assert normalize_money("10.129", "sale_price") == Decimal("10.13")
+    with pytest.raises(InvalidProductDataError):
+        normalize_money("-0.01", "sale_price")
+
+
+@pytest.mark.unit
+def test_text_is_trimmed_and_compacted() -> None:
+    assert normalize_text("  Produto   Teste  ", "name", max_length=160) == "Produto Teste"

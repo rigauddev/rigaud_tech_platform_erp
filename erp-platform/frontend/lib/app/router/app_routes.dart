@@ -13,6 +13,8 @@ class AppRoutes {
   static const currentUser = '/users/me';
   static const changeMyPassword = '/users/me/change-password';
   static const mfaSettings = '/users/me/mfa';
+  static const products = '/products';
+  static const productCreate = '/products/new';
   static const audit = '/audit';
   static const notFound = '/not-found';
 }

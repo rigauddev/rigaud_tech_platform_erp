@@ -158,6 +158,33 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         "Senha temporária definida. Usuário deve trocar a senha.",
         audit_required=True,
     ),
+    "PRODUCT_CREATED": MessageDefinition(
+        "PRODUCT_CREATED", 201, "Produto criado com sucesso.", audit_required=True
+    ),
+    "PRODUCT_UPDATED": MessageDefinition(
+        "PRODUCT_UPDATED", 200, "Produto atualizado com sucesso.", audit_required=True
+    ),
+    "PRODUCT_DELETED": MessageDefinition(
+        "PRODUCT_DELETED", 200, "Produto removido com sucesso.", audit_required=True
+    ),
+    "PRODUCT_RETRIEVED": MessageDefinition(
+        "PRODUCT_RETRIEVED", 200, "Produto consultado com sucesso."
+    ),
+    "PRODUCTS_RETRIEVED": MessageDefinition(
+        "PRODUCTS_RETRIEVED", 200, "Produtos consultados com sucesso."
+    ),
+    "PRODUCT_AVAILABILITY_CHANGED": MessageDefinition(
+        "PRODUCT_AVAILABILITY_CHANGED",
+        200,
+        "Disponibilidade do produto atualizada.",
+        audit_required=True,
+    ),
+    "PRODUCT_NOT_FOUND": MessageDefinition(
+        "PRODUCT_NOT_FOUND", 404, "Produto não encontrado.", "warning"
+    ),
+    "PRODUCT_ALREADY_EXISTS": MessageDefinition(
+        "PRODUCT_ALREADY_EXISTS", 409, "Produto já cadastrado nesta empresa.", "warning"
+    ),
     "AUDIT_EVENTS_RETRIEVED": MessageDefinition(
         "AUDIT_EVENTS_RETRIEVED",
         200,

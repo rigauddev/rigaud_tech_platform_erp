@@ -34,7 +34,7 @@ Estado atual:
 - DEV-008 — concluída.
 - DEV-009 — concluída.
 
-Próxima Task:
+Task atual:
 
 ```text
 REST-001 — Cadastro de Produtos
