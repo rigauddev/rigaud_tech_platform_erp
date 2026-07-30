@@ -429,6 +429,7 @@ class EnsureDefaultMembershipForUser:
         user_id: UUID,
         tenant_id: UUID,
         is_company_admin: bool,
+        actor_id: UUID | None = None,
     ) -> CompanyMembershipModel:
         existing = await self.memberships.get_company_membership(user_id, tenant_id)
         if existing is not None:
@@ -444,6 +445,8 @@ class EnsureDefaultMembershipForUser:
                     AccessScope.ALL_BRANCHES if is_company_admin else AccessScope.SELECTED_BRANCHES
                 ),
                 is_default=not company_memberships,
+                created_by=actor_id,
+                updated_by=actor_id,
             )
         )
         branches = await self.branches.list_by_tenant(tenant_id, limit=1, offset=0)
@@ -457,6 +460,8 @@ class EnsureDefaultMembershipForUser:
                     else BranchRole.BRANCH_OPERATOR,
                     status=MembershipStatus.ACTIVE,
                     is_default=True,
+                    created_by=actor_id,
+                    updated_by=actor_id,
                 )
             )
         return membership

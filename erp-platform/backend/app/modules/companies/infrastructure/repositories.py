@@ -4,6 +4,7 @@ from sqlalchemy import Select, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.companies.domain.entities import BranchStatus, CompanyStatus, MembershipStatus
+from app.modules.companies.domain.exceptions import ContextSelectionError
 from app.modules.companies.domain.repositories import (
     BranchRepository,
     CompanyRepository,
@@ -235,6 +236,7 @@ class SQLAlchemyMembershipRepository(MembershipRepository):
     async def add_branch_membership(
         self, membership: BranchMembershipModel
     ) -> BranchMembershipModel:
+        await self._ensure_branch_membership_same_tenant(membership)
         self.session.add(membership)
         await self.session.flush()
         return membership
@@ -276,9 +278,17 @@ class SQLAlchemyMembershipRepository(MembershipRepository):
         self, company_membership_id: UUID, branch_id: UUID
     ) -> BranchMembershipModel | None:
         result = await self.session.execute(
-            select(BranchMembershipModel).where(
+            select(BranchMembershipModel)
+            .join(
+                CompanyMembershipModel,
+                CompanyMembershipModel.id == BranchMembershipModel.company_membership_id,
+            )
+            .join(BranchModel, BranchModel.id == BranchMembershipModel.branch_id)
+            .where(
                 BranchMembershipModel.company_membership_id == company_membership_id,
                 BranchMembershipModel.branch_id == branch_id,
+                BranchModel.tenant_id == CompanyMembershipModel.tenant_id,
+                BranchModel.deleted_at.is_(None),
             )
         )
         return result.scalar_one_or_none()
@@ -287,9 +297,17 @@ class SQLAlchemyMembershipRepository(MembershipRepository):
         self, company_membership_id: UUID
     ) -> BranchMembershipModel | None:
         result = await self.session.execute(
-            select(BranchMembershipModel).where(
+            select(BranchMembershipModel)
+            .join(
+                CompanyMembershipModel,
+                CompanyMembershipModel.id == BranchMembershipModel.company_membership_id,
+            )
+            .join(BranchModel, BranchModel.id == BranchMembershipModel.branch_id)
+            .where(
                 BranchMembershipModel.company_membership_id == company_membership_id,
                 BranchMembershipModel.is_default.is_(True),
+                BranchModel.tenant_id == CompanyMembershipModel.tenant_id,
+                BranchModel.deleted_at.is_(None),
             )
         )
         return result.scalar_one_or_none()
@@ -299,8 +317,18 @@ class SQLAlchemyMembershipRepository(MembershipRepository):
         company_membership_id: UUID,
         status: MembershipStatus | None = None,
     ) -> list[BranchMembershipModel]:
-        statement = select(BranchMembershipModel).where(
-            BranchMembershipModel.company_membership_id == company_membership_id
+        statement = (
+            select(BranchMembershipModel)
+            .join(
+                CompanyMembershipModel,
+                CompanyMembershipModel.id == BranchMembershipModel.company_membership_id,
+            )
+            .join(BranchModel, BranchModel.id == BranchMembershipModel.branch_id)
+            .where(
+                BranchMembershipModel.company_membership_id == company_membership_id,
+                BranchModel.tenant_id == CompanyMembershipModel.tenant_id,
+                BranchModel.deleted_at.is_(None),
+            )
         )
         if status is not None:
             statement = statement.where(BranchMembershipModel.status == status)
@@ -310,3 +338,28 @@ class SQLAlchemyMembershipRepository(MembershipRepository):
             )
         )
         return list(result.scalars().all())
+
+    async def _ensure_branch_membership_same_tenant(
+        self, membership: BranchMembershipModel
+    ) -> None:
+        company_membership_tenant_id = (
+            await self.session.execute(
+                select(CompanyMembershipModel.tenant_id).where(
+                    CompanyMembershipModel.id == membership.company_membership_id
+                )
+            )
+        ).scalar_one_or_none()
+        branch_tenant_id = (
+            await self.session.execute(
+                select(BranchModel.tenant_id).where(
+                    BranchModel.id == membership.branch_id,
+                    BranchModel.deleted_at.is_(None),
+                )
+            )
+        ).scalar_one_or_none()
+        if (
+            company_membership_tenant_id is None
+            or branch_tenant_id is None
+            or company_membership_tenant_id != branch_tenant_id
+        ):
+            raise ContextSelectionError("Branch membership tenant mismatch.")

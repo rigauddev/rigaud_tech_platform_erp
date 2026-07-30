@@ -113,7 +113,7 @@ class BranchModel(TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
     address: Mapped[str | None] = mapped_column(String(500), nullable=True)
 
 
-class CompanyMembershipModel(TimestampMixin, Base):
+class CompanyMembershipModel(TimestampMixin, AuditMixin, Base):
     __tablename__ = "company_memberships"
     __table_args__ = (
         UniqueConstraint("user_id", "tenant_id", name="uq_company_memberships_user_tenant"),
@@ -158,7 +158,7 @@ class CompanyMembershipModel(TimestampMixin, Base):
     is_default: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
 
-class BranchMembershipModel(TimestampMixin, Base):
+class BranchMembershipModel(TimestampMixin, AuditMixin, Base):
     __tablename__ = "branch_memberships"
     __table_args__ = (
         UniqueConstraint(

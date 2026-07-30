@@ -51,3 +51,9 @@ Claims preparadas no JWT:
 Usuários com `access_scope = selected_branches` precisam operar com `branch_id`.
 
 Usuários com `access_scope = all_branches` podem operar sem filial ativa quando a operação permitir visão consolidada.
+
+`auth_users.tenant_id` continua existindo por compatibilidade com a fundação anterior.
+
+Para tokens com contexto ativo, o tenant efetivo é validado por `CompanyMembership`.
+
+Isso permite que um mesmo usuário possua memberships em múltiplas empresas sem transformar filial em tenant independente.
