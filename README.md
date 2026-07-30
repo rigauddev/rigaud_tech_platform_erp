@@ -1,0 +1,110 @@
+# Rigaud Tech Platform ERP
+
+Workspace base para iniciar o desenvolvimento da plataforma ERP da Rigaud Tech.
+
+Este repositório contém apenas a estrutura inicial de pastas e documentação de orientação. Funcionalidades, código de negócio e implementações técnicas serão adicionados nas próximas etapas do projeto.
+
+## Estrutura principal
+
+- `erp-blueprint`: materiais de arquitetura, visão de produto e decisões técnicas.
+- `erp-platform`: base da futura plataforma ERP.
+- `scripts`: automações e utilitários de apoio ao projeto.
+- `docs`: documentação geral do workspace.
+
+## Status Atual
+
+Fundação concluída até:
+
+```text
+DEV-009 — Autenticação em Dois Fatores
+```
+
+Próxima task oficial:
+
+```text
+REST-001 — Cadastro de Produtos
+```
+
+## Desenvolvimento com Docker
+
+A infraestrutura de desenvolvimento está configurada para subir toda a stack com um único comando:
+
+```bash
+make up
+```
+
+Comandos disponíveis:
+
+- `make up`
+- `make down`
+- `make restart`
+- `make logs`
+- `make backend`
+- `make flutter`
+- `make shell-backend`
+- `make shell-db`
+- `make lint`
+- `make format`
+- `make test`
+
+Detalhes em `docs/development/docker.md`.
+
+## Backend
+
+A base inicial do backend está documentada em `docs/backend/backend-starter.md`.
+
+A fundação técnica de banco está documentada em `docs/database/overview.md`.
+
+A fundação de autenticação está documentada em `docs/authentication/overview.md`.
+
+A fundação de empresas e tenant real está documentada em `docs/companies/overview.md`.
+
+A fundação de usuários multi-tenant está documentada em `docs/users/overview.md`.
+
+A fundação transversal de governança, auditoria, logs e respostas da API está documentada em `docs/governance/task-management.md`, `docs/observability/overview.md`, `docs/api/response-contract.md` e `docs/audit/overview.md`.
+
+A autenticação em dois fatores está documentada em `docs/authentication/mfa-overview.md`.
+
+Endpoints técnicos disponíveis:
+
+- `GET /health`
+- `GET /api/v1/health`
+- `GET /health/database`
+- `GET /api/v1/health/database`
+- `POST /api/v1/auth/login`
+- `POST /api/v1/auth/refresh`
+- `POST /api/v1/auth/logout`
+- `GET /api/v1/auth/me`
+- `GET /api/v1/auth/mfa/status`
+- `POST /api/v1/auth/mfa/totp/setup`
+- `POST /api/v1/auth/mfa/totp/confirm`
+- `POST /api/v1/auth/mfa/email/setup`
+- `POST /api/v1/auth/mfa/email/confirm`
+- `POST /api/v1/auth/mfa/sms/setup`
+- `POST /api/v1/auth/mfa/sms/confirm`
+- `POST /api/v1/auth/mfa/verify`
+- `POST /api/v1/companies`
+- `GET /api/v1/companies`
+- `GET /api/v1/companies/current`
+- `POST /api/v1/users`
+- `GET /api/v1/users`
+- `GET /api/v1/users/me`
+- `PATCH /api/v1/users/me`
+- `POST /api/v1/users/me/change-password`
+- `GET /api/v1/audit/events`
+- `GET /api/v1/audit/events/{event_id}`
+- Swagger em `/docs`
+- OpenAPI em `/openapi.json`
+
+## Frontend
+
+A base inicial do frontend Flutter está documentada em `docs/frontend/flutter-starter.md`.
+
+Integração Flutter de autenticação documentada em `docs/authentication/flutter.md`.
+
+Documentação complementar:
+
+- `docs/frontend/project-structure.md`
+- `docs/frontend/platforms.md`
+- `docs/frontend/responsive-design.md`
+# rigaud_tech_platform_erp
