@@ -5,6 +5,11 @@ class AuthUser {
     required this.email,
     required this.isActive,
     required this.isSuperuser,
+    this.membershipId,
+    this.branchId,
+    this.branchMembershipId,
+    this.role,
+    this.accessScope,
   });
 
   final String id;
@@ -12,4 +17,9 @@ class AuthUser {
   final String email;
   final bool isActive;
   final bool isSuperuser;
+  final String? membershipId;
+  final String? branchId;
+  final String? branchMembershipId;
+  final String? role;
+  final String? accessScope;
 }

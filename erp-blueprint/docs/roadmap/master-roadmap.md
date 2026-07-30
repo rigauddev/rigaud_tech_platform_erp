@@ -16,10 +16,11 @@ Roadmap oficial da Rigaud Tech Platform ERP.
 - Usuários.
 - Governança, auditoria e respostas da API.
 - Autenticação em dois fatores.
+- Tenant, memberships, filiais e contexto ativo.
 
-Estado atual: concluído até DEV-009.
+Estado atual: concluído até DEV-010.
 
-Próximo passo: REST-001 — Cadastro de Produtos.
+Próxima task prevista: DEV-011 — Assinaturas, Planos e Limites.
 
 ## Fase 2 — MVP Restaurante
 
@@ -28,6 +29,8 @@ Objetivo: construir o fluxo operacional inicial de restaurante usando o Core com
 Sequência:
 
 - Produtos.
+- Tenant, memberships, filiais e contexto ativo.
+- Assinaturas, planos e limites.
 - Categorias.
 - Estoque.
 - Mesas.

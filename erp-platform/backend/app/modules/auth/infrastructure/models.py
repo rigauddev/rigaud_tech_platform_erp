@@ -89,6 +89,15 @@ class AuthSessionModel(TimestampMixin, Base):
         nullable=False,
     )
     tenant_id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), index=True, nullable=False)
+    membership_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True), index=True, nullable=True
+    )
+    branch_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True), index=True, nullable=True
+    )
+    branch_membership_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
+    role: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    access_scope: Mapped[str | None] = mapped_column(String(64), nullable=True)
     refresh_token_hash: Mapped[str] = mapped_column(
         String(128), unique=True, index=True, nullable=False
     )

@@ -16,13 +16,13 @@ Este repositório contém apenas a estrutura inicial de pastas e documentação 
 Fundação concluída até:
 
 ```text
-DEV-009 — Autenticação em Dois Fatores
+DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 ```
 
-Próxima task oficial:
+Próxima task prevista:
 
 ```text
-REST-001 — Cadastro de Produtos
+DEV-011 — Assinaturas, Planos e Limites
 ```
 
 ## Desenvolvimento com Docker
@@ -65,6 +65,10 @@ A fundação transversal de governança, auditoria, logs e respostas da API est�
 
 A autenticação em dois fatores está documentada em `docs/authentication/mfa-overview.md`.
 
+O contexto ativo multi-empresa e multi-filial está documentado em `docs/authentication/context.md` e `docs/companies/multi-tenancy.md`.
+
+O cadastro de produtos está documentado em `docs/products/overview.md`.
+
 Endpoints técnicos disponíveis:
 
 - `GET /health`
@@ -75,6 +79,8 @@ Endpoints técnicos disponíveis:
 - `POST /api/v1/auth/refresh`
 - `POST /api/v1/auth/logout`
 - `GET /api/v1/auth/me`
+- `GET /api/v1/auth/context`
+- `POST /api/v1/auth/context/switch`
 - `GET /api/v1/auth/mfa/status`
 - `POST /api/v1/auth/mfa/totp/setup`
 - `POST /api/v1/auth/mfa/totp/confirm`
@@ -86,6 +92,8 @@ Endpoints técnicos disponíveis:
 - `POST /api/v1/companies`
 - `GET /api/v1/companies`
 - `GET /api/v1/companies/current`
+- `POST /api/v1/companies/branches`
+- `GET /api/v1/companies/branches`
 - `POST /api/v1/users`
 - `GET /api/v1/users`
 - `GET /api/v1/users/me`
@@ -93,6 +101,14 @@ Endpoints técnicos disponíveis:
 - `POST /api/v1/users/me/change-password`
 - `GET /api/v1/audit/events`
 - `GET /api/v1/audit/events/{event_id}`
+- `POST /api/v1/products`
+- `GET /api/v1/products`
+- `GET /api/v1/products/{product_id}`
+- `PATCH /api/v1/products/{product_id}`
+- `POST /api/v1/products/{product_id}/activate`
+- `POST /api/v1/products/{product_id}/deactivate`
+- `POST /api/v1/products/{product_id}/availability`
+- `DELETE /api/v1/products/{product_id}`
 - Swagger em `/docs`
 - OpenAPI em `/openapi.json`
 

@@ -12,27 +12,40 @@ from app.modules.audit.infrastructure.repositories import SQLAlchemyAuditEventRe
 from app.modules.auth.domain.entities import AuthenticatedUser
 from app.modules.auth.presentation.dependencies import get_current_user
 from app.modules.companies.application.use_cases import (
+    BranchCreateInput,
+    BranchListInput,
     ChangeCompanyStatus,
     CompanyCreateInput,
     CompanyListInput,
     CompanyUpdateInput,
+    CreateBranch,
     CreateCompany,
     EnsureCompanyAccess,
     GetCompany,
+    ListBranches,
     ListCompanies,
     UpdateCompany,
 )
-from app.modules.companies.domain.entities import CompanyStatus
+from app.modules.companies.domain.entities import BranchStatus, BranchType, CompanyStatus
 from app.modules.companies.domain.exceptions import (
+    BranchAlreadyExistsError,
+    BranchHeadquartersConflictError,
+    BranchNotFoundError,
     CompanyAlreadyExistsError,
     CompanyError,
     CompanyNotFoundError,
     CompanyPermissionError,
     InvalidCompanyDataError,
 )
-from app.modules.companies.infrastructure.models import CompanyModel
-from app.modules.companies.infrastructure.repositories import SQLAlchemyCompanyRepository
+from app.modules.companies.infrastructure.models import BranchModel, CompanyModel
+from app.modules.companies.infrastructure.repositories import (
+    SQLAlchemyBranchRepository,
+    SQLAlchemyCompanyRepository,
+)
 from app.modules.companies.presentation.schemas import (
+    BranchCreateRequest,
+    BranchListResponse,
+    BranchResponse,
     CompanyCreateRequest,
     CompanyListResponse,
     CompanyResponse,
@@ -48,6 +61,7 @@ CurrentUserDependency = Annotated[AuthenticatedUser, Depends(get_current_user)]
 PageQuery = Annotated[int, Query(ge=1)]
 PageSizeQuery = Annotated[int, Query(ge=1, le=100)]
 StatusQuery = Annotated[CompanyStatus | None, Query(alias="status")]
+BranchStatusQuery = Annotated[BranchStatus | None, Query(alias="status")]
 IsActiveQuery = Annotated[bool | None, Query()]
 SearchQuery = Annotated[str | None, Query(max_length=120)]
 
@@ -69,6 +83,27 @@ def _company_response(company: CompanyModel) -> CompanyResponse:
         is_active=company.is_active,
         created_at=company.created_at,
         updated_at=company.updated_at,
+    )
+
+
+def _branch_response(branch: BranchModel) -> BranchResponse:
+    return BranchResponse(
+        id=branch.id,
+        tenant_id=branch.tenant_id,
+        code=branch.code,
+        name=branch.name,
+        legal_name=branch.legal_name,
+        trade_name=branch.trade_name,
+        document=branch.document,
+        branch_type=branch.branch_type,
+        status=branch.status,
+        is_headquarters=branch.is_headquarters,
+        timezone=branch.timezone,
+        phone=branch.phone,
+        email=branch.email,
+        address=branch.address,
+        created_at=branch.created_at,
+        updated_at=branch.updated_at,
     )
 
 
@@ -136,6 +171,25 @@ async def create_company(
                 },
             )
         )
+        await CreateBranch(
+            SQLAlchemyBranchRepository(session),
+            SQLAlchemyCompanyRepository(session),
+        ).execute(
+            BranchCreateInput(
+                tenant_id=company.id,
+                code="HQ",
+                name=company.trade_name,
+                legal_name=company.legal_name,
+                trade_name=company.trade_name,
+                document=company.document,
+                branch_type=BranchType.HEADQUARTERS,
+                is_headquarters=True,
+                timezone=company.timezone,
+                phone=company.phone,
+                email=company.email,
+                actor_id=current_user.id,
+            )
+        )
         await session.commit()
         return success_response(
             "COMPANY_CREATED", data=_company_response(company).model_dump(mode="json")
@@ -191,6 +245,95 @@ async def get_current_company(
         )
     except CompanyError as exc:
         return company_exception_to_response(exc)
+
+
+@router.post("/branches", response_model=BranchResponse, status_code=status.HTTP_201_CREATED)
+async def create_branch(
+    payload: BranchCreateRequest,
+    request: Request,
+    session: AsyncSessionDependency,
+    current_user: CurrentUserDependency,
+) -> JSONResponse:
+    if error := _require_superuser(current_user):
+        return error
+    try:
+        branch = await CreateBranch(
+            SQLAlchemyBranchRepository(session),
+            SQLAlchemyCompanyRepository(session),
+        ).execute(
+            BranchCreateInput(
+                tenant_id=payload.tenant_id,
+                code=payload.code,
+                name=payload.name,
+                legal_name=payload.legal_name,
+                trade_name=payload.trade_name,
+                document=payload.document,
+                branch_type=payload.branch_type,
+                is_headquarters=payload.is_headquarters,
+                timezone=payload.timezone,
+                phone=payload.phone,
+                email=payload.email,
+                address=payload.address,
+                actor_id=current_user.id,
+            )
+        )
+        audit_logger.info(
+            "branch.created",
+            extra={
+                "event": "branch.created",
+                "actor_id": str(current_user.id),
+                "branch_id": str(branch.id),
+                "request_id": _client_request_id(request),
+            },
+        )
+        await _audit_service(session).record_event(
+            AuditEventInput(
+                event_name="branch.created",
+                module="companies",
+                action="branch_created",
+                entity_type="branch",
+                entity_id=branch.id,
+                tenant_id=branch.tenant_id,
+                actor_user_id=current_user.id,
+                after_data={"id": str(branch.id), "code": branch.code},
+            )
+        )
+        await session.commit()
+        return success_response(
+            "BRANCH_CREATED", data=_branch_response(branch).model_dump(mode="json")
+        )
+    except CompanyError as exc:
+        await session.rollback()
+        return company_exception_to_response(exc)
+
+
+@router.get("/branches", response_model=BranchListResponse)
+async def list_branches(
+    session: AsyncSessionDependency,
+    current_user: CurrentUserDependency,
+    page: PageQuery = 1,
+    page_size: PageSizeQuery = 20,
+    company_id: UUID | None = None,
+    status_filter: BranchStatusQuery = None,
+) -> JSONResponse:
+    tenant_id = company_id if current_user.is_superuser and company_id else current_user.tenant_id
+    result = await ListBranches(SQLAlchemyBranchRepository(session)).execute(
+        BranchListInput(
+            tenant_id=tenant_id,
+            page=page,
+            page_size=page_size,
+            status=status_filter,
+        )
+    )
+    return success_response(
+        "BRANCH_LIST_RETRIEVED",
+        data=[_branch_response(branch).model_dump(mode="json") for branch in result.items],
+        meta=PaginationMeta.from_total(
+            page=result.page,
+            page_size=result.page_size,
+            total=result.total,
+        ),
+    )
 
 
 @router.get("/{company_id}", response_model=CompanyResponse)
@@ -376,6 +519,12 @@ def company_exception_to_response(exc: Exception) -> JSONResponse:
         return error_response("COMPANY_NOT_FOUND")
     if isinstance(exc, CompanyAlreadyExistsError):
         return error_response("COMPANY_ALREADY_EXISTS")
+    if isinstance(exc, BranchNotFoundError):
+        return error_response("BRANCH_NOT_FOUND")
+    if isinstance(exc, BranchAlreadyExistsError):
+        return error_response("BRANCH_ALREADY_EXISTS")
+    if isinstance(exc, BranchHeadquartersConflictError):
+        return error_response("BRANCH_HEADQUARTERS_ALREADY_EXISTS")
     if isinstance(exc, InvalidCompanyDataError):
         return error_response("VALIDATION_ERROR")
     if isinstance(exc, CompanyPermissionError):

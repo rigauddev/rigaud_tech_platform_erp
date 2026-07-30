@@ -23,6 +23,7 @@ Eventos técnicos são enviados para o logger `audit`:
 - `auth.refresh.failed`
 - `auth.token.reuse_detected`
 - `auth.logout`
+- `auth.context.switched`
 
 ## Integração com Empresas
 
@@ -31,3 +32,14 @@ Na DEV-006, a autenticação passou a resolver tenant pela tabela `companies`.
 O login aceita slug ou código da empresa.
 
 Empresas inativas ou suspensas bloqueiam novos logins.
+
+## Contexto Ativo
+
+Na DEV-010, o login passa a resolver o contexto padrão do usuário quando há membership ativo.
+
+Endpoints técnicos:
+
+- `GET /api/v1/auth/context`
+- `POST /api/v1/auth/context/switch`
+
+A troca de contexto emite um novo access token com claims de tenant, membership, filial, papel e escopo de acesso.

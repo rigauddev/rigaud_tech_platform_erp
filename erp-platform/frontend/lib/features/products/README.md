@@ -1,7 +1,13 @@
 # Products
 
-Feature reservada para produtos.
+Feature responsável pelo cadastro de produtos.
 
-Estrutura preparada em `data`, `domain` e `presentation`.
+Estrutura:
 
-Nenhuma regra de negócio foi implementada nesta task.
+- `domain`: entidade, input, contrato de repositório e use cases.
+- `data`: datasource remoto e implementação do repositório.
+- `presentation`: controller Riverpod, listagem, formulário e detalhe.
+
+A feature consome o envelope padrão da API e utiliza o tenant autenticado pelo backend.
+
+A tela exibe `status` como estado funcional e `is_available_for_sale` como disponibilidade comercial.

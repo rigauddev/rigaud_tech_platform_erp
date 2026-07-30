@@ -131,6 +131,33 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     "COMPANY_ALREADY_EXISTS": MessageDefinition(
         "COMPANY_ALREADY_EXISTS", 409, "Empresa já cadastrada.", "warning"
     ),
+    "BRANCH_CREATED": MessageDefinition(
+        "BRANCH_CREATED", 201, "Filial criada com sucesso.", audit_required=True
+    ),
+    "BRANCH_LIST_RETRIEVED": MessageDefinition(
+        "BRANCH_LIST_RETRIEVED", 200, "Filiais consultadas com sucesso."
+    ),
+    "BRANCH_NOT_FOUND": MessageDefinition(
+        "BRANCH_NOT_FOUND", 404, "Filial não encontrada.", "warning"
+    ),
+    "BRANCH_ALREADY_EXISTS": MessageDefinition(
+        "BRANCH_ALREADY_EXISTS", 409, "Filial já cadastrada.", "warning"
+    ),
+    "BRANCH_HEADQUARTERS_ALREADY_EXISTS": MessageDefinition(
+        "BRANCH_HEADQUARTERS_ALREADY_EXISTS",
+        409,
+        "Esta empresa já possui matriz principal.",
+        "warning",
+    ),
+    "CONTEXT_RETRIEVED": MessageDefinition(
+        "CONTEXT_RETRIEVED", 200, "Contexto de acesso consultado com sucesso."
+    ),
+    "CONTEXT_SWITCHED": MessageDefinition(
+        "CONTEXT_SWITCHED", 200, "Contexto de acesso atualizado.", audit_required=True
+    ),
+    "CONTEXT_NOT_ALLOWED": MessageDefinition(
+        "CONTEXT_NOT_ALLOWED", 403, "Contexto de acesso não permitido.", "warning"
+    ),
     "USER_CREATED": MessageDefinition(
         "USER_CREATED", 201, "Usuário criado com sucesso.", audit_required=True
     ),
@@ -157,6 +184,69 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         200,
         "Senha temporária definida. Usuário deve trocar a senha.",
         audit_required=True,
+    ),
+    "PRODUCT_CREATED": MessageDefinition(
+        "PRODUCT_CREATED", 201, "Produto criado com sucesso.", audit_required=True
+    ),
+    "PRODUCT_UPDATED": MessageDefinition(
+        "PRODUCT_UPDATED", 200, "Produto atualizado com sucesso.", audit_required=True
+    ),
+    "PRODUCT_ACTIVATED": MessageDefinition(
+        "PRODUCT_ACTIVATED", 200, "Produto ativado com sucesso.", audit_required=True
+    ),
+    "PRODUCT_DEACTIVATED": MessageDefinition(
+        "PRODUCT_DEACTIVATED", 200, "Produto desativado com sucesso.", audit_required=True
+    ),
+    "PRODUCT_DELETED": MessageDefinition(
+        "PRODUCT_DELETED", 200, "Produto removido com sucesso.", audit_required=True
+    ),
+    "PRODUCT_RETRIEVED": MessageDefinition(
+        "PRODUCT_RETRIEVED", 200, "Produto consultado com sucesso."
+    ),
+    "PRODUCT_LIST_RETRIEVED": MessageDefinition(
+        "PRODUCT_LIST_RETRIEVED", 200, "Produtos consultados com sucesso."
+    ),
+    "PRODUCT_AVAILABILITY_UPDATED": MessageDefinition(
+        "PRODUCT_AVAILABILITY_UPDATED",
+        200,
+        "Disponibilidade do produto atualizada.",
+        audit_required=True,
+    ),
+    "PRODUCT_NOT_FOUND": MessageDefinition(
+        "PRODUCT_NOT_FOUND", 404, "Produto não encontrado.", "warning"
+    ),
+    "PRODUCT_INTERNAL_CODE_ALREADY_EXISTS": MessageDefinition(
+        "PRODUCT_INTERNAL_CODE_ALREADY_EXISTS",
+        409,
+        "Código interno já cadastrado nesta empresa.",
+        "warning",
+    ),
+    "PRODUCT_BARCODE_ALREADY_EXISTS": MessageDefinition(
+        "PRODUCT_BARCODE_ALREADY_EXISTS",
+        409,
+        "Código de barras já cadastrado nesta empresa.",
+        "warning",
+    ),
+    "PRODUCT_INVALID_PRICE": MessageDefinition(
+        "PRODUCT_INVALID_PRICE", 400, "Preço de venda inválido.", "warning"
+    ),
+    "PRODUCT_INVALID_COST": MessageDefinition(
+        "PRODUCT_INVALID_COST", 400, "Custo inválido.", "warning"
+    ),
+    "PRODUCT_INVALID_TYPE": MessageDefinition(
+        "PRODUCT_INVALID_TYPE", 400, "Tipo de produto inválido.", "warning"
+    ),
+    "PRODUCT_INVALID_UNIT": MessageDefinition(
+        "PRODUCT_INVALID_UNIT", 400, "Unidade de medida inválida.", "warning"
+    ),
+    "PRODUCT_IMAGE_INVALID": MessageDefinition(
+        "PRODUCT_IMAGE_INVALID", 400, "Imagem principal inválida.", "warning"
+    ),
+    "PRODUCT_IMAGE_TOO_LARGE": MessageDefinition(
+        "PRODUCT_IMAGE_TOO_LARGE", 413, "Imagem principal excede o tamanho permitido.", "warning"
+    ),
+    "PRODUCT_NOT_AVAILABLE": MessageDefinition(
+        "PRODUCT_NOT_AVAILABLE", 409, "Produto indisponível para venda.", "warning"
     ),
     "AUDIT_EVENTS_RETRIEVED": MessageDefinition(
         "AUDIT_EVENTS_RETRIEVED",

@@ -1,5 +1,6 @@
 import 'auth_tokens.dart';
 import 'auth_user.dart';
+import 'access_context.dart';
 import 'mfa.dart';
 
 abstract interface class AuthRepository {
@@ -20,4 +21,11 @@ abstract interface class AuthRepository {
   Future<void> logout(String refreshToken);
 
   Future<AuthUser> me();
+
+  Future<ContextOptions> contextOptions();
+
+  Future<ContextAccessToken> switchContext({
+    required String tenantId,
+    String? branchId,
+  });
 }

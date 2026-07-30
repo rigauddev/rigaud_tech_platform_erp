@@ -139,7 +139,15 @@ class SmsOtpSender(ABC):
         raise NotImplementedError
 
 
-def to_authenticated_user(user: Any) -> AuthenticatedUser:
+def to_authenticated_user(
+    user: Any,
+    *,
+    membership_id: UUID | None = None,
+    branch_id: UUID | None = None,
+    branch_membership_id: UUID | None = None,
+    role: str | None = None,
+    access_scope: str | None = None,
+) -> AuthenticatedUser:
     return AuthenticatedUser(
         id=user.id,
         tenant_id=user.tenant_id,
@@ -148,4 +156,9 @@ def to_authenticated_user(user: Any) -> AuthenticatedUser:
         is_active=user.is_active,
         is_superuser=user.is_superuser,
         deleted_at=user.deleted_at,
+        membership_id=membership_id,
+        branch_id=branch_id,
+        branch_membership_id=branch_membership_id,
+        role=role,
+        access_scope=access_scope,
     )

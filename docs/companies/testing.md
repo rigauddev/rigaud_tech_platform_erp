@@ -5,6 +5,7 @@
 ```bash
 docker compose --env-file .env.example exec -T backend pytest -m unit
 docker compose --env-file .env.example exec -T backend pytest -m integration
+docker compose --env-file .env.example exec -T backend pytest tests/integration/companies/test_tenant_context_api.py
 docker compose --env-file .env.example exec -T backend pytest
 docker compose --env-file .env.example exec -T backend ruff check app tests migrations
 docker compose --env-file .env.example exec -T backend ruff format --check app tests migrations

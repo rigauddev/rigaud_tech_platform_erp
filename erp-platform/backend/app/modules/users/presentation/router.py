@@ -13,8 +13,13 @@ from app.modules.auth.application.passwords import PasswordService
 from app.modules.auth.domain.entities import AuthenticatedUser
 from app.modules.auth.infrastructure.repositories import SQLAlchemyAuthSessionRepository
 from app.modules.auth.presentation.dependencies import get_current_user, get_password_service
+from app.modules.companies.application.use_cases import EnsureDefaultMembershipForUser
 from app.modules.companies.domain.exceptions import CompanyNotFoundError
-from app.modules.companies.infrastructure.repositories import SQLAlchemyCompanyRepository
+from app.modules.companies.infrastructure.repositories import (
+    SQLAlchemyBranchRepository,
+    SQLAlchemyCompanyRepository,
+    SQLAlchemyMembershipRepository,
+)
 from app.modules.users.application.use_cases import (
     ChangeOwnPassword,
     ChangeUserStatus,
@@ -146,6 +151,14 @@ async def create_user(
                 actor_user_id=current_user.id,
                 after_data={"id": str(user.id), "email": user.email, "phone": user.phone},
             )
+        )
+        await EnsureDefaultMembershipForUser(
+            SQLAlchemyMembershipRepository(session),
+            SQLAlchemyBranchRepository(session),
+        ).execute(
+            user_id=user.id,
+            tenant_id=user.tenant_id,
+            is_company_admin=user.is_superuser,
         )
         await session.commit()
         return success_response("USER_CREATED", data=_user_response(user).model_dump(mode="json"))

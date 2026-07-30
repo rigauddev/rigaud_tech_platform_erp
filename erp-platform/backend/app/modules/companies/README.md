@@ -23,3 +23,13 @@ Na DEV-006, `Company` passou a ser a raiz oficial do tenant.
 ## DEV-008
 
 Companies usa respostas padronizadas e registra eventos de auditoria em criação, alteração e mudança de status.
+
+## DEV-010
+
+Companies também concentra a fundação de filiais e memberships:
+
+- `BranchModel`
+- `CompanyMembershipModel`
+- `BranchMembershipModel`
+
+`Company` continua sendo a raiz do tenant. Filiais não criam um novo tenant.

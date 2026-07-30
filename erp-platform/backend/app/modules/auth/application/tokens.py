@@ -16,8 +16,26 @@ class RefreshToken:
 
 
 class TokenService:
-    def create_access_token(self, user_id: UUID, tenant_id: UUID) -> str:
-        return create_auth_access_token(user_id=user_id, tenant_id=tenant_id)
+    def create_access_token(
+        self,
+        user_id: UUID,
+        tenant_id: UUID,
+        *,
+        membership_id: UUID | None = None,
+        branch_id: UUID | None = None,
+        branch_membership_id: UUID | None = None,
+        role: str | None = None,
+        access_scope: str | None = None,
+    ) -> str:
+        return create_auth_access_token(
+            user_id=user_id,
+            tenant_id=tenant_id,
+            membership_id=membership_id,
+            branch_id=branch_id,
+            branch_membership_id=branch_membership_id,
+            role=role,
+            access_scope=access_scope,
+        )
 
     def decode_access_token(self, token: str) -> dict[str, object]:
         return decode_auth_access_token(token)

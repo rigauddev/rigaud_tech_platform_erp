@@ -28,6 +28,10 @@ class SecureStorage {
     await _write('refresh_token', refreshToken);
   }
 
+  Future<void> writeAccessToken(String accessToken) async {
+    await _write('access_token', accessToken);
+  }
+
   Future<void> clearTokens() async {
     await _delete('access_token');
     await _delete('refresh_token');
