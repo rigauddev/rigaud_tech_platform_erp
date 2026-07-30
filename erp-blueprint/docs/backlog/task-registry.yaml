@@ -32,13 +32,45 @@ tasks:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/dev-010-tenant-memberships-branches-context
       commits:
-        - db933f2
+        - acf6694
+        - 13acc1e
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: db933f2
+    commit: 13acc1e
+    review:
+      reviewed_at: "2026-07-30"
+      backend:
+        - docker compose config --quiet
+        - docker compose up -d postgres redis backend
+        - docker compose exec -T backend alembic current
+        - docker compose exec -T backend alembic history
+        - docker compose exec -T backend alembic upgrade head
+        - docker compose exec -T backend alembic downgrade -1
+        - docker compose exec -T backend alembic upgrade head
+        - docker compose exec -T backend ruff check app tests migrations
+        - docker compose exec -T backend ruff format --check app tests migrations
+        - docker compose exec -T backend pytest -m unit
+        - docker compose exec -T backend pytest -m integration
+        - docker compose exec -T backend pytest
+      frontend:
+        - flutter pub get
+        - dart format --set-exit-if-changed lib test
+        - flutter analyze
+        - flutter test
+        - flutter build web --dart-define=API_BASE_URL=http://localhost:8000
+        - flutter doctor -v
+        - flutter devices
+        - flutter emulators
+      platforms:
+        web: validated
+        android: apk_debug_built_adb_install_interrupted
+        ios: simulator_detected_not_run_in_synced_workspace
+        macos: detected_not_run_in_synced_workspace
+        windows: prepared_not_validated_on_windows_host
+        linux: out_of_scope_on_current_host
     review_status: ready
   - id: REST-001
     title: Cadastro de Produtos
