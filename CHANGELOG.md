@@ -77,6 +77,11 @@
 - REVIEW DEV-010: refresh e `/auth/me` passam a revalidar contexto ativo contra memberships e filiais no banco.
 - REVIEW DEV-010: proteção explícita contra vínculo cruzado entre `CompanyMembership` e `Branch` de tenants diferentes.
 - REVIEW DEV-010: testes ampliados para multiempresa, `all_branches`, membership inativo, refresh com contexto inválido e branch membership cross-tenant.
+- DEV-011: fundação SaaS com módulos `plan`, `subscription`, `entitlements`, `feature_flags` e `billing`.
+- DEV-011: migration `0010_saas_foundation` com plans, plan entitlements, plan limits, subscriptions, tenant entitlements, feature flags e billing events.
+- DEV-011: FakeBillingProvider preparado via Strategy Pattern para futura integração Asaas, Stripe e Mercado Pago.
+- DEV-011: endpoints técnicos para planos, assinaturas, entitlements, feature flags e eventos fake de billing.
+- DEV-011: testes unitários e integração cobrindo plano ativo/inativo, trial, upgrade, limites, feature flags, grace period, suspensão, fake provider, auditoria, logs, mensagens e API envelope.
 
 ### Changed
 

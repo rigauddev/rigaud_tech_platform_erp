@@ -46,6 +46,16 @@ Sequência:
 - Fechamento da Venda.
 - Cupom ou NFC-e.
 
+## EPIC-03 — Plataforma SaaS
+
+Objetivo: manter planos, assinaturas, entitlements, feature flags e billing desacoplados dos módulos de negócio.
+
+Sequência inicial:
+
+- DEV-011 — SaaS Foundation.
+- DEV-012 — Integração de limites e bloqueios comerciais.
+- DEV-013 — Billing provider real e webhooks.
+
 ## Fase 3 — MVP Loja de Roupas
 
 Objetivo: reutilizar o Core e especializar o domínio Fashion.

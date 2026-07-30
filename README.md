@@ -19,7 +19,7 @@ Fundação concluída até:
 DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 ```
 
-Próxima task prevista:
+Task atual:
 
 ```text
 DEV-011 — Assinaturas, Planos e Limites
@@ -67,6 +67,8 @@ A autenticação em dois fatores está documentada em `docs/authentication/mfa-o
 
 O contexto ativo multi-empresa e multi-filial está documentado em `docs/authentication/context.md` e `docs/companies/multi-tenancy.md`.
 
+A fundação SaaS de planos, assinaturas, entitlements, feature flags e billing fake está documentada em `docs/saas/overview.md`.
+
 O cadastro de produtos está documentado em `docs/products/overview.md`.
 
 Endpoints técnicos disponíveis:
@@ -94,6 +96,18 @@ Endpoints técnicos disponíveis:
 - `GET /api/v1/companies/current`
 - `POST /api/v1/companies/branches`
 - `GET /api/v1/companies/branches`
+- `POST /api/v1/plans`
+- `GET /api/v1/plans`
+- `POST /api/v1/subscriptions`
+- `GET /api/v1/subscriptions/current`
+- `POST /api/v1/subscriptions/{subscription_id}/change-plan`
+- `POST /api/v1/subscriptions/{subscription_id}/billing-status`
+- `GET /api/v1/entitlements`
+- `GET /api/v1/entitlements/{entitlement_key}`
+- `POST /api/v1/feature-flags`
+- `GET /api/v1/feature-flags`
+- `PATCH /api/v1/feature-flags/{flag_id}`
+- `POST /api/v1/billing/events/fake`
 - `POST /api/v1/users`
 - `GET /api/v1/users`
 - `GET /api/v1/users/me`

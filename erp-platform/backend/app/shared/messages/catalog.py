@@ -158,6 +158,53 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     "CONTEXT_NOT_ALLOWED": MessageDefinition(
         "CONTEXT_NOT_ALLOWED", 403, "Contexto de acesso não permitido.", "warning"
     ),
+    "PLAN_CREATED": MessageDefinition(
+        "PLAN_CREATED", 201, "Plano criado com sucesso.", audit_required=True
+    ),
+    "PLAN_LIST_RETRIEVED": MessageDefinition(
+        "PLAN_LIST_RETRIEVED", 200, "Planos consultados com sucesso."
+    ),
+    "PLAN_NOT_FOUND": MessageDefinition("PLAN_NOT_FOUND", 404, "Plano não encontrado.", "warning"),
+    "PLAN_ALREADY_EXISTS": MessageDefinition(
+        "PLAN_ALREADY_EXISTS", 409, "Plano já cadastrado.", "warning"
+    ),
+    "PLAN_INACTIVE": MessageDefinition("PLAN_INACTIVE", 409, "Plano inativo.", "warning"),
+    "SUBSCRIPTION_CREATED": MessageDefinition(
+        "SUBSCRIPTION_CREATED", 200, "Assinatura criada com sucesso.", audit_required=True
+    ),
+    "SUBSCRIPTION_RETRIEVED": MessageDefinition(
+        "SUBSCRIPTION_RETRIEVED", 200, "Assinatura consultada com sucesso."
+    ),
+    "SUBSCRIPTION_PLAN_CHANGED": MessageDefinition(
+        "SUBSCRIPTION_PLAN_CHANGED", 200, "Plano da assinatura alterado.", audit_required=True
+    ),
+    "SUBSCRIPTION_STATUS_CHANGED": MessageDefinition(
+        "SUBSCRIPTION_STATUS_CHANGED", 200, "Status da assinatura alterado.", audit_required=True
+    ),
+    "SUBSCRIPTION_NOT_FOUND": MessageDefinition(
+        "SUBSCRIPTION_NOT_FOUND", 404, "Assinatura não encontrada.", "warning"
+    ),
+    "SUBSCRIPTION_ALREADY_EXISTS": MessageDefinition(
+        "SUBSCRIPTION_ALREADY_EXISTS", 409, "Assinatura já cadastrada para esta empresa.", "warning"
+    ),
+    "ENTITLEMENT_LIST_RETRIEVED": MessageDefinition(
+        "ENTITLEMENT_LIST_RETRIEVED", 200, "Entitlements consultados com sucesso."
+    ),
+    "ENTITLEMENT_CHECKED": MessageDefinition(
+        "ENTITLEMENT_CHECKED", 200, "Entitlement verificado com sucesso."
+    ),
+    "FEATURE_FLAG_SAVED": MessageDefinition(
+        "FEATURE_FLAG_SAVED", 200, "Feature flag salva com sucesso.", audit_required=True
+    ),
+    "FEATURE_FLAG_LIST_RETRIEVED": MessageDefinition(
+        "FEATURE_FLAG_LIST_RETRIEVED", 200, "Feature flags consultadas com sucesso."
+    ),
+    "FEATURE_FLAG_NOT_FOUND": MessageDefinition(
+        "FEATURE_FLAG_NOT_FOUND", 404, "Feature flag não encontrada.", "warning"
+    ),
+    "BILLING_EVENT_RECORDED": MessageDefinition(
+        "BILLING_EVENT_RECORDED", 200, "Evento de billing registrado.", audit_required=True
+    ),
     "USER_CREATED": MessageDefinition(
         "USER_CREATED", 201, "Usuário criado com sucesso.", audit_required=True
     ),

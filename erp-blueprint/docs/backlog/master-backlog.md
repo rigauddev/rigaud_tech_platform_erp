@@ -46,6 +46,14 @@ DEV-009 deverá permitir autenticação em dois fatores habilitável e desabilit
 
 DEV-010 prepara contexto ativo multi-empresa e multi-filial antes das regras comerciais dependentes de filial.
 
+## EPIC-03 — Plataforma SaaS
+
+1. DEV-011 — SaaS Foundation
+2. DEV-012 — Integração de limites e bloqueios comerciais
+3. DEV-013 — Billing provider real e webhooks
+
+Esta epic permanece desacoplada do MVP Restaurante e da Loja de Roupas.
+
 ## MVP Restaurante
 
 Após DEV-009, executar exatamente nesta ordem:
