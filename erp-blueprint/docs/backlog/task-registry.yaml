@@ -32,6 +32,8 @@ tasks:
       branch: feature/rest-001-products
       commits:
         - 0984698
+        - b403518
+        - d96da15
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
