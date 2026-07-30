@@ -64,6 +64,10 @@
 - DEV-009: documentação em `docs/authentication/mfa-*.md`, docs locais do módulo Auth e aulas Academy de 2FA/TOTP/OTP.
 - DOC-001: Git Flow oficial documentado com branches `main`/`develop`, branch por task, PR para `develop`, validação integrada e PR `develop → main`.
 - DOC-001: templates de Pull Request, Issue de Task/Review, CONTRIBUTING e workflow básico de compliance adicionados.
+- REST-001: módulo Products iniciado com entidade multi-tenant, API, migration `0008_products`, Flutter e documentação base.
+- REST-001: suporte a criação, consulta, listagem, filtros, paginação, atualização, ativação, desativação, disponibilidade, soft delete, imagem principal, auditoria e mensagens da API.
+- REVIEW REST-001: status funcional de Product separado da disponibilidade, códigos específicos de conflito/validação e testes monetários ampliados.
+- REVIEW REST-001: validação Flutter em Android, iOS e macOS documentada, incluindo correção de xattrs no build nativo e limitação de CodeSign em workspace sincronizado.
 
 ### Changed
 
@@ -85,3 +89,5 @@
 - DEV-007: `is_active` passa a ser campo de compatibilidade derivado do `status` funcional do usuário.
 - DEV-008: respostas de Auth, Companies e Users passam a incluir envelope padronizado e mantêm campos de compatibilidade no topo durante transição.
 - DEV-009: login Auth passa a retornar `AUTH_MFA_REQUIRED` para usuários com MFA ativo, preservando o fluxo sem MFA para usuários existentes.
+- REST-001: menu e rotas Flutter passam a incluir Products como primeira feature comercial do MVP Restaurante.
+- REST-001: comandos `make lint`, `make format` e `make test` passam a configurar `safe.directory` para o SDK Flutter em containers temporários.

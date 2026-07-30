@@ -79,15 +79,15 @@ create-company:
 
 lint:
 	$(COMPOSE) run --rm backend ruff check app tests
-	$(COMPOSE) run --rm frontend flutter analyze
+	$(COMPOSE) run --rm frontend sh -lc 'git config --global --add safe.directory /sdks/flutter && flutter pub get && flutter analyze'
 
 format:
 	$(COMPOSE) run --rm backend ruff format app tests
-	$(COMPOSE) run --rm frontend dart format lib test
+	$(COMPOSE) run --rm frontend sh -lc 'git config --global --add safe.directory /sdks/flutter && flutter pub get && dart format lib test'
 
 test:
 	$(COMPOSE) run --rm backend pytest
-	$(COMPOSE) run --rm frontend flutter test
+	$(COMPOSE) run --rm frontend sh -lc 'git config --global --add safe.directory /sdks/flutter && flutter pub get && flutter test'
 
 check-task:
 	@if [ -z "$(TASK)" ]; then echo 'Usage: make check-task TASK=DEV-008'; exit 1; fi

@@ -11,6 +11,9 @@ import '../../features/companies/presentation/company_form_screen.dart';
 import '../../features/companies/presentation/company_list_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/not_found/presentation/not_found_screen.dart';
+import '../../features/products/presentation/product_detail_screen.dart';
+import '../../features/products/presentation/product_form_screen.dart';
+import '../../features/products/presentation/product_list_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/users/presentation/user_detail_screen.dart';
 import '../../features/users/presentation/user_form_screen.dart';
@@ -89,6 +92,25 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.mfaSettings,
         builder: (context, state) => const MfaSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.products,
+        builder: (context, state) => const ProductListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.productCreate,
+        builder: (context, state) => const ProductFormScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.products}/:productId',
+        builder: (context, state) => ProductDetailScreen(
+          productId: state.pathParameters['productId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.products}/:productId/edit',
+        builder: (context, state) =>
+            ProductFormScreen(productId: state.pathParameters['productId']),
       ),
       GoRoute(
         path: '${AppRoutes.users}/:userId',

@@ -1,4 +1,46 @@
 tasks:
+  - id: REST-001
+    title: Cadastro de Produtos
+    epic: MVP Restaurante
+    module: products
+    status: review
+    dependencies:
+      - DEV-006
+      - DEV-007
+      - DEV-008
+      - DEV-009
+    started_at: "2026-07-30"
+    completed_at: null
+    documentation:
+      - docs/products/overview.md
+      - docs/products/backend.md
+      - docs/products/flutter.md
+      - docs/products/database.md
+      - docs/products/testing.md
+      - docs/products/troubleshooting.md
+      - erp-platform/backend/app/modules/products/README.md
+      - erp-platform/frontend/lib/features/products/README.md
+    academy:
+      - erp-blueprint/docs/academy/core/002-cadastro-de-produtos-multitenant.md
+    tests:
+      - erp-platform/backend/tests/unit/products/test_product_validators.py
+      - erp-platform/backend/tests/integration/products/test_products_api.py
+      - erp-platform/frontend/test/products/product_controller_test.dart
+    migration: 0008_products
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-001-products
+      commits:
+        - 0984698
+        - b403518
+        - d96da15
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 0984698
+    review_status: ready
   - id: DOC-001
     title: Registrar Git Flow oficial
     epic: EPIC-0001
