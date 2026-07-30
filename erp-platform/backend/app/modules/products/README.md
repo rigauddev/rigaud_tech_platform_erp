@@ -11,3 +11,5 @@ Camadas:
 - `tests`: estrutura local reservada.
 
 A REST-001 implementa somente Produtos. Categorias, estoque, ingredientes, variações, cardápio, pedidos, fiscal e caixa ficam fora do escopo.
+
+O estado funcional usa `status`. A disponibilidade comercial usa `is_available_for_sale`.

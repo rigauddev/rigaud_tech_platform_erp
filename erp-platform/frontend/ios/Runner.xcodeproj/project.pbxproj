@@ -202,6 +202,7 @@
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				CDAB9BB313AAC88133C23A97 /* [CP] Embed Pods Frameworks */,
+				4B8914D71F5A469296A211F3 /* Clear Extended Attributes */,
 			);
 			buildRules = (
 			);
@@ -288,6 +289,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
+		};
+		4B8914D71F5A469296A211F3 /* Clear Extended Attributes */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Clear Extended Attributes";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -n \"$TARGET_BUILD_DIR\" ] && [ -n \"$FULL_PRODUCT_NAME\" ]; then\n  xattr -cr \"$TARGET_BUILD_DIR/$FULL_PRODUCT_NAME\" 2>/dev/null || true\nfi\n";
 		};
 		6A65F1D122A61D1A65E84892 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

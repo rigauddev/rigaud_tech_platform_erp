@@ -172,14 +172,26 @@ async def test_user_can_manage_products_in_own_tenant(products_client: AsyncClie
         headers=headers,
     )
     assert deactivated.status_code == 200
+    assert deactivated.json()["status"] == "inactive"
     assert deactivated.json()["is_active"] is False
+    assert deactivated.json()["is_available_for_sale"] is False
+
+    unavailable_inactive = await products_client.post(
+        f"/api/v1/products/{product_id}/availability",
+        json={"is_available_for_sale": True},
+        headers=headers,
+    )
+    assert unavailable_inactive.status_code == 409
+    assert unavailable_inactive.json()["code"] == "PRODUCT_NOT_AVAILABLE"
 
     activated = await products_client.post(
         f"/api/v1/products/{product_id}/activate",
         headers=headers,
     )
     assert activated.status_code == 200
+    assert activated.json()["status"] == "active"
     assert activated.json()["is_active"] is True
+    assert activated.json()["is_available_for_sale"] is False
 
     deleted = await products_client.delete(f"/api/v1/products/{product_id}", headers=headers)
     assert deleted.status_code == 200
@@ -233,6 +245,7 @@ async def test_product_uniqueness_is_scoped_by_tenant(products_client: AsyncClie
 
     assert first.status_code == 201
     assert duplicate_same_tenant.status_code == 409
+    assert duplicate_same_tenant.json()["code"] == "PRODUCT_INTERNAL_CODE_ALREADY_EXISTS"
     assert same_code_other_tenant.status_code == 201
 
 
@@ -270,6 +283,7 @@ async def test_barcode_null_is_allowed_and_duplicate_barcode_is_rejected(
     assert null_two.status_code == 201
     assert duplicate_barcode.status_code == 201
     assert duplicate_barcode_again.status_code == 409
+    assert duplicate_barcode_again.json()["code"] == "PRODUCT_BARCODE_ALREADY_EXISTS"
 
 
 @pytest.mark.integration
@@ -305,4 +319,84 @@ async def test_negative_values_are_rejected(products_client: AsyncClient) -> Non
         headers=auth_header(user),
     )
 
-    assert response.status_code == 422
+    assert response.status_code == 400
+    assert response.json()["code"] == "PRODUCT_INVALID_PRICE"
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_money_boundaries_are_accepted(products_client: AsyncClient) -> None:
+    company = await create_company(slug="money-company", code="MONEY", document_seed=8)
+    user = await create_user(company, email="money@example.com")
+    headers = auth_header(user)
+
+    zero = await products_client.post(
+        "/api/v1/products",
+        json={**product_payload(internal_code="MONEY-0", barcode=None), "sale_price": "0.00"},
+        headers=headers,
+    )
+    cent = await products_client.post(
+        "/api/v1/products",
+        json={**product_payload(internal_code="MONEY-1", barcode=None), "sale_price": "0.01"},
+        headers=headers,
+    )
+    limit = await products_client.post(
+        "/api/v1/products",
+        json={
+            **product_payload(internal_code="MONEY-2", barcode=None),
+            "sale_price": "9999999999.99",
+        },
+        headers=headers,
+    )
+    rounded = await products_client.post(
+        "/api/v1/products",
+        json={**product_payload(internal_code="MONEY-3", barcode=None), "sale_price": "10.129"},
+        headers=headers,
+    )
+
+    assert zero.status_code == 201
+    assert zero.json()["sale_price"] == "0.00"
+    assert cent.status_code == 201
+    assert cent.json()["sale_price"] == "0.01"
+    assert limit.status_code == 201
+    assert limit.json()["sale_price"] == "9999999999.99"
+    assert rounded.status_code == 201
+    assert rounded.json()["sale_price"] == "10.13"
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_deleted_product_cannot_be_updated_activated_or_made_available(
+    products_client: AsyncClient,
+) -> None:
+    company = await create_company(slug="deleted-company", code="DEL", document_seed=9)
+    user = await create_user(company, email="deleted@example.com")
+    headers = auth_header(user)
+
+    created = await products_client.post(
+        "/api/v1/products",
+        json=product_payload(),
+        headers=headers,
+    )
+    product_id = created.json()["id"]
+    deleted = await products_client.delete(f"/api/v1/products/{product_id}", headers=headers)
+
+    update = await products_client.patch(
+        f"/api/v1/products/{product_id}",
+        json={"name": "Produto excluído"},
+        headers=headers,
+    )
+    activate = await products_client.post(
+        f"/api/v1/products/{product_id}/activate",
+        headers=headers,
+    )
+    availability = await products_client.post(
+        f"/api/v1/products/{product_id}/availability",
+        json={"is_available_for_sale": True},
+        headers=headers,
+    )
+
+    assert deleted.status_code == 200
+    assert update.status_code == 404
+    assert activate.status_code == 404
+    assert availability.status_code == 404

@@ -68,6 +68,7 @@ class _FakeProductRepository implements ProductRepository {
       barcode: input.barcode,
       productType: input.productType,
       unitOfMeasure: input.unitOfMeasure,
+      status: ProductStatus.active,
       salePrice: input.salePrice,
       costPrice: input.costPrice,
       mainImageUrl: input.mainImageUrl,

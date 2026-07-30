@@ -172,8 +172,8 @@ class _ProductCards extends StatelessWidget {
 }
 
 String _status(Product product) {
-  if (!product.isActive) {
-    return 'Inativo';
+  if (product.status == ProductStatus.inactive) {
+    return product.status.label;
   }
   return product.isAvailableForSale ? 'Disponível' : 'Indisponível';
 }

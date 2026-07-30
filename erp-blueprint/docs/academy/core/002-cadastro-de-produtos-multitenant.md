@@ -25,6 +25,16 @@ Preços e custos usam:
 
 `float` não deve ser usado para dinheiro.
 
+Valores são normalizados para duas casas decimais.
+
+## Status
+
+`status` representa o estado funcional.
+
+`is_available_for_sale` representa disponibilidade comercial.
+
+Ativar um produto não deve disponibilizá-lo automaticamente.
+
 ## Exclusão lógica
 
 Produtos removidos permanecem no banco com `deleted_at`.

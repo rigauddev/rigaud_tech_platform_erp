@@ -14,8 +14,10 @@ from app.modules.products.application.validators import (
 )
 from app.modules.products.domain.entities import ProductType, UnitOfMeasure
 from app.modules.products.domain.exceptions import (
-    InvalidProductDataError,
     ProductAlreadyExistsError,
+    ProductBarcodeAlreadyExistsError,
+    ProductInternalCodeAlreadyExistsError,
+    ProductNotAvailableError,
     ProductNotFoundError,
 )
 from app.modules.products.domain.repositories import ProductRepository
@@ -119,9 +121,9 @@ class CreateProduct:
         barcode: str | None,
     ) -> None:
         if await self.products.exists_by_internal_code(internal_code, tenant_id=tenant_id):
-            raise ProductAlreadyExistsError("Internal code already exists.")
+            raise ProductInternalCodeAlreadyExistsError("Internal code already exists.")
         if barcode and await self.products.exists_by_barcode(barcode, tenant_id=tenant_id):
-            raise ProductAlreadyExistsError("Barcode already exists.")
+            raise ProductBarcodeAlreadyExistsError("Barcode already exists.")
 
 
 class GetProduct:
@@ -198,7 +200,7 @@ class UpdateProduct:
                     tenant_id=tenant_id,
                     exclude_id=product.id,
                 ):
-                    raise ProductAlreadyExistsError("Internal code already exists.")
+                    raise ProductInternalCodeAlreadyExistsError("Internal code already exists.")
                 product.internal_code = internal_code
             if input_data.barcode is not None:
                 barcode = normalize_barcode(input_data.barcode)
@@ -207,7 +209,7 @@ class UpdateProduct:
                     tenant_id=tenant_id,
                     exclude_id=product.id,
                 ):
-                    raise ProductAlreadyExistsError("Barcode already exists.")
+                    raise ProductBarcodeAlreadyExistsError("Barcode already exists.")
                 product.barcode = barcode
             if input_data.product_type is not None:
                 product.product_type = input_data.product_type
@@ -275,7 +277,7 @@ class ChangeProductAvailability:
     ) -> ProductModel:
         product = await GetProduct(self.products).execute(product_id, tenant_id=tenant_id)
         if not product.is_active and available:
-            raise InvalidProductDataError("Inactive products cannot be available for sale.")
+            raise ProductNotAvailableError("Inactive products cannot be available for sale.")
         product.change_availability(available)
         product.updated_by = actor_id
         return await self.products.add(product)

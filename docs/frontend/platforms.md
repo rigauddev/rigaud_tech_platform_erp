@@ -20,13 +20,16 @@ flutter run -d chrome
 Android:
 
 ```bash
-flutter run -d android
+flutter emulators
+flutter emulators --launch Pixel_9_Pro_XL
+flutter run -d emulator-5554 --dart-define=API_BASE_URL=http://10.0.2.2:8000
 ```
 
 iOS:
 
 ```bash
-flutter run -d ios
+flutter devices
+flutter run -d ios --dart-define=API_BASE_URL=http://localhost:8000
 ```
 
 Windows:
@@ -44,7 +47,7 @@ flutter run -d linux
 macOS:
 
 ```bash
-flutter run -d macos
+flutter run -d macos --dart-define=API_BASE_URL=http://localhost:8000
 ```
 
 ## Testes
@@ -103,6 +106,31 @@ macOS:
 
 ```bash
 flutter test integration_test -d macos
+```
+
+## Docker e Execucao Local
+
+Os comandos Flutter executados no container podem recriar `.dart_tool/package_config.json` com caminhos internos, como `/sdks/flutter` e `/root/.pub-cache`.
+
+Antes de rodar Android, iOS ou macOS diretamente no host, execute:
+
+```bash
+flutter pub get
+```
+
+## CodeSign macOS/iOS
+
+Se o workspace estiver em pasta sincronizada por File Provider/iCloud, o Xcode pode falhar no CodeSign com:
+
+```text
+resource fork, Finder information, or similar detritus not allowed
+```
+
+Use uma cópia do projeto fora da pasta sincronizada ou mova o workspace para um diretório local não sincronizado antes de rodar:
+
+```bash
+flutter run -d macos --dart-define=API_BASE_URL=http://localhost:8000
+flutter run -d ios --dart-define=API_BASE_URL=http://localhost:8000
 ```
 
 ## Pré-requisitos

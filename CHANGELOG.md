@@ -66,6 +66,8 @@
 - DOC-001: templates de Pull Request, Issue de Task/Review, CONTRIBUTING e workflow básico de compliance adicionados.
 - REST-001: módulo Products iniciado com entidade multi-tenant, API, migration `0008_products`, Flutter e documentação base.
 - REST-001: suporte a criação, consulta, listagem, filtros, paginação, atualização, ativação, desativação, disponibilidade, soft delete, imagem principal, auditoria e mensagens da API.
+- REVIEW REST-001: status funcional de Product separado da disponibilidade, códigos específicos de conflito/validação e testes monetários ampliados.
+- REVIEW REST-001: validação Flutter em Android, iOS e macOS documentada, incluindo correção de xattrs no build nativo e limitação de CodeSign em workspace sincronizado.
 
 ### Changed
 

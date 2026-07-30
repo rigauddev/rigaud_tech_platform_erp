@@ -7,6 +7,11 @@ class ProductType(StrEnum):
     PREPARED_ITEM = "prepared_item"
 
 
+class ProductStatus(StrEnum):
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+
+
 class UnitOfMeasure(StrEnum):
     UNIT = "unit"
     KG = "kg"

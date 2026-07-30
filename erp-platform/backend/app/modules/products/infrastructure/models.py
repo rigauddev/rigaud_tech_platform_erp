@@ -17,7 +17,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 from app.database.mixins import AuditMixin, SoftDeleteMixin, TenantMixin, TimestampMixin
 from app.database.types import UUIDType
-from app.modules.products.domain.entities import ProductType, UnitOfMeasure
+from app.modules.products.domain.entities import ProductStatus, ProductType, UnitOfMeasure
 
 
 class ProductModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
@@ -33,6 +33,7 @@ class ProductModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Bas
         ),
         Index("ix_products_tenant_active", "tenant_id", "is_active"),
         Index("ix_products_tenant_available", "tenant_id", "is_available_for_sale"),
+        Index("ix_products_tenant_status", "tenant_id", "status"),
         Index("ix_products_tenant_type", "tenant_id", "product_type"),
         CheckConstraint("sale_price >= 0", name="sale_price_non_negative"),
         CheckConstraint("cost_price >= 0", name="cost_price_non_negative"),
@@ -67,6 +68,15 @@ class ProductModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Bas
         default=UnitOfMeasure.UNIT,
         nullable=False,
     )
+    status: Mapped[ProductStatus] = mapped_column(
+        Enum(
+            ProductStatus,
+            name="product_status",
+            values_callable=lambda enum: [item.value for item in enum],
+        ),
+        default=ProductStatus.ACTIVE,
+        nullable=False,
+    )
     sale_price: Mapped[Decimal] = mapped_column(
         Numeric(12, 2), nullable=False, default=Decimal("0.00")
     )
@@ -78,9 +88,11 @@ class ProductModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Bas
     is_available_for_sale: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     def activate(self) -> None:
+        self.status = ProductStatus.ACTIVE
         self.is_active = True
 
     def deactivate(self) -> None:
+        self.status = ProductStatus.INACTIVE
         self.is_active = False
         self.is_available_for_sale = False
 

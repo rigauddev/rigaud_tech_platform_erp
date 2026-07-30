@@ -28,7 +28,13 @@ from app.modules.products.domain.entities import ProductType, UnitOfMeasure
 from app.modules.products.domain.exceptions import (
     InvalidProductDataError,
     ProductAlreadyExistsError,
+    ProductBarcodeAlreadyExistsError,
     ProductError,
+    ProductImageInvalidError,
+    ProductInternalCodeAlreadyExistsError,
+    ProductInvalidCostError,
+    ProductInvalidPriceError,
+    ProductNotAvailableError,
     ProductNotFoundError,
 )
 from app.modules.products.infrastructure.models import ProductModel
@@ -66,6 +72,7 @@ def _product_response(product: ProductModel) -> ProductResponse:
         barcode=product.barcode,
         product_type=product.product_type,
         unit_of_measure=product.unit_of_measure,
+        status=product.status,
         sale_price=product.sale_price,
         cost_price=product.cost_price,
         main_image_url=product.main_image_url,
@@ -85,6 +92,7 @@ def _snapshot(product: ProductModel) -> dict[str, str | bool | None]:
         "barcode": product.barcode,
         "product_type": product.product_type.value,
         "unit_of_measure": product.unit_of_measure.value,
+        "status": product.status.value,
         "sale_price": str(product.sale_price),
         "cost_price": str(product.cost_price),
         "main_image_url": product.main_image_url,
@@ -220,7 +228,7 @@ async def list_products(
         },
     )
     return success_response(
-        "PRODUCTS_RETRIEVED",
+        "PRODUCT_LIST_RETRIEVED",
         data=[_product_response(product).model_dump(mode="json") for product in result.items],
         meta=PaginationMeta.from_total(
             page=result.page,
@@ -378,7 +386,7 @@ async def change_product_availability(
         )
         await session.commit()
         return success_response(
-            "PRODUCT_AVAILABILITY_CHANGED",
+            "PRODUCT_AVAILABILITY_UPDATED",
             data=_product_response(product).model_dump(mode="json"),
         )
     except ProductError as exc:
@@ -461,7 +469,7 @@ async def _change_product_state(
         )
         await session.commit()
         return success_response(
-            "PRODUCT_UPDATED",
+            "PRODUCT_ACTIVATED" if action == "activated" else "PRODUCT_DEACTIVATED",
             data=_product_response(product).model_dump(mode="json"),
         )
     except ProductError as exc:
@@ -472,11 +480,31 @@ async def _change_product_state(
 def product_exception_to_response(exc: Exception) -> JSONResponse:
     if isinstance(exc, ProductNotFoundError):
         return error_response("PRODUCT_NOT_FOUND")
+    if isinstance(exc, ProductInternalCodeAlreadyExistsError):
+        logger.warning(
+            "product.uniqueness.conflict",
+            extra={"event": "product.uniqueness.conflict", "field": "internal_code"},
+        )
+        return error_response("PRODUCT_INTERNAL_CODE_ALREADY_EXISTS")
+    if isinstance(exc, ProductBarcodeAlreadyExistsError):
+        logger.warning(
+            "product.uniqueness.conflict",
+            extra={"event": "product.uniqueness.conflict", "field": "barcode"},
+        )
+        return error_response("PRODUCT_BARCODE_ALREADY_EXISTS")
     if isinstance(exc, ProductAlreadyExistsError):
         logger.warning(
             "product.uniqueness.conflict", extra={"event": "product.uniqueness.conflict"}
         )
-        return error_response("PRODUCT_ALREADY_EXISTS")
+        return error_response("PRODUCT_INTERNAL_CODE_ALREADY_EXISTS")
+    if isinstance(exc, ProductInvalidPriceError):
+        return error_response("PRODUCT_INVALID_PRICE", status_code=status.HTTP_400_BAD_REQUEST)
+    if isinstance(exc, ProductInvalidCostError):
+        return error_response("PRODUCT_INVALID_COST", status_code=status.HTTP_400_BAD_REQUEST)
+    if isinstance(exc, ProductImageInvalidError):
+        return error_response("PRODUCT_IMAGE_INVALID", status_code=status.HTTP_400_BAD_REQUEST)
+    if isinstance(exc, ProductNotAvailableError):
+        return error_response("PRODUCT_NOT_AVAILABLE", status_code=status.HTTP_409_CONFLICT)
     if isinstance(exc, InvalidProductDataError):
         return error_response("VALIDATION_ERROR", status_code=status.HTTP_400_BAD_REQUEST)
     return error_response("VALIDATION_ERROR", status_code=status.HTTP_400_BAD_REQUEST)

@@ -62,7 +62,7 @@ class _ProductDetail extends ConsumerWidget {
           children: [
             Chip(label: Text(product.formattedSalePrice)),
             Chip(label: Text(product.unitOfMeasure.label)),
-            Chip(label: Text(product.isActive ? 'Ativo' : 'Inativo')),
+            Chip(label: Text(product.status.label)),
             Chip(
               label: Text(
                 product.isAvailableForSale ? 'Disponível' : 'Indisponível',

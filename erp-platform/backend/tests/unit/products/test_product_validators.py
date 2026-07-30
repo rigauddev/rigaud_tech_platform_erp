@@ -8,7 +8,11 @@ from app.modules.products.application.validators import (
     normalize_money,
     normalize_text,
 )
-from app.modules.products.domain.exceptions import InvalidProductDataError
+from app.modules.products.domain.exceptions import (
+    InvalidProductDataError,
+    ProductInvalidCostError,
+    ProductInvalidPriceError,
+)
 
 
 @pytest.mark.unit
@@ -31,8 +35,13 @@ def test_null_barcode_is_allowed() -> None:
 @pytest.mark.unit
 def test_money_uses_decimal_and_rejects_negative_values() -> None:
     assert normalize_money("10.129", "sale_price") == Decimal("10.13")
-    with pytest.raises(InvalidProductDataError):
+    assert normalize_money("0.00", "sale_price") == Decimal("0.00")
+    assert normalize_money("0.01", "sale_price") == Decimal("0.01")
+    assert normalize_money("9999999999.99", "sale_price") == Decimal("9999999999.99")
+    with pytest.raises(ProductInvalidPriceError):
         normalize_money("-0.01", "sale_price")
+    with pytest.raises(ProductInvalidCostError):
+        normalize_money("invalid", "cost_price")
 
 
 @pytest.mark.unit

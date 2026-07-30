@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.modules.products.domain.entities import ProductType, UnitOfMeasure
+from app.modules.products.domain.entities import ProductStatus, ProductType, UnitOfMeasure
 
 
 class ProductBaseSchema(BaseModel):
@@ -18,8 +18,8 @@ class ProductCreateRequest(ProductBaseSchema):
     barcode: str | None = Field(default=None, max_length=64)
     product_type: ProductType = ProductType.SIMPLE
     unit_of_measure: UnitOfMeasure = UnitOfMeasure.UNIT
-    sale_price: Decimal = Field(default=Decimal("0.00"), ge=0)
-    cost_price: Decimal = Field(default=Decimal("0.00"), ge=0)
+    sale_price: Decimal = Decimal("0.00")
+    cost_price: Decimal = Decimal("0.00")
     main_image_url: str | None = Field(default=None, max_length=500)
     is_available_for_sale: bool = True
 
@@ -31,8 +31,8 @@ class ProductUpdateRequest(ProductBaseSchema):
     barcode: str | None = Field(default=None, max_length=64)
     product_type: ProductType | None = None
     unit_of_measure: UnitOfMeasure | None = None
-    sale_price: Decimal | None = Field(default=None, ge=0)
-    cost_price: Decimal | None = Field(default=None, ge=0)
+    sale_price: Decimal | None = None
+    cost_price: Decimal | None = None
     main_image_url: str | None = Field(default=None, max_length=500)
     is_available_for_sale: bool | None = None
 
@@ -50,6 +50,7 @@ class ProductResponse(ProductBaseSchema):
     barcode: str | None
     product_type: ProductType
     unit_of_measure: UnitOfMeasure
+    status: ProductStatus
     sale_price: Decimal
     cost_price: Decimal
     main_image_url: str | None

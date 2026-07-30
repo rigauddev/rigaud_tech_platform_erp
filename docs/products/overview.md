@@ -24,6 +24,7 @@ Escopo implementado:
 - tipo de produto;
 - unidade de medida;
 - imagem principal por URL;
+- status funcional separado da disponibilidade;
 - auditoria;
 - mensagens padronizadas da API;
 - telas Flutter de lista, formulário e detalhe.
@@ -42,3 +43,5 @@ Fora do escopo:
 - delivery;
 - caixa;
 - fiscal.
+
+Não há upload real de imagem nesta task. O campo implementado é apenas a referência `main_image_url`.

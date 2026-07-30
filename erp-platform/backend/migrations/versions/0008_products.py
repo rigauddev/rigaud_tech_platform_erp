@@ -31,8 +31,10 @@ def upgrade() -> None:
         name="product_unit_of_measure",
         create_type=False,
     )
+    product_status = postgresql.ENUM("active", "inactive", name="product_status", create_type=False)
     product_type.create(op.get_bind(), checkfirst=True)
     unit_of_measure.create(op.get_bind(), checkfirst=True)
+    product_status.create(op.get_bind(), checkfirst=True)
 
     op.create_table(
         "products",
@@ -44,6 +46,7 @@ def upgrade() -> None:
         sa.Column("barcode", sa.String(length=64), nullable=True),
         sa.Column("product_type", product_type, nullable=False),
         sa.Column("unit_of_measure", unit_of_measure, nullable=False),
+        sa.Column("status", product_status, nullable=False),
         sa.Column("sale_price", sa.Numeric(12, 2), nullable=False),
         sa.Column("cost_price", sa.Numeric(12, 2), nullable=False),
         sa.Column("main_image_url", sa.String(length=500), nullable=True),
@@ -71,6 +74,7 @@ def upgrade() -> None:
     )
     op.create_index(op.f("ix_products_tenant_id"), "products", ["tenant_id"])
     op.create_index("ix_products_tenant_active", "products", ["tenant_id", "is_active"])
+    op.create_index("ix_products_tenant_status", "products", ["tenant_id", "status"])
     op.create_index(
         "ix_products_tenant_available",
         "products",
@@ -90,9 +94,11 @@ def downgrade() -> None:
     op.drop_index("uq_products_tenant_id_barcode_not_null", table_name="products")
     op.drop_index("ix_products_tenant_type", table_name="products")
     op.drop_index("ix_products_tenant_available", table_name="products")
+    op.execute("DROP INDEX IF EXISTS ix_products_tenant_status")
     op.drop_index("ix_products_tenant_active", table_name="products")
     op.drop_index(op.f("ix_products_tenant_id"), table_name="products")
     op.drop_table("products")
 
     sa.Enum(name="product_unit_of_measure").drop(op.get_bind(), checkfirst=True)
     sa.Enum(name="product_type").drop(op.get_bind(), checkfirst=True)
+    sa.Enum(name="product_status").drop(op.get_bind(), checkfirst=True)

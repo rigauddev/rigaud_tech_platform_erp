@@ -49,6 +49,18 @@ enum UnitOfMeasure {
   }
 }
 
+enum ProductStatus {
+  active,
+  inactive;
+
+  String get label {
+    return switch (this) {
+      ProductStatus.active => 'Ativo',
+      ProductStatus.inactive => 'Inativo',
+    };
+  }
+}
+
 class Product {
   const Product({
     required this.id,
@@ -57,6 +69,7 @@ class Product {
     required this.internalCode,
     required this.productType,
     required this.unitOfMeasure,
+    required this.status,
     required this.salePrice,
     required this.costPrice,
     required this.isActive,
@@ -76,6 +89,7 @@ class Product {
   final String? barcode;
   final ProductType productType;
   final UnitOfMeasure unitOfMeasure;
+  final ProductStatus status;
   final String salePrice;
   final String costPrice;
   final String? mainImageUrl;
@@ -95,6 +109,9 @@ class Product {
       productType: ProductType.fromApi(json['product_type'] as String? ?? ''),
       unitOfMeasure: UnitOfMeasure.values.byName(
         json['unit_of_measure'] as String? ?? 'unit',
+      ),
+      status: ProductStatus.values.byName(
+        json['status'] as String? ?? 'inactive',
       ),
       salePrice: (json['sale_price'] ?? '0.00').toString(),
       costPrice: (json['cost_price'] ?? '0.00').toString(),

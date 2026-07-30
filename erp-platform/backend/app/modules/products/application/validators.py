@@ -3,7 +3,12 @@ from __future__ import annotations
 import re
 from decimal import Decimal, InvalidOperation
 
-from app.modules.products.domain.exceptions import InvalidProductDataError
+from app.modules.products.domain.exceptions import (
+    InvalidProductDataError,
+    ProductImageInvalidError,
+    ProductInvalidCostError,
+    ProductInvalidPriceError,
+)
 
 CODE_PATTERN = re.compile(r"^[A-Z0-9][A-Z0-9_.-]{1,39}$")
 BARCODE_PATTERN = re.compile(r"^[0-9A-Za-z_.-]{3,64}$")
@@ -58,9 +63,9 @@ def normalize_money(value: Decimal | str | int | None, field_name: str) -> Decim
     try:
         amount = Decimal(str(value)).quantize(MONEY_QUANTIZE)
     except (InvalidOperation, ValueError) as exc:
-        raise InvalidProductDataError(f"Invalid {field_name}.") from exc
+        raise _money_error(field_name) from exc
     if amount < Decimal("0.00"):
-        raise InvalidProductDataError(f"Invalid {field_name}.")
+        raise _money_error(field_name)
     return amount
 
 
@@ -71,5 +76,13 @@ def normalize_image_url(value: str | None) -> str | None:
     if not normalized:
         return None
     if not IMAGE_URL_PATTERN.fullmatch(normalized):
-        raise InvalidProductDataError("Invalid main_image_url.")
+        raise ProductImageInvalidError("Invalid main_image_url.")
     return normalized
+
+
+def _money_error(field_name: str) -> InvalidProductDataError:
+    if field_name == "sale_price":
+        return ProductInvalidPriceError("Invalid sale_price.")
+    if field_name == "cost_price":
+        return ProductInvalidCostError("Invalid cost_price.")
+    return InvalidProductDataError(f"Invalid {field_name}.")
