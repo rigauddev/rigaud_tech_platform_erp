@@ -3,14 +3,27 @@ from uuid import uuid4
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 
 from app.database.session import async_session_factory
 from app.main import create_app
 from app.modules.auth.application.passwords import PasswordService
 from app.modules.auth.application.tokens import TokenService
 from app.modules.auth.infrastructure.models import AuthSessionModel, AuthUserModel
-from app.modules.companies.infrastructure.models import CompanyModel
+from app.modules.companies.domain.entities import (
+    AccessScope,
+    BranchRole,
+    CompanyRole,
+    MembershipStatus,
+)
+from app.modules.companies.domain.exceptions import ContextSelectionError
+from app.modules.companies.infrastructure.models import (
+    BranchMembershipModel,
+    BranchModel,
+    CompanyMembershipModel,
+    CompanyModel,
+)
+from app.modules.companies.infrastructure.repositories import SQLAlchemyMembershipRepository
 
 
 @pytest_asyncio.fixture
@@ -236,3 +249,320 @@ async def test_user_cannot_switch_to_unauthorized_branch(client: AsyncClient) ->
     )
     assert denied.status_code == 403
     assert denied.json()["code"] == "CONTEXT_NOT_ALLOWED"
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_user_can_switch_to_authorized_second_company(client: AsyncClient) -> None:
+    admin = await create_platform_admin()
+    headers = auth_header(admin)
+
+    first_company = await client.post(
+        "/api/v1/companies",
+        headers=headers,
+        json={
+            "legal_name": "Tenant Multi A Ltda",
+            "trade_name": "Tenant Multi A",
+            "document": valid_cnpj(13),
+            "slug": "tenant-multi-a",
+            "code": "MULTIA",
+        },
+    )
+    second_company = await client.post(
+        "/api/v1/companies",
+        headers=headers,
+        json={
+            "legal_name": "Tenant Multi B Ltda",
+            "trade_name": "Tenant Multi B",
+            "document": valid_cnpj(14),
+            "slug": "tenant-multi-b",
+            "code": "MULTIB",
+        },
+    )
+    first_tenant_id = first_company.json()["id"]
+    second_tenant_id = second_company.json()["id"]
+
+    await client.post(
+        "/api/v1/users",
+        headers=headers,
+        json={
+            "tenant_id": first_tenant_id,
+            "email": "multi@tenant.test",
+            "password": "Senha123",
+            "must_change_password": False,
+        },
+    )
+
+    async with async_session_factory() as session:
+        user = (
+            await session.execute(
+                select(AuthUserModel).where(AuthUserModel.email == "multi@tenant.test")
+            )
+        ).scalar_one()
+        second_branch = (
+            await session.execute(
+                select(BranchModel).where(
+                    BranchModel.tenant_id == second_tenant_id,
+                    BranchModel.is_headquarters.is_(True),
+                )
+            )
+        ).scalar_one()
+        membership = await SQLAlchemyMembershipRepository(session).add_company_membership(
+            CompanyMembershipModel(
+                user_id=user.id,
+                tenant_id=second_branch.tenant_id,
+                role=CompanyRole.MEMBER,
+                status=MembershipStatus.ACTIVE,
+                access_scope=AccessScope.SELECTED_BRANCHES,
+                is_default=False,
+                created_by=admin.id,
+                updated_by=admin.id,
+            )
+        )
+        await SQLAlchemyMembershipRepository(session).add_branch_membership(
+            BranchMembershipModel(
+                company_membership_id=membership.id,
+                branch_id=second_branch.id,
+                role=BranchRole.BRANCH_OPERATOR,
+                status=MembershipStatus.ACTIVE,
+                is_default=True,
+                created_by=admin.id,
+                updated_by=admin.id,
+            )
+        )
+        await session.commit()
+
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "tenant": "tenant-multi-a",
+            "email": "multi@tenant.test",
+            "password": "Senha123",
+        },
+    )
+    token = login_response.json()["access_token"]
+
+    switch_response = await client.post(
+        "/api/v1/auth/context/switch",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"tenant_id": second_tenant_id, "branch_id": str(second_branch.id)},
+    )
+    assert switch_response.status_code == 200
+    switched_token = switch_response.json()["access_token"]
+
+    me_response = await client.get(
+        "/api/v1/auth/me",
+        headers={"Authorization": f"Bearer {switched_token}"},
+    )
+    assert me_response.status_code == 200
+    assert me_response.json()["tenant_id"] == second_tenant_id
+    assert me_response.json()["branch_id"] == str(second_branch.id)
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_branch_membership_rejects_cross_tenant_link(client: AsyncClient) -> None:
+    admin = await create_platform_admin()
+    headers = auth_header(admin)
+
+    first_company = await client.post(
+        "/api/v1/companies",
+        headers=headers,
+        json={
+            "legal_name": "Cross Tenant A Ltda",
+            "trade_name": "Cross Tenant A",
+            "document": valid_cnpj(15),
+            "slug": "cross-tenant-a",
+            "code": "CROSSA",
+        },
+    )
+    second_company = await client.post(
+        "/api/v1/companies",
+        headers=headers,
+        json={
+            "legal_name": "Cross Tenant B Ltda",
+            "trade_name": "Cross Tenant B",
+            "document": valid_cnpj(16),
+            "slug": "cross-tenant-b",
+            "code": "CROSSB",
+        },
+    )
+    first_tenant_id = first_company.json()["id"]
+    second_tenant_id = second_company.json()["id"]
+
+    await client.post(
+        "/api/v1/users",
+        headers=headers,
+        json={
+            "tenant_id": first_tenant_id,
+            "email": "cross@tenant.test",
+            "password": "Senha123",
+            "must_change_password": False,
+        },
+    )
+
+    async with async_session_factory() as session:
+        user = (
+            await session.execute(
+                select(AuthUserModel).where(AuthUserModel.email == "cross@tenant.test")
+            )
+        ).scalar_one()
+        first_membership = (
+            await session.execute(
+                select(CompanyMembershipModel).where(
+                    CompanyMembershipModel.user_id == user.id,
+                    CompanyMembershipModel.tenant_id == first_tenant_id,
+                )
+            )
+        ).scalar_one()
+        second_branch = (
+            await session.execute(
+                select(BranchModel).where(
+                    BranchModel.tenant_id == second_tenant_id,
+                    BranchModel.is_headquarters.is_(True),
+                )
+            )
+        ).scalar_one()
+
+        with pytest.raises(ContextSelectionError):
+            await SQLAlchemyMembershipRepository(session).add_branch_membership(
+                BranchMembershipModel(
+                    company_membership_id=first_membership.id,
+                    branch_id=second_branch.id,
+                    role=BranchRole.BRANCH_OPERATOR,
+                    status=MembershipStatus.ACTIVE,
+                    is_default=False,
+                    created_by=admin.id,
+                    updated_by=admin.id,
+                )
+            )
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_refresh_revalidates_inactive_membership(client: AsyncClient) -> None:
+    admin = await create_platform_admin()
+    headers = auth_header(admin)
+
+    company_response = await client.post(
+        "/api/v1/companies",
+        headers=headers,
+        json={
+            "legal_name": "Refresh Context Ltda",
+            "trade_name": "Refresh Context",
+            "document": valid_cnpj(17),
+            "slug": "refresh-context",
+            "code": "REFCTX",
+        },
+    )
+    tenant_id = company_response.json()["id"]
+    await client.post(
+        "/api/v1/users",
+        headers=headers,
+        json={
+            "tenant_id": tenant_id,
+            "email": "refresh@tenant.test",
+            "password": "Senha123",
+            "must_change_password": False,
+        },
+    )
+
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "tenant": "refresh-context",
+            "email": "refresh@tenant.test",
+            "password": "Senha123",
+        },
+    )
+    refresh_token = login_response.json()["refresh_token"]
+
+    async with async_session_factory() as session:
+        user = (
+            await session.execute(
+                select(AuthUserModel).where(AuthUserModel.email == "refresh@tenant.test")
+            )
+        ).scalar_one()
+        membership = (
+            await session.execute(
+                select(CompanyMembershipModel).where(
+                    CompanyMembershipModel.user_id == user.id,
+                    CompanyMembershipModel.tenant_id == tenant_id,
+                )
+            )
+        ).scalar_one()
+        membership.status = MembershipStatus.INACTIVE
+        await session.commit()
+
+    refresh_response = await client.post(
+        "/api/v1/auth/refresh",
+        json={"refresh_token": refresh_token},
+    )
+    assert refresh_response.status_code == 401
+    assert refresh_response.json()["code"] == "AUTH_TOKEN_INVALID"
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_all_branches_context_can_switch_without_branch(client: AsyncClient) -> None:
+    admin = await create_platform_admin()
+    headers = auth_header(admin)
+
+    company_response = await client.post(
+        "/api/v1/companies",
+        headers=headers,
+        json={
+            "legal_name": "All Branches Ltda",
+            "trade_name": "All Branches",
+            "document": valid_cnpj(18),
+            "slug": "all-branches",
+            "code": "ALLBR",
+        },
+    )
+    tenant_id = company_response.json()["id"]
+    await client.post(
+        "/api/v1/users",
+        headers=headers,
+        json={
+            "tenant_id": tenant_id,
+            "email": "allbranches@tenant.test",
+            "password": "Senha123",
+            "must_change_password": False,
+        },
+    )
+
+    async with async_session_factory() as session:
+        user = (
+            await session.execute(
+                select(AuthUserModel).where(AuthUserModel.email == "allbranches@tenant.test")
+            )
+        ).scalar_one()
+        membership = (
+            await session.execute(
+                select(CompanyMembershipModel).where(
+                    CompanyMembershipModel.user_id == user.id,
+                    CompanyMembershipModel.tenant_id == tenant_id,
+                )
+            )
+        ).scalar_one()
+        membership.access_scope = AccessScope.ALL_BRANCHES
+        await session.commit()
+
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "tenant": "all-branches",
+            "email": "allbranches@tenant.test",
+            "password": "Senha123",
+        },
+    )
+    token = login_response.json()["access_token"]
+
+    switch_response = await client.post(
+        "/api/v1/auth/context/switch",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"tenant_id": tenant_id, "branch_id": None},
+    )
+    assert switch_response.status_code == 200
+    assert switch_response.json()["active_context"]["branch_id"] is None
+    assert switch_response.json()["active_context"]["access_scope"] == "all_branches"

@@ -11,6 +11,17 @@ docker compose --env-file .env.example exec -T backend ruff check app tests migr
 docker compose --env-file .env.example exec -T backend ruff format --check app tests migrations
 ```
 
+`tests/integration/companies/test_tenant_context_api.py` cobre:
+
+- criação automática de matriz;
+- contexto padrão no login;
+- troca para filial autorizada;
+- bloqueio de filial não autorizada;
+- troca para segunda empresa autorizada;
+- rejeição de branch membership cross-tenant;
+- refresh com membership inativo;
+- contexto `all_branches` sem `branch_id`.
+
 ## Flutter
 
 ```bash

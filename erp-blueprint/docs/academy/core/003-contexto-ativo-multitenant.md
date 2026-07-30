@@ -25,6 +25,22 @@ O JWT passa a carregar contexto técnico opcional:
 
 Isso permite que futuras features validem isolamento por tenant e por filial sem duplicar lógica.
 
+## Revalidação
+
+Claims ajudam o backend a carregar o contexto, mas não substituem o banco.
+
+Ao consultar usuário atual ou renovar sessão, o backend deve revalidar membership, filial e escopo.
+
+Se um vínculo for desativado, novos tokens não devem preservar aquele contexto.
+
+## IDOR
+
+Troca de contexto nunca deve confiar em UUID enviado pelo cliente.
+
+O tenant solicitado precisa pertencer ao usuário por `CompanyMembership`.
+
+A filial solicitada precisa pertencer ao mesmo tenant e ao usuário por `BranchMembership`.
+
 ## Limite da Task
 
 Esta aula não cobre estoque, venda, assinatura, cobrança ou permissões avançadas.

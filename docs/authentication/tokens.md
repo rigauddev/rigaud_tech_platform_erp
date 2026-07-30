@@ -34,3 +34,7 @@ No banco, apenas o hash SHA-256 do refresh token é persistido.
 Cada refresh válido gera uma nova sessão e revoga a sessão anterior. Reuso de refresh token revogado é tratado como token inválido e registrado em auditoria.
 
 Na DEV-010, a sessão pode preservar contexto ativo para emissão do access token durante refresh.
+
+O refresh revalida o contexto persistido na sessão contra o banco.
+
+Se o membership ou a filial forem desativados após a emissão do token anterior, o refresh passa a responder token inválido e não emite novo contexto.

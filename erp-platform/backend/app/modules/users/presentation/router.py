@@ -159,6 +159,7 @@ async def create_user(
             user_id=user.id,
             tenant_id=user.tenant_id,
             is_company_admin=user.is_superuser,
+            actor_id=current_user.id,
         )
         await session.commit()
         return success_response("USER_CREATED", data=_user_response(user).model_dump(mode="json"))

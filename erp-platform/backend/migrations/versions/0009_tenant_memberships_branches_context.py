@@ -109,6 +109,9 @@ def upgrade() -> None:
         sa.Column(
             "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
         ),
+        sa.Column("created_by", sa.UUID(), nullable=True),
+        sa.Column("updated_by", sa.UUID(), nullable=True),
+        sa.Column("deleted_by", sa.UUID(), nullable=True),
         sa.ForeignKeyConstraint(["tenant_id"], ["companies.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["user_id"], ["auth_users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
@@ -138,6 +141,9 @@ def upgrade() -> None:
         sa.Column(
             "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
         ),
+        sa.Column("created_by", sa.UUID(), nullable=True),
+        sa.Column("updated_by", sa.UUID(), nullable=True),
+        sa.Column("deleted_by", sa.UUID(), nullable=True),
         sa.ForeignKeyConstraint(["branch_id"], ["branches.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
             ["company_membership_id"], ["company_memberships.id"], ondelete="CASCADE"

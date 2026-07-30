@@ -41,9 +41,13 @@ from app.modules.auth.domain.repositories import (
     to_authenticated_user,
 )
 from app.modules.auth.infrastructure.models import AuthSessionModel
-from app.modules.companies.application.use_cases import ActiveContext, ResolveDefaultContext
-from app.modules.companies.domain.exceptions import MembershipNotFoundError
-from app.modules.companies.domain.repositories import MembershipRepository
+from app.modules.companies.application.use_cases import (
+    ActiveContext,
+    ResolveDefaultContext,
+    SelectActiveContext,
+)
+from app.modules.companies.domain.exceptions import CompanyError, MembershipNotFoundError
+from app.modules.companies.domain.repositories import BranchRepository, MembershipRepository
 from app.modules.users.domain.entities import UserStatus
 
 
@@ -354,10 +358,14 @@ class RefreshSession:
         users: UserAuthRepository,
         sessions: AuthSessionRepository,
         token_service: TokenService,
+        memberships: MembershipRepository | None = None,
+        branches: BranchRepository | None = None,
     ) -> None:
         self.users = users
         self.sessions = sessions
         self.token_service = token_service
+        self.memberships = memberships
+        self.branches = branches
 
     async def execute(self, input_data: RefreshInput) -> TokenPair:
         token_hash = self.token_service.hash_refresh_token(input_data.refresh_token)
@@ -383,15 +391,22 @@ class RefreshSession:
         if user.status != UserStatus.ACTIVE or not user.is_active:
             raise InactiveUserError("Inactive user.")
 
+        active_context = await self._validate_session_context(session)
+        active_tenant_id = active_context.tenant_id if active_context else user.tenant_id
+
         refresh_token = self.token_service.create_refresh_token()
         new_session = AuthSessionModel(
             user_id=user.id,
-            tenant_id=user.tenant_id,
-            membership_id=session.membership_id,
-            branch_id=session.branch_id,
-            branch_membership_id=session.branch_membership_id,
-            role=session.role,
-            access_scope=session.access_scope,
+            tenant_id=active_tenant_id,
+            membership_id=active_context.membership_id if active_context else None,
+            branch_id=active_context.branch_id if active_context else None,
+            branch_membership_id=active_context.branch_membership_id if active_context else None,
+            role=active_context.role if active_context else None,
+            access_scope=(
+                active_context.access_scope.value
+                if active_context and active_context.access_scope
+                else None
+            ),
             refresh_token_hash=refresh_token.token_hash,
             expires_at=refresh_token.expires_at,
             user_agent=input_data.user_agent,
@@ -400,22 +415,63 @@ class RefreshSession:
         await self.sessions.create(new_session)
         session.revoked_at = now
         session.replaced_by_session_id = new_session.id
-        set_tenant_id(user.tenant_id)
+        set_tenant_id(active_tenant_id)
 
         return TokenPair(
             access_token=self.token_service.create_access_token(
                 user.id,
-                user.tenant_id,
-                membership_id=session.membership_id,
-                branch_id=session.branch_id,
-                branch_membership_id=session.branch_membership_id,
-                role=session.role,
-                access_scope=session.access_scope,
+                active_tenant_id,
+                membership_id=active_context.membership_id if active_context else None,
+                branch_id=active_context.branch_id if active_context else None,
+                branch_membership_id=(
+                    active_context.branch_membership_id if active_context else None
+                ),
+                role=active_context.role if active_context else None,
+                access_scope=(
+                    active_context.access_scope.value
+                    if active_context and active_context.access_scope
+                    else None
+                ),
             ),
             refresh_token=refresh_token.token,
             token_type="bearer",
             expires_in=self.token_service.access_token_expires_in,
         )
+
+    async def _validate_session_context(self, session: AuthSessionModel) -> ActiveContext | None:
+        if not _has_context_claims(
+            {
+                "membership_id": session.membership_id,
+                "branch_id": session.branch_id,
+                "branch_membership_id": session.branch_membership_id,
+                "role": session.role,
+                "access_scope": session.access_scope,
+            }
+        ):
+            return None
+        if self.memberships is None or self.branches is None:
+            raise InvalidTokenError("Invalid refresh token.")
+        try:
+            active_context = await SelectActiveContext(self.memberships, self.branches).execute(
+                user_id=session.user_id,
+                tenant_id=session.tenant_id,
+                branch_id=session.branch_id,
+            )
+        except CompanyError as exc:
+            raise InvalidTokenError("Invalid refresh token.") from exc
+        if session.membership_id and active_context.membership_id != session.membership_id:
+            raise InvalidTokenError("Invalid refresh token.")
+        if (
+            session.branch_membership_id
+            and active_context.branch_membership_id != session.branch_membership_id
+        ):
+            raise InvalidTokenError("Invalid refresh token.")
+        if session.access_scope and (
+            active_context.access_scope is None
+            or active_context.access_scope.value != session.access_scope
+        ):
+            raise InvalidTokenError("Invalid refresh token.")
+        return active_context
 
 
 class LogoutSession:
@@ -432,9 +488,17 @@ class LogoutSession:
 
 
 class GetCurrentUser:
-    def __init__(self, users: UserAuthRepository, token_service: TokenService) -> None:
+    def __init__(
+        self,
+        users: UserAuthRepository,
+        token_service: TokenService,
+        memberships: MembershipRepository | None = None,
+        branches: BranchRepository | None = None,
+    ) -> None:
         self.users = users
         self.token_service = token_service
+        self.memberships = memberships
+        self.branches = branches
 
     async def execute(self, access_token: str) -> AuthenticatedUser:
         payload = self.token_service.decode_access_token(access_token)
@@ -448,7 +512,7 @@ class GetCurrentUser:
             raise InvalidTokenError("Invalid token.") from exc
 
         user = await self.users.get_by_id(user_id)
-        if user is None or user.tenant_id != tenant_id:
+        if user is None:
             raise InvalidTokenError("Invalid token.")
         if user.deleted_at is not None:
             raise InvalidTokenError("Invalid token.")
@@ -460,18 +524,85 @@ class GetCurrentUser:
         if user.status != UserStatus.ACTIVE or not user.is_active:
             raise InactiveUserError("Inactive user.")
 
-        set_tenant_id(user.tenant_id)
-        return to_authenticated_user(
-            user,
+        active_context = await self._validate_access_context(
+            user_id=user.id,
+            tenant_id=tenant_id,
             membership_id=membership_id,
             branch_id=branch_id,
             branch_membership_id=branch_membership_id,
-            role=str(payload["role"]) if payload.get("role") else None,
             access_scope=str(payload["access_scope"]) if payload.get("access_scope") else None,
+            payload=payload,
         )
+
+        active_tenant_id = active_context.tenant_id if active_context else user.tenant_id
+        if active_context is None and user.tenant_id != tenant_id:
+            raise InvalidTokenError("Invalid token.")
+
+        set_tenant_id(active_tenant_id)
+        return to_authenticated_user(
+            user,
+            tenant_id=active_tenant_id,
+            membership_id=active_context.membership_id if active_context else membership_id,
+            branch_id=active_context.branch_id if active_context else branch_id,
+            branch_membership_id=(
+                active_context.branch_membership_id if active_context else branch_membership_id
+            ),
+            role=active_context.role
+            if active_context
+            else str(payload["role"])
+            if payload.get("role")
+            else None,
+            access_scope=(
+                active_context.access_scope.value
+                if active_context and active_context.access_scope
+                else str(payload["access_scope"])
+                if payload.get("access_scope")
+                else None
+            ),
+        )
+
+    async def _validate_access_context(
+        self,
+        *,
+        user_id: UUID,
+        tenant_id: UUID,
+        membership_id: UUID | None,
+        branch_id: UUID | None,
+        branch_membership_id: UUID | None,
+        access_scope: str | None,
+        payload: dict[str, Any],
+    ) -> ActiveContext | None:
+        if not _has_context_claims(payload):
+            return None
+        if self.memberships is None or self.branches is None:
+            raise InvalidTokenError("Invalid token.")
+        try:
+            active_context = await SelectActiveContext(self.memberships, self.branches).execute(
+                user_id=user_id,
+                tenant_id=tenant_id,
+                branch_id=branch_id,
+            )
+        except CompanyError as exc:
+            raise InvalidTokenError("Invalid token.") from exc
+        if membership_id and active_context.membership_id != membership_id:
+            raise InvalidTokenError("Invalid token.")
+        if branch_membership_id and active_context.branch_membership_id != branch_membership_id:
+            raise InvalidTokenError("Invalid token.")
+        if access_scope and (
+            active_context.access_scope is None or active_context.access_scope.value != access_scope
+        ):
+            raise InvalidTokenError("Invalid token.")
+        return active_context
 
 
 def _optional_uuid(value: object | None) -> UUID | None:
     if value is None:
         return None
     return UUID(str(value))
+
+
+def _has_context_claims(payload: dict[str, Any]) -> bool:
+    return any(
+        payload.get(key) is not None
+        for key in ("membership_id", "branch_id", "branch_membership_id", "role", "access_scope")
+    )

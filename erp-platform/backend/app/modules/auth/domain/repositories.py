@@ -142,6 +142,7 @@ class SmsOtpSender(ABC):
 def to_authenticated_user(
     user: Any,
     *,
+    tenant_id: UUID | None = None,
     membership_id: UUID | None = None,
     branch_id: UUID | None = None,
     branch_membership_id: UUID | None = None,
@@ -150,7 +151,7 @@ def to_authenticated_user(
 ) -> AuthenticatedUser:
     return AuthenticatedUser(
         id=user.id,
-        tenant_id=user.tenant_id,
+        tenant_id=tenant_id or user.tenant_id,
         tenant_slug=user.tenant_slug,
         email=user.email,
         is_active=user.is_active,
