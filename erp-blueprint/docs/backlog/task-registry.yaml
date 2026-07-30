@@ -25,7 +25,8 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/dev-011-subscriptions-entitlements-billing
-      commits: []
+      commits:
+        - 38e953f
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
