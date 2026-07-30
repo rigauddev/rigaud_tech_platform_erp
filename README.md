@@ -108,3 +108,4 @@ Documentação complementar:
 - `docs/frontend/platforms.md`
 - `docs/frontend/responsive-design.md`
 # rigaud_tech_platform_erp
+# rigaud_tech_platform_erp
