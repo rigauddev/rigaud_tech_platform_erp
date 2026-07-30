@@ -1,0 +1,91 @@
+tasks:
+  - id: DOC-001
+    title: Registrar Git Flow oficial
+    epic: EPIC-0001
+    module: governance
+    status: completed
+    dependencies:
+      - DEV-008
+      - DEV-009
+    started_at: "2026-07-30"
+    completed_at: "2026-07-30"
+    documentation:
+      - docs/governance/git-flow.md
+      - docs/governance/commit-convention.md
+      - docs/governance/pull-request-policy.md
+      - docs/governance/release-flow.md
+      - CONTRIBUTING.md
+    academy: []
+    tests:
+      - scripts/check_task_compliance.py
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: null
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: pending
+  - id: DEV-008
+    title: Governança, Auditoria e Respostas da API
+    epic: EPIC-0001
+    module: core
+    status: completed
+    dependencies:
+      - DEV-004
+      - DEV-005
+      - DEV-006
+      - DEV-007
+    started_at: "2026-07-29"
+    completed_at: "2026-07-30"
+    documentation:
+      - docs/governance/task-management.md
+      - docs/observability/overview.md
+      - docs/api/response-contract.md
+      - docs/audit/overview.md
+    academy:
+      - erp-blueprint/docs/academy/observability/001-logs-estruturados.md
+      - erp-blueprint/docs/academy/api/001-respostas-e-erros-padronizados.md
+    tests:
+      - erp-platform/backend/tests/unit/governance
+      - erp-platform/backend/tests/integration/audit
+      - erp-platform/frontend/test/widget_test.dart
+    migration: 0006_audit_governance
+    commit: null
+    review_status: pending
+  - id: DEV-009
+    title: Autenticação em Dois Fatores
+    epic: EPIC-0001
+    module: authentication
+    status: completed
+    dependencies:
+      - DEV-005
+      - DEV-007
+      - DEV-008
+    started_at: "2026-07-30"
+    completed_at: "2026-07-30"
+    documentation:
+      - docs/authentication/mfa-overview.md
+      - docs/authentication/mfa-login-flow.md
+      - docs/authentication/mfa-totp.md
+      - docs/authentication/mfa-email.md
+      - docs/authentication/mfa-sms.md
+      - docs/authentication/mfa-recovery-codes.md
+      - docs/authentication/mfa-security.md
+      - docs/authentication/mfa-testing.md
+      - docs/authentication/mfa-troubleshooting.md
+    academy:
+      - erp-blueprint/docs/academy/security/003-autenticacao-em-dois-fatores.md
+      - erp-blueprint/docs/academy/security/004-totp-e-aplicativos-autenticadores.md
+      - erp-blueprint/docs/academy/security/005-otp-email-sms-e-recovery-codes.md
+    tests:
+      - erp-platform/backend/tests/unit/auth/test_mfa_services.py
+      - erp-platform/backend/tests/integration/auth/test_mfa_api.py
+      - erp-platform/frontend/lib/features/auth/mfa
+    migration: 0007_mfa_2fa
+    commit: null
+    review_status: pending

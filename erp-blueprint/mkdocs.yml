@@ -1,0 +1,49 @@
+site_name: Rigaud Tech Platform ERP Blueprint
+site_description: Blueprint arquitetural e documental da Rigaud Tech Platform ERP.
+docs_dir: docs
+
+nav:
+  - Home: index.md
+  - Project Plan: project-plan.md
+  - Architecture:
+      - Overview: architecture/README.md
+      - Product Vision: architecture/product-vision.md
+      - Development Workflow: architecture/development-workflow.md
+  - Academy:
+      - Overview: academy/README.md
+      - Flutter Multiplataforma: academy/flutter/001-flutter-multiplataforma.md
+      - Database Core: academy/backend/001-database-core.md
+      - Fundamentos PostgreSQL: academy/postgresql/001-fundamentos-do-banco-do-erp.md
+      - Autenticação Multi-Tenant JWT: academy/security/001-autenticacao-multitenant-jwt.md
+      - Empresa como Tenant: academy/multi-tenancy/001-empresa-como-tenant.md
+      - Usuários Multi-Tenant: academy/core/001-usuarios-multitenant.md
+      - Logs Estruturados: academy/observability/001-logs-estruturados.md
+      - Request ID: academy/observability/002-rastreabilidade-com-request-id.md
+      - Auditoria de Sistemas: academy/security/002-auditoria-de-sistemas.md
+      - Respostas de API: academy/api/001-respostas-e-erros-padronizados.md
+      - Tasks Docs-as-Code: academy/engineering/001-gestao-de-tasks-docs-as-code.md
+  - ADR:
+      - Overview: adr/README.md
+      - ADR 0001 Database Tenancy: adr/0001-database-tenancy-strategy.md
+      - ADR 0002 Authentication Strategy: adr/0002-authentication-strategy.md
+      - ADR 0003 Company Tenant Root: adr/0003-company-as-tenant-root.md
+      - ADR 0004 User Company Tenant: adr/0004-user-company-tenant.md
+      - ADR 0005 API Governance Audit: adr/0005-api-governance-audit-response-contract.md
+      - ADR 0006 Two Factor Authentication: adr/0006-two-factor-authentication-channels.md
+  - Modules: modules/README.md
+  - Research: research/README.md
+  - Backlog:
+      - Overview: backlog/README.md
+      - Master Backlog: backlog/master-backlog.md
+      - Task Registry: backlog/task-registry.yaml
+  - Roadmap:
+      - Overview: roadmap/README.md
+      - Master Roadmap: roadmap/master-roadmap.md
+  - Checklists: checklists/README.md
+  - Diagrams: diagrams/README.md
+  - Examples: examples/README.md
+  - Glossary: glossary/README.md
+  - Journal: journal/README.md
+  - Sprints: sprints/README.md
+  - Prompts: prompts/README.md
+  - Templates: templates/README.md

@@ -1,0 +1,87 @@
+# Changelog
+
+## Unreleased
+
+### Added
+
+- DEV-001: infraestrutura Docker de desenvolvimento com Backend, PostgreSQL 16, Redis, Mailpit, PgAdmin, Flutter Web e Nginx.
+- DEV-001: Dockerfiles centralizados em `docker/backend/Dockerfile` e `docker/flutter/Dockerfile`.
+- DEV-001: comandos `make` para subir, parar, reiniciar, acessar logs, subir backend/frontend, shells, lint, formatacao e testes.
+- DEV-001: healthchecks, network compartilhada e volumes persistentes incluindo volume reservado para backups do PostgreSQL.
+- DEV-001: documentação em `docs/development/docker.md`.
+- DEV-002: backend starter com FastAPI, SQLAlchemy 2, Alembic, Pydantic v2, JWT, DDD simplificado, Repository Pattern e Use Case Pattern.
+- DEV-002: configuracao de Swagger, OpenAPI, health check, logs estruturados, ambientes e tratamento global de excecoes.
+- DEV-002: documentação em `docs/backend/backend-starter.md`.
+- DEV-002: estrutura modular independente para auth, companies, users, products, restaurant, fashion, inventory, sales, finance, delivery e fiscal.
+- DEV-002: pacotes base de database, middlewares, exceptions, security, utils, requirements e teste inicial de `GET /health`.
+- DEV-002: documentação de estrutura em `docs/backend/project-structure.md`.
+- DEV-003: Flutter starter multiplataforma com MVVM, Riverpod, GoRouter, Dio, Freezed e Responsive Framework.
+- DEV-003: temas claro e escuro, splash e tela de login vazia.
+- DEV-003: documentação em `docs/frontend/flutter-starter.md`.
+- DEV-003: configuração por ambiente, router centralizado, Dio preparado, storage local/seguro e design system compartilhado.
+- DEV-003: telas iniciais de Splash, Login visual, Dashboard placeholder e 404.
+- DEV-003: estrutura Feature First para auth, dashboard, companies, users, products, inventory, restaurant, fashion, sales, finance, delivery e fiscal.
+- DEV-003: documentação em `docs/frontend/project-structure.md`, `docs/frontend/platforms.md`, `docs/frontend/responsive-design.md` e aula `erp-blueprint/docs/academy/flutter/001-flutter-multiplataforma.md`.
+- REVIEW DEV-003: documentação atualizada com comandos de teste por plataforma e validação Web.
+- DEV-004: fundação técnica de banco com SQLAlchemy async, sessão, naming convention, mixins, tipos compartilhados, tenant context e repositório base.
+- DEV-004: Alembic assíncrono com migration técnica inicial `0001_database_core`.
+- DEV-004: health check de banco em `/health/database` e `/api/v1/health/database`.
+- DEV-004: testes unitários e de integração para database core.
+- DEV-004: documentação em `docs/backend/database-core.md` e aula `erp-blueprint/docs/academy/backend/001-database-core.md`.
+- DEV-004: documentação operacional de banco em `docs/database/*`, ADR `0001-database-tenancy-strategy` e aula `academy/postgresql/001-fundamentos-do-banco-do-erp.md`.
+- DEV-005: fundação de autenticação multi-tenant com login, JWT access token, refresh token opaco rotacionável, logout e `/api/v1/auth/me`.
+- DEV-005: tabelas técnicas `auth_users` e `auth_sessions` com migrations `0002_authentication` e `0003_auth_tenant_slug_email`.
+- DEV-005: camada Auth organizada em Domain, Application, Infrastructure e Presentation, com Repository Pattern, Use Case Pattern e dependencies FastAPI.
+- DEV-005: integração Flutter com AuthRepository, datasource remoto, controller Riverpod, storage seguro, Bearer interceptor, refresh automático, logout e dashboard protegido.
+- DEV-005: testes unitários e de integração para autenticação, refresh rotation, revogação, tenant isolation e hash de refresh token.
+- DEV-005: documentação em `docs/authentication/*`, ADR `0002-authentication-strategy` e aula `academy/security/001-autenticacao-multitenant-jwt.md`.
+- ALINHAMENTO: plano oficial congelado do projeto em `erp-blueprint/docs/project-plan.md`.
+- ALINHAMENTO: backlog e roadmap oficiais em `erp-blueprint/docs/backlog/master-backlog.md` e `erp-blueprint/docs/roadmap/master-roadmap.md`.
+- ALINHAMENTO: regras permanentes de agentes em `AGENTS.md` e `erp-blueprint/AGENTS.md`.
+- ALINHAMENTO: visão de produto e fluxo obrigatório de desenvolvimento em `erp-blueprint/docs/architecture/`.
+- DEV-006: módulo Empresas com `Company` como raiz do tenant, CNPJ normalizado, slug/código únicos e status `active`, `inactive`, `suspended`.
+- DEV-006: endpoints `/api/v1/companies`, `/api/v1/companies/current` e ações de ativar, desativar e suspender.
+- DEV-006: autenticação atualizada para resolver tenant pela tabela `companies` e bloquear login de empresa inativa ou suspensa.
+- DEV-006: Flutter Companies com lista, cadastro, edição, detalhes e rota de empresa atual.
+- DEV-006: migration `0004_companies`, testes backend/Flutter e documentação `docs/companies/*`.
+- DEV-007: módulo Usuários implementado sobre `auth_users`, preservando a identidade autenticável existente.
+- DEV-007: `auth_users` evoluído com perfil, status `active/inactive/blocked`, auditoria básica, troca obrigatória de senha, tentativas de login e bloqueio técnico.
+- DEV-007: endpoints `/api/v1/users`, `/api/v1/users/me`, ações de ativar, desativar, bloquear, desbloquear, trocar senha própria e resetar senha administrativo.
+- DEV-007: autenticação integrada ao status do usuário, rastreio de tentativas inválidas, atualização de `last_login_at` e revogação de sessões por usuário.
+- DEV-007: Flutter Users com lista, criação, edição, detalhe, perfil atual, troca de senha e reset administrativo.
+- DEV-007: migration `0005_users`, testes backend/Flutter, ADR `0004-user-company-tenant` e documentação `docs/users/*`.
+- DEV-008: governança transversal com `request_id`, `correlation_id`, logs estruturados, sanitização e catálogo central de mensagens.
+- DEV-008: contrato padronizado de respostas da API com `success`, `code`, `message`, `data`, `meta`, `request_id` e `timestamp`.
+- DEV-008: módulo Audit com tabela `audit_events`, migration `0006_audit_governance`, listagem e detalhe para superusuários.
+- DEV-008: eventos de auditoria integrados a Authentication, Companies e Users.
+- DEV-008: Flutter preparado para envelope padrão, erros com `request_id` e central administrativa de auditoria.
+- DEV-008: task registry Docs-as-Code, templates oficiais de Task/Revisão e comando `make check-task TASK=DEV-008`.
+- PLANEJAMENTO: DEV-009 registrada para autenticação em dois fatores habilitável/desabilitável por email, telefone e aplicativo autenticador.
+- DEV-009: autenticação em dois fatores com TOTP, email OTP, SMS OTP, recovery codes e challenges temporários.
+- DEV-009: segredos TOTP criptografados, OTP/recovery codes armazenados por hash e tokens emitidos somente após segundo fator quando MFA está ativo.
+- DEV-009: endpoints `/api/v1/auth/mfa/*`, migration `0007_mfa_2fa`, mensagens centralizadas e auditoria de operações MFA.
+- DEV-009: Flutter integrado ao fluxo `AUTH_MFA_REQUIRED`, verificação de código, configuração TOTP com QR Code e gestão de recovery codes.
+- DEV-009: documentação em `docs/authentication/mfa-*.md`, docs locais do módulo Auth e aulas Academy de 2FA/TOTP/OTP.
+- DOC-001: Git Flow oficial documentado com branches `main`/`develop`, branch por task, PR para `develop`, validação integrada e PR `develop → main`.
+- DOC-001: templates de Pull Request, Issue de Task/Review, CONTRIBUTING e workflow básico de compliance adicionados.
+
+### Changed
+
+- REVIEW DEV-001: removidas configuracoes Docker duplicadas, ajustado healthcheck do frontend, habilitada persistencia AOF no Redis, revisado proxy `/api` e removida variavel legada `FLUTTER_WEB_PORT`.
+- REVIEW DEV-001: `make up`, `make backend` e `make flutter` agora executam preflight de Docker, Compose e espaco livre antes do build.
+- REVIEW DEV-001: Dockerfile Flutter ajustado para executar como usuario `ubuntu` e evitar preparacao do Flutter toolchain como root durante o build.
+- REVIEW DEV-001: `make up` ajustado para aguardar healthchecks com `--wait` e corrigir `safe.directory` do Flutter SDK.
+- REVIEW DEV-001: permissões do Flutter SDK ajustadas no Dockerfile para permitir hot reload com usuário não-root.
+- REVIEW DEV-001: imagem Flutter fixada em `ghcr.io/cirruslabs/flutter:3.41.9` para estabilizar o `make up`.
+- REVIEW DEV-001: startup do Flutter ajustado para corrigir permissões do volume `flutter_pub_cache` antes de executar como `ubuntu`.
+- REVIEW DEV-001: comando Flutter no container ajustado para usar caminho absoluto do SDK.
+- REVIEW DEV-001: healthcheck do Nginx ajustado para rota interna `/nginx-health`, estabilizando o `make up --wait`.
+- REVIEW DEV-003: removida duplicação residual da antiga feature `login` e estabilizados testes de navegação.
+- REVIEW DEV-003: feature técnica `splash` alinhada ao padrão `data`, `domain` e `presentation`.
+- DEV-004: engine assíncrona refinada com pool recycle, descarte via lifespan, sessão com rollback em erro e context manager externo.
+- DEV-004: adicionados Unit of Work async, métodos de soft delete/restore, tenant obrigatório controlado e comandos Makefile para Alembic.
+- DEV-004: migration inicial ajustada para criar apenas extensão PostgreSQL necessária, sem tabela artificial.
+- DEV-005: módulo Auth deixou de ser apenas estrutura reservada e passou a conter a fundação técnica de autenticação.
+- DEV-007: `is_active` passa a ser campo de compatibilidade derivado do `status` funcional do usuário.
+- DEV-008: respostas de Auth, Companies e Users passam a incluir envelope padronizado e mantêm campos de compatibilidade no topo durante transição.
+- DEV-009: login Auth passa a retornar `AUTH_MFA_REQUIRED` para usuários com MFA ativo, preservando o fluxo sem MFA para usuários existentes.

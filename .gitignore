@@ -1,0 +1,50 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+*.lockfile
+
+# Android / Gradle
+.gradle/
+local.properties
+
+# iOS / macOS
+Pods/
+Flutter/ephemeral/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Node / frontend caches
+node_modules/
+
+# Docker / database local data
+*.dump
+*.sql
+*.sqlite
+*.sqlite3
+
+# OS / editor noise
+.DS_Store
+._*
+*.swp
+*.tmp
+
+# Logs
+*.log
+logs/

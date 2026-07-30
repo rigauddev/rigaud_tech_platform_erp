@@ -1,0 +1,30 @@
+name: Task Compliance
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+  workflow_dispatch:
+    inputs:
+      task:
+        description: Task ID
+        required: true
+        default: DEV-009
+
+jobs:
+  compliance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Validate task registry when manually requested
+        if: github.event_name == 'workflow_dispatch'
+        run: python scripts/check_task_compliance.py --task "${{ inputs.task }}"
+      - name: Validate repository files
+        run: |
+          test -f CONTRIBUTING.md
+          test -f docs/governance/git-flow.md
+          test -f .github/pull_request_template.md

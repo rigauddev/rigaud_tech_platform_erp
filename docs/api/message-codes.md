@@ -1,0 +1,13 @@
+# Message Codes
+
+Códigos são estáveis, em inglês técnico e `UPPER_SNAKE_CASE`.
+
+Exemplos:
+
+- `API_SUCCESS`
+- `VALIDATION_ERROR`
+- `AUTH_INVALID_CREDENTIALS`
+- `COMPANY_CREATED`
+- `USER_CREATED`
+- `AUDIT_EVENTS_RETRIEVED`
+- `INTERNAL_SERVER_ERROR`
