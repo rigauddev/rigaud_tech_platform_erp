@@ -3,9 +3,18 @@ from uuid import UUID
 from sqlalchemy import Select, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.companies.domain.entities import CompanyStatus
-from app.modules.companies.domain.repositories import CompanyRepository
-from app.modules.companies.infrastructure.models import CompanyModel
+from app.modules.companies.domain.entities import BranchStatus, CompanyStatus, MembershipStatus
+from app.modules.companies.domain.repositories import (
+    BranchRepository,
+    CompanyRepository,
+    MembershipRepository,
+)
+from app.modules.companies.infrastructure.models import (
+    BranchMembershipModel,
+    BranchModel,
+    CompanyMembershipModel,
+    CompanyModel,
+)
 
 
 class SQLAlchemyCompanyRepository(CompanyRepository):
@@ -126,3 +135,178 @@ class SQLAlchemyCompanyRepository(CompanyRepository):
             statement = statement.where(CompanyModel.id != exclude_id)
         result = await self.session.execute(statement.limit(1))
         return result.scalar_one_or_none() is not None
+
+
+class SQLAlchemyBranchRepository(BranchRepository):
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def add(self, branch: BranchModel) -> BranchModel:
+        self.session.add(branch)
+        await self.session.flush()
+        return branch
+
+    async def get_by_id(self, branch_id: UUID) -> BranchModel | None:
+        result = await self.session.execute(
+            select(BranchModel).where(
+                BranchModel.id == branch_id,
+                BranchModel.deleted_at.is_(None),
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def list_by_tenant(
+        self,
+        tenant_id: UUID,
+        *,
+        limit: int,
+        offset: int,
+        status: BranchStatus | None = None,
+    ) -> list[BranchModel]:
+        statement = select(BranchModel).where(
+            BranchModel.tenant_id == tenant_id,
+            BranchModel.deleted_at.is_(None),
+        )
+        if status is not None:
+            statement = statement.where(BranchModel.status == status)
+        statement = statement.order_by(BranchModel.is_headquarters.desc(), BranchModel.name)
+        result = await self.session.execute(statement.limit(limit).offset(offset))
+        return list(result.scalars().all())
+
+    async def count_by_tenant(self, tenant_id: UUID, status: BranchStatus | None = None) -> int:
+        statement = select(BranchModel.id).where(
+            BranchModel.tenant_id == tenant_id,
+            BranchModel.deleted_at.is_(None),
+        )
+        if status is not None:
+            statement = statement.where(BranchModel.status == status)
+        result = await self.session.execute(select(func.count()).select_from(statement.subquery()))
+        return int(result.scalar_one())
+
+    async def exists_by_code(
+        self, tenant_id: UUID, code: str, exclude_id: UUID | None = None
+    ) -> bool:
+        statement = select(BranchModel.id).where(
+            BranchModel.tenant_id == tenant_id,
+            BranchModel.code == code,
+            BranchModel.deleted_at.is_(None),
+        )
+        if exclude_id is not None:
+            statement = statement.where(BranchModel.id != exclude_id)
+        result = await self.session.execute(statement.limit(1))
+        return result.scalar_one_or_none() is not None
+
+    async def exists_by_document(
+        self, tenant_id: UUID, document: str, exclude_id: UUID | None = None
+    ) -> bool:
+        statement = select(BranchModel.id).where(
+            BranchModel.tenant_id == tenant_id,
+            BranchModel.document == document,
+            BranchModel.deleted_at.is_(None),
+        )
+        if exclude_id is not None:
+            statement = statement.where(BranchModel.id != exclude_id)
+        result = await self.session.execute(statement.limit(1))
+        return result.scalar_one_or_none() is not None
+
+    async def has_headquarters(self, tenant_id: UUID, exclude_id: UUID | None = None) -> bool:
+        statement = select(BranchModel.id).where(
+            BranchModel.tenant_id == tenant_id,
+            BranchModel.is_headquarters.is_(True),
+            BranchModel.deleted_at.is_(None),
+        )
+        if exclude_id is not None:
+            statement = statement.where(BranchModel.id != exclude_id)
+        result = await self.session.execute(statement.limit(1))
+        return result.scalar_one_or_none() is not None
+
+
+class SQLAlchemyMembershipRepository(MembershipRepository):
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def add_company_membership(
+        self, membership: CompanyMembershipModel
+    ) -> CompanyMembershipModel:
+        self.session.add(membership)
+        await self.session.flush()
+        return membership
+
+    async def add_branch_membership(
+        self, membership: BranchMembershipModel
+    ) -> BranchMembershipModel:
+        self.session.add(membership)
+        await self.session.flush()
+        return membership
+
+    async def get_company_membership(
+        self, user_id: UUID, tenant_id: UUID
+    ) -> CompanyMembershipModel | None:
+        result = await self.session.execute(
+            select(CompanyMembershipModel).where(
+                CompanyMembershipModel.user_id == user_id,
+                CompanyMembershipModel.tenant_id == tenant_id,
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def get_default_company_membership(self, user_id: UUID) -> CompanyMembershipModel | None:
+        result = await self.session.execute(
+            select(CompanyMembershipModel).where(
+                CompanyMembershipModel.user_id == user_id,
+                CompanyMembershipModel.is_default.is_(True),
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def list_company_memberships(
+        self, user_id: UUID, status: MembershipStatus | None = None
+    ) -> list[CompanyMembershipModel]:
+        statement = select(CompanyMembershipModel).where(CompanyMembershipModel.user_id == user_id)
+        if status is not None:
+            statement = statement.where(CompanyMembershipModel.status == status)
+        result = await self.session.execute(
+            statement.order_by(
+                CompanyMembershipModel.is_default.desc(), CompanyMembershipModel.created_at
+            )
+        )
+        return list(result.scalars().all())
+
+    async def get_branch_membership(
+        self, company_membership_id: UUID, branch_id: UUID
+    ) -> BranchMembershipModel | None:
+        result = await self.session.execute(
+            select(BranchMembershipModel).where(
+                BranchMembershipModel.company_membership_id == company_membership_id,
+                BranchMembershipModel.branch_id == branch_id,
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def get_default_branch_membership(
+        self, company_membership_id: UUID
+    ) -> BranchMembershipModel | None:
+        result = await self.session.execute(
+            select(BranchMembershipModel).where(
+                BranchMembershipModel.company_membership_id == company_membership_id,
+                BranchMembershipModel.is_default.is_(True),
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def list_branch_memberships(
+        self,
+        company_membership_id: UUID,
+        status: MembershipStatus | None = None,
+    ) -> list[BranchMembershipModel]:
+        statement = select(BranchMembershipModel).where(
+            BranchMembershipModel.company_membership_id == company_membership_id
+        )
+        if status is not None:
+            statement = statement.where(BranchMembershipModel.status == status)
+        result = await self.session.execute(
+            statement.order_by(
+                BranchMembershipModel.is_default.desc(), BranchMembershipModel.created_at
+            )
+        )
+        return list(result.scalars().all())

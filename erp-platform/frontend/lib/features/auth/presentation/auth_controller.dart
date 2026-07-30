@@ -70,6 +70,18 @@ class AuthController extends AsyncNotifier<AuthState> {
     state = const AsyncData(AuthState.unauthenticated());
   }
 
+  Future<void> switchContext({
+    required String tenantId,
+    String? branchId,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await _repository.switchContext(tenantId: tenantId, branchId: branchId);
+      final user = await _repository.me();
+      return AuthState.authenticated(user);
+    });
+  }
+
   Future<void> logout() async {
     final refreshToken = await _storage.readRefreshToken();
     state = const AsyncLoading();

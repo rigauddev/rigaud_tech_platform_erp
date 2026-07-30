@@ -17,3 +17,14 @@
 5. Requests recebem `Authorization: Bearer`.
 6. Em `401`, o interceptor tenta refresh uma vez e repete a request.
 7. Logout revoga refresh token e limpa o storage.
+
+## Contexto Ativo
+
+Na DEV-010, a feature Auth passa a incluir modelos e repository para:
+
+- consultar opções de contexto;
+- trocar contexto ativo;
+- salvar o novo access token retornado pela API;
+- recarregar `/me` após a troca.
+
+Não há tela final de seleção de empresa/filial nesta task.

@@ -68,6 +68,12 @@
 - REST-001: suporte a criação, consulta, listagem, filtros, paginação, atualização, ativação, desativação, disponibilidade, soft delete, imagem principal, auditoria e mensagens da API.
 - REVIEW REST-001: status funcional de Product separado da disponibilidade, códigos específicos de conflito/validação e testes monetários ampliados.
 - REVIEW REST-001: validação Flutter em Android, iOS e macOS documentada, incluindo correção de xattrs no build nativo e limitação de CodeSign em workspace sincronizado.
+- DEV-010: fundação de contexto ativo multi-tenant com `Company` como tenant raiz, filiais, memberships de empresa e memberships de filial.
+- DEV-010: migration `0009_tenant_context` com `branches`, `company_memberships`, `branch_memberships` e contexto opcional em `auth_sessions`.
+- DEV-010: endpoints `/api/v1/auth/context`, `/api/v1/auth/context/switch` e `/api/v1/companies/branches`.
+- DEV-010: JWT preparado com `membership_id`, `branch_id`, `branch_membership_id`, `role` e `access_scope`.
+- DEV-010: Flutter Auth preparado para ler opções de contexto e trocar contexto ativo sem implementar funcionalidades comerciais.
+- DEV-010: documentação em `docs/authentication/context.md`, `docs/companies/*` e aula Academy de contexto ativo.
 
 ### Changed
 
@@ -91,3 +97,4 @@
 - DEV-009: login Auth passa a retornar `AUTH_MFA_REQUIRED` para usuários com MFA ativo, preservando o fluxo sem MFA para usuários existentes.
 - REST-001: menu e rotas Flutter passam a incluir Products como primeira feature comercial do MVP Restaurante.
 - REST-001: comandos `make lint`, `make format` e `make test` passam a configurar `safe.directory` para o SDK Flutter em containers temporários.
+- DEV-010: criação de usuários passa a garantir membership padrão de empresa e filial quando existe filial matriz ativa.

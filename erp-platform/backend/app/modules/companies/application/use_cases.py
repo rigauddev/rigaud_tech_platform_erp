@@ -14,14 +14,36 @@ from app.modules.companies.application.validators import (
     normalize_text,
     normalize_timezone,
 )
-from app.modules.companies.domain.entities import CompanyStatus
+from app.modules.companies.domain.entities import (
+    AccessScope,
+    BranchRole,
+    BranchStatus,
+    BranchType,
+    CompanyRole,
+    CompanyStatus,
+    MembershipStatus,
+)
 from app.modules.companies.domain.exceptions import (
+    BranchAlreadyExistsError,
+    BranchHeadquartersConflictError,
+    BranchNotFoundError,
     CompanyAlreadyExistsError,
     CompanyNotFoundError,
     CompanyPermissionError,
+    ContextSelectionError,
+    MembershipNotFoundError,
 )
-from app.modules.companies.domain.repositories import CompanyRepository
-from app.modules.companies.infrastructure.models import CompanyModel
+from app.modules.companies.domain.repositories import (
+    BranchRepository,
+    CompanyRepository,
+    MembershipRepository,
+)
+from app.modules.companies.infrastructure.models import (
+    BranchMembershipModel,
+    BranchModel,
+    CompanyMembershipModel,
+    CompanyModel,
+)
 
 
 @dataclass(frozen=True)
@@ -69,6 +91,56 @@ class CompanyListResult:
     total: int
     page: int
     page_size: int
+
+
+@dataclass(frozen=True)
+class BranchCreateInput:
+    tenant_id: UUID
+    code: str
+    name: str
+    legal_name: str | None = None
+    trade_name: str | None = None
+    document: str | None = None
+    branch_type: BranchType = BranchType.STORE
+    timezone: str | None = None
+    phone: str | None = None
+    email: str | None = None
+    address: str | None = None
+    is_headquarters: bool = False
+    actor_id: UUID | None = None
+
+
+@dataclass(frozen=True)
+class BranchListInput:
+    tenant_id: UUID
+    page: int = 1
+    page_size: int = 20
+    status: BranchStatus | None = None
+
+
+@dataclass(frozen=True)
+class BranchListResult:
+    items: list[BranchModel]
+    total: int
+    page: int
+    page_size: int
+
+
+@dataclass(frozen=True)
+class ActiveContext:
+    tenant_id: UUID
+    membership_id: UUID | None
+    branch_id: UUID | None
+    branch_membership_id: UUID | None
+    role: str | None
+    access_scope: AccessScope | None
+
+
+@dataclass(frozen=True)
+class ContextOptions:
+    companies: list[CompanyMembershipModel]
+    branches_by_membership: dict[UUID, list[BranchMembershipModel]]
+    active_context: ActiveContext
 
 
 class CreateCompany:
@@ -272,3 +344,187 @@ class EnsureCompanyAccess:
         if current_tenant_id == company_id:
             return
         raise CompanyPermissionError("Permission denied.")
+
+
+class CreateBranch:
+    def __init__(self, branches: BranchRepository, companies: CompanyRepository) -> None:
+        self.branches = branches
+        self.companies = companies
+
+    async def execute(self, input_data: BranchCreateInput) -> BranchModel:
+        company = await self.companies.get_by_id(input_data.tenant_id)
+        if company is None:
+            raise CompanyNotFoundError("Company not found.")
+        code = normalize_code(input_data.code)
+        if await self.branches.exists_by_code(input_data.tenant_id, code):
+            raise BranchAlreadyExistsError("Branch code already exists.")
+        document = normalize_document(input_data.document) if input_data.document else None
+        if document and await self.branches.exists_by_document(input_data.tenant_id, document):
+            raise BranchAlreadyExistsError("Branch document already exists.")
+        if input_data.is_headquarters and await self.branches.has_headquarters(
+            input_data.tenant_id
+        ):
+            raise BranchHeadquartersConflictError("Tenant already has headquarters.")
+        branch = BranchModel(
+            tenant_id=input_data.tenant_id,
+            code=code,
+            name=normalize_text(input_data.name, "name", max_length=120),
+            legal_name=(
+                normalize_text(input_data.legal_name, "legal_name", max_length=180)
+                if input_data.legal_name
+                else None
+            ),
+            trade_name=(
+                normalize_text(input_data.trade_name, "trade_name", max_length=120)
+                if input_data.trade_name
+                else None
+            ),
+            document=document,
+            branch_type=input_data.branch_type,
+            status=BranchStatus.ACTIVE,
+            is_headquarters=input_data.is_headquarters,
+            timezone=normalize_timezone(input_data.timezone),
+            phone=normalize_phone(input_data.phone),
+            email=normalize_email(input_data.email),
+            address=(
+                normalize_text(input_data.address, "address", max_length=500)
+                if input_data.address
+                else None
+            ),
+            created_by=input_data.actor_id,
+            updated_by=input_data.actor_id,
+        )
+        try:
+            return await self.branches.add(branch)
+        except IntegrityError as exc:
+            raise BranchAlreadyExistsError("Branch already exists.") from exc
+
+
+class ListBranches:
+    def __init__(self, branches: BranchRepository) -> None:
+        self.branches = branches
+
+    async def execute(self, input_data: BranchListInput) -> BranchListResult:
+        page = max(input_data.page, 1)
+        page_size = min(max(input_data.page_size, 1), 100)
+        offset = (page - 1) * page_size
+        items = await self.branches.list_by_tenant(
+            input_data.tenant_id,
+            limit=page_size,
+            offset=offset,
+            status=input_data.status,
+        )
+        total = await self.branches.count_by_tenant(input_data.tenant_id, input_data.status)
+        return BranchListResult(items=items, total=total, page=page, page_size=page_size)
+
+
+class EnsureDefaultMembershipForUser:
+    def __init__(self, memberships: MembershipRepository, branches: BranchRepository) -> None:
+        self.memberships = memberships
+        self.branches = branches
+
+    async def execute(
+        self,
+        *,
+        user_id: UUID,
+        tenant_id: UUID,
+        is_company_admin: bool,
+    ) -> CompanyMembershipModel:
+        existing = await self.memberships.get_company_membership(user_id, tenant_id)
+        if existing is not None:
+            return existing
+        company_memberships = await self.memberships.list_company_memberships(user_id)
+        membership = await self.memberships.add_company_membership(
+            CompanyMembershipModel(
+                user_id=user_id,
+                tenant_id=tenant_id,
+                role=CompanyRole.COMPANY_ADMIN if is_company_admin else CompanyRole.MEMBER,
+                status=MembershipStatus.ACTIVE,
+                access_scope=(
+                    AccessScope.ALL_BRANCHES if is_company_admin else AccessScope.SELECTED_BRANCHES
+                ),
+                is_default=not company_memberships,
+            )
+        )
+        branches = await self.branches.list_by_tenant(tenant_id, limit=1, offset=0)
+        if branches:
+            await self.memberships.add_branch_membership(
+                BranchMembershipModel(
+                    company_membership_id=membership.id,
+                    branch_id=branches[0].id,
+                    role=BranchRole.BRANCH_MANAGER
+                    if is_company_admin
+                    else BranchRole.BRANCH_OPERATOR,
+                    status=MembershipStatus.ACTIVE,
+                    is_default=True,
+                )
+            )
+        return membership
+
+
+class ResolveDefaultContext:
+    def __init__(self, memberships: MembershipRepository) -> None:
+        self.memberships = memberships
+
+    async def execute(self, user_id: UUID, tenant_id: UUID) -> ActiveContext:
+        membership = await self.memberships.get_company_membership(user_id, tenant_id)
+        if membership is None or membership.status != MembershipStatus.ACTIVE:
+            raise MembershipNotFoundError("Company membership not found.")
+        branch_membership = await self.memberships.get_default_branch_membership(membership.id)
+        branch_id = None
+        branch_membership_id = None
+        role = membership.role.value
+        if branch_membership and branch_membership.status == MembershipStatus.ACTIVE:
+            branch_id = branch_membership.branch_id
+            branch_membership_id = branch_membership.id
+            role = branch_membership.role.value
+        return ActiveContext(
+            tenant_id=tenant_id,
+            membership_id=membership.id,
+            branch_id=branch_id,
+            branch_membership_id=branch_membership_id,
+            role=role,
+            access_scope=membership.access_scope,
+        )
+
+
+class SelectActiveContext:
+    def __init__(self, memberships: MembershipRepository, branches: BranchRepository) -> None:
+        self.memberships = memberships
+        self.branches = branches
+
+    async def execute(
+        self,
+        *,
+        user_id: UUID,
+        tenant_id: UUID,
+        branch_id: UUID | None,
+    ) -> ActiveContext:
+        membership = await self.memberships.get_company_membership(user_id, tenant_id)
+        if membership is None or membership.status != MembershipStatus.ACTIVE:
+            raise ContextSelectionError("Company membership not allowed.")
+        if branch_id is None:
+            if membership.access_scope != AccessScope.ALL_BRANCHES:
+                raise ContextSelectionError("All branches access is not allowed.")
+            return ActiveContext(
+                tenant_id=tenant_id,
+                membership_id=membership.id,
+                branch_id=None,
+                branch_membership_id=None,
+                role=membership.role.value,
+                access_scope=membership.access_scope,
+            )
+        branch = await self.branches.get_by_id(branch_id)
+        if branch is None or branch.tenant_id != tenant_id or branch.status != BranchStatus.ACTIVE:
+            raise BranchNotFoundError("Branch not found.")
+        branch_membership = await self.memberships.get_branch_membership(membership.id, branch_id)
+        if branch_membership is None or branch_membership.status != MembershipStatus.ACTIVE:
+            raise ContextSelectionError("Branch membership not allowed.")
+        return ActiveContext(
+            tenant_id=tenant_id,
+            membership_id=membership.id,
+            branch_id=branch_id,
+            branch_membership_id=branch_membership.id,
+            role=branch_membership.role.value,
+            access_scope=membership.access_scope,
+        )

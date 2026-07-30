@@ -72,6 +72,7 @@ from app.modules.auth.presentation.dependencies import (
     get_token_service,
 )
 from app.modules.auth.presentation.schemas import (
+    ContextAccessTokenResponse,
     CurrentUserResponse,
     LoginRequest,
     LogoutRequest,
@@ -88,7 +89,20 @@ from app.modules.auth.presentation.schemas import (
     MfaTotpSetupResponse,
     MfaVerifyRequest,
     RefreshRequest,
+    SwitchContextRequest,
     TokenResponse,
+)
+from app.modules.companies.application.use_cases import SelectActiveContext
+from app.modules.companies.domain.exceptions import CompanyError
+from app.modules.companies.infrastructure.repositories import (
+    SQLAlchemyBranchRepository,
+    SQLAlchemyMembershipRepository,
+)
+from app.modules.companies.presentation.schemas import (
+    ActiveContextResponse,
+    BranchMembershipResponse,
+    CompanyMembershipResponse,
+    ContextOptionsResponse,
 )
 from app.shared.api.responses import error_response, success_response
 
@@ -153,6 +167,7 @@ async def login(
         mfa_methods=_mfa_methods(session),
         mfa_challenges=_mfa_challenges(),
         otp_service=OtpService(),
+        memberships=SQLAlchemyMembershipRepository(session),
     )
     try:
         token_pair = await use_case.execute(
@@ -343,8 +358,121 @@ async def me(
         email=current_user.email,
         is_active=current_user.is_active,
         is_superuser=current_user.is_superuser,
+        membership_id=current_user.membership_id,
+        branch_id=current_user.branch_id,
+        branch_membership_id=current_user.branch_membership_id,
+        role=current_user.role,
+        access_scope=current_user.access_scope,
     )
     return success_response("API_SUCCESS", data=data.model_dump(mode="json"))
+
+
+@router.get("/context", response_model=ContextOptionsResponse)
+async def context_options(
+    current_user: CurrentUserDependency,
+    session: AsyncSessionDependency,
+) -> JSONResponse:
+    memberships = SQLAlchemyMembershipRepository(session)
+    company_memberships = await memberships.list_company_memberships(current_user.id)
+    branches_by_membership = {
+        membership.id: await memberships.list_branch_memberships(membership.id)
+        for membership in company_memberships
+    }
+    active_context = ActiveContextResponse(
+        tenant_id=current_user.tenant_id,
+        membership_id=current_user.membership_id,
+        branch_id=current_user.branch_id,
+        branch_membership_id=current_user.branch_membership_id,
+        role=current_user.role,
+        access_scope=current_user.access_scope,
+    )
+    data = ContextOptionsResponse(
+        active_context=active_context,
+        memberships=[
+            CompanyMembershipResponse(
+                id=membership.id,
+                tenant_id=membership.tenant_id,
+                role=membership.role,
+                status=membership.status,
+                access_scope=membership.access_scope,
+                is_default=membership.is_default,
+                branches=[
+                    BranchMembershipResponse(
+                        id=branch_membership.id,
+                        branch_id=branch_membership.branch_id,
+                        role=branch_membership.role,
+                        status=branch_membership.status,
+                        is_default=branch_membership.is_default,
+                    )
+                    for branch_membership in branches_by_membership[membership.id]
+                ],
+            )
+            for membership in company_memberships
+        ],
+    )
+    return success_response("CONTEXT_RETRIEVED", data=data.model_dump(mode="json"))
+
+
+@router.post("/context/switch", response_model=ContextAccessTokenResponse)
+async def switch_context(
+    payload: SwitchContextRequest,
+    request: Request,
+    current_user: CurrentUserDependency,
+    session: AsyncSessionDependency,
+    token_service: TokenServiceDependency,
+) -> JSONResponse:
+    try:
+        active_context = await SelectActiveContext(
+            memberships=SQLAlchemyMembershipRepository(session),
+            branches=SQLAlchemyBranchRepository(session),
+        ).execute(
+            user_id=current_user.id,
+            tenant_id=payload.tenant_id,
+            branch_id=payload.branch_id,
+        )
+    except CompanyError:
+        return error_response("CONTEXT_NOT_ALLOWED")
+    await _audit_service(session).record_event(
+        AuditEventInput(
+            event_name="auth.context.switched",
+            module="auth",
+            action="context_switched",
+            tenant_id=active_context.tenant_id,
+            actor_user_id=current_user.id,
+            metadata={
+                "branch_id": str(active_context.branch_id) if active_context.branch_id else None,
+                "access_scope": (
+                    active_context.access_scope.value if active_context.access_scope else None
+                ),
+            },
+            ip_address=_client_ip(request),
+            user_agent=_user_agent(request),
+        )
+    )
+    await session.commit()
+    access_token = token_service.create_access_token(
+        current_user.id,
+        active_context.tenant_id,
+        membership_id=active_context.membership_id,
+        branch_id=active_context.branch_id,
+        branch_membership_id=active_context.branch_membership_id,
+        role=active_context.role,
+        access_scope=active_context.access_scope.value if active_context.access_scope else None,
+    )
+    data = ContextAccessTokenResponse(
+        access_token=access_token,
+        token_type="bearer",
+        expires_in=token_service.access_token_expires_in,
+        active_context=ActiveContextResponse(
+            tenant_id=active_context.tenant_id,
+            membership_id=active_context.membership_id,
+            branch_id=active_context.branch_id,
+            branch_membership_id=active_context.branch_membership_id,
+            role=active_context.role,
+            access_scope=active_context.access_scope,
+        ).model_dump(mode="json"),
+    )
+    return success_response("CONTEXT_SWITCHED", data=data.model_dump(mode="json"))
 
 
 def _status_to_response(status) -> MfaStatusResponse:
@@ -663,6 +791,7 @@ async def mfa_verify(
         totp_service=TotpService(),
         otp_service=OtpService(),
         recovery_code_service=RecoveryCodeService(),
+        memberships=SQLAlchemyMembershipRepository(session),
     ).execute(
         VerifyLoginMfaInput(
             challenge_id=payload.challenge_id,

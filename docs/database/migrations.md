@@ -31,3 +31,11 @@ O Alembic usa metadata de `app.database.Base`, URL assíncrona, comparação de 
 `0001_database_core` cria somente a extensão PostgreSQL `pgcrypto`.
 
 Nenhuma tabela de negócio ou tabela artificial é criada nesta migration.
+
+## Migrations técnicas relevantes
+
+- `0004_companies`: cria `companies` como raiz do tenant.
+- `0005_users`: evolui `auth_users` para usuário funcional.
+- `0007_mfa_2fa`: adiciona estruturas técnicas de segundo fator.
+- `0008_products`: cria a base de produtos multi-tenant.
+- `0009_tenant_context`: cria filiais, memberships e contexto opcional em sessões.

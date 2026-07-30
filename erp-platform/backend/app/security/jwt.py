@@ -17,7 +17,16 @@ def create_access_token(subject: str, expires_delta: timedelta | None = None) ->
     return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 
 
-def create_auth_access_token(user_id: UUID, tenant_id: UUID) -> str:
+def create_auth_access_token(
+    user_id: UUID,
+    tenant_id: UUID,
+    *,
+    membership_id: UUID | None = None,
+    branch_id: UUID | None = None,
+    branch_membership_id: UUID | None = None,
+    role: str | None = None,
+    access_scope: str | None = None,
+) -> str:
     issued_at = datetime.now(UTC)
     expires_at = issued_at + timedelta(minutes=settings.jwt_access_token_expire_minutes)
     payload: dict[str, Any] = {
@@ -28,6 +37,16 @@ def create_auth_access_token(user_id: UUID, tenant_id: UUID) -> str:
         "exp": expires_at,
         "jti": str(uuid4()),
     }
+    optional_claims = {
+        "membership_id": membership_id,
+        "branch_id": branch_id,
+        "branch_membership_id": branch_membership_id,
+        "role": role,
+        "access_scope": access_scope,
+    }
+    for key, value in optional_claims.items():
+        if value is not None:
+            payload[key] = str(value)
     if settings.jwt_issuer:
         payload["iss"] = settings.jwt_issuer
     if settings.jwt_audience:

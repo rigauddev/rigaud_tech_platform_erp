@@ -41,6 +41,9 @@ from app.modules.auth.domain.repositories import (
     to_authenticated_user,
 )
 from app.modules.auth.infrastructure.models import AuthSessionModel
+from app.modules.companies.application.use_cases import ActiveContext, ResolveDefaultContext
+from app.modules.companies.domain.exceptions import MembershipNotFoundError
+from app.modules.companies.domain.repositories import MembershipRepository
 from app.modules.users.domain.entities import UserStatus
 
 
@@ -78,6 +81,7 @@ class AuthenticateUser:
         otp_service: OtpService | None = None,
         email_sender: EmailOtpSender | None = None,
         sms_sender: SmsOtpSender | None = None,
+        memberships: MembershipRepository | None = None,
     ) -> None:
         self.users = users
         self.sessions = sessions
@@ -89,6 +93,7 @@ class AuthenticateUser:
         self.otp_service = otp_service or OtpService()
         self.email_sender = email_sender or DevelopmentEmailOtpSender()
         self.sms_sender = sms_sender or DevelopmentSmsOtpSender()
+        self.memberships = memberships
 
     async def execute(self, input_data: LoginInput) -> TokenPair | LoginMfaChallenge:
         try:
@@ -181,6 +186,7 @@ class AuthenticateUser:
             user_agent=user_agent,
             ip_address=ip_address,
             logged_at=logged_at,
+            memberships=self.memberships,
         )
 
 
@@ -205,6 +211,7 @@ class VerifyLoginMfaChallenge:
         totp_service: TotpService,
         otp_service: OtpService,
         recovery_code_service: RecoveryCodeService,
+        memberships: MembershipRepository | None = None,
     ) -> None:
         self.users = users
         self.sessions = sessions
@@ -215,6 +222,7 @@ class VerifyLoginMfaChallenge:
         self.totp_service = totp_service
         self.otp_service = otp_service
         self.recovery_code_service = recovery_code_service
+        self.memberships = memberships
 
     async def execute(self, input_data: VerifyLoginMfaInput) -> TokenPair:
         challenge = await self.mfa_challenges.get(input_data.challenge_id)
@@ -276,6 +284,7 @@ class VerifyLoginMfaChallenge:
             token_service=self.token_service,
             user_agent=input_data.user_agent,
             ip_address=input_data.ip_address,
+            memberships=self.memberships,
         )
 
 
@@ -288,11 +297,29 @@ async def issue_token_pair(
     user_agent: str | None,
     ip_address: str | None,
     logged_at: datetime | None = None,
+    memberships: MembershipRepository | None = None,
+    active_context: ActiveContext | None = None,
 ) -> TokenPair:
+    if active_context is None and memberships is not None:
+        try:
+            active_context = await ResolveDefaultContext(memberships).execute(
+                user.id, user.tenant_id
+            )
+        except MembershipNotFoundError:
+            active_context = None
     refresh_token = token_service.create_refresh_token()
     session = AuthSessionModel(
         user_id=user.id,
         tenant_id=user.tenant_id,
+        membership_id=active_context.membership_id if active_context else None,
+        branch_id=active_context.branch_id if active_context else None,
+        branch_membership_id=active_context.branch_membership_id if active_context else None,
+        role=active_context.role if active_context else None,
+        access_scope=(
+            active_context.access_scope.value
+            if active_context and active_context.access_scope
+            else None
+        ),
         refresh_token_hash=refresh_token.token_hash,
         expires_at=refresh_token.expires_at,
         user_agent=user_agent,
@@ -302,7 +329,19 @@ async def issue_token_pair(
     await users.update_last_login(user, logged_at or datetime.now(UTC))
     set_tenant_id(user.tenant_id)
     return TokenPair(
-        access_token=token_service.create_access_token(user.id, user.tenant_id),
+        access_token=token_service.create_access_token(
+            user.id,
+            user.tenant_id,
+            membership_id=active_context.membership_id if active_context else None,
+            branch_id=active_context.branch_id if active_context else None,
+            branch_membership_id=(active_context.branch_membership_id if active_context else None),
+            role=active_context.role if active_context else None,
+            access_scope=(
+                active_context.access_scope.value
+                if active_context and active_context.access_scope
+                else None
+            ),
+        ),
         refresh_token=refresh_token.token,
         token_type="bearer",
         expires_in=token_service.access_token_expires_in,
@@ -348,6 +387,11 @@ class RefreshSession:
         new_session = AuthSessionModel(
             user_id=user.id,
             tenant_id=user.tenant_id,
+            membership_id=session.membership_id,
+            branch_id=session.branch_id,
+            branch_membership_id=session.branch_membership_id,
+            role=session.role,
+            access_scope=session.access_scope,
             refresh_token_hash=refresh_token.token_hash,
             expires_at=refresh_token.expires_at,
             user_agent=input_data.user_agent,
@@ -359,7 +403,15 @@ class RefreshSession:
         set_tenant_id(user.tenant_id)
 
         return TokenPair(
-            access_token=self.token_service.create_access_token(user.id, user.tenant_id),
+            access_token=self.token_service.create_access_token(
+                user.id,
+                user.tenant_id,
+                membership_id=session.membership_id,
+                branch_id=session.branch_id,
+                branch_membership_id=session.branch_membership_id,
+                role=session.role,
+                access_scope=session.access_scope,
+            ),
             refresh_token=refresh_token.token,
             token_type="bearer",
             expires_in=self.token_service.access_token_expires_in,
@@ -389,6 +441,9 @@ class GetCurrentUser:
         try:
             user_id = UUID(str(payload["sub"]))
             tenant_id = UUID(str(payload["tenant_id"]))
+            membership_id = _optional_uuid(payload.get("membership_id"))
+            branch_id = _optional_uuid(payload.get("branch_id"))
+            branch_membership_id = _optional_uuid(payload.get("branch_membership_id"))
         except (KeyError, ValueError) as exc:
             raise InvalidTokenError("Invalid token.") from exc
 
@@ -406,4 +461,17 @@ class GetCurrentUser:
             raise InactiveUserError("Inactive user.")
 
         set_tenant_id(user.tenant_id)
-        return to_authenticated_user(user)
+        return to_authenticated_user(
+            user,
+            membership_id=membership_id,
+            branch_id=branch_id,
+            branch_membership_id=branch_membership_id,
+            role=str(payload["role"]) if payload.get("role") else None,
+            access_scope=str(payload["access_scope"]) if payload.get("access_scope") else None,
+        )
+
+
+def _optional_uuid(value: object | None) -> UUID | None:
+    if value is None:
+        return None
+    return UUID(str(value))

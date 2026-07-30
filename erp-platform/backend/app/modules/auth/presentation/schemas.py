@@ -28,6 +28,13 @@ class TokenResponse(AuthBaseSchema):
     expires_in: int
 
 
+class ContextAccessTokenResponse(AuthBaseSchema):
+    access_token: str
+    token_type: str
+    expires_in: int
+    active_context: dict[str, object | None]
+
+
 class LogoutResponse(AuthBaseSchema):
     message: str
 
@@ -38,6 +45,16 @@ class CurrentUserResponse(AuthBaseSchema):
     email: str
     is_active: bool
     is_superuser: bool
+    membership_id: UUID | None = None
+    branch_id: UUID | None = None
+    branch_membership_id: UUID | None = None
+    role: str | None = None
+    access_scope: str | None = None
+
+
+class SwitchContextRequest(AuthBaseSchema):
+    tenant_id: UUID
+    branch_id: UUID | None = None
 
 
 class MfaMethodResponse(AuthBaseSchema):

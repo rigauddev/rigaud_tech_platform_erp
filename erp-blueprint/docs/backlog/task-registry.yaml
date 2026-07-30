@@ -1,4 +1,45 @@
 tasks:
+  - id: DEV-010
+    title: Tenant, Memberships, Filiais e Contexto Ativo
+    epic: MVP Restaurante
+    module: core
+    status: review
+    dependencies:
+      - DEV-006
+      - DEV-007
+      - DEV-008
+      - DEV-009
+      - REST-001
+    started_at: "2026-07-30"
+    completed_at: null
+    documentation:
+      - docs/authentication/context.md
+      - docs/authentication/tokens.md
+      - docs/companies/overview.md
+      - docs/companies/backend.md
+      - docs/companies/database.md
+      - docs/companies/multi-tenancy.md
+      - docs/companies/testing.md
+      - erp-platform/backend/app/modules/companies/README.md
+      - erp-platform/frontend/lib/features/auth/README.md
+    academy:
+      - erp-blueprint/docs/academy/core/003-contexto-ativo-multitenant.md
+    tests:
+      - erp-platform/backend/tests/integration/companies/test_tenant_context_api.py
+      - erp-platform/frontend/test
+    migration: 0009_tenant_context
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/dev-010-tenant-memberships-branches-context
+      commits:
+        - db933f2
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: db933f2
+    review_status: ready
   - id: REST-001
     title: Cadastro de Produtos
     epic: MVP Restaurante

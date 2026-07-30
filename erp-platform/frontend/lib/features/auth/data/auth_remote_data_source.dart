@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/api/api_client.dart';
 import '../../../core/api/api_response.dart';
+import '../domain/access_context.dart';
 import '../domain/auth_tokens.dart';
 import '../domain/auth_user.dart';
 import '../domain/mfa.dart';
@@ -65,7 +66,30 @@ class AuthRemoteDataSource {
       email: data['email'] as String? ?? '',
       isActive: data['is_active'] as bool? ?? false,
       isSuperuser: data['is_superuser'] as bool? ?? false,
+      membershipId: data['membership_id'] as String?,
+      branchId: data['branch_id'] as String?,
+      branchMembershipId: data['branch_membership_id'] as String?,
+      role: data['role'] as String?,
+      accessScope: data['access_scope'] as String?,
     );
+  }
+
+  Future<ContextOptions> contextOptions() async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/auth/context',
+    );
+    return ContextOptions.fromJson(apiDataObject(response.data));
+  }
+
+  Future<ContextAccessToken> switchContext({
+    required String tenantId,
+    String? branchId,
+  }) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/auth/context/switch',
+      data: {'tenant_id': tenantId, 'branch_id': branchId},
+    );
+    return ContextAccessToken.fromJson(apiDataObject(response.data));
   }
 
   AuthTokens _tokensFromJson(Map<String, dynamic> data) {

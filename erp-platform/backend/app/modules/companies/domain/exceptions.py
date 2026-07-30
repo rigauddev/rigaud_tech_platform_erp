@@ -24,3 +24,23 @@ class CompanySuspendedError(CompanyError):
 
 class CompanyPermissionError(CompanyError):
     pass
+
+
+class BranchNotFoundError(CompanyError):
+    pass
+
+
+class BranchAlreadyExistsError(CompanyError):
+    pass
+
+
+class BranchHeadquartersConflictError(CompanyError):
+    pass
+
+
+class MembershipNotFoundError(CompanyError):
+    pass
+
+
+class ContextSelectionError(CompanyError):
+    pass

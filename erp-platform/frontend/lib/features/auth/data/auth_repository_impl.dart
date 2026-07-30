@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/api/api_client.dart';
 import '../../../core/storage/secure_storage.dart';
+import '../domain/access_context.dart';
 import '../domain/auth_repository.dart';
 import '../domain/auth_tokens.dart';
 import '../domain/auth_user.dart';
@@ -95,6 +96,32 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthUser> me() async {
     try {
       return _remoteDataSource.me();
+    } on DioException catch (error) {
+      throw mapDioError(error);
+    }
+  }
+
+  @override
+  Future<ContextOptions> contextOptions() async {
+    try {
+      return _remoteDataSource.contextOptions();
+    } on DioException catch (error) {
+      throw mapDioError(error);
+    }
+  }
+
+  @override
+  Future<ContextAccessToken> switchContext({
+    required String tenantId,
+    String? branchId,
+  }) async {
+    try {
+      final result = await _remoteDataSource.switchContext(
+        tenantId: tenantId,
+        branchId: branchId,
+      );
+      await _secureStorage.writeAccessToken(result.accessToken);
+      return result;
     } on DioException catch (error) {
       throw mapDioError(error);
     }

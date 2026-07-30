@@ -1,6 +1,6 @@
 # Companies Database
 
-## Tabela
+## Tabelas
 
 `companies`
 
@@ -34,3 +34,61 @@ Campos principais:
 `Company` não possui `tenant_id`.
 
 O `company.id` é o `tenant_id` das entidades tenant-aware.
+
+`branches`
+
+Campos principais:
+
+- `id`
+- `tenant_id`
+- `name`
+- `code`
+- `document`
+- `type`
+- `status`
+- `is_active`
+- timestamps
+- soft delete
+- auditoria básica
+
+`company_memberships`
+
+Campos principais:
+
+- `id`
+- `tenant_id`
+- `user_id`
+- `role`
+- `status`
+- `access_scope`
+- `is_default`
+- timestamps
+
+`branch_memberships`
+
+Campos principais:
+
+- `id`
+- `tenant_id`
+- `company_membership_id`
+- `branch_id`
+- `role`
+- `status`
+- `is_default`
+- timestamps
+
+`auth_sessions`
+
+Na DEV-010, sessões passam a guardar contexto opcional para preservar refresh token:
+
+- `membership_id`
+- `branch_id`
+- `branch_membership_id`
+- `role`
+- `access_scope`
+
+## Migration
+
+`0009_tenant_context` cria as tabelas técnicas de filiais e memberships.
+
+A migration também cria uma filial matriz padrão para empresas existentes e memberships técnicos iniciais para usuários existentes.

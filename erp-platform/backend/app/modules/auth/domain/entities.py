@@ -4,6 +4,16 @@ from uuid import UUID
 
 
 @dataclass(frozen=True)
+class ActiveContext:
+    tenant_id: UUID
+    membership_id: UUID | None = None
+    branch_id: UUID | None = None
+    branch_membership_id: UUID | None = None
+    role: str | None = None
+    access_scope: str | None = None
+
+
+@dataclass(frozen=True)
 class AuthenticatedUser:
     id: UUID
     tenant_id: UUID
@@ -12,6 +22,11 @@ class AuthenticatedUser:
     is_active: bool
     is_superuser: bool
     deleted_at: datetime | None = None
+    membership_id: UUID | None = None
+    branch_id: UUID | None = None
+    branch_membership_id: UUID | None = None
+    role: str | None = None
+    access_scope: str | None = None
 
     @property
     def can_authenticate(self) -> bool:

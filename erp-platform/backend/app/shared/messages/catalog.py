@@ -131,6 +131,33 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     "COMPANY_ALREADY_EXISTS": MessageDefinition(
         "COMPANY_ALREADY_EXISTS", 409, "Empresa já cadastrada.", "warning"
     ),
+    "BRANCH_CREATED": MessageDefinition(
+        "BRANCH_CREATED", 201, "Filial criada com sucesso.", audit_required=True
+    ),
+    "BRANCH_LIST_RETRIEVED": MessageDefinition(
+        "BRANCH_LIST_RETRIEVED", 200, "Filiais consultadas com sucesso."
+    ),
+    "BRANCH_NOT_FOUND": MessageDefinition(
+        "BRANCH_NOT_FOUND", 404, "Filial não encontrada.", "warning"
+    ),
+    "BRANCH_ALREADY_EXISTS": MessageDefinition(
+        "BRANCH_ALREADY_EXISTS", 409, "Filial já cadastrada.", "warning"
+    ),
+    "BRANCH_HEADQUARTERS_ALREADY_EXISTS": MessageDefinition(
+        "BRANCH_HEADQUARTERS_ALREADY_EXISTS",
+        409,
+        "Esta empresa já possui matriz principal.",
+        "warning",
+    ),
+    "CONTEXT_RETRIEVED": MessageDefinition(
+        "CONTEXT_RETRIEVED", 200, "Contexto de acesso consultado com sucesso."
+    ),
+    "CONTEXT_SWITCHED": MessageDefinition(
+        "CONTEXT_SWITCHED", 200, "Contexto de acesso atualizado.", audit_required=True
+    ),
+    "CONTEXT_NOT_ALLOWED": MessageDefinition(
+        "CONTEXT_NOT_ALLOWED", 403, "Contexto de acesso não permitido.", "warning"
+    ),
     "USER_CREATED": MessageDefinition(
         "USER_CREATED", 201, "Usuário criado com sucesso.", audit_required=True
     ),
