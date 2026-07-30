@@ -74,6 +74,9 @@
 - DEV-010: JWT preparado com `membership_id`, `branch_id`, `branch_membership_id`, `role` e `access_scope`.
 - DEV-010: Flutter Auth preparado para ler opções de contexto e trocar contexto ativo sem implementar funcionalidades comerciais.
 - DEV-010: documentação em `docs/authentication/context.md`, `docs/companies/*` e aula Academy de contexto ativo.
+- REVIEW DEV-010: refresh e `/auth/me` passam a revalidar contexto ativo contra memberships e filiais no banco.
+- REVIEW DEV-010: proteção explícita contra vínculo cruzado entre `CompanyMembership` e `Branch` de tenants diferentes.
+- REVIEW DEV-010: testes ampliados para multiempresa, `all_branches`, membership inativo, refresh com contexto inválido e branch membership cross-tenant.
 
 ### Changed
 
@@ -98,3 +101,4 @@
 - REST-001: menu e rotas Flutter passam a incluir Products como primeira feature comercial do MVP Restaurante.
 - REST-001: comandos `make lint`, `make format` e `make test` passam a configurar `safe.directory` para o SDK Flutter em containers temporários.
 - DEV-010: criação de usuários passa a garantir membership padrão de empresa e filial quando existe filial matriz ativa.
+- REVIEW DEV-010: memberships de empresa e filial passam a carregar campos de auditoria básica.

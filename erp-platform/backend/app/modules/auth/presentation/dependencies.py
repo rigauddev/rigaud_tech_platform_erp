@@ -12,6 +12,10 @@ from app.modules.auth.application.use_cases import GetCurrentUser
 from app.modules.auth.domain.entities import AuthenticatedUser
 from app.modules.auth.domain.exceptions import AuthenticationRequiredError
 from app.modules.auth.infrastructure.repositories import SQLAlchemyUserAuthRepository
+from app.modules.companies.infrastructure.repositories import (
+    SQLAlchemyBranchRepository,
+    SQLAlchemyMembershipRepository,
+)
 from app.shared.observability.context import with_actor
 
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -44,6 +48,8 @@ async def get_current_user(
     use_case = GetCurrentUser(
         users=SQLAlchemyUserAuthRepository(session),
         token_service=token_service,
+        memberships=SQLAlchemyMembershipRepository(session),
+        branches=SQLAlchemyBranchRepository(session),
     )
     try:
         current_user = await use_case.execute(credentials.credentials)

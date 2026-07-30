@@ -63,6 +63,7 @@ Campos principais:
 - `access_scope`
 - `is_default`
 - timestamps
+- auditoria básica
 
 `branch_memberships`
 
@@ -76,6 +77,7 @@ Campos principais:
 - `status`
 - `is_default`
 - timestamps
+- auditoria básica
 
 `auth_sessions`
 
@@ -92,3 +94,5 @@ Na DEV-010, sessões passam a guardar contexto opcional para preservar refresh t
 `0009_tenant_context` cria as tabelas técnicas de filiais e memberships.
 
 A migration também cria uma filial matriz padrão para empresas existentes e memberships técnicos iniciais para usuários existentes.
+
+A integridade operacional exige que `branch_memberships.branch_id` pertença ao mesmo `tenant_id` do `company_memberships.tenant_id`.

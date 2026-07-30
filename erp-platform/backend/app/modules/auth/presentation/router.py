@@ -93,6 +93,7 @@ from app.modules.auth.presentation.schemas import (
     TokenResponse,
 )
 from app.modules.companies.application.use_cases import SelectActiveContext
+from app.modules.companies.domain.entities import MembershipStatus
 from app.modules.companies.domain.exceptions import CompanyError
 from app.modules.companies.infrastructure.repositories import (
     SQLAlchemyBranchRepository,
@@ -285,6 +286,8 @@ async def refresh(
         users=SQLAlchemyUserAuthRepository(session),
         sessions=SQLAlchemyAuthSessionRepository(session),
         token_service=token_service,
+        memberships=SQLAlchemyMembershipRepository(session),
+        branches=SQLAlchemyBranchRepository(session),
     )
     try:
         token_pair = await use_case.execute(
@@ -373,9 +376,24 @@ async def context_options(
     session: AsyncSessionDependency,
 ) -> JSONResponse:
     memberships = SQLAlchemyMembershipRepository(session)
-    company_memberships = await memberships.list_company_memberships(current_user.id)
+    audit_logger.info(
+        "auth.context.lookup.started",
+        extra={
+            "event": "auth.context.lookup.started",
+            "user_id": str(current_user.id),
+            "tenant_id": str(current_user.tenant_id),
+            "membership_id": str(current_user.membership_id)
+            if current_user.membership_id
+            else None,
+        },
+    )
+    company_memberships = await memberships.list_company_memberships(
+        current_user.id, MembershipStatus.ACTIVE
+    )
     branches_by_membership = {
-        membership.id: await memberships.list_branch_memberships(membership.id)
+        membership.id: await memberships.list_branch_memberships(
+            membership.id, MembershipStatus.ACTIVE
+        )
         for membership in company_memberships
     }
     active_context = ActiveContextResponse(
@@ -410,6 +428,32 @@ async def context_options(
             for membership in company_memberships
         ],
     )
+    await _audit_service(session).record_event(
+        AuditEventInput(
+            event_name="auth.context.viewed",
+            module="auth",
+            action="context_viewed",
+            tenant_id=current_user.tenant_id,
+            actor_user_id=current_user.id,
+            metadata={
+                "membership_id": str(current_user.membership_id)
+                if current_user.membership_id
+                else None,
+                "branch_id": str(current_user.branch_id) if current_user.branch_id else None,
+                "available_memberships": len(company_memberships),
+            },
+        )
+    )
+    await session.commit()
+    audit_logger.info(
+        "auth.context.lookup.completed",
+        extra={
+            "event": "auth.context.lookup.completed",
+            "user_id": str(current_user.id),
+            "tenant_id": str(current_user.tenant_id),
+            "available_memberships": len(company_memberships),
+        },
+    )
     return success_response("CONTEXT_RETRIEVED", data=data.model_dump(mode="json"))
 
 
@@ -421,6 +465,17 @@ async def switch_context(
     session: AsyncSessionDependency,
     token_service: TokenServiceDependency,
 ) -> JSONResponse:
+    audit_logger.info(
+        "auth.context.switch.started",
+        extra={
+            "event": "auth.context.switch.started",
+            "user_id": str(current_user.id),
+            "previous_tenant_id": str(current_user.tenant_id),
+            "new_tenant_id": str(payload.tenant_id),
+            "previous_branch_id": str(current_user.branch_id) if current_user.branch_id else None,
+            "new_branch_id": str(payload.branch_id) if payload.branch_id else None,
+        },
+    )
     try:
         active_context = await SelectActiveContext(
             memberships=SQLAlchemyMembershipRepository(session),
@@ -431,6 +486,16 @@ async def switch_context(
             branch_id=payload.branch_id,
         )
     except CompanyError:
+        audit_logger.warning(
+            "auth.context.switch.denied",
+            extra={
+                "event": "auth.context.switch.denied",
+                "user_id": str(current_user.id),
+                "previous_tenant_id": str(current_user.tenant_id),
+                "requested_tenant_id": str(payload.tenant_id),
+                "requested_branch_id": str(payload.branch_id) if payload.branch_id else None,
+            },
+        )
         return error_response("CONTEXT_NOT_ALLOWED")
     await _audit_service(session).record_event(
         AuditEventInput(
@@ -440,6 +505,21 @@ async def switch_context(
             tenant_id=active_context.tenant_id,
             actor_user_id=current_user.id,
             metadata={
+                "previous_tenant_id": str(current_user.tenant_id),
+                "new_tenant_id": str(active_context.tenant_id),
+                "previous_branch_id": str(current_user.branch_id)
+                if current_user.branch_id
+                else None,
+                "new_branch_id": str(active_context.branch_id)
+                if active_context.branch_id
+                else None,
+                "membership_id": str(active_context.membership_id)
+                if active_context.membership_id
+                else None,
+                "branch_membership_id": str(active_context.branch_membership_id)
+                if active_context.branch_membership_id
+                else None,
+                "role": active_context.role,
                 "branch_id": str(active_context.branch_id) if active_context.branch_id else None,
                 "access_scope": (
                     active_context.access_scope.value if active_context.access_scope else None
@@ -450,6 +530,18 @@ async def switch_context(
         )
     )
     await session.commit()
+    audit_logger.info(
+        "auth.context.switch.completed",
+        extra={
+            "event": "auth.context.switch.completed",
+            "user_id": str(current_user.id),
+            "tenant_id": str(active_context.tenant_id),
+            "branch_id": str(active_context.branch_id) if active_context.branch_id else None,
+            "membership_id": str(active_context.membership_id)
+            if active_context.membership_id
+            else None,
+        },
+    )
     access_token = token_service.create_access_token(
         current_user.id,
         active_context.tenant_id,
