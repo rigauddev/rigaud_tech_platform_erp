@@ -31,7 +31,7 @@ Sequência:
 - Produtos.
 - Tenant, memberships, filiais e contexto ativo.
 - Assinaturas, planos e limites.
-- Categorias.
+- Categorias de Produtos.
 - Estoque.
 - Mesas.
 - Setores.
