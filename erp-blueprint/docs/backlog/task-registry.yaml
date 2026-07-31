@@ -27,7 +27,10 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/rest-002-product-categories
-      commits: []
+      commits:
+        - 626d1c5
+        - 6b94bb5
+        - ceebe58
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
