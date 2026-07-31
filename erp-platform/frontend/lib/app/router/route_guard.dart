@@ -34,6 +34,7 @@ class RouteGuard {
     final isProtectedRoute =
         location == AppRoutes.dashboard ||
         location.startsWith('${AppRoutes.dashboard}/') ||
+        location.startsWith(AppRoutes.categories) ||
         location.startsWith(AppRoutes.companies) ||
         location.startsWith(AppRoutes.users) ||
         location.startsWith(AppRoutes.audit);

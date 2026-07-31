@@ -19,10 +19,10 @@ Fundação concluída até:
 DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 ```
 
-Task documental atual:
+Task atual:
 
 ```text
-DOC-002 — Master Development Prompt
+REST-002 — Categorias de Produtos
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -71,6 +71,8 @@ O contexto ativo multi-empresa e multi-filial está documentado em `docs/authent
 
 O cadastro de produtos está documentado em `docs/products/overview.md`.
 
+O cadastro de categorias está documentado em `docs/categories/overview.md`.
+
 Endpoints técnicos disponíveis:
 
 - `GET /health`
@@ -111,6 +113,14 @@ Endpoints técnicos disponíveis:
 - `POST /api/v1/products/{product_id}/deactivate`
 - `POST /api/v1/products/{product_id}/availability`
 - `DELETE /api/v1/products/{product_id}`
+- `POST /api/v1/categories`
+- `GET /api/v1/categories`
+- `GET /api/v1/categories/{category_id}`
+- `PATCH /api/v1/categories/{category_id}`
+- `POST /api/v1/categories/{category_id}/activate`
+- `POST /api/v1/categories/{category_id}/deactivate`
+- `POST /api/v1/categories/{category_id}/reorder`
+- `DELETE /api/v1/categories/{category_id}`
 - Swagger em `/docs`
 - OpenAPI em `/openapi.json`
 

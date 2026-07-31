@@ -53,7 +53,7 @@ Após DEV-009, executar exatamente nesta ordem:
 1. REST-001 — Cadastro de Produtos
 2. DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 3. DEV-011 — Assinaturas, Planos e Limites
-4. REST-002 — Categorias
+4. REST-002 — Categorias de Produtos
 5. REST-003 — Controle de Estoque
 6. REST-004 — Mesas
 7. REST-005 — Setores

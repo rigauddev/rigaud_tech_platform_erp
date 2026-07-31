@@ -248,6 +248,60 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     "PRODUCT_NOT_AVAILABLE": MessageDefinition(
         "PRODUCT_NOT_AVAILABLE", 409, "Produto indisponível para venda.", "warning"
     ),
+    "CATEGORY_CREATED": MessageDefinition(
+        "CATEGORY_CREATED", 201, "Categoria criada com sucesso.", audit_required=True
+    ),
+    "CATEGORY_UPDATED": MessageDefinition(
+        "CATEGORY_UPDATED", 200, "Categoria atualizada com sucesso.", audit_required=True
+    ),
+    "CATEGORY_ACTIVATED": MessageDefinition(
+        "CATEGORY_ACTIVATED", 200, "Categoria ativada com sucesso.", audit_required=True
+    ),
+    "CATEGORY_DEACTIVATED": MessageDefinition(
+        "CATEGORY_DEACTIVATED", 200, "Categoria desativada com sucesso.", audit_required=True
+    ),
+    "CATEGORY_REORDERED": MessageDefinition(
+        "CATEGORY_REORDERED", 200, "Categoria reordenada com sucesso.", audit_required=True
+    ),
+    "CATEGORY_DELETED": MessageDefinition(
+        "CATEGORY_DELETED", 200, "Categoria removida com sucesso.", audit_required=True
+    ),
+    "CATEGORY_RETRIEVED": MessageDefinition(
+        "CATEGORY_RETRIEVED", 200, "Categoria consultada com sucesso."
+    ),
+    "CATEGORY_LIST_RETRIEVED": MessageDefinition(
+        "CATEGORY_LIST_RETRIEVED", 200, "Categorias consultadas com sucesso."
+    ),
+    "CATEGORY_NOT_FOUND": MessageDefinition(
+        "CATEGORY_NOT_FOUND", 404, "Categoria não encontrada.", "warning"
+    ),
+    "CATEGORY_ALREADY_EXISTS": MessageDefinition(
+        "CATEGORY_ALREADY_EXISTS", 409, "Categoria já cadastrada.", "warning"
+    ),
+    "CATEGORY_INTERNAL_CODE_ALREADY_EXISTS": MessageDefinition(
+        "CATEGORY_INTERNAL_CODE_ALREADY_EXISTS",
+        409,
+        "Código interno já cadastrado nesta empresa.",
+        "warning",
+    ),
+    "CATEGORY_SLUG_ALREADY_EXISTS": MessageDefinition(
+        "CATEGORY_SLUG_ALREADY_EXISTS",
+        409,
+        "Slug já cadastrado nesta empresa.",
+        "warning",
+    ),
+    "CATEGORY_CYCLE_DETECTED": MessageDefinition(
+        "CATEGORY_CYCLE_DETECTED",
+        409,
+        "A hierarquia da categoria não pode criar ciclos.",
+        "warning",
+    ),
+    "CATEGORY_IN_USE": MessageDefinition(
+        "CATEGORY_IN_USE",
+        409,
+        "Categoria em uso não pode ser removida.",
+        "warning",
+    ),
     "AUDIT_EVENTS_RETRIEVED": MessageDefinition(
         "AUDIT_EVENTS_RETRIEVED",
         200,

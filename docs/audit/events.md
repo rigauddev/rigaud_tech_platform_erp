@@ -21,3 +21,12 @@ Exemplos:
 - `product.availability.changed`
 - `product.deleted`
 - `product.image.changed`
+
+## Categories
+
+- `category.created`
+- `category.updated`
+- `category.deleted`
+- `category.activated`
+- `category.deactivated`
+- `category.reordered`

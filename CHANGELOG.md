@@ -4,6 +4,10 @@
 
 ### Added
 
+- REST-002: módulo Categories com CRUD multi-tenant, hierarquia por `parent_id`, slug/código interno únicos, soft delete, ativação, desativação e ordenação manual.
+- REST-002: endpoints `/api/v1/categories`, migration `0010_product_categories`, auditoria de categorias e mensagens centralizadas.
+- REST-002: feature Flutter Categories com lista hierárquica, cadastro, edição, detalhe e ações de ativar/desativar/remover.
+- REST-002: documentação em `docs/categories/*`, Academy de Categorias e registro inicial de Form Blueprint.
 - DOC-002: prompt mestre de desenvolvimento criado em `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`, consolidando arquitetura, Git Flow, testes, documentação, auditoria, SaaS, multitenancy, feature flags, roadmap e convenções.
 - DOC-002: diretriz de Form Blueprint registrada para cadastros reutilizáveis por segmento a partir de REST-002.
 - DEV-001: infraestrutura Docker de desenvolvimento com Backend, PostgreSQL 16, Redis, Mailpit, PgAdmin, Flutter Web e Nginx.
