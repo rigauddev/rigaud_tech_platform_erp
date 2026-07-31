@@ -81,6 +81,16 @@ void main() {
     expect(guard.redirect('/audit'), '/users/me');
   });
 
+  test('protege rota de categorias sem sessao autenticada', () {
+    const guard = RouteGuard(
+      enabled: true,
+      isAuthenticated: false,
+      isSuperuser: false,
+    );
+
+    expect(guard.redirect('/categories'), '/login');
+  });
+
   testWidgets('renderiza layout responsivo basico em desktop', (tester) async {
     tester.view.physicalSize = const Size(1280, 800);
     tester.view.devicePixelRatio = 1;
@@ -104,6 +114,7 @@ void main() {
     expect(find.text('Empresas'), findsOneWidget);
     expect(find.text('Usuários'), findsOneWidget);
     expect(find.text('Meu perfil'), findsOneWidget);
+    expect(find.text('Categorias'), findsOneWidget);
     expect(find.text('Auditoria'), findsOneWidget);
     expect(find.text('Operações'), findsOneWidget);
   });

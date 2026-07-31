@@ -6,6 +6,9 @@ import '../../features/auth/mfa/presentation/mfa_settings_screen.dart';
 import '../../features/auth/mfa/presentation/mfa_verify_screen.dart';
 import '../../features/audit/presentation/audit_detail_screen.dart';
 import '../../features/audit/presentation/audit_list_screen.dart';
+import '../../features/categories/presentation/category_detail_screen.dart';
+import '../../features/categories/presentation/category_form_screen.dart';
+import '../../features/categories/presentation/category_list_screen.dart';
 import '../../features/companies/presentation/company_detail_screen.dart';
 import '../../features/companies/presentation/company_form_screen.dart';
 import '../../features/companies/presentation/company_list_screen.dart';
@@ -100,6 +103,25 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.productCreate,
         builder: (context, state) => const ProductFormScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.categories,
+        builder: (context, state) => const CategoryListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.categoryCreate,
+        builder: (context, state) => const CategoryFormScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.categories}/:categoryId',
+        builder: (context, state) => CategoryDetailScreen(
+          categoryId: state.pathParameters['categoryId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.categories}/:categoryId/edit',
+        builder: (context, state) =>
+            CategoryFormScreen(categoryId: state.pathParameters['categoryId']),
       ),
       GoRoute(
         path: '${AppRoutes.products}/:productId',
