@@ -15,6 +15,8 @@ class AppRoutes {
   static const mfaSettings = '/users/me/mfa';
   static const products = '/products';
   static const productCreate = '/products/new';
+  static const categories = '/categories';
+  static const categoryCreate = '/categories/new';
   static const audit = '/audit';
   static const notFound = '/not-found';
 }

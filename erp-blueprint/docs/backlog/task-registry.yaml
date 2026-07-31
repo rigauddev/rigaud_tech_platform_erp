@@ -1,4 +1,43 @@
 tasks:
+  - id: REST-002
+    title: Categorias de Produtos
+    epic: MVP Restaurante
+    module: categories
+    status: review
+    dependencies:
+      - REST-001
+      - DEV-010
+    started_at: "2026-07-31"
+    completed_at: null
+    documentation:
+      - docs/categories/overview.md
+      - docs/categories/backend.md
+      - docs/categories/database.md
+      - docs/categories/flutter.md
+      - docs/categories/testing.md
+      - erp-platform/backend/app/modules/categories/README.md
+      - erp-platform/frontend/lib/features/categories/README.md
+    academy:
+      - erp-blueprint/docs/academy/core/004-categorias-de-produtos.md
+    tests:
+      - erp-platform/backend/tests/unit/categories/test_category_validators.py
+      - erp-platform/backend/tests/integration/categories/test_categories_api.py
+      - erp-platform/frontend/test/categories/category_controller_test.dart
+    migration: 0010_product_categories
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-002-product-categories
+      commits:
+        - 626d1c5
+        - 6b94bb5
+        - ceebe58
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
   - id: DOC-002
     title: Master Development Prompt
     epic: governance
