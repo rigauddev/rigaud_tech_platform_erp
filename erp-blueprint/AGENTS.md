@@ -6,6 +6,7 @@ Regras permanentes para qualquer agente ou sessão do Codex na Rigaud Tech Platf
 
 Antes de executar qualquer Task, leia:
 
+- `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`
 - `erp-blueprint/docs/project-plan.md`
 - `erp-blueprint/docs/architecture/product-vision.md`
 - `erp-blueprint/docs/architecture/development-workflow.md`

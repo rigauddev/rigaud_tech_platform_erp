@@ -19,11 +19,13 @@ Fundação concluída até:
 DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 ```
 
-Próxima task prevista:
+Task documental atual:
 
 ```text
-DEV-011 — Assinaturas, Planos e Limites
+DOC-002 — Master Development Prompt
 ```
+
+Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
 
 ## Desenvolvimento com Docker
 

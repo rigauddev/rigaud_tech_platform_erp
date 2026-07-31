@@ -8,5 +8,6 @@ Nenhuma documentação funcional foi criada nesta etapa.
 
 ## Estrutura
 
+- `MASTER_DEVELOPMENT_PROMPT.md`: prompt mestre com estratégia, fluxo e padrões obrigatórios para as próximas Tasks.
 - `mkdocs.yml`: configuração principal do MkDocs.
 - `docs/`: conteúdo versionado da documentação.

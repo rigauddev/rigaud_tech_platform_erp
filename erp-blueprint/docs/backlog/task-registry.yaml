@@ -1,4 +1,35 @@
 tasks:
+  - id: DOC-002
+    title: Master Development Prompt
+    epic: governance
+    module: documentation
+    status: review
+    dependencies:
+      - DEV-010
+      - DEV-011
+    started_at: "2026-07-31"
+    completed_at: null
+    documentation:
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - README.md
+      - erp-blueprint/README.md
+      - AGENTS.md
+      - erp-blueprint/AGENTS.md
+    academy: []
+    tests:
+      - scripts/check_task_compliance.py
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: docs/master-development-prompt
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
   - id: DEV-010
     title: Tenant, Memberships, Filiais e Contexto Ativo
     epic: MVP Restaurante
