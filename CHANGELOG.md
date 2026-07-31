@@ -4,6 +4,8 @@
 
 ### Added
 
+- DOC-002: prompt mestre de desenvolvimento criado em `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`, consolidando arquitetura, Git Flow, testes, documentação, auditoria, SaaS, multitenancy, feature flags, roadmap e convenções.
+- DOC-002: diretriz de Form Blueprint registrada para cadastros reutilizáveis por segmento a partir de REST-002.
 - DEV-001: infraestrutura Docker de desenvolvimento com Backend, PostgreSQL 16, Redis, Mailpit, PgAdmin, Flutter Web e Nginx.
 - DEV-001: Dockerfiles centralizados em `docker/backend/Dockerfile` e `docker/flutter/Dockerfile`.
 - DEV-001: comandos `make` para subir, parar, reiniciar, acessar logs, subir backend/frontend, shells, lint, formatacao e testes.

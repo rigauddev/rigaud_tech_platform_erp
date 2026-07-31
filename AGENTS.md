@@ -4,6 +4,7 @@ Regras permanentes do workspace Rigaud Tech Platform ERP.
 
 Leia primeiro:
 
+- `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`
 - `erp-blueprint/AGENTS.md`
 - `CONTRIBUTING.md`
 - `docs/governance/git-flow.md`
