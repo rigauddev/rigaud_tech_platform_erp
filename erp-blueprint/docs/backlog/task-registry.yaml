@@ -22,7 +22,8 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: docs/master-development-prompt
-      commits: []
+      commits:
+        - 5cf8023
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
