@@ -4,6 +4,9 @@
 
 ### Added
 
+- UI-001: tela de login ganha background visual próprio inspirado na identidade Rigaud Tech e no contexto ERP.
+- UI-001: rodapé de login passa a exibir versão, build, API e ambiente.
+- UI-001: documentação criada em `docs/ui/login-screen.md` e Academy UI em `erp-blueprint/docs/academy/ui/001-login-experience.md`.
 - DEV-012: alinhamento de autenticação e tenant com login por email/senha, resolução backend de empresa, filial ativa e papel.
 - DEV-012: migration `0011_auth_tenant_alignment` adiciona filial ativa, papel, permissões, histórico de troca de filial e lotação de trabalho.
 - DEV-012: documentação de arquitetura em `docs/authentication/tenant-alignment.md` e Academy de alinhamento Auth/Tenant.
@@ -101,6 +104,7 @@
 
 ### Changed
 
+- UI-001: tela de login remove scroll externo, centraliza card responsivo e ajusta renderização horizontal da logo.
 - DEV-012: tela de login Flutter remove o campo Tenant e envia somente email e senha.
 - DEV-012: endpoint `/api/v1/auth/login` deixa de aceitar tenant no payload.
 - DEV-012: troca de contexto passa a negar usuário comum e manter tenant único por usuário.
