@@ -4,6 +4,10 @@
 
 ### Added
 
+- DOC-006: criados `AI_DEVELOPMENT_CHARTER.md`, `ERP_DECISIONS.md` e `ERP_GLOSSARY.md` como base permanente para desenvolvimento com IA.
+- DOC-006: `AGENTS.md`, `erp-blueprint/AGENTS.md` e `MASTER_DEVELOPMENT_PROMPT.md` passam a exigir leitura dos novos documentos.
+- DOC-006: Academy de AI Development Charter criada em `erp-blueprint/docs/academy/engineering/002-ai-development-charter.md`.
+- DOC-006: corrigido carregamento da logo na tela de login Flutter usando o asset registrado em `assets/images/logo_rigaud_tech.png`.
 - DOC-005: domínio do Inventory Engine congelado em `docs/inventory/*` antes da implementação REST-003.
 - DOC-005: ADR `0007-engine-first-development-strategy` oficializa o fluxo DOC → Implementação → Review → Integração para engines.
 - DOC-005: Academy `erp-blueprint/docs/academy/inventory/001-inventory-engine-domain.md` criada para explicar estoque como engine compartilhada.

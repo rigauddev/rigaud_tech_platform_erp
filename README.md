@@ -22,10 +22,16 @@ DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 Task atual:
 
 ```text
-DOC-005 — Inventory Engine Domain
+DOC-006 — AI Development Charter, ERP Decisions e ERP Glossary
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
+
+Fontes permanentes adicionais:
+
+- `AI_DEVELOPMENT_CHARTER.md`
+- `ERP_DECISIONS.md`
+- `ERP_GLOSSARY.md`
 
 ## Desenvolvimento com Docker
 

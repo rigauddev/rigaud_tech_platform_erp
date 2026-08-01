@@ -1,4 +1,41 @@
 tasks:
+  - id: DOC-006
+    title: AI Development Charter, ERP Decisions e ERP Glossary
+    epic: governance
+    module: documentation
+    status: review
+    dependencies:
+      - DOC-005
+    started_at: "2026-08-01"
+    completed_at: null
+    documentation:
+      - docs/governance/ai-development-knowledge-base.md
+      - README.md
+      - AGENTS.md
+      - AI_DEVELOPMENT_CHARTER.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/AGENTS.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-platform/frontend/lib/features/auth/presentation/login_screen.dart
+    academy:
+      - erp-blueprint/docs/academy/engineering/002-ai-development-charter.md
+    tests:
+      - make check-task TASK=DOC-006
+      - flutter analyze
+      - flutter test
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-006-ai-development-charter
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
   - id: DOC-005
     title: Inventory Engine Domain
     epic: governance

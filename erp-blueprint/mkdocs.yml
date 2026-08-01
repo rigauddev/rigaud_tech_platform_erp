@@ -25,6 +25,7 @@ nav:
       - Auditoria de Sistemas: academy/security/002-auditoria-de-sistemas.md
       - Respostas de API: academy/api/001-respostas-e-erros-padronizados.md
       - Tasks Docs-as-Code: academy/engineering/001-gestao-de-tasks-docs-as-code.md
+      - AI Development Charter: academy/engineering/002-ai-development-charter.md
   - ADR:
       - Overview: adr/README.md
       - ADR 0001 Database Tenancy: adr/0001-database-tenancy-strategy.md

@@ -4,6 +4,12 @@ Fonte operacional para qualquer agente, desenvolvedor ou sessão Codex da Rigaud
 
 Este documento consolida a estratégia do projeto. Ele deve ser lido antes de qualquer Task, junto com `AGENTS.md`, `erp-blueprint/AGENTS.md`, ADRs, backlog, roadmap e documentação do módulo afetado.
 
+Também devem ser lidos:
+
+- `AI_DEVELOPMENT_CHARTER.md`
+- `ERP_DECISIONS.md`
+- `ERP_GLOSSARY.md`
+
 ## Identidade do Projeto
 
 Nome oficial:
@@ -30,6 +36,9 @@ Leitura obrigatória antes de alterar arquivos:
 
 - `AGENTS.md`
 - `erp-blueprint/AGENTS.md`
+- `AI_DEVELOPMENT_CHARTER.md`
+- `ERP_DECISIONS.md`
+- `ERP_GLOSSARY.md`
 - `CONTRIBUTING.md`
 - `docs/governance/git-flow.md`
 - `erp-blueprint/docs/project-plan.md`
