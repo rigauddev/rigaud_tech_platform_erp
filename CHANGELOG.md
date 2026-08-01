@@ -4,6 +4,9 @@
 
 ### Added
 
+- DOC-005: domínio do Inventory Engine congelado em `docs/inventory/*` antes da implementação REST-003.
+- DOC-005: ADR `0007-engine-first-development-strategy` oficializa o fluxo DOC → Implementação → Review → Integração para engines.
+- DOC-005: Academy `erp-blueprint/docs/academy/inventory/001-inventory-engine-domain.md` criada para explicar estoque como engine compartilhada.
 - DOC-003: Demo Environment com comandos `make demo`, `make demo-platform`, `make demo-restaurant`, `make demo-retail` e `make demo-reset`.
 - DOC-003: seed idempotente para plataforma, Restaurante Sabor da Serra, Moda Center, filiais, usuários, memberships, categorias e 130 produtos demo.
 - DOC-003: `make test` passa a limpar tenants demo operacionais antes do pytest para evitar conflito entre dados persistentes e fixtures de integração.

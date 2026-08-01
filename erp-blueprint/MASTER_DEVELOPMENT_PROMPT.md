@@ -252,6 +252,31 @@ Ordem oficial do MVP Restaurante:
 
 Não reordenar o backlog. Não avançar automaticamente para a próxima Task.
 
+## Estratégia Engine-First
+
+A partir da DOC-005, domínios comerciais reutilizáveis devem nascer como engines.
+
+Fluxo obrigatório para engines:
+
+```text
+DOC
+    ↓
+IMPLEMENTAÇÃO
+    ↓
+REVIEW
+    ↓
+INTEGRAÇÃO
+```
+
+Regras:
+
+- DOC congela domínio, eventos, fluxos, estados, integrações, offline strategy e limites.
+- Implementação cria backend, frontend, testes e documentação operacional.
+- Review estabiliza comportamento, segurança, performance e aderência arquitetural.
+- Integração conecta a engine aos demais módulos.
+- Toda engine deve ser demonstrável pelo Demo Environment quando aplicável.
+- Kafka e Event Store permanecem planejados até tasks específicas.
+
 ## Git Flow
 
 Não desenvolver diretamente em `main` ou `develop`.

@@ -29,6 +29,16 @@ Objetivo: construir o fluxo operacional inicial de restaurante usando o Core com
 Suporte transversal:
 
 - Demo Environment para desenvolvimento, QA e demonstrações.
+- Inventory Engine Domain antes da implementação REST-003.
+
+Engines planejadas:
+
+- ENGINE-001 — Inventory Engine.
+- ENGINE-002 — Order Engine.
+- ENGINE-003 — Restaurant Engine.
+- ENGINE-004 — POS Engine.
+- ENGINE-005 — Financial Engine.
+- ENGINE-006 — Reporting Engine.
 
 Sequência:
 
