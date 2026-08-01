@@ -7,6 +7,9 @@ Regras permanentes para qualquer agente ou sessão do Codex na Rigaud Tech Platf
 Antes de executar qualquer Task, leia:
 
 - `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`
+- `AI_DEVELOPMENT_CHARTER.md`
+- `ERP_DECISIONS.md`
+- `ERP_GLOSSARY.md`
 - `erp-blueprint/docs/project-plan.md`
 - `erp-blueprint/docs/architecture/product-vision.md`
 - `erp-blueprint/docs/architecture/development-workflow.md`
@@ -39,6 +42,8 @@ A implementação existente tem prioridade sobre suposições, desde que não co
 - Atualizar testes, documentação, Academy e `CHANGELOG.md`.
 - Executar validações da Task.
 - Apresentar relatório final e parar.
+- Conferir `ERP_DECISIONS.md` antes de rediscutir decisões de negócio já congeladas.
+- Usar `ERP_GLOSSARY.md` para nomes oficiais do domínio.
 
 ## Quando Houver Dúvida
 
