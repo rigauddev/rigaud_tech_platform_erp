@@ -51,6 +51,16 @@ DEV-010 prepara contexto ativo multi-empresa e multi-filial antes das regras com
 Task transversal de suporte antes da continuidade operacional:
 
 - DOC-003 — Demo Environment.
+- DOC-005 — Inventory Engine Domain.
+
+Estratégia Engine-first:
+
+- ENGINE-001 — Inventory Engine.
+- ENGINE-002 — Order Engine.
+- ENGINE-003 — Restaurant Engine.
+- ENGINE-004 — POS Engine.
+- ENGINE-005 — Financial Engine.
+- ENGINE-006 — Reporting Engine.
 
 Após DEV-009, executar exatamente nesta ordem:
 

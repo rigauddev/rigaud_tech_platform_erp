@@ -11,3 +11,4 @@ Documentação geral do projeto, guias, referências e registros técnicos.
 - `authentication`: fundação técnica de autenticação da DEV-005.
 - `companies`: módulo Empresas e raiz do tenant da DEV-006.
 - `demo`: ambiente oficial de demonstração e contas de teste.
+- `inventory`: domínio planejado do Inventory Engine.

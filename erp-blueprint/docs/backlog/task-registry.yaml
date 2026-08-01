@@ -1,4 +1,44 @@
 tasks:
+  - id: DOC-005
+    title: Inventory Engine Domain
+    epic: governance
+    module: inventory
+    status: review
+    dependencies:
+      - DOC-003
+      - REST-002
+    started_at: "2026-08-01"
+    completed_at: null
+    documentation:
+      - docs/inventory/overview.md
+      - docs/inventory/domain-model.md
+      - docs/inventory/movement-types.md
+      - docs/inventory/events.md
+      - docs/inventory/integrations.md
+      - docs/inventory/offline-strategy.md
+      - docs/inventory/flows.md
+      - docs/inventory/use-cases.md
+      - docs/inventory/audit-security.md
+      - docs/inventory/multi-tenancy.md
+      - erp-blueprint/docs/adr/0007-engine-first-development-strategy.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/inventory/README.md
+    academy:
+      - erp-blueprint/docs/academy/inventory/001-inventory-engine-domain.md
+    tests:
+      - make check-task TASK=DOC-005
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-005-inventory-engine
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
   - id: DOC-003
     title: Demo Environment & Scenario Engine
     epic: governance
