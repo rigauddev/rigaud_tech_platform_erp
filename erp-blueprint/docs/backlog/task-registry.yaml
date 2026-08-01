@@ -26,13 +26,14 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/ui-001-login-experience
-      commits: []
+      commits:
+        - 1068ebf
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
+    commit: 1068ebf
     review_status: ready
   - id: DEV-012
     title: Authentication & Tenant Architecture Alignment
