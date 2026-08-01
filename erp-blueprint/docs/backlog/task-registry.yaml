@@ -28,13 +28,15 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/doc-006-ai-development-charter
-      commits: []
+      commits:
+        - 0997987
+        - 7dc9f3b
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
+    commit: 7dc9f3b
     review_status: ready
   - id: DOC-005
     title: Inventory Engine Domain
