@@ -24,13 +24,15 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/doc-003-demo-environment
-      commits: []
+      commits:
+        - 1fbeaa1
+        - 52041a0
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
+    commit: 52041a0
     review_status: ready
   - id: REST-002
     title: Categorias de Produtos
