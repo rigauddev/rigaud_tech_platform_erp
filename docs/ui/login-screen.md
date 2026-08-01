@@ -7,8 +7,21 @@ UI-001 refina a tela de login sem alterar regra de negócio.
 - A tela ocupa 100% do viewport.
 - O fundo é fixo e não rola.
 - O card de login fica centralizado e usa `FittedBox` para evitar overflow em telas menores.
+- Em telas amplas, o login é acompanhado por um card informativo lateral.
+- Em telas compactas, o card informativo fica acima do formulário sem criar scroll externo.
 - Ao abrir o teclado, apenas a área do formulário é reposicionada por `viewInsets`.
 - Não há `SingleChildScrollView` na tela de login.
+
+## Informativos
+
+A tela possui um carrossel de informativos para comunicação antes do acesso ao ERP.
+
+- O primeiro card é sempre reservado para informativos do sistema.
+- Os cards seguintes são preparados para informativos da empresa.
+- O conteúdo atual é estático e serve como base visual.
+- Em evolução futura, os informativos poderão aceitar textos e imagens vindos de configuração ou API.
+
+Esse espaço pode ser usado para avisos internos, campanhas, comunicados de operação, mensagens de suporte, status de manutenção e orientações por empresa.
 
 ## Identidade Visual
 

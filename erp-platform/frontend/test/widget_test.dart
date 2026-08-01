@@ -22,8 +22,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.byType(SingleChildScrollView), findsNothing);
+    expect(find.byType(PageView), findsOneWidget);
     expect(find.byType(Image), findsOneWidget);
-    expect(find.text('Rigaud Tech Platform ERP'), findsOneWidget);
+    expect(find.text('Sistema'), findsOneWidget);
+    expect(find.text('Rigaud Tech Platform ERP'), findsWidgets);
     expect(
       find.text('Gestão inteligente para pequenas e médias empresas'),
       findsOneWidget,

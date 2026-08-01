@@ -5,6 +5,7 @@
 ### Added
 
 - UI-001: tela de login ganha background visual próprio inspirado na identidade Rigaud Tech e no contexto ERP.
+- UI-001: tela de login ganha carrossel de informativos com primeiro card reservado ao sistema e demais cards preparados para comunicados da empresa.
 - UI-001: rodapé de login passa a exibir versão, build, API e ambiente.
 - UI-001: documentação criada em `docs/ui/login-screen.md` e Academy UI em `erp-blueprint/docs/academy/ui/001-login-experience.md`.
 - DEV-012: alinhamento de autenticação e tenant com login por email/senha, resolução backend de empresa, filial ativa e papel.

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -101,21 +103,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             fit: BoxFit.scaleDown,
                             child: ConstrainedBox(
                               constraints: BoxConstraints(
-                                maxWidth: isCompact ? 392 : 448,
-                                minWidth: isCompact ? 320 : 420,
+                                maxWidth: isCompact ? 392 : 980,
+                                minWidth: isCompact ? 320 : 860,
                               ),
-                              child: _LoginForm(
-                                emailController: _emailController,
-                                passwordController: _passwordController,
-                                rememberAccess: rememberAccess,
-                                authState: authState,
-                                isSubmitting: _isSubmitting,
-                                onRememberChanged: (value) {
-                                  ref
-                                      .read(rememberAccessProvider.notifier)
-                                      .update(value ?? false);
-                                },
-                                onSubmit: _submit,
+                              child: _LoginContent(
+                                isCompact: isCompact,
+                                form: _LoginForm(
+                                  emailController: _emailController,
+                                  passwordController: _passwordController,
+                                  rememberAccess: rememberAccess,
+                                  authState: authState,
+                                  isSubmitting: _isSubmitting,
+                                  onRememberChanged: (value) {
+                                    ref
+                                        .read(rememberAccessProvider.notifier)
+                                        .update(value ?? false);
+                                  },
+                                  onSubmit: _submit,
+                                ),
                               ),
                             ),
                           ),
@@ -152,6 +157,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (mounted) {
       setState(() => _isSubmitting = false);
     }
+  }
+}
+
+class _LoginContent extends StatelessWidget {
+  const _LoginContent({required this.isCompact, required this.form});
+
+  final bool isCompact;
+  final Widget form;
+
+  @override
+  Widget build(BuildContext context) {
+    if (isCompact) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 150, child: _LoginInfoCarousel(compact: true)),
+          const SizedBox(height: AppSpacing.md),
+          form,
+        ],
+      );
+    }
+
+    return SizedBox(
+      height: 640,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Expanded(child: _LoginInfoCarousel()),
+          const SizedBox(width: AppSpacing.xl),
+          SizedBox(width: 448, child: form),
+        ],
+      ),
+    );
   }
 }
 
@@ -218,6 +256,296 @@ class _LoginBackground extends StatelessWidget {
       ),
     );
   }
+}
+
+class _LoginAnnouncement {
+  const _LoginAnnouncement({
+    required this.source,
+    required this.title,
+    required this.description,
+    required this.icon,
+    this.metric,
+  });
+
+  final String source;
+  final String title;
+  final String description;
+  final IconData icon;
+  final String? metric;
+}
+
+const _announcements = [
+  _LoginAnnouncement(
+    source: 'Sistema',
+    title: 'Rigaud Tech Platform ERP',
+    description:
+        'Gestão integrada para empresas que precisam vender, controlar estoque, acompanhar financeiro e operar em múltiplas plataformas.',
+    icon: Icons.cloud_sync_outlined,
+    metric: 'Core ERP',
+  ),
+  _LoginAnnouncement(
+    source: 'Empresa',
+    title: 'Comunicados para sua equipe',
+    description:
+        'Este espaço poderá exibir avisos internos, campanhas, alertas operacionais ou orientações antes do início do expediente.',
+    icon: Icons.campaign_outlined,
+    metric: 'Informativo',
+  ),
+  _LoginAnnouncement(
+    source: 'Empresa',
+    title: 'Operação conectada',
+    description:
+        'Use o login como ponto de entrada para mensagens sobre restaurante, varejo, atendimento, caixa, estoque e entregas.',
+    icon: Icons.hub_outlined,
+    metric: 'Multi módulo',
+  ),
+];
+
+class _LoginInfoCarousel extends StatefulWidget {
+  const _LoginInfoCarousel({this.compact = false});
+
+  final bool compact;
+
+  @override
+  State<_LoginInfoCarousel> createState() => _LoginInfoCarouselState();
+}
+
+class _LoginInfoCarouselState extends State<_LoginInfoCarousel> {
+  late final PageController _controller;
+  Timer? _timer;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController();
+    _timer = Timer.periodic(const Duration(seconds: 6), (_) {
+      if (!mounted || !_controller.hasClients) {
+        return;
+      }
+      final nextPage = (_currentPage + 1) % _announcements.length;
+      _controller.animateToPage(
+        nextPage,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeOutCubic,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: const Color(0xFF0E2A5A).withValues(alpha: 0.88),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.42)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0E2A5A).withValues(alpha: 0.18),
+            blurRadius: 32,
+            offset: const Offset(0, 20),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            CustomPaint(painter: _LoginInfoPainter()),
+            PageView.builder(
+              controller: _controller,
+              itemCount: _announcements.length,
+              onPageChanged: (index) => setState(() => _currentPage = index),
+              itemBuilder: (context, index) {
+                return _AnnouncementCard(
+                  announcement: _announcements[index],
+                  compact: widget.compact,
+                );
+              },
+            ),
+            Positioned(
+              left: AppSpacing.lg,
+              right: AppSpacing.lg,
+              bottom: widget.compact ? AppSpacing.sm : AppSpacing.lg,
+              child: _CarouselDots(
+                count: _announcements.length,
+                activeIndex: _currentPage,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AnnouncementCard extends StatelessWidget {
+  const _AnnouncementCard({required this.announcement, required this.compact});
+
+  final _LoginAnnouncement announcement;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final titleStyle = compact
+        ? Theme.of(context).textTheme.titleMedium
+        : Theme.of(context).textTheme.headlineSmall;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        compact ? AppSpacing.md : AppSpacing.xl,
+        compact ? AppSpacing.md : AppSpacing.xl,
+        compact ? AppSpacing.md : AppSpacing.xl,
+        compact ? AppSpacing.xl : AppSpacing.xxl,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: compact ? 36 : 48,
+                height: compact ? 36 : 48,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF33C7D8).withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.24),
+                  ),
+                ),
+                child: Icon(
+                  announcement.icon,
+                  color: const Color(0xFF8DE8F0),
+                  size: compact ? 20 : 26,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.xxs,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(99),
+                ),
+                child: Text(
+                  announcement.source,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: compact ? AppSpacing.sm : AppSpacing.lg),
+          Text(
+            announcement.title,
+            maxLines: compact ? 1 : 2,
+            overflow: TextOverflow.ellipsis,
+            style: titleStyle?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            announcement.description,
+            maxLines: compact ? 2 : 4,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Colors.white.withValues(alpha: 0.82),
+              height: 1.35,
+            ),
+          ),
+          if (!compact && announcement.metric != null) ...[
+            const SizedBox(height: AppSpacing.xl),
+            Text(
+              announcement.metric!,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: const Color(0xFF8DE8F0),
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _CarouselDots extends StatelessWidget {
+  const _CarouselDots({required this.count, required this.activeIndex});
+
+  final int count;
+  final int activeIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        for (var index = 0; index < count; index++)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            margin: const EdgeInsets.only(right: AppSpacing.xs),
+            width: index == activeIndex ? 24 : 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(
+                alpha: index == activeIndex ? 0.95 : 0.38,
+              ),
+              borderRadius: BorderRadius.circular(99),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _LoginInfoPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4
+      ..color = Colors.white.withValues(alpha: 0.12);
+
+    for (var i = 0; i < 5; i++) {
+      final y = size.height * (0.18 + i * 0.16);
+      canvas.drawLine(
+        Offset(size.width * 0.08, y),
+        Offset(size.width * 0.92, y),
+        paint,
+      );
+    }
+
+    final accent = Paint()
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF33C7D8).withValues(alpha: 0.18);
+    canvas.drawCircle(
+      Offset(size.width * 0.84, size.height * 0.18),
+      54,
+      accent,
+    );
+    canvas.drawCircle(
+      Offset(size.width * 0.12, size.height * 0.84),
+      72,
+      accent,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _LoginGridPainter extends CustomPainter {
