@@ -48,6 +48,10 @@ DEV-010 prepara contexto ativo multi-empresa e multi-filial antes das regras com
 
 ## MVP Restaurante
 
+Task transversal de suporte antes da continuidade operacional:
+
+- DOC-003 — Demo Environment.
+
 Após DEV-009, executar exatamente nesta ordem:
 
 1. REST-001 — Cadastro de Produtos

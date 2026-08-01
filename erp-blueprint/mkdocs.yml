@@ -18,6 +18,7 @@ nav:
       - Empresa como Tenant: academy/multi-tenancy/001-empresa-como-tenant.md
       - Usuários Multi-Tenant: academy/core/001-usuarios-multitenant.md
       - Categorias de Produtos: academy/core/004-categorias-de-produtos.md
+      - Demo Environment: academy/demo/001-demo-environment.md
       - Logs Estruturados: academy/observability/001-logs-estruturados.md
       - Request ID: academy/observability/002-rastreabilidade-com-request-id.md
       - Auditoria de Sistemas: academy/security/002-auditoria-de-sistemas.md

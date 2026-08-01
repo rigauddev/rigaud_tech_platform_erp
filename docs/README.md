@@ -10,3 +10,4 @@ Documentação geral do projeto, guias, referências e registros técnicos.
 - `frontend`: starter Flutter e plataformas.
 - `authentication`: fundação técnica de autenticação da DEV-005.
 - `companies`: módulo Empresas e raiz do tenant da DEV-006.
+- `demo`: ambiente oficial de demonstração e contas de teste.
