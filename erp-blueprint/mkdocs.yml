@@ -19,6 +19,7 @@ nav:
       - Usuários Multi-Tenant: academy/core/001-usuarios-multitenant.md
       - Categorias de Produtos: academy/core/004-categorias-de-produtos.md
       - Demo Environment: academy/demo/001-demo-environment.md
+      - Inventory Engine Domain: academy/inventory/001-inventory-engine-domain.md
       - Logs Estruturados: academy/observability/001-logs-estruturados.md
       - Request ID: academy/observability/002-rastreabilidade-com-request-id.md
       - Auditoria de Sistemas: academy/security/002-auditoria-de-sistemas.md
@@ -32,6 +33,7 @@ nav:
       - ADR 0004 User Company Tenant: adr/0004-user-company-tenant.md
       - ADR 0005 API Governance Audit: adr/0005-api-governance-audit-response-contract.md
       - ADR 0006 Two Factor Authentication: adr/0006-two-factor-authentication-channels.md
+      - ADR 0007 Engine First: adr/0007-engine-first-development-strategy.md
   - Modules: modules/README.md
   - Research: research/README.md
   - Backlog:

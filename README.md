@@ -22,7 +22,7 @@ DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 Task atual:
 
 ```text
-DOC-003 — Demo Environment & Scenario Engine
+DOC-005 — Inventory Engine Domain
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -97,6 +97,8 @@ O cadastro de produtos está documentado em `docs/products/overview.md`.
 O cadastro de categorias está documentado em `docs/categories/overview.md`.
 
 O ambiente demo está documentado em `docs/demo/overview.md`.
+
+O domínio do Inventory Engine está documentado em `docs/inventory/overview.md`.
 
 Endpoints técnicos disponíveis:
 

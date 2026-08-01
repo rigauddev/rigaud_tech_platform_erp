@@ -20,6 +20,20 @@ Revisão
 Merge
 ```
 
+Engines comerciais devem seguir:
+
+```text
+DOC
+    ↓
+IMPLEMENTAÇÃO
+    ↓
+REVIEW
+    ↓
+INTEGRAÇÃO
+```
+
+O documento DOC congela domínio, eventos, fluxos, estados, offline strategy e integrações antes de qualquer implementação.
+
 ## Regra Principal
 
 ```text
