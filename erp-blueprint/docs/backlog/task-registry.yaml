@@ -1,4 +1,39 @@
 tasks:
+  - id: UI-001
+    title: Login Experience
+    epic: ui
+    module: frontend
+    status: review
+    dependencies:
+      - DEV-012
+    started_at: "2026-08-01"
+    completed_at: null
+    documentation:
+      - docs/ui/login-screen.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/ui/001-login-experience.md
+    tests:
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - flutter build apk --debug
+      - flutter build macos
+      - make check-task TASK=UI-001
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/ui-001-login-experience
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
   - id: DEV-012
     title: Authentication & Tenant Architecture Alignment
     epic: foundation

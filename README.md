@@ -22,7 +22,7 @@ DEV-012 — Authentication & Tenant Architecture Alignment
 Task atual:
 
 ```text
-DEV-012 — Authentication & Tenant Architecture Alignment
+UI-001 — Login Experience
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -105,6 +105,10 @@ O cadastro de categorias está documentado em `docs/categories/overview.md`.
 O ambiente demo está documentado em `docs/demo/overview.md`.
 
 O domínio do Inventory Engine está documentado em `docs/inventory/overview.md`.
+
+## Frontend E UI
+
+A experiência visual da tela de login está documentada em `docs/ui/login-screen.md`.
 
 Endpoints técnicos disponíveis:
 
