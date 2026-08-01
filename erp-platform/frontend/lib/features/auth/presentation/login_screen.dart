@@ -156,10 +156,15 @@ class _LoginForm extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Icon(
-                Icons.business_center_outlined,
-                size: 56,
-                color: Theme.of(context).colorScheme.primary,
+              AspectRatio(
+                aspectRatio: 1,
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Image.asset(
+                    'assets/images/logo_rigaud_tech.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
