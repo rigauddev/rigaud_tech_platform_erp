@@ -1,6 +1,6 @@
 tasks:
   - id: DOC-003
-    title: Demo Environment
+    title: Demo Environment & Scenario Engine
     epic: governance
     module: demo
     status: review
@@ -16,6 +16,7 @@ tasks:
       - docs/demo/scenario-engine.md
       - docs/demo/testing.md
       - README.md
+      - erp-platform/frontend/lib/features/demo/README.md
     academy:
       - erp-blueprint/docs/academy/demo/001-demo-environment.md
     tests:

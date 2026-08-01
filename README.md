@@ -22,7 +22,7 @@ DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 Task atual:
 
 ```text
-DOC-003 — Demo Environment
+DOC-003 — Demo Environment & Scenario Engine
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -49,16 +49,19 @@ Comandos disponíveis:
 - `make format`
 - `make test`
 - `make demo`
+- `make demo-users`
 - `make demo-platform`
 - `make demo-restaurant`
 - `make demo-retail`
+- `make demo-scenarios`
 - `make demo-reset`
+- `make playground`
 
 Detalhes em `docs/development/docker.md`.
 
 ## Ambiente Demo
 
-O ambiente demo oficial está documentado em `docs/demo/overview.md`.
+O ambiente demo oficial e o Scenario Engine estão documentados em `docs/demo/overview.md`.
 
 Fluxo rápido:
 
@@ -69,7 +72,7 @@ make demo
 
 Contas disponíveis em `docs/demo/accounts.md`.
 
-Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. Cenários completos de mesas, pedidos, estoque, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
+Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. A API `/api/v1/demo/*` e o Dashboard Demo do Flutter existem apenas para desenvolvimento. Cenários completos de mesas, pedidos, estoque, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
 
 ## Backend
 
@@ -143,6 +146,10 @@ Endpoints técnicos disponíveis:
 - `POST /api/v1/categories/{category_id}/deactivate`
 - `POST /api/v1/categories/{category_id}/reorder`
 - `DELETE /api/v1/categories/{category_id}`
+- `GET /api/v1/demo/status`
+- `GET /api/v1/demo/install`
+- `GET /api/v1/demo/reset`
+- `GET /api/v1/demo/scenarios`
 - Swagger em `/docs`
 - OpenAPI em `/openapi.json`
 

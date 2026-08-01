@@ -10,6 +10,15 @@ Executar apenas os testes do demo:
 docker compose --env-file .env.example run --rm backend pytest tests/integration/demo/test_demo_seed.py
 ```
 
+Validar API demo:
+
+```bash
+curl http://localhost:8000/api/v1/demo/status
+curl http://localhost:8000/api/v1/demo/install
+curl http://localhost:8000/api/v1/demo/scenarios
+curl http://localhost:8000/api/v1/demo/reset
+```
+
 Executar a suíte completa do backend:
 
 ```bash
@@ -40,3 +49,10 @@ make demo
 ```
 
 Depois acessar o frontend ou Swagger e autenticar com uma conta documentada em `docs/demo/accounts.md`.
+
+Validar o dashboard:
+
+```bash
+flutter test
+flutter build web
+```

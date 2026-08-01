@@ -2,7 +2,7 @@
 
 O Scenario Engine é o blueprint dos cenários operacionais de demonstração.
 
-Na DOC-003 ele permanece documental porque os módulos de mesas, setores, estoque, clientes, pedidos, delivery, caixa e vendas ainda não existem na base atual.
+Na DOC-003 ele expõe cenários planejados via CLI e API, mas ainda não materializa registros operacionais porque os módulos de mesas, setores, estoque, clientes, pedidos, delivery, caixa e vendas ainda não existem na base atual.
 
 ## Cenário Restaurante Futuro
 
@@ -41,3 +41,16 @@ O seed deve continuar separado por módulo:
 
 Novos comandos devem ser adicionados somente quando as tabelas e use cases correspondentes existirem.
 
+## API
+
+Consultar cenários planejados:
+
+```bash
+curl http://localhost:8000/api/v1/demo/scenarios
+```
+
+CLI:
+
+```bash
+make demo-scenarios
+```

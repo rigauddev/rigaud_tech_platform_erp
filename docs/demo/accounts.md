@@ -3,7 +3,7 @@
 Todas as contas criadas pela DOC-003 usam a senha:
 
 ```text
-senha123
+123456
 ```
 
 ## Platform
@@ -56,4 +56,3 @@ Contas:
 - `vendedor@demo.local`
 - `caixa@modacenter.demo`
 - `estoque@modacenter.demo`
-

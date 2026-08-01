@@ -1,4 +1,4 @@
-# Academy — Demo Environment
+# Academy — Demo Environment & Scenario Engine
 
 O Demo Environment é uma ferramenta técnica para reduzir atrito em desenvolvimento, QA, treinamento e demonstrações comerciais.
 
@@ -10,6 +10,7 @@ Um ambiente demo deve permitir:
 - carregar dados com `make demo`;
 - testar fluxos existentes sem cadastro manual repetitivo;
 - resetar dados operacionais sem apagar a configuração-base da plataforma.
+- disponibilizar uma API e dashboard de desenvolvimento para acelerar homologação.
 
 ## Princípios
 
@@ -32,3 +33,8 @@ Na DOC-003, o seed trabalha apenas com módulos já disponíveis:
 
 Mesas, pedidos, estoque, clientes, QR Code e vendas ficam como cenários documentados para tasks futuras.
 
+## Regra Permanente
+
+Tudo que for desenvolvido deve ser demonstrável.
+
+Ao concluir uma task funcional, o módulo deve informar como seus dados demo, cenários e validações entram no Demo Environment.
