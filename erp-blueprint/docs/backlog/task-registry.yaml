@@ -28,12 +28,16 @@ tasks:
       commits:
         - 1fbeaa1
         - 52041a0
+        - 048bd6d
+        - b5b9caa
+        - 9c6579e
+        - 4edecca
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: 52041a0
+    commit: 4edecca
     review_status: ready
   - id: REST-002
     title: Categorias de Produtos
