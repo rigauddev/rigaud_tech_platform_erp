@@ -31,12 +31,13 @@ tasks:
       commits:
         - 0997987
         - 7dc9f3b
+        - 9f0e93f
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: 7dc9f3b
+    commit: 9f0e93f
     review_status: ready
   - id: DOC-005
     title: Inventory Engine Domain
