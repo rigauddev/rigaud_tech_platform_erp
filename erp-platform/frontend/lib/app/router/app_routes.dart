@@ -18,5 +18,6 @@ class AppRoutes {
   static const categories = '/categories';
   static const categoryCreate = '/categories/new';
   static const audit = '/audit';
+  static const demo = '/demo';
   static const notFound = '/not-found';
 }
