@@ -22,7 +22,7 @@ DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 Task atual:
 
 ```text
-REST-002 — Categorias de Produtos
+DOC-003 — Demo Environment
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -48,8 +48,28 @@ Comandos disponíveis:
 - `make lint`
 - `make format`
 - `make test`
+- `make demo`
+- `make demo-platform`
+- `make demo-restaurant`
+- `make demo-retail`
+- `make demo-reset`
 
 Detalhes em `docs/development/docker.md`.
+
+## Ambiente Demo
+
+O ambiente demo oficial está documentado em `docs/demo/overview.md`.
+
+Fluxo rápido:
+
+```bash
+make up
+make demo
+```
+
+Contas disponíveis em `docs/demo/accounts.md`.
+
+Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. Cenários completos de mesas, pedidos, estoque, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
 
 ## Backend
 
@@ -72,6 +92,8 @@ O contexto ativo multi-empresa e multi-filial está documentado em `docs/authent
 O cadastro de produtos está documentado em `docs/products/overview.md`.
 
 O cadastro de categorias está documentado em `docs/categories/overview.md`.
+
+O ambiente demo está documentado em `docs/demo/overview.md`.
 
 Endpoints técnicos disponíveis:
 

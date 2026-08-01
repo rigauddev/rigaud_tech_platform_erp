@@ -1,4 +1,37 @@
 tasks:
+  - id: DOC-003
+    title: Demo Environment
+    epic: governance
+    module: demo
+    status: review
+    dependencies:
+      - DEV-010
+      - REST-001
+      - REST-002
+    started_at: "2026-07-31"
+    completed_at: null
+    documentation:
+      - docs/demo/overview.md
+      - docs/demo/accounts.md
+      - docs/demo/scenario-engine.md
+      - docs/demo/testing.md
+      - README.md
+    academy:
+      - erp-blueprint/docs/academy/demo/001-demo-environment.md
+    tests:
+      - erp-platform/backend/tests/integration/demo/test_demo_seed.py
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-003-demo-environment
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
   - id: REST-002
     title: Categorias de Produtos
     epic: MVP Restaurante

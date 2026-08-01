@@ -26,6 +26,10 @@ Próxima task prevista: DEV-011 — Assinaturas, Planos e Limites.
 
 Objetivo: construir o fluxo operacional inicial de restaurante usando o Core compartilhado.
 
+Suporte transversal:
+
+- Demo Environment para desenvolvimento, QA e demonstrações.
+
 Sequência:
 
 - Produtos.
