@@ -40,3 +40,5 @@ A ausência de contexto não autoriza o agente a inventar uma nova arquitetura.
 A implementação existente tem prioridade sobre suposições, desde que não contradiga um ADR aprovado.
 
 Antes de implementar, confirme as decisões permanentes em `ERP_DECISIONS.md` e a linguagem oficial em `ERP_GLOSSARY.md`.
+
+Decisão congelada da DEV-012: login usa email e senha; usuário pertence a uma empresa e possui uma filial ativa única.

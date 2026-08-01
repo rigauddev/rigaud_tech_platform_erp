@@ -4,6 +4,9 @@
 
 ### Added
 
+- DEV-012: alinhamento de autenticação e tenant com login por email/senha, resolução backend de empresa, filial ativa e papel.
+- DEV-012: migration `0011_auth_tenant_alignment` adiciona filial ativa, papel, permissões, histórico de troca de filial e lotação de trabalho.
+- DEV-012: documentação de arquitetura em `docs/authentication/tenant-alignment.md` e Academy de alinhamento Auth/Tenant.
 - DOC-006: criados `AI_DEVELOPMENT_CHARTER.md`, `ERP_DECISIONS.md` e `ERP_GLOSSARY.md` como base permanente para desenvolvimento com IA.
 - DOC-006: `AGENTS.md`, `erp-blueprint/AGENTS.md` e `MASTER_DEVELOPMENT_PROMPT.md` passam a exigir leitura dos novos documentos.
 - DOC-006: Academy de AI Development Charter criada em `erp-blueprint/docs/academy/engineering/002-ai-development-charter.md`.
@@ -98,6 +101,9 @@
 
 ### Changed
 
+- DEV-012: tela de login Flutter remove o campo Tenant e envia somente email e senha.
+- DEV-012: endpoint `/api/v1/auth/login` deixa de aceitar tenant no payload.
+- DEV-012: troca de contexto passa a negar usuário comum e manter tenant único por usuário.
 - REVIEW DEV-001: removidas configuracoes Docker duplicadas, ajustado healthcheck do frontend, habilitada persistencia AOF no Redis, revisado proxy `/api` e removida variavel legada `FLUTTER_WEB_PORT`.
 - REVIEW DEV-001: `make up`, `make backend` e `make flutter` agora executam preflight de Docker, Compose e espaco livre antes do build.
 - REVIEW DEV-001: Dockerfile Flutter ajustado para executar como usuario `ubuntu` e evitar preparacao do Flutter toolchain como root durante o build.

@@ -173,7 +173,6 @@ async def login(
     try:
         token_pair = await use_case.execute(
             LoginInput(
-                tenant=payload.tenant,
                 email=payload.email,
                 password=payload.password,
                 user_agent=_user_agent(request),
@@ -186,7 +185,7 @@ async def login(
                     event_name="auth.mfa.challenge.created",
                     module="auth",
                     action="mfa_challenge_created",
-                    metadata={"tenant": payload.tenant, "email": payload.email},
+                    metadata={"email": payload.email},
                     ip_address=_client_ip(request),
                     user_agent=_user_agent(request),
                 )
@@ -210,15 +209,13 @@ async def login(
             )
 
         await session.commit()
-        audit_logger.info(
-            "auth.login.success", extra={"event": "auth.login.success", "tenant": payload.tenant}
-        )
+        audit_logger.info("auth.login.success", extra={"event": "auth.login.success"})
         await _audit_service(session).record_event(
             AuditEventInput(
                 event_name="auth.login.success",
                 module="auth",
                 action="login",
-                metadata={"tenant": payload.tenant, "email": payload.email},
+                metadata={"email": payload.email},
                 ip_address=_client_ip(request),
                 user_agent=_user_agent(request),
             )
@@ -228,15 +225,13 @@ async def login(
             "API_SUCCESS", data=TokenResponse(**token_pair.__dict__).model_dump()
         )
     except InvalidCredentialsError:
-        audit_logger.info(
-            "auth.login.failed", extra={"event": "auth.login.failed", "tenant": payload.tenant}
-        )
+        audit_logger.info("auth.login.failed", extra={"event": "auth.login.failed"})
         await _audit_service(session).record_event(
             AuditEventInput(
                 event_name="auth.login.failed",
                 module="auth",
                 action="login_failed",
-                metadata={"tenant": payload.tenant, "email": payload.email},
+                metadata={"email": payload.email},
                 ip_address=_client_ip(request),
                 user_agent=_user_agent(request),
             )
@@ -245,20 +240,16 @@ async def login(
         return error_response("AUTH_INVALID_CREDENTIALS")
     except InactiveUserError:
         await session.rollback()
-        audit_logger.info(
-            "auth.login.failed", extra={"event": "auth.login.failed", "tenant": payload.tenant}
-        )
+        audit_logger.info("auth.login.failed", extra={"event": "auth.login.failed"})
         return error_response("AUTH_USER_INACTIVE")
     except BlockedUserError:
-        audit_logger.info(
-            "auth.login.failed", extra={"event": "auth.login.failed", "tenant": payload.tenant}
-        )
+        audit_logger.info("auth.login.failed", extra={"event": "auth.login.failed"})
         await _audit_service(session).record_event(
             AuditEventInput(
                 event_name="auth.login.blocked",
                 module="auth",
                 action="login_blocked",
-                metadata={"tenant": payload.tenant, "email": payload.email},
+                metadata={"email": payload.email},
                 ip_address=_client_ip(request),
                 user_agent=_user_agent(request),
             )
@@ -267,9 +258,7 @@ async def login(
         return error_response("AUTH_USER_BLOCKED")
     except (TenantInactiveError, TenantSuspendedError):
         await session.rollback()
-        audit_logger.info(
-            "auth.login.failed", extra={"event": "auth.login.failed", "tenant": payload.tenant}
-        )
+        audit_logger.info("auth.login.failed", extra={"event": "auth.login.failed"})
         return error_response("AUTH_FORBIDDEN")
     finally:
         clear_tenant_id()
@@ -465,6 +454,30 @@ async def switch_context(
     session: AsyncSessionDependency,
     token_service: TokenServiceDependency,
 ) -> JSONResponse:
+    authorized_roles = {"company_admin", "branch_manager"}
+    if not current_user.is_superuser and current_user.role not in authorized_roles:
+        await _audit_service(session).record_event(
+            AuditEventInput(
+                event_name="auth.context.switch.denied",
+                module="auth",
+                action="context_switch_denied",
+                tenant_id=current_user.tenant_id,
+                actor_user_id=current_user.id,
+                metadata={
+                    "reason": "insufficient_role",
+                    "role": current_user.role,
+                    "requested_tenant_id": str(payload.tenant_id),
+                    "requested_branch_id": str(payload.branch_id) if payload.branch_id else None,
+                },
+                ip_address=_client_ip(request),
+                user_agent=_user_agent(request),
+            )
+        )
+        await session.commit()
+        return error_response("CONTEXT_NOT_ALLOWED")
+    if payload.tenant_id != current_user.tenant_id:
+        await session.rollback()
+        return error_response("CONTEXT_NOT_ALLOWED")
     audit_logger.info(
         "auth.context.switch.started",
         extra={

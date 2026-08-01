@@ -16,13 +16,13 @@ Este repositório contém apenas a estrutura inicial de pastas e documentação 
 Fundação concluída até:
 
 ```text
-DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
+DEV-012 — Authentication & Tenant Architecture Alignment
 ```
 
 Task atual:
 
 ```text
-DOC-006 — AI Development Charter, ERP Decisions e ERP Glossary
+DEV-012 — Authentication & Tenant Architecture Alignment
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -96,7 +96,7 @@ A fundação transversal de governança, auditoria, logs e respostas da API est�
 
 A autenticação em dois fatores está documentada em `docs/authentication/mfa-overview.md`.
 
-O contexto ativo multi-empresa e multi-filial está documentado em `docs/authentication/context.md` e `docs/companies/multi-tenancy.md`.
+O contexto ativo foi alinhado para usuário com uma empresa e uma filial ativa em `docs/authentication/tenant-alignment.md`.
 
 O cadastro de produtos está documentado em `docs/products/overview.md`.
 

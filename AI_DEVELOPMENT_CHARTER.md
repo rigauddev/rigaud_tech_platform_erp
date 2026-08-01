@@ -18,7 +18,8 @@ Este documento deve ser lido antes de qualquer task, junto com `AGENTS.md`, `erp
 - Preferir composição em vez de herança.
 - Manter código pequeno, testável e alinhado ao padrão existente.
 - Toda API deve seguir o envelope padrão.
-- Toda funcionalidade deve respeitar multi-tenant, multi-filial, auditoria e feature flags quando aplicável.
+- Toda funcionalidade deve respeitar multi-tenant, filial ativa única, auditoria e feature flags quando aplicável.
+- Login sempre usa email e senha; tenant e filial são resolvidos pelo backend.
 - Todo módulo novo deve ser demonstrável no Demo Environment quando houver superfície funcional.
 
 ## Fluxo Obrigatório
@@ -96,4 +97,3 @@ Cada entrega deve atualizar:
 - CHANGELOG;
 - Task Registry;
 - READMEs locais quando o módulo for afetado.
-
