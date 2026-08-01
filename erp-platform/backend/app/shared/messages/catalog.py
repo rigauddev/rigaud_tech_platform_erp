@@ -315,6 +315,19 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     "AUDIT_EVENT_NOT_FOUND": MessageDefinition(
         "AUDIT_EVENT_NOT_FOUND", 404, "Evento de auditoria não encontrado.", "warning"
     ),
+    "DEMO_STATUS_RETRIEVED": MessageDefinition(
+        "DEMO_STATUS_RETRIEVED", 200, "Status do ambiente demo consultado."
+    ),
+    "DEMO_INSTALLED": MessageDefinition(
+        "DEMO_INSTALLED", 200, "Ambiente demo instalado com sucesso."
+    ),
+    "DEMO_RESET": MessageDefinition("DEMO_RESET", 200, "Ambiente demo resetado com sucesso."),
+    "DEMO_SCENARIOS_RETRIEVED": MessageDefinition(
+        "DEMO_SCENARIOS_RETRIEVED", 200, "Cenários demo consultados com sucesso."
+    ),
+    "DEMO_NOT_AVAILABLE": MessageDefinition(
+        "DEMO_NOT_AVAILABLE", 404, "Demo Environment indisponível neste ambiente.", "warning"
+    ),
     "INTERNAL_SERVER_ERROR": MessageDefinition(
         "INTERNAL_SERVER_ERROR",
         HTTPStatus.INTERNAL_SERVER_ERROR,

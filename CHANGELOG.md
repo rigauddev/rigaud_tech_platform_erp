@@ -4,6 +4,11 @@
 
 ### Added
 
+- DOC-003: Demo Environment com comandos `make demo`, `make demo-platform`, `make demo-restaurant`, `make demo-retail` e `make demo-reset`.
+- DOC-003: seed idempotente para plataforma, Restaurante Sabor da Serra, Moda Center, filiais, usuários, memberships, categorias e 130 produtos demo.
+- DOC-003: `make test` passa a limpar tenants demo operacionais antes do pytest para evitar conflito entre dados persistentes e fixtures de integração.
+- DOC-003: documentação em `docs/demo/*` e aula Academy `erp-blueprint/docs/academy/demo/001-demo-environment.md`.
+- DOC-003: evoluída para Demo Environment & Scenario Engine com API DEV-only `/api/v1/demo/*`, Dashboard Demo Flutter, scripts em `scripts/demo*.py`, comandos `make demo-scenarios`, `make playground` e senha demo `123456`.
 - REST-002: módulo Categories com CRUD multi-tenant, hierarquia por `parent_id`, slug/código interno únicos, soft delete, ativação, desativação e ordenação manual.
 - REST-002: endpoints `/api/v1/categories`, migration `0010_product_categories`, auditoria de categorias e mensagens centralizadas.
 - REST-002: feature Flutter Categories com lista hierárquica, cadastro, edição, detalhe e ações de ativar/desativar/remover.

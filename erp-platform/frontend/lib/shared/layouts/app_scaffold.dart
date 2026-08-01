@@ -44,6 +44,11 @@ class AppScaffold extends StatelessWidget {
 class _NavigationItems extends StatelessWidget {
   const _NavigationItems();
 
+  static const _environment = String.fromEnvironment(
+    'APP_ENV',
+    defaultValue: 'development',
+  );
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -89,6 +94,12 @@ class _NavigationItems extends StatelessWidget {
           title: const Text('Auditoria'),
           onTap: () => context.go(AppRoutes.audit),
         ),
+        if (_environment != 'production')
+          ListTile(
+            leading: const Icon(Icons.tune_outlined),
+            title: const Text('Demo'),
+            onTap: () => context.go(AppRoutes.demo),
+          ),
         const ListTile(
           leading: Icon(Icons.inventory_2_outlined),
           title: Text('Operações'),
