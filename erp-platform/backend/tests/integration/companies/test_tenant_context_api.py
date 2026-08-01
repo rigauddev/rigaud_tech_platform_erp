@@ -150,7 +150,6 @@ async def test_company_creation_creates_headquarters_and_user_context(
     login_response = await client.post(
         "/api/v1/auth/login",
         json={
-            "tenant": "rigaud-restaurante",
             "email": "manager@rigaud.test",
             "password": "Senha123",
         },
@@ -227,7 +226,6 @@ async def test_user_cannot_switch_to_unauthorized_branch(client: AsyncClient) ->
     login_response = await client.post(
         "/api/v1/auth/login",
         json={
-            "tenant": "tenant-a-context",
             "email": "operator@tenant.test",
             "password": "Senha123",
         },
@@ -239,8 +237,8 @@ async def test_user_cannot_switch_to_unauthorized_branch(client: AsyncClient) ->
         headers={"Authorization": f"Bearer {token}"},
         json={"tenant_id": tenant_id, "branch_id": default_branch_id},
     )
-    assert allowed.status_code == 200
-    assert allowed.json()["active_context"]["branch_id"] == default_branch_id
+    assert allowed.status_code == 403
+    assert allowed.json()["code"] == "CONTEXT_NOT_ALLOWED"
 
     denied = await client.post(
         "/api/v1/auth/context/switch",
@@ -335,7 +333,6 @@ async def test_user_can_switch_to_authorized_second_company(client: AsyncClient)
     login_response = await client.post(
         "/api/v1/auth/login",
         json={
-            "tenant": "tenant-multi-a",
             "email": "multi@tenant.test",
             "password": "Senha123",
         },
@@ -347,16 +344,8 @@ async def test_user_can_switch_to_authorized_second_company(client: AsyncClient)
         headers={"Authorization": f"Bearer {token}"},
         json={"tenant_id": second_tenant_id, "branch_id": str(second_branch.id)},
     )
-    assert switch_response.status_code == 200
-    switched_token = switch_response.json()["access_token"]
-
-    me_response = await client.get(
-        "/api/v1/auth/me",
-        headers={"Authorization": f"Bearer {switched_token}"},
-    )
-    assert me_response.status_code == 200
-    assert me_response.json()["tenant_id"] == second_tenant_id
-    assert me_response.json()["branch_id"] == str(second_branch.id)
+    assert switch_response.status_code == 403
+    assert switch_response.json()["code"] == "CONTEXT_NOT_ALLOWED"
 
 
 @pytest.mark.integration
@@ -470,7 +459,6 @@ async def test_refresh_revalidates_inactive_membership(client: AsyncClient) -> N
     login_response = await client.post(
         "/api/v1/auth/login",
         json={
-            "tenant": "refresh-context",
             "email": "refresh@tenant.test",
             "password": "Senha123",
         },
@@ -551,7 +539,6 @@ async def test_all_branches_context_can_switch_without_branch(client: AsyncClien
     login_response = await client.post(
         "/api/v1/auth/login",
         json={
-            "tenant": "all-branches",
             "email": "allbranches@tenant.test",
             "password": "Senha123",
         },
@@ -563,6 +550,5 @@ async def test_all_branches_context_can_switch_without_branch(client: AsyncClien
         headers={"Authorization": f"Bearer {token}"},
         json={"tenant_id": tenant_id, "branch_id": None},
     )
-    assert switch_response.status_code == 200
-    assert switch_response.json()["active_context"]["branch_id"] is None
-    assert switch_response.json()["active_context"]["access_scope"] == "all_branches"
+    assert switch_response.status_code == 403
+    assert switch_response.json()["code"] == "CONTEXT_NOT_ALLOWED"

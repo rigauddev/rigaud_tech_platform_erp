@@ -8,7 +8,6 @@ class AuthBaseSchema(BaseModel):
 
 
 class LoginRequest(AuthBaseSchema):
-    tenant: str = Field(min_length=1, max_length=80)
     email: str = Field(min_length=3, max_length=320)
     password: str = Field(min_length=1, max_length=128)
 

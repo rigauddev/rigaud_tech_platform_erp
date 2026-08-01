@@ -136,7 +136,10 @@ tenant_id = companies.id
 Regras permanentes:
 
 - o frontend nunca define `tenant_id` confiável;
-- o backend resolve tenant pelo usuário autenticado e contexto ativo;
+- login usa somente email e senha;
+- o usuário pertence a exatamente uma empresa;
+- o usuário possui exatamente uma filial ativa;
+- o backend resolve tenant, filial ativa e papel pelo usuário autenticado;
 - filtros por tenant são obrigatórios em repositórios e use cases;
 - não misturar dados entre empresas;
 - filiais devem pertencer ao tenant ativo;
@@ -168,6 +171,7 @@ Regras:
 Padrões obrigatórios:
 
 - JWT com claims controladas pelo backend;
+- JWT deve carregar `user_id`, `tenant_id`, `branch_id` e `role`;
 - refresh token opaco e rotacionável;
 - senhas sempre com hash;
 - dados sensíveis nunca em logs;

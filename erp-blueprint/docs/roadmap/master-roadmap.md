@@ -17,8 +17,9 @@ Roadmap oficial da Rigaud Tech Platform ERP.
 - Governança, auditoria e respostas da API.
 - Autenticação em dois fatores.
 - Tenant, memberships, filiais e contexto ativo.
+- Alinhamento Auth/Tenant: usuário com empresa única e filial ativa única.
 
-Estado atual: concluído até DEV-010.
+Estado atual: concluído até DEV-012 em review.
 
 Próxima task prevista: DEV-011 — Assinaturas, Planos e Limites.
 
@@ -46,6 +47,7 @@ Sequência:
 - Tenant, memberships, filiais e contexto ativo.
 - Assinaturas, planos e limites.
 - Categorias de Produtos.
+- Alinhamento Auth/Tenant.
 - Estoque.
 - Mesas.
 - Setores.

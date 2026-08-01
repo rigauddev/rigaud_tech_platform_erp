@@ -22,7 +22,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('Email'), findsOneWidget);
-    expect(find.text('Tenant'), findsOneWidget);
+    expect(find.text('Tenant'), findsNothing);
     expect(find.text('Senha'), findsOneWidget);
     expect(find.text('Entrar'), findsOneWidget);
     expect(find.text('Recuperar senha'), findsOneWidget);

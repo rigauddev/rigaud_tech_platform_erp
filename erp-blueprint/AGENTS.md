@@ -44,6 +44,7 @@ A implementação existente tem prioridade sobre suposições, desde que não co
 - Apresentar relatório final e parar.
 - Conferir `ERP_DECISIONS.md` antes de rediscutir decisões de negócio já congeladas.
 - Usar `ERP_GLOSSARY.md` para nomes oficiais do domínio.
+- Obedecer a DEV-012: login por email/senha, empresa única por usuário e filial ativa única.
 
 ## Quando Houver Dúvida
 

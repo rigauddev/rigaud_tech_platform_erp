@@ -14,6 +14,10 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - `Company` é a raiz oficial do tenant.
 - `tenant_id = companies.id`.
 - `Branch` representa filial operacional dentro de um tenant.
+- DEC-001: um usuário pertence a exatamente uma empresa/tenant.
+- DEC-002: um usuário possui exatamente uma filial ativa.
+- DEC-003: troca de filial só pode ser feita por gestor, administrador ou permissão explícita.
+- DEC-004: `tenant_id` permanece obrigatório em tabelas SaaS e On-Premise.
 - O frontend nunca define `tenant_id` confiável.
 - O backend resolve tenant e filial pelo usuário autenticado e contexto ativo.
 
@@ -28,8 +32,9 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 
 ## Segurança E Acesso
 
-- Login usa tenant, email e senha.
+- Login usa email e senha. O tenant é resolvido pelo backend a partir do usuário.
 - JWT é curto e controlado pelo backend.
+- JWT deve carregar `user_id`, `tenant_id`, `branch_id` e `role`.
 - Refresh token é opaco, rotacionável e persistido apenas como hash.
 - MFA pode ser habilitado ou desabilitado por usuário.
 - Canais MFA preparados: email, telefone e aplicativo TOTP.
@@ -61,4 +66,3 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Offline-first é planejado.
 - SQLite local só entra em task futura.
 - Operações offline devem considerar idempotência, fila, retry, conflitos e auditoria.
-

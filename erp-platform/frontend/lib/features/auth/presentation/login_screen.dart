@@ -32,14 +32,12 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _tenantController = TextEditingController(text: 'rigaud-demo');
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isSubmitting = false;
 
   @override
   void dispose() {
-    _tenantController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -65,7 +63,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: SafeArea(
         child: ResponsiveLayout(
           mobile: _LoginForm(
-            tenantController: _tenantController,
             emailController: _emailController,
             passwordController: _passwordController,
             rememberAccess: rememberAccess,
@@ -80,7 +77,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 440),
               child: _LoginForm(
-                tenantController: _tenantController,
                 emailController: _emailController,
                 passwordController: _passwordController,
                 rememberAccess: rememberAccess,
@@ -101,17 +97,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _submit() async {
-    final tenant = _tenantController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text;
-    if (tenant.isEmpty || email.isEmpty || password.isEmpty) {
+    if (email.isEmpty || password.isEmpty) {
       return;
     }
 
     setState(() => _isSubmitting = true);
     await ref
         .read(authControllerProvider.notifier)
-        .login(tenant: tenant, email: email, password: password);
+        .login(email: email, password: password);
     if (mounted) {
       setState(() => _isSubmitting = false);
     }
@@ -120,7 +115,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
 class _LoginForm extends StatelessWidget {
   const _LoginForm({
-    required this.tenantController,
     required this.emailController,
     required this.passwordController,
     required this.rememberAccess,
@@ -130,7 +124,6 @@ class _LoginForm extends StatelessWidget {
     required this.onSubmit,
   });
 
-  final TextEditingController tenantController;
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final bool rememberAccess;
@@ -163,6 +156,13 @@ class _LoginForm extends StatelessWidget {
                   child: Image.asset(
                     'assets/images/logo_rigaud_tech.png',
                     fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(
+                        Icons.business_outlined,
+                        size: 96,
+                        color: Theme.of(context).colorScheme.primary,
+                      );
+                    },
                   ),
                 ),
               ),
@@ -179,12 +179,6 @@ class _LoginForm extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: AppSpacing.xl),
-              AppTextField(
-                controller: tenantController,
-                label: 'Tenant',
-                prefixIcon: Icons.apartment_outlined,
-              ),
-              const SizedBox(height: AppSpacing.md),
               AppTextField(
                 controller: emailController,
                 label: 'Email',

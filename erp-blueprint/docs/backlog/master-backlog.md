@@ -19,6 +19,7 @@ Ordem congelada:
 11. DEV-008 — Governança, Auditoria e Respostas da API
 12. DEV-009 — Autenticação em Dois Fatores
 13. DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
+14. DEV-012 — Authentication & Tenant Architecture Alignment
 
 Estado atual:
 
@@ -35,6 +36,7 @@ Estado atual:
 - DEV-008 — concluída.
 - DEV-009 — concluída.
 - DEV-010 — concluída.
+- DEV-012 — em review.
 
 Próxima task prevista:
 
@@ -44,7 +46,7 @@ DEV-011 — Assinaturas, Planos e Limites
 
 DEV-009 deverá permitir autenticação em dois fatores habilitável e desabilitável por email, telefone e aplicativo autenticador.
 
-DEV-010 prepara contexto ativo multi-empresa e multi-filial antes das regras comerciais dependentes de filial.
+DEV-012 congela a regra oficial: usuário pertence a uma empresa e possui uma filial ativa.
 
 ## MVP Restaurante
 
@@ -68,7 +70,8 @@ Após DEV-009, executar exatamente nesta ordem:
 2. DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 3. DEV-011 — Assinaturas, Planos e Limites
 4. REST-002 — Categorias de Produtos
-5. REST-003 — Controle de Estoque
+5. DEV-012 — Authentication & Tenant Architecture Alignment
+6. REST-003 — Controle de Estoque
 6. REST-004 — Mesas
 7. REST-005 — Setores
 8. REST-006 — Garçons
