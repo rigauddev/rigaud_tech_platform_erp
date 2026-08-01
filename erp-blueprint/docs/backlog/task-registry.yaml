@@ -1,4 +1,48 @@
 tasks:
+  - id: DEV-012
+    title: Authentication & Tenant Architecture Alignment
+    epic: foundation
+    module: auth
+    status: review
+    dependencies:
+      - DEV-010
+      - DEV-011
+      - REST-002
+    started_at: "2026-08-01"
+    completed_at: null
+    documentation:
+      - docs/authentication/tenant-alignment.md
+      - README.md
+      - CHANGELOG.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/adr/0002-authentication-strategy.md
+      - erp-blueprint/docs/adr/0004-user-company-tenant.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/security/003-auth-tenant-alignment.md
+    tests:
+      - make lint
+      - make test
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - make check-task TASK=DEV-012
+    migration: 0011_auth_tenant_alignment
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/dev-012-auth-tenant-alignment
+      commits:
+        - 48628d7
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 48628d7
+    review_status: ready
   - id: DOC-006
     title: AI Development Charter, ERP Decisions e ERP Glossary
     epic: governance

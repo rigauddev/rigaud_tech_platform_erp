@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import select, update
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.auth.domain.exceptions import TenantInactiveError, TenantSuspendedError
@@ -26,6 +26,15 @@ from app.modules.companies.infrastructure.models import CompanyModel
 class SQLAlchemyUserAuthRepository(UserAuthRepository):
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
+
+    async def get_by_email(self, email: str) -> AuthUserModel | None:
+        result = await self.session.execute(
+            select(AuthUserModel).where(
+                func.lower(AuthUserModel.email) == email.lower(),
+                AuthUserModel.deleted_at.is_(None),
+            )
+        )
+        return result.scalar_one_or_none()
 
     async def get_by_email_and_tenant_id(self, email: str, tenant_id: UUID) -> AuthUserModel | None:
         result = await self.session.execute(
@@ -234,3 +243,12 @@ class SQLAlchemyTenantResolver(TenantResolver):
         if company.status != CompanyStatus.ACTIVE or not company.is_active:
             raise TenantInactiveError("Tenant inactive.")
         return company.id
+
+    async def ensure_active(self, tenant_id: UUID) -> None:
+        company = await self.session.get(CompanyModel, tenant_id)
+        if company is None or company.deleted_at is not None:
+            raise TenantInactiveError("Tenant inactive.")
+        if company.status == CompanyStatus.SUSPENDED:
+            raise TenantSuspendedError("Tenant suspended.")
+        if company.status != CompanyStatus.ACTIVE or not company.is_active:
+            raise TenantInactiveError("Tenant inactive.")

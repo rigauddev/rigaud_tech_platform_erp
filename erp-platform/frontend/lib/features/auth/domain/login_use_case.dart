@@ -7,10 +7,9 @@ class LoginUseCase {
   final AuthRepository _repository;
 
   Future<AuthLoginResult> execute({
-    required String tenant,
     required String email,
     required String password,
   }) {
-    return _repository.login(tenant: tenant, email: email, password: password);
+    return _repository.login(email: email, password: password);
   }
 }

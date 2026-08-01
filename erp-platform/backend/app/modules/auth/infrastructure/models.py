@@ -1,8 +1,10 @@
-from datetime import datetime
+from datetime import date, datetime
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
+    JSON,
     Boolean,
+    Date,
     DateTime,
     Enum,
     ForeignKey,
@@ -26,6 +28,12 @@ class AuthUserModel(TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
     __table_args__ = (
         UniqueConstraint("tenant_id", "email", name="uq_auth_users_tenant_id_email"),
         UniqueConstraint("tenant_slug", "email", name="uq_auth_users_tenant_slug_email"),
+        Index(
+            "uq_auth_users_email_global_active",
+            text("lower(email)"),
+            unique=True,
+            postgresql_where=text("deleted_at IS NULL"),
+        ),
     )
 
     id: Mapped[UUID] = mapped_column(
@@ -35,6 +43,14 @@ class AuthUserModel(TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
     )
     tenant_id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), index=True, nullable=False)
     tenant_slug: Mapped[str] = mapped_column(String(80), index=True, nullable=False)
+    active_branch_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("branches.id", ondelete="SET NULL"),
+        index=True,
+        nullable=True,
+    )
+    role: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    permissions: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
     email: Mapped[str] = mapped_column(String(320), nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     first_name: Mapped[str | None] = mapped_column(String(80), nullable=True)
@@ -110,6 +126,97 @@ class AuthSessionModel(TimestampMixin, Base):
     )
     user_agent: Mapped[str | None] = mapped_column(String(255), nullable=True)
     ip_address: Mapped[str | None] = mapped_column(String(64), nullable=True)
+
+
+class UserBranchHistoryModel(Base):
+    __tablename__ = "user_branch_history"
+    __table_args__ = (
+        Index("ix_user_branch_history_tenant_user", "tenant_id", "user_id"),
+        Index("ix_user_branch_history_changed_at", "changed_at"),
+    )
+
+    id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("companies.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
+    user_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("auth_users.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
+    old_branch_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("branches.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    new_branch_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("branches.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    changed_by: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("auth_users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    reason: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    changed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=text("now()"),
+        nullable=False,
+    )
+
+
+class UserWorkAssignmentModel(Base):
+    __tablename__ = "user_work_assignments"
+    __table_args__ = (
+        Index(
+            "uq_user_work_assignments_current",
+            "tenant_id",
+            "user_id",
+            unique=True,
+            postgresql_where=text("is_current = true"),
+        ),
+        Index("ix_user_work_assignments_tenant_branch", "tenant_id", "branch_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("companies.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
+    user_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("auth_users.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
+    branch_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("branches.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    start_date: Mapped[date] = mapped_column(Date, nullable=False)
+    end_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    is_current: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    assigned_by: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("auth_users.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    reason: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=text("now()"),
+        nullable=False,
+    )
 
 
 class UserMfaMethodModel(TimestampMixin, Base):

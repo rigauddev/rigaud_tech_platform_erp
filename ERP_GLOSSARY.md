@@ -10,9 +10,15 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Branch`: filial operacional de uma empresa.
 
-`Membership`: vínculo de usuário com empresa ou filial.
+`Active Branch`: filial operacional única ativa do usuário autenticado.
 
-`Active Context`: empresa e filial ativas para a sessão autenticada.
+`Membership`: vínculo legado/compatível usado para contexto e permissões até a consolidação de RBAC.
+
+`Work Assignment`: lotação operacional de um usuário em uma filial, com início, fim e histórico.
+
+`Branch History`: trilha de auditoria para mudanças de filial ativa.
+
+`Active Context`: empresa, filial e papel ativos resolvidos pelo backend para a sessão autenticada.
 
 `Feature Flag`: chave que habilita ou desabilita comportamento.
 
@@ -29,6 +35,8 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 `TOTP`: código temporário gerado por aplicativo autenticador.
 
 `RBAC`: controle de acesso baseado em papéis.
+
+`Profile`: perfil funcional único do usuário, origem das permissões efetivas.
 
 ## Inventory
 
@@ -85,4 +93,3 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 `Scenario Engine`: mecanismo planejado para montar cenários operacionais.
 
 `Demo Account`: conta criada para testes e demonstrações.
-

@@ -5,7 +5,6 @@ import 'mfa.dart';
 
 abstract interface class AuthRepository {
   Future<AuthLoginResult> login({
-    required String tenant,
     required String email,
     required String password,
   });
