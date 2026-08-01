@@ -35,13 +35,13 @@ tasks:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/dev-012-auth-tenant-alignment
       commits:
-        - 48628d7
+        - 85a9a40
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: 48628d7
+    commit: 85a9a40
     review_status: ready
   - id: DOC-006
     title: AI Development Charter, ERP Decisions e ERP Glossary
