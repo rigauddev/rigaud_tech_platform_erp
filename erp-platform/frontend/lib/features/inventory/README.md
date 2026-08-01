@@ -1,9 +1,18 @@
 # Inventory
 
-Feature reservada para o futuro Inventory Engine.
+Feature Flutter do Inventory Engine.
 
 Estrutura preparada em `data`, `domain` e `presentation`.
 
 DOC-005 define o domínio antes da implementação da REST-003.
 
-Nenhuma tela ou regra de negócio foi implementada nesta task.
+REST-003 adiciona:
+
+- consulta de saldos;
+- consulta de movimentações;
+- formulário de ajuste;
+- formulário de reserva;
+- Riverpod controllers;
+- repository/data source com Dio.
+
+As telas não implementam regra de negócio. Validações críticas permanecem no backend.

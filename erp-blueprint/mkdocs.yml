@@ -21,6 +21,7 @@ nav:
       - Categorias de Produtos: academy/core/004-categorias-de-produtos.md
       - Demo Environment: academy/demo/001-demo-environment.md
       - Inventory Engine Domain: academy/inventory/001-inventory-engine-domain.md
+      - Inventory Engine Implementation: academy/inventory/002-inventory-engine-implementation.md
       - Logs Estruturados: academy/observability/001-logs-estruturados.md
       - Request ID: academy/observability/002-rastreabilidade-com-request-id.md
       - Auditoria de Sistemas: academy/security/002-auditoria-de-sistemas.md

@@ -1,0 +1,42 @@
+# Inventory Validation
+
+## Quantidade
+
+- Deve ser maior que zero.
+- Usa precisão decimal de 3 casas.
+- Não aceita valores inválidos ou negativos.
+
+## Ajuste De Saída
+
+Não pode reduzir saldo abaixo da disponibilidade.
+
+```text
+available_quantity >= quantity
+```
+
+## Reserva
+
+Não altera saldo físico.
+
+Só pode ser criada se houver disponibilidade:
+
+```text
+physical_quantity - reserved_quantity >= quantity
+```
+
+## Liberação De Reserva
+
+- reserva deve existir no tenant;
+- reserva deve estar ativa;
+- liberação gera novo movimento;
+- reserva liberada não pode ser liberada novamente.
+
+## Produto
+
+O produto deve existir no tenant autenticado.
+
+Produto de outro tenant deve ser tratado como inexistente.
+
+## Filial
+
+Operações de escrita exigem filial ativa resolvida pelo backend.

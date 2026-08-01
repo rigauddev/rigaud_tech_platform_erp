@@ -1,4 +1,53 @@
 tasks:
+  - id: REST-003
+    title: Inventory Engine
+    epic: MVP Restaurante
+    module: inventory
+    status: review
+    dependencies:
+      - DOC-005
+      - REST-001
+      - REST-002
+      - DEV-010
+      - DEV-012
+    started_at: "2026-08-01"
+    completed_at: null
+    documentation:
+      - docs/inventory/api.md
+      - docs/inventory/endpoints.md
+      - docs/inventory/entities.md
+      - docs/inventory/events.md
+      - docs/inventory/permissions.md
+      - docs/inventory/validation.md
+      - README.md
+      - CHANGELOG.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/inventory/README.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/002-inventory-engine-implementation.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_inventory_engine.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-003
+    migration: 0012_inventory_engine
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-003-inventory-engine
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
   - id: UI-001
     title: Login Experience
     epic: ui

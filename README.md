@@ -22,7 +22,7 @@ DEV-012 — Authentication & Tenant Architecture Alignment
 Task atual:
 
 ```text
-UI-001 — Login Experience
+REST-003 — Inventory Engine
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -102,6 +102,8 @@ O cadastro de produtos está documentado em `docs/products/overview.md`.
 
 O cadastro de categorias está documentado em `docs/categories/overview.md`.
 
+O Inventory Engine está documentado em `docs/inventory/api.md`.
+
 O ambiente demo está documentado em `docs/demo/overview.md`.
 
 O domínio do Inventory Engine está documentado em `docs/inventory/overview.md`.
@@ -158,6 +160,11 @@ Endpoints técnicos disponíveis:
 - `POST /api/v1/categories/{category_id}/deactivate`
 - `POST /api/v1/categories/{category_id}/reorder`
 - `DELETE /api/v1/categories/{category_id}`
+- `GET /api/v1/inventory/balances`
+- `GET /api/v1/inventory/movements`
+- `POST /api/v1/inventory/adjustments`
+- `POST /api/v1/inventory/reservations`
+- `POST /api/v1/inventory/reservations/{reservation_id}/release`
 - `GET /api/v1/demo/status`
 - `GET /api/v1/demo/install`
 - `GET /api/v1/demo/reset`
