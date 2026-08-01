@@ -32,12 +32,13 @@ tasks:
         - b5b9caa
         - 9c6579e
         - 4edecca
+        - 221749b
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: 4edecca
+    commit: 221749b
     review_status: ready
   - id: REST-002
     title: Categorias de Produtos
