@@ -20,6 +20,10 @@ async def run(action: str, password: str) -> dict[str, int | str]:
             return (await seeder.seed_retail()).as_dict()
         if action == "reset":
             return (await seeder.reset()).as_dict()
+        if action == "status":
+            return await seeder.status()
+        if action == "scenarios":
+            return await seeder.scenarios()
     raise ValueError(f"Unsupported demo action: {action}")
 
 
@@ -27,7 +31,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Seed Rigaud ERP demo environment.")
     parser.add_argument(
         "action",
-        choices=("all", "platform", "restaurant", "retail", "reset"),
+        choices=("all", "platform", "restaurant", "retail", "reset", "status", "scenarios"),
         help="Demo dataset to apply.",
     )
     parser.add_argument(

@@ -1,8 +1,10 @@
 import pytest
 import pytest_asyncio
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy import delete, func, select
 
 from app.database.session import async_session_factory
+from app.main import create_app
 from app.modules.auth.infrastructure.models import (
     AuthSessionModel,
     AuthUserModel,
@@ -17,6 +19,7 @@ from app.modules.companies.infrastructure.models import (
     CompanyModel,
 )
 from app.modules.products.infrastructure.models import ProductModel
+from app.security.passwords import verify_password
 from app.shared.demo.data import PLATFORM_SLUG, RESTAURANT_SLUG, RETAIL_SLUG
 from app.shared.demo.service import DemoSeeder
 
@@ -48,6 +51,16 @@ async def _clean(session) -> None:
 async def count_rows(model) -> int:
     async with async_session_factory() as session:
         return (await session.execute(select(func.count()).select_from(model))).scalar_one()
+
+
+@pytest_asyncio.fixture
+async def demo_client() -> AsyncClient:
+    app = create_app()
+    async with AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="http://testserver",
+    ) as client:
+        yield client
 
 
 @pytest.mark.integration
@@ -92,6 +105,14 @@ async def test_demo_seed_all_is_idempotent() -> None:
     }
     assert counts_after_second == counts_after_first
 
+    async with async_session_factory() as session:
+        admin = (
+            await session.execute(
+                select(AuthUserModel).where(AuthUserModel.email == "admin@demo.local")
+            )
+        ).scalar_one()
+    assert verify_password("123456", admin.password_hash)
+
 
 @pytest.mark.integration
 @pytest.mark.asyncio
@@ -134,3 +155,25 @@ async def test_demo_segment_seeds_can_run_independently() -> None:
             .all()
         )
     assert demo_slugs == [RETAIL_SLUG, RESTAURANT_SLUG]
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_demo_api_installs_reports_and_resets(demo_client: AsyncClient) -> None:
+    install = await demo_client.get("/api/v1/demo/install")
+    assert install.status_code == 200
+    assert install.json()["code"] == "DEMO_INSTALLED"
+    assert install.json()["products"] == 130
+
+    status = await demo_client.get("/api/v1/demo/status")
+    assert status.status_code == 200
+    assert status.json()["companies"] == 3
+    assert status.json()["scenarios"]["restaurant"] == 4
+
+    scenarios = await demo_client.get("/api/v1/demo/scenarios")
+    assert scenarios.status_code == 200
+    assert scenarios.json()["data"]["status"] == "planned"
+
+    reset = await demo_client.get("/api/v1/demo/reset")
+    assert reset.status_code == 200
+    assert reset.json()["code"] == "DEMO_RESET"

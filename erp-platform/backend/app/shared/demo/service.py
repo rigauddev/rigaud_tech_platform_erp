@@ -7,7 +7,6 @@ from uuid import UUID
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.auth.application.passwords import PasswordService
 from app.modules.auth.infrastructure.models import (
     AuthSessionModel,
     AuthUserModel,
@@ -33,8 +32,10 @@ from app.modules.companies.infrastructure.models import (
 from app.modules.products.domain.entities import ProductStatus
 from app.modules.products.infrastructure.models import ProductModel
 from app.modules.users.domain.entities import UserStatus
+from app.security.passwords import hash_password
 from app.shared.demo.data import (
     DEMO_PASSWORD,
+    DEMO_SCENARIOS,
     PLATFORM_COMPANY,
     PLATFORM_USERS,
     RESETTABLE_TENANT_SLUGS,
@@ -75,7 +76,28 @@ class DemoSeedSummary:
 class DemoSeeder:
     def __init__(self, session: AsyncSession, password: str = DEMO_PASSWORD) -> None:
         self.session = session
-        self.password_hash = PasswordService().hash(password)
+        self.password_hash = hash_password(password)
+
+    async def status(self) -> dict[str, int | str | dict[str, int]]:
+        return {
+            "mode": "status",
+            "companies": await self._count(CompanyModel),
+            "branches": await self._count(BranchModel),
+            "users": await self._count(AuthUserModel),
+            "memberships": await self._count(CompanyMembershipModel),
+            "branch_memberships": await self._count(BranchMembershipModel),
+            "categories": await self._count(CategoryModel),
+            "products": await self._count(ProductModel),
+            "scenarios": {key: len(value) for key, value in DEMO_SCENARIOS.items()},
+        }
+
+    async def scenarios(self) -> dict[str, object]:
+        return {
+            "mode": "scenarios",
+            "status": "planned",
+            "items": DEMO_SCENARIOS,
+            "message": "Cenarios operacionais serao materializados quando os modulos existirem.",
+        }
 
     async def seed_all(self) -> DemoSeedSummary:
         await self.seed_platform()
@@ -442,3 +464,6 @@ class DemoSeeder:
     async def _delete_where(self, model: type, *criteria: object) -> int:
         result = await self.session.execute(delete(model).where(*criteria))
         return result.rowcount or 0
+
+    async def _count(self, model: type) -> int:
+        return (await self.session.execute(select(func.count()).select_from(model))).scalar_one()

@@ -4,7 +4,7 @@ from decimal import Decimal
 from app.modules.companies.domain.entities import BranchType, CompanyRole
 from app.modules.products.domain.entities import ProductType, UnitOfMeasure
 
-DEMO_PASSWORD = "senha123"
+DEMO_PASSWORD = "123456"
 PLATFORM_SLUG = "rigaud-platform"
 RESTAURANT_SLUG = "sabor-da-serra"
 RETAIL_SLUG = "moda-center"
@@ -323,6 +323,67 @@ RETAIL_CATEGORIES = (
         "RETAIL-CAT-004", "Acessorios", "acessorios", "Acessorios de moda.", "watch", "#2C7A7B", 4
     ),
 )
+
+DEMO_SCENARIOS = {
+    "restaurant": [
+        {
+            "name": "Mesa 1 - pedido em preparo",
+            "status": "planned",
+            "depends_on": ["REST-004", "REST-010", "REST-011"],
+        },
+        {
+            "name": "Mesa 5 - cliente pediu via QR Code",
+            "status": "planned",
+            "depends_on": ["REST-007", "REST-008", "REST-009"],
+        },
+        {
+            "name": "Mesa 12 - aguardando pagamento",
+            "status": "planned",
+            "depends_on": ["REST-013", "REST-014"],
+        },
+        {
+            "name": "Mesa 20 - pedido delivery",
+            "status": "planned",
+            "depends_on": ["REST-012"],
+        },
+    ],
+    "retail": [
+        {
+            "name": "Venda aberta",
+            "status": "planned",
+            "depends_on": ["STORE-006", "STORE-007"],
+        },
+        {
+            "name": "Pre-venda",
+            "status": "planned",
+            "depends_on": ["STORE-005"],
+        },
+        {
+            "name": "Produto reservado",
+            "status": "planned",
+            "depends_on": ["STORE-003", "STORE-005"],
+        },
+        {
+            "name": "Produto em promocao",
+            "status": "planned",
+            "depends_on": ["STORE-002", "STORE-006"],
+        },
+    ],
+    "financial": [
+        {
+            "name": "Conta aguardando fechamento",
+            "status": "planned",
+            "depends_on": ["REST-013", "REST-014"],
+        }
+    ],
+    "delivery": [
+        {
+            "name": "Pedido em rota de entrega",
+            "status": "planned",
+            "depends_on": ["REST-012"],
+        }
+    ],
+}
 
 
 def restaurant_products() -> tuple[DemoProduct, ...]:
