@@ -33,12 +33,13 @@ tasks:
       branch: feature/doc-005-inventory-engine
       commits:
         - fcfe4aa
+        - e679bb0
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: fcfe4aa
+    commit: e679bb0
     review_status: ready
   - id: DOC-003
     title: Demo Environment & Scenario Engine
