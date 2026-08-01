@@ -2,7 +2,7 @@ COMPOSE := docker compose --env-file .env.example
 MIN_FREE_MB ?= 20000
 WAIT_TIMEOUT ?= 240
 
-.PHONY: preflight up down restart logs backend flutter shell-backend shell-db lint format test db-upgrade db-downgrade db-current db-history db-revision create-company check-task
+.PHONY: preflight up down restart logs backend flutter shell-backend shell-db lint format test db-upgrade db-downgrade db-current db-history db-revision create-company demo demo-all demo-platform demo-restaurant demo-retail demo-reset check-task
 
 preflight:
 	@echo "Checking Docker daemon..."
@@ -77,6 +77,23 @@ create-company:
 		-e COMPANY_CURRENCY="$(COMPANY_CURRENCY)" \
 		backend python -m app.modules.companies.infrastructure.bootstrap
 
+demo: demo-all
+
+demo-all:
+	$(COMPOSE) exec backend python -m app.shared.demo.cli all
+
+demo-platform:
+	$(COMPOSE) exec backend python -m app.shared.demo.cli platform
+
+demo-restaurant:
+	$(COMPOSE) exec backend python -m app.shared.demo.cli restaurant
+
+demo-retail:
+	$(COMPOSE) exec backend python -m app.shared.demo.cli retail
+
+demo-reset:
+	$(COMPOSE) exec backend python -m app.shared.demo.cli reset
+
 lint:
 	$(COMPOSE) run --rm backend ruff check app tests
 	$(COMPOSE) run --rm frontend sh -lc 'git config --global --add safe.directory /sdks/flutter && flutter pub get && flutter analyze'
@@ -86,6 +103,7 @@ format:
 	$(COMPOSE) run --rm frontend sh -lc 'git config --global --add safe.directory /sdks/flutter && flutter pub get && dart format lib test'
 
 test:
+	$(COMPOSE) run --rm backend python -m app.shared.demo.cli reset
 	$(COMPOSE) run --rm backend pytest
 	$(COMPOSE) run --rm frontend sh -lc 'git config --global --add safe.directory /sdks/flutter && flutter pub get && flutter test'
 
