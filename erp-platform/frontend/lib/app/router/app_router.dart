@@ -24,6 +24,9 @@ import '../../features/users/presentation/user_detail_screen.dart';
 import '../../features/users/presentation/user_form_screen.dart';
 import '../../features/users/presentation/user_list_screen.dart';
 import '../../features/users/presentation/user_password_screens.dart';
+import '../../features/warehouses/presentation/warehouse_detail_screen.dart';
+import '../../features/warehouses/presentation/warehouse_form_screen.dart';
+import '../../features/warehouses/presentation/warehouse_list_screen.dart';
 import 'app_routes.dart';
 import 'route_guard.dart';
 
@@ -113,6 +116,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.inventory,
         builder: (context, state) => const InventoryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.warehouses,
+        builder: (context, state) => const WarehouseListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.warehouseCreate,
+        builder: (context, state) => const WarehouseFormScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.warehouses}/:warehouseId',
+        builder: (context, state) => WarehouseDetailScreen(
+          warehouseId: state.pathParameters['warehouseId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.warehouses}/:warehouseId/edit',
+        builder: (context, state) => WarehouseFormScreen(
+          warehouseId: state.pathParameters['warehouseId'],
+        ),
       ),
       GoRoute(
         path: AppRoutes.categoryCreate,

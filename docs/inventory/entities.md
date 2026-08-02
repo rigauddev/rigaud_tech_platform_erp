@@ -7,7 +7,7 @@ Projeção atual de saldo por:
 - tenant;
 - filial;
 - produto;
-- warehouse reservado;
+- warehouse;
 - location reservado.
 
 Campos principais:
@@ -65,8 +65,8 @@ Estados REST-003:
 
 Reserva ativa aumenta `reserved_quantity` e reduz disponibilidade, sem alterar `physical_quantity`.
 
-## Campos Reservados
+## Warehouse E Location
 
-`warehouse_id` e `location_id` existem como campos opcionais para manter compatibilidade com REST-004 e REST-005.
+`warehouse_id` referencia `warehouses.id` a partir da REST-004.
 
-Essas tasks futuras criarão os cadastros e constraints referenciais específicas.
+`location_id` permanece reservado para REST-005, quando o cadastro de Stock Locations será implementado.

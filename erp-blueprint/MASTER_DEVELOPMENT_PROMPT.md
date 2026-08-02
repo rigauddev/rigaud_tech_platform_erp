@@ -111,6 +111,12 @@ Frontend:
 - responsividade por plataforma
 - widgets sem regra de negócio.
 
+Regra multiplataforma permanente:
+
+- nenhuma funcionalidade é considerada concluída se não nascer preparada para Web, Android, iOS, Windows, Linux e macOS;
+- validações completas de Windows e Linux podem ocorrer em ambientes próprios, mas a implementação Flutter não deve introduzir dependências ou fluxos incompatíveis com essas plataformas;
+- divergências entre SaaS e On-Premise não devem gerar bases de código separadas.
+
 Organização esperada para módulos backend:
 
 ```text

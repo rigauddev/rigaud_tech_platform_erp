@@ -22,7 +22,7 @@ DEV-012 — Authentication & Tenant Architecture Alignment
 Task atual:
 
 ```text
-REST-003 — Inventory Engine
+REST-004 — Warehouse Management
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -78,7 +78,7 @@ make demo
 
 Contas disponíveis em `docs/demo/accounts.md`.
 
-Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. A API `/api/v1/demo/*` e o Dashboard Demo do Flutter existem apenas para desenvolvimento. Cenários completos de mesas, pedidos, estoque, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
+Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. A REST-004 adiciona depósitos demo por filial para validar o fluxo de armazenagem. A API `/api/v1/demo/*` e o Dashboard Demo do Flutter existem apenas para desenvolvimento. Cenários completos de mesas, pedidos, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
 
 ## Backend
 
@@ -103,6 +103,8 @@ O cadastro de produtos está documentado em `docs/products/overview.md`.
 O cadastro de categorias está documentado em `docs/categories/overview.md`.
 
 O Inventory Engine está documentado em `docs/inventory/api.md`.
+
+O cadastro de depósitos está documentado em `docs/warehouse/overview.md`.
 
 O ambiente demo está documentado em `docs/demo/overview.md`.
 
@@ -165,6 +167,12 @@ Endpoints técnicos disponíveis:
 - `POST /api/v1/inventory/adjustments`
 - `POST /api/v1/inventory/reservations`
 - `POST /api/v1/inventory/reservations/{reservation_id}/release`
+- `GET /api/v1/warehouses`
+- `GET /api/v1/warehouses/{warehouse_id}`
+- `POST /api/v1/warehouses`
+- `PUT /api/v1/warehouses/{warehouse_id}`
+- `POST /api/v1/warehouses/{warehouse_id}/default`
+- `DELETE /api/v1/warehouses/{warehouse_id}`
 - `GET /api/v1/demo/status`
 - `GET /api/v1/demo/install`
 - `GET /api/v1/demo/reset`

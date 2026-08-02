@@ -79,6 +79,16 @@ class DemoProduct:
     cost_price: Decimal
 
 
+@dataclass(frozen=True)
+class DemoWarehouse:
+    branch_code: str
+    code: str
+    name: str
+    description: str
+    address: str
+    is_default: bool = False
+
+
 PLATFORM_COMPANY = DemoCompany(
     legal_name="Rigaud Tech Platform Ltda",
     trade_name="Rigaud Tech Platform",
@@ -162,6 +172,54 @@ RESTAURANT_BRANCHES = (
         email="foodtruck@sabordaserra.demo",
         phone="75982165873",
         address="Eventos externos",
+    ),
+)
+
+RESTAURANT_WAREHOUSES = (
+    DemoWarehouse(
+        branch_code="MATRIZ",
+        code="MAIN",
+        name="Deposito Principal",
+        description="Estoque principal da filial matriz.",
+        address="Rua das Palmeiras, 100 - Centro",
+        is_default=True,
+    ),
+    DemoWarehouse(
+        branch_code="MATRIZ",
+        code="COLD",
+        name="Camara Fria",
+        description="Armazenamento refrigerado para insumos pereciveis.",
+        address="Fundos da cozinha - acesso controlado",
+    ),
+    DemoWarehouse(
+        branch_code="MATRIZ",
+        code="BAR",
+        name="Bar",
+        description="Estoque operacional de bebidas.",
+        address="Balcao principal",
+    ),
+    DemoWarehouse(
+        branch_code="MATRIZ",
+        code="KITCHEN",
+        name="Cozinha",
+        description="Estoque de preparo e producao.",
+        address="Area de producao",
+    ),
+    DemoWarehouse(
+        branch_code="DELIVERY",
+        code="EXPEDITION",
+        name="Expedicao Delivery",
+        description="Separacao de pedidos para entrega.",
+        address="Rua das Palmeiras, 120 - Centro",
+        is_default=True,
+    ),
+    DemoWarehouse(
+        branch_code="FOODTRUCK",
+        code="STOCK",
+        name="Estoque Food Truck",
+        description="Estoque movel para eventos externos.",
+        address="Unidade movel",
+        is_default=True,
     ),
 )
 
@@ -262,6 +320,39 @@ RETAIL_BRANCHES = (
         email="centro@modacenter.demo",
         phone="75982165882",
         address="Avenida Comercial, 55 - Centro",
+    ),
+)
+
+RETAIL_WAREHOUSES = (
+    DemoWarehouse(
+        branch_code="SHOPPING",
+        code="STOCK",
+        name="Estoque",
+        description="Estoque principal da loja shopping.",
+        address="Shopping Principal, Loja 210",
+        is_default=True,
+    ),
+    DemoWarehouse(
+        branch_code="SHOPPING",
+        code="SHOWCASE",
+        name="Vitrine",
+        description="Produtos expostos para venda imediata.",
+        address="Area de vendas",
+    ),
+    DemoWarehouse(
+        branch_code="SHOPPING",
+        code="RESERVED",
+        name="Reserva",
+        description="Produtos separados para pre-venda e retirada.",
+        address="Retaguarda",
+    ),
+    DemoWarehouse(
+        branch_code="CENTRO",
+        code="STOCK",
+        name="Estoque Centro",
+        description="Estoque principal da filial centro.",
+        address="Avenida Comercial, 55 - Centro",
+        is_default=True,
     ),
 )
 

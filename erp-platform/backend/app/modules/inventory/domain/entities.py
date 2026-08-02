@@ -1,6 +1,11 @@
 from enum import StrEnum
 
 
+class WarehouseStatus(StrEnum):
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+
+
 class InventoryMovementType(StrEnum):
     ADJUSTMENT_IN = "adjustment_in"
     ADJUSTMENT_OUT = "adjustment_out"

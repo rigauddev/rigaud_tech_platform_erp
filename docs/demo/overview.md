@@ -96,6 +96,7 @@ Restaurante:
 - filiais `Matriz`, `Delivery` e `Food Truck`;
 - usuários demo para admin, gerente, caixa, garçons, cozinha, estoque e financeiro;
 - categorias `Bebidas`, `Entradas`, `Pratos`, `Sobremesas` e `Promocoes`;
+- depósitos `Deposito Principal`, `Camara Fria`, `Bar`, `Cozinha`, `Expedicao Delivery` e `Estoque Food Truck`;
 - 50 produtos demo.
 
 Loja:
@@ -104,13 +105,14 @@ Loja:
 - filiais `Shopping` e `Centro`;
 - usuários demo para admin, gerente, vendedor, caixa e estoque;
 - categorias `Calcados`, `Roupas`, `Bolsas` e `Acessorios`;
+- depósitos `Estoque`, `Vitrine`, `Reserva` e `Estoque Centro`;
 - 80 produtos demo.
 
 ## Limite Da DOC-003
 
 Esta task não cria funcionalidades comerciais novas.
 
-Como os módulos de estoque, mesas, clientes, pedidos, QR Code, delivery, caixa e vendas ainda não existem no `develop`, os cenários operacionais completos ficam documentados em `docs/demo/scenario-engine.md` para implementação incremental nas próximas tasks.
+Como os módulos de mesas, clientes, pedidos, QR Code, delivery, caixa e vendas ainda não existem no `develop`, os cenários operacionais completos ficam documentados em `docs/demo/scenario-engine.md` para implementação incremental nas próximas tasks.
 
 ## Princípio
 

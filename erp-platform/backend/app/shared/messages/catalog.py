@@ -366,6 +366,45 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         "Filial ativa obrigatória para movimentar estoque.",
         "warning",
     ),
+    "WAREHOUSE_CREATED": MessageDefinition(
+        "WAREHOUSE_CREATED", 201, "Depósito criado com sucesso.", audit_required=True
+    ),
+    "WAREHOUSE_UPDATED": MessageDefinition(
+        "WAREHOUSE_UPDATED", 200, "Depósito atualizado com sucesso.", audit_required=True
+    ),
+    "WAREHOUSE_DELETED": MessageDefinition(
+        "WAREHOUSE_DELETED", 200, "Depósito removido com sucesso.", audit_required=True
+    ),
+    "WAREHOUSE_DEFAULT_SET": MessageDefinition(
+        "WAREHOUSE_DEFAULT_SET",
+        200,
+        "Depósito padrão atualizado com sucesso.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_RETRIEVED": MessageDefinition(
+        "WAREHOUSE_RETRIEVED", 200, "Depósito consultado com sucesso."
+    ),
+    "WAREHOUSE_LIST_RETRIEVED": MessageDefinition(
+        "WAREHOUSE_LIST_RETRIEVED", 200, "Depósitos consultados com sucesso."
+    ),
+    "WAREHOUSE_NOT_FOUND": MessageDefinition(
+        "WAREHOUSE_NOT_FOUND", 404, "Depósito não encontrado.", "warning"
+    ),
+    "WAREHOUSE_CODE_ALREADY_EXISTS": MessageDefinition(
+        "WAREHOUSE_CODE_ALREADY_EXISTS",
+        409,
+        "Código de depósito já cadastrado nesta filial.",
+        "warning",
+    ),
+    "WAREHOUSE_BRANCH_REQUIRED": MessageDefinition(
+        "WAREHOUSE_BRANCH_REQUIRED",
+        409,
+        "Filial ativa obrigatória para cadastrar depósito.",
+        "warning",
+    ),
+    "WAREHOUSE_INVALID_DATA": MessageDefinition(
+        "WAREHOUSE_INVALID_DATA", 400, "Dados do depósito inválidos.", "warning"
+    ),
     "AUDIT_EVENTS_RETRIEVED": MessageDefinition(
         "AUDIT_EVENTS_RETRIEVED",
         200,

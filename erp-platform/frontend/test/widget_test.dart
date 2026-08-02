@@ -125,6 +125,7 @@ void main() {
     expect(find.text('Meu perfil'), findsOneWidget);
     expect(find.text('Categorias'), findsOneWidget);
     expect(find.text('Estoque'), findsOneWidget);
+    expect(find.text('Depósitos'), findsOneWidget);
     expect(find.text('Auditoria'), findsOneWidget);
     expect(find.text('Operações'), findsOneWidget);
   });
