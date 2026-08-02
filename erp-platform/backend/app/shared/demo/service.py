@@ -29,12 +29,17 @@ from app.modules.companies.infrastructure.models import (
     CompanyMembershipModel,
     CompanyModel,
 )
-from app.modules.inventory.domain.entities import WarehouseStatus, WarehouseZoneStatus
+from app.modules.inventory.domain.entities import (
+    WarehouseLocationStatus,
+    WarehouseStatus,
+    WarehouseZoneStatus,
+)
 from app.modules.inventory.infrastructure.models import (
     InventoryAdjustmentModel,
     InventoryBalanceModel,
     InventoryMovementModel,
     InventoryReservationModel,
+    WarehouseLocationModel,
     WarehouseModel,
     WarehouseZoneModel,
 )
@@ -52,12 +57,14 @@ from app.shared.demo.data import (
     RESTAURANT_CATEGORIES,
     RESTAURANT_COMPANY,
     RESTAURANT_USERS,
+    RESTAURANT_WAREHOUSE_LOCATIONS,
     RESTAURANT_WAREHOUSE_ZONES,
     RESTAURANT_WAREHOUSES,
     RETAIL_BRANCHES,
     RETAIL_CATEGORIES,
     RETAIL_COMPANY,
     RETAIL_USERS,
+    RETAIL_WAREHOUSE_LOCATIONS,
     RETAIL_WAREHOUSE_ZONES,
     RETAIL_WAREHOUSES,
     DemoBranch,
@@ -66,6 +73,7 @@ from app.shared.demo.data import (
     DemoProduct,
     DemoUser,
     DemoWarehouse,
+    DemoWarehouseLocation,
     DemoWarehouseZone,
     restaurant_products,
     retail_products,
@@ -82,6 +90,7 @@ class DemoSeedSummary:
     branch_memberships: int = 0
     warehouses: int = 0
     warehouse_zones: int = 0
+    warehouse_locations: int = 0
     categories: int = 0
     products: int = 0
     deleted_rows: int = 0
@@ -105,6 +114,7 @@ class DemoSeeder:
             "branch_memberships": await self._count(BranchMembershipModel),
             "warehouses": await self._count(WarehouseModel),
             "warehouse_zones": await self._count(WarehouseZoneModel),
+            "warehouse_locations": await self._count(WarehouseLocationModel),
             "categories": await self._count(CategoryModel),
             "products": await self._count(ProductModel),
             "scenarios": {key: len(value) for key, value in DEMO_SCENARIOS.items()},
@@ -131,6 +141,7 @@ class DemoSeeder:
             branch_memberships=restaurant.branch_memberships + retail.branch_memberships,
             warehouses=restaurant.warehouses + retail.warehouses,
             warehouse_zones=restaurant.warehouse_zones + retail.warehouse_zones,
+            warehouse_locations=restaurant.warehouse_locations + retail.warehouse_locations,
             categories=restaurant.categories + retail.categories,
             products=restaurant.products + retail.products,
         )
@@ -156,6 +167,13 @@ class DemoSeeder:
             warehouses,
             RESTAURANT_WAREHOUSE_ZONES,
         )
+        locations = await self._ensure_warehouse_locations(
+            company.id,
+            branches,
+            warehouses,
+            zones,
+            RESTAURANT_WAREHOUSE_LOCATIONS,
+        )
         users = await self._ensure_users(company, RESTAURANT_USERS)
         branch_memberships = await self._ensure_branch_memberships(users, branches)
         categories = await self._ensure_categories(company.id, RESTAURANT_CATEGORIES)
@@ -170,6 +188,7 @@ class DemoSeeder:
             branch_memberships=branch_memberships,
             warehouses=len(warehouses),
             warehouse_zones=len(zones),
+            warehouse_locations=len(locations),
             categories=len(categories),
             products=len(products),
         )
@@ -183,6 +202,13 @@ class DemoSeeder:
             branches,
             warehouses,
             RETAIL_WAREHOUSE_ZONES,
+        )
+        locations = await self._ensure_warehouse_locations(
+            company.id,
+            branches,
+            warehouses,
+            zones,
+            RETAIL_WAREHOUSE_LOCATIONS,
         )
         users = await self._ensure_users(company, RETAIL_USERS)
         branch_memberships = await self._ensure_branch_memberships(users, branches)
@@ -198,6 +224,7 @@ class DemoSeeder:
             branch_memberships=branch_memberships,
             warehouses=len(warehouses),
             warehouse_zones=len(zones),
+            warehouse_locations=len(locations),
             categories=len(categories),
             products=len(products),
         )
@@ -266,6 +293,9 @@ class DemoSeeder:
         )
         deleted_rows += await self._delete_where(
             InventoryBalanceModel, InventoryBalanceModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            WarehouseLocationModel, WarehouseLocationModel.tenant_id.in_(tenant_ids)
         )
         deleted_rows += await self._delete_where(
             WarehouseZoneModel, WarehouseZoneModel.tenant_id.in_(tenant_ids)
@@ -566,6 +596,71 @@ class DemoSeeder:
             zone.is_active = True
             zone.deleted_at = None
             models.append(zone)
+        await self.session.flush()
+        return models
+
+    async def _ensure_warehouse_locations(
+        self,
+        tenant_id: UUID,
+        branches: Iterable[BranchModel],
+        warehouses: Iterable[WarehouseModel],
+        zones: Iterable[WarehouseZoneModel],
+        locations: Iterable[DemoWarehouseLocation],
+    ) -> list[WarehouseLocationModel]:
+        branch_by_code = {branch.code: branch for branch in branches}
+        warehouse_by_scope = {
+            (warehouse.branch_id, warehouse.code): warehouse for warehouse in warehouses
+        }
+        zone_by_scope = {(zone.warehouse_id, zone.code): zone for zone in zones}
+        models: list[WarehouseLocationModel] = []
+
+        for data in locations:
+            branch = branch_by_code[data.branch_code]
+            warehouse = warehouse_by_scope[(branch.id, data.warehouse_code)]
+            zone = zone_by_scope[(warehouse.id, data.zone_code)]
+            location = (
+                await self.session.execute(
+                    select(WarehouseLocationModel).where(
+                        WarehouseLocationModel.tenant_id == tenant_id,
+                        WarehouseLocationModel.warehouse_id == warehouse.id,
+                        WarehouseLocationModel.code == data.code,
+                    )
+                )
+            ).scalar_one_or_none()
+            if location is None:
+                location = WarehouseLocationModel(
+                    tenant_id=tenant_id,
+                    branch_id=branch.id,
+                    warehouse_id=warehouse.id,
+                    zone_id=zone.id,
+                    code=data.code,
+                )
+                self.session.add(location)
+
+            location.zone_id = zone.id
+            location.name = data.name
+            location.alias = data.alias
+            location.barcode = data.barcode
+            location.qr_code = data.qr_code
+            location.aisle = data.aisle
+            location.rack = data.rack
+            location.shelf = data.shelf
+            location.level = data.level
+            location.position = data.position
+            location.capacity = data.capacity
+            location.capacity_unit = data.capacity_unit
+            location.allow_negative = data.allow_negative
+            location.allow_mixed_items = data.allow_mixed_items
+            location.allow_expired = data.allow_expired
+            location.is_pick_location = data.is_pick_location
+            location.is_receive_location = data.is_receive_location
+            location.is_shipping_location = data.is_shipping_location
+            location.is_default = data.is_default
+            location.sort_order = data.sort_order
+            location.status = WarehouseLocationStatus.ACTIVE
+            location.is_active = True
+            location.deleted_at = None
+            models.append(location)
         await self.session.flush()
         return models
 

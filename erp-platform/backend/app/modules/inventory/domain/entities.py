@@ -11,6 +11,11 @@ class WarehouseZoneStatus(StrEnum):
     INACTIVE = "inactive"
 
 
+class WarehouseLocationStatus(StrEnum):
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+
+
 class WarehouseZoneType(StrEnum):
     RECEIVING = "receiving"
     SHIPPING = "shipping"

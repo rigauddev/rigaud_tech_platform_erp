@@ -24,6 +24,9 @@ import '../../features/users/presentation/user_detail_screen.dart';
 import '../../features/users/presentation/user_form_screen.dart';
 import '../../features/users/presentation/user_list_screen.dart';
 import '../../features/users/presentation/user_password_screens.dart';
+import '../../features/warehouse_locations/presentation/warehouse_location_detail_screen.dart';
+import '../../features/warehouse_locations/presentation/warehouse_location_form_screen.dart';
+import '../../features/warehouse_locations/presentation/warehouse_location_list_screen.dart';
 import '../../features/warehouse_zones/presentation/warehouse_zone_detail_screen.dart';
 import '../../features/warehouse_zones/presentation/warehouse_zone_form_screen.dart';
 import '../../features/warehouse_zones/presentation/warehouse_zone_list_screen.dart';
@@ -135,6 +138,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.warehouseZoneCreate,
         builder: (context, state) => const WarehouseZoneFormScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.warehouseLocations,
+        builder: (context, state) => const WarehouseLocationListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.warehouseLocationCreate,
+        builder: (context, state) => const WarehouseLocationFormScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.warehouseLocations}/:locationId',
+        builder: (context, state) => WarehouseLocationDetailScreen(
+          locationId: state.pathParameters['locationId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.warehouseLocations}/:locationId/edit',
+        builder: (context, state) => WarehouseLocationFormScreen(
+          locationId: state.pathParameters['locationId'],
+        ),
       ),
       GoRoute(
         path: '${AppRoutes.warehouseZones}/:zoneId',

@@ -54,6 +54,42 @@ class WarehouseZoneInvalidDataError(WarehouseZoneError):
     """Raised when warehouse zone payload violates validation rules."""
 
 
+class WarehouseLocationError(InventoryError):
+    """Base exception for warehouse location use cases."""
+
+
+class WarehouseLocationNotFoundError(WarehouseLocationError):
+    """Raised when a warehouse location does not exist for the current tenant."""
+
+
+class WarehouseLocationAlreadyExistsError(WarehouseLocationError):
+    """Raised when a warehouse location unique value already exists."""
+
+
+class WarehouseLocationCodeAlreadyExistsError(WarehouseLocationAlreadyExistsError):
+    """Raised when location code already exists in the same warehouse."""
+
+
+class WarehouseLocationBarcodeAlreadyExistsError(WarehouseLocationAlreadyExistsError):
+    """Raised when location barcode already exists in the tenant."""
+
+
+class WarehouseLocationQrCodeAlreadyExistsError(WarehouseLocationAlreadyExistsError):
+    """Raised when location QR Code already exists in the tenant."""
+
+
+class WarehouseLocationBranchRequiredError(WarehouseLocationError):
+    """Raised when the authenticated context has no active branch."""
+
+
+class WarehouseLocationInvalidDataError(WarehouseLocationError):
+    """Raised when warehouse location payload violates validation rules."""
+
+
+class WarehouseZoneInactiveError(WarehouseZoneError):
+    """Raised when operation requires an active warehouse zone."""
+
+
 class InventoryBranchRequiredError(InventoryError):
     """Raised when the authenticated context has no active branch."""
 

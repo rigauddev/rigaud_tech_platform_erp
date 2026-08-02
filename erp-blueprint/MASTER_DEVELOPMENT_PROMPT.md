@@ -120,6 +120,7 @@ Regra multiplataforma permanente:
 Regra de preparação evolutiva de entidades:
 
 - toda nova entidade deve ser avaliada para suportar futuramente QR Code, código de barras, auditoria completa, sincronização offline, eventos Kafka, operação multi-filial e compatibilidade SaaS/On-Premise;
+- toda nova entidade operacional deve possuir UUID interno e avaliar a necessidade de código curto para uso humano na operação;
 - essa avaliação não autoriza implementar recursos futuros fora do escopo da Task;
 - quando a Task não implementar um desses recursos, a documentação deve registrar a preparação ou o limite do escopo.
 

@@ -6,6 +6,9 @@ from app.modules.auth.presentation.router import router as auth_router
 from app.modules.categories.presentation.router import router as categories_router
 from app.modules.companies.presentation.router import router as companies_router
 from app.modules.inventory.presentation.router import router as inventory_router
+from app.modules.inventory.presentation.warehouse_location_router import (
+    router as warehouse_locations_router,
+)
 from app.modules.inventory.presentation.warehouse_router import router as warehouses_router
 from app.modules.inventory.presentation.warehouse_zone_router import (
     router as warehouse_zones_router,
@@ -22,6 +25,7 @@ api_router.include_router(companies_router)
 api_router.include_router(inventory_router)
 api_router.include_router(warehouses_router)
 api_router.include_router(warehouse_zones_router)
+api_router.include_router(warehouse_locations_router)
 api_router.include_router(products_router)
 api_router.include_router(users_router)
 api_router.include_router(demo_router)

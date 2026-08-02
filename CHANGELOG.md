@@ -4,6 +4,10 @@
 
 ### Added
 
+- REST-006: Warehouse Locations com CRUD de localizações físicas, filtros por depósito/zona/pesquisa, QR Code e código de barras preparados, ativação/inativação, ordenação, soft delete, auditoria, migration `0015_warehouse_locations` e endpoints `/api/v1/warehouse-locations`.
+- REST-006: Flutter Warehouse Locations com lista, cadastro, edição, detalhe, filtros, status e ações operacionais.
+- REST-006: Demo Environment atualizado com localizações físicas para restaurante e varejo.
+- REST-006: documentação em `docs/warehouse/locations*.md` e Academy de Warehouse Locations.
 - REST-005: Warehouse Zones com CRUD de zonas, tipo operacional, flags de recebimento/expedição/armazenagem/produção/quarentena, ordenação, soft delete, auditoria, migration `0014_warehouse_zones` e endpoints `/api/v1/warehouse-zones`.
 - REST-005: Flutter Warehouse Zones com lista, cadastro, edição, detalhe, ativação/desativação e reordenação.
 - REST-005: Demo Environment atualizado com zonas operacionais para restaurante e varejo.

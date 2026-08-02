@@ -444,6 +444,81 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     "WAREHOUSE_ZONE_INVALID_DATA": MessageDefinition(
         "WAREHOUSE_ZONE_INVALID_DATA", 400, "Dados da zona inválidos.", "warning"
     ),
+    "WAREHOUSE_ZONE_INACTIVE": MessageDefinition(
+        "WAREHOUSE_ZONE_INACTIVE", 409, "Zona inativa não aceita novas localizações.", "warning"
+    ),
+    "WAREHOUSE_LOCATION_CREATED": MessageDefinition(
+        "WAREHOUSE_LOCATION_CREATED",
+        201,
+        "Localização criada com sucesso.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_LOCATION_UPDATED": MessageDefinition(
+        "WAREHOUSE_LOCATION_UPDATED",
+        200,
+        "Localização atualizada com sucesso.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_LOCATION_ACTIVATED": MessageDefinition(
+        "WAREHOUSE_LOCATION_ACTIVATED",
+        200,
+        "Localização ativada com sucesso.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_LOCATION_DEACTIVATED": MessageDefinition(
+        "WAREHOUSE_LOCATION_DEACTIVATED",
+        200,
+        "Localização inativada com sucesso.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_LOCATION_DELETED": MessageDefinition(
+        "WAREHOUSE_LOCATION_DELETED",
+        200,
+        "Localização removida com sucesso.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_LOCATION_REORDERED": MessageDefinition(
+        "WAREHOUSE_LOCATION_REORDERED",
+        200,
+        "Ordenação da localização atualizada.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_LOCATION_RETRIEVED": MessageDefinition(
+        "WAREHOUSE_LOCATION_RETRIEVED", 200, "Localização consultada com sucesso."
+    ),
+    "WAREHOUSE_LOCATION_LIST_RETRIEVED": MessageDefinition(
+        "WAREHOUSE_LOCATION_LIST_RETRIEVED", 200, "Localizações consultadas com sucesso."
+    ),
+    "WAREHOUSE_LOCATION_NOT_FOUND": MessageDefinition(
+        "WAREHOUSE_LOCATION_NOT_FOUND", 404, "Localização não encontrada.", "warning"
+    ),
+    "WAREHOUSE_LOCATION_CODE_ALREADY_EXISTS": MessageDefinition(
+        "WAREHOUSE_LOCATION_CODE_ALREADY_EXISTS",
+        409,
+        "Código de localização já cadastrado neste depósito.",
+        "warning",
+    ),
+    "WAREHOUSE_LOCATION_BARCODE_ALREADY_EXISTS": MessageDefinition(
+        "WAREHOUSE_LOCATION_BARCODE_ALREADY_EXISTS",
+        409,
+        "Código de barras já cadastrado em outra localização.",
+        "warning",
+    ),
+    "WAREHOUSE_LOCATION_QR_CODE_ALREADY_EXISTS": MessageDefinition(
+        "WAREHOUSE_LOCATION_QR_CODE_ALREADY_EXISTS",
+        409,
+        "QR Code já cadastrado em outra localização.",
+        "warning",
+    ),
+    "WAREHOUSE_LOCATION_BRANCH_REQUIRED": MessageDefinition(
+        "WAREHOUSE_LOCATION_BRANCH_REQUIRED",
+        409,
+        "Filial ativa obrigatória para cadastrar localização.",
+        "warning",
+    ),
+    "WAREHOUSE_LOCATION_INVALID_DATA": MessageDefinition(
+        "WAREHOUSE_LOCATION_INVALID_DATA", 400, "Dados da localização inválidos.", "warning"
+    ),
     "AUDIT_EVENTS_RETRIEVED": MessageDefinition(
         "AUDIT_EVENTS_RETRIEVED",
         200,

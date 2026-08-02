@@ -22,10 +22,6 @@ Regras:
 - warehouse inativo não recebe novas operações;
 - warehouse inativo pode manter histórico.
 
-## StockLocation
-
-Representa um local interno dentro de um warehouse e de uma zona.
-
 ## WarehouseZone
 
 Representa uma zona operacional dentro de um warehouse.
@@ -52,24 +48,33 @@ Regras:
 - `code` deve ser único por warehouse entre zonas não removidas;
 - uma zona pertence a um único warehouse;
 - o warehouse precisa pertencer ao tenant e à filial ativa;
-- zona inativa não deve receber novas localizações em tasks futuras.
+- zona inativa não recebe novas localizações.
 
-Campos planejados:
+## WarehouseLocation
 
-- `id`;
-- `tenant_id`;
-- `branch_id`;
-- `warehouse_id`;
-- `code`;
-- `name`;
-- `location_type`;
-- `status`;
-- auditoria e timestamps.
+Representa um endereço físico dentro de uma zona de depósito.
+
+Também é o `Stock Location` ou `Bin` operacional do ERP.
+
+Campos REST-006:
+
+- identificação por UUID e código curto;
+- vínculo com `tenant_id`, `branch_id`, `warehouse_id` e `zone_id`;
+- `alias`;
+- `barcode`;
+- `qr_code`;
+- atributos físicos: corredor, rack, prateleira, nível e posição;
+- capacidade e unidade de capacidade;
+- flags operacionais para recebimento, picking e expedição;
+- flags de política preparatória para saldo negativo, itens mistos e vencidos;
+- status, ordenação, soft delete, auditoria e timestamps.
 
 Regras:
 
-- `code` deve ser único por warehouse;
-- um local pertence a um único warehouse;
+- `code` deve ser único por warehouse entre localizações não removidas;
+- `barcode` e `qr_code` devem ser únicos por tenant quando informados;
+- um local pertence a uma única zona;
+- a zona deve pertencer ao mesmo warehouse;
 - movimentações devem informar local quando o warehouse exigir controle por localização.
 
 ## InventoryBalance
