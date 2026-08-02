@@ -29,6 +29,14 @@ from app.modules.companies.infrastructure.models import (
     CompanyMembershipModel,
     CompanyModel,
 )
+from app.modules.inventory.domain.entities import WarehouseStatus
+from app.modules.inventory.infrastructure.models import (
+    InventoryAdjustmentModel,
+    InventoryBalanceModel,
+    InventoryMovementModel,
+    InventoryReservationModel,
+    WarehouseModel,
+)
 from app.modules.products.domain.entities import ProductStatus
 from app.modules.products.infrastructure.models import ProductModel
 from app.modules.users.domain.entities import UserStatus
@@ -43,15 +51,18 @@ from app.shared.demo.data import (
     RESTAURANT_CATEGORIES,
     RESTAURANT_COMPANY,
     RESTAURANT_USERS,
+    RESTAURANT_WAREHOUSES,
     RETAIL_BRANCHES,
     RETAIL_CATEGORIES,
     RETAIL_COMPANY,
     RETAIL_USERS,
+    RETAIL_WAREHOUSES,
     DemoBranch,
     DemoCategory,
     DemoCompany,
     DemoProduct,
     DemoUser,
+    DemoWarehouse,
     restaurant_products,
     retail_products,
 )
@@ -65,6 +76,7 @@ class DemoSeedSummary:
     users: int = 0
     memberships: int = 0
     branch_memberships: int = 0
+    warehouses: int = 0
     categories: int = 0
     products: int = 0
     deleted_rows: int = 0
@@ -86,6 +98,7 @@ class DemoSeeder:
             "users": await self._count(AuthUserModel),
             "memberships": await self._count(CompanyMembershipModel),
             "branch_memberships": await self._count(BranchMembershipModel),
+            "warehouses": await self._count(WarehouseModel),
             "categories": await self._count(CategoryModel),
             "products": await self._count(ProductModel),
             "scenarios": {key: len(value) for key, value in DEMO_SCENARIOS.items()},
@@ -110,6 +123,7 @@ class DemoSeeder:
             users=len(PLATFORM_USERS) + restaurant.users + retail.users,
             memberships=len(PLATFORM_USERS) + restaurant.memberships + retail.memberships,
             branch_memberships=restaurant.branch_memberships + retail.branch_memberships,
+            warehouses=restaurant.warehouses + retail.warehouses,
             categories=restaurant.categories + retail.categories,
             products=restaurant.products + retail.products,
         )
@@ -128,6 +142,7 @@ class DemoSeeder:
     async def seed_restaurant(self) -> DemoSeedSummary:
         company = await self._ensure_company(RESTAURANT_COMPANY)
         branches = await self._ensure_branches(company, RESTAURANT_BRANCHES)
+        warehouses = await self._ensure_warehouses(company.id, branches, RESTAURANT_WAREHOUSES)
         users = await self._ensure_users(company, RESTAURANT_USERS)
         branch_memberships = await self._ensure_branch_memberships(users, branches)
         categories = await self._ensure_categories(company.id, RESTAURANT_CATEGORIES)
@@ -140,6 +155,7 @@ class DemoSeeder:
             users=len(users),
             memberships=len(users),
             branch_memberships=branch_memberships,
+            warehouses=len(warehouses),
             categories=len(categories),
             products=len(products),
         )
@@ -147,6 +163,7 @@ class DemoSeeder:
     async def seed_retail(self) -> DemoSeedSummary:
         company = await self._ensure_company(RETAIL_COMPANY)
         branches = await self._ensure_branches(company, RETAIL_BRANCHES)
+        warehouses = await self._ensure_warehouses(company.id, branches, RETAIL_WAREHOUSES)
         users = await self._ensure_users(company, RETAIL_USERS)
         branch_memberships = await self._ensure_branch_memberships(users, branches)
         categories = await self._ensure_categories(company.id, RETAIL_CATEGORIES)
@@ -159,6 +176,7 @@ class DemoSeeder:
             users=len(users),
             memberships=len(users),
             branch_memberships=branch_memberships,
+            warehouses=len(warehouses),
             categories=len(categories),
             products=len(products),
         )
@@ -215,6 +233,21 @@ class DemoSeeder:
         deleted_rows += await self._delete_where(
             CompanyMembershipModel,
             CompanyMembershipModel.tenant_id.in_(tenant_ids),
+        )
+        deleted_rows += await self._delete_where(
+            InventoryReservationModel, InventoryReservationModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            InventoryAdjustmentModel, InventoryAdjustmentModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            InventoryMovementModel, InventoryMovementModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            InventoryBalanceModel, InventoryBalanceModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            WarehouseModel, WarehouseModel.tenant_id.in_(tenant_ids)
         )
         deleted_rows += await self._delete_where(
             ProductModel, ProductModel.tenant_id.in_(tenant_ids)
@@ -392,6 +425,73 @@ class DemoSeeder:
                 count += 1
         await self.session.flush()
         return count
+
+    async def _ensure_warehouses(
+        self,
+        tenant_id: UUID,
+        branches: Iterable[BranchModel],
+        warehouses: Iterable[DemoWarehouse],
+    ) -> list[WarehouseModel]:
+        branch_by_code = {branch.code: branch for branch in branches}
+        models: list[WarehouseModel] = []
+
+        for data in warehouses:
+            branch = branch_by_code[data.branch_code]
+            warehouse = (
+                await self.session.execute(
+                    select(WarehouseModel).where(
+                        WarehouseModel.tenant_id == tenant_id,
+                        WarehouseModel.branch_id == branch.id,
+                        WarehouseModel.code == data.code,
+                    )
+                )
+            ).scalar_one_or_none()
+            if warehouse is None:
+                warehouse = WarehouseModel(
+                    tenant_id=tenant_id,
+                    branch_id=branch.id,
+                    code=data.code,
+                )
+                self.session.add(warehouse)
+
+            if data.is_default:
+                await self._clear_default_warehouse(tenant_id, branch.id, exclude=warehouse)
+
+            warehouse.name = data.name
+            warehouse.description = data.description
+            warehouse.address = data.address
+            warehouse.status = WarehouseStatus.ACTIVE
+            warehouse.is_active = True
+            warehouse.is_default = data.is_default
+            warehouse.deleted_at = None
+            models.append(warehouse)
+        await self.session.flush()
+        return models
+
+    async def _clear_default_warehouse(
+        self,
+        tenant_id: UUID,
+        branch_id: UUID,
+        *,
+        exclude: WarehouseModel,
+    ) -> None:
+        defaults = (
+            (
+                await self.session.execute(
+                    select(WarehouseModel).where(
+                        WarehouseModel.tenant_id == tenant_id,
+                        WarehouseModel.branch_id == branch_id,
+                        WarehouseModel.is_default.is_(True),
+                        WarehouseModel.deleted_at.is_(None),
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        for default in defaults:
+            if default.id != exclude.id:
+                default.is_default = False
 
     async def _ensure_categories(
         self,

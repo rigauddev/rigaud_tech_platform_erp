@@ -130,6 +130,7 @@ format:
 	$(COMPOSE) run --rm frontend sh -lc 'git config --global --add safe.directory /sdks/flutter && flutter pub get && dart format lib test'
 
 test:
+	$(COMPOSE) run --rm backend alembic upgrade head
 	$(COMPOSE) run --rm backend python -m app.shared.demo.cli reset
 	$(COMPOSE) run --rm backend pytest
 	$(COMPOSE) run --rm frontend sh -lc 'git config --global --add safe.directory /sdks/flutter && flutter pub get && flutter test'

@@ -17,8 +17,10 @@ from app.modules.inventory.domain.exceptions import (
     InventoryProductNotFoundError,
     InventoryReservationInactiveError,
     InventoryReservationNotFoundError,
+    InventoryWarehouseNotFoundError,
 )
 from app.modules.inventory.domain.repositories import InventoryRepository
+from app.modules.inventory.domain.warehouse_repositories import WarehouseRepository
 from app.modules.inventory.infrastructure.models import (
     InventoryAdjustmentModel,
     InventoryBalanceModel,
@@ -128,9 +130,15 @@ class ListInventoryMovements:
 
 
 class CreateInventoryAdjustment:
-    def __init__(self, inventory: InventoryRepository, products: ProductRepository) -> None:
+    def __init__(
+        self,
+        inventory: InventoryRepository,
+        products: ProductRepository,
+        warehouses: WarehouseRepository | None = None,
+    ) -> None:
         self.inventory = inventory
         self.products = products
+        self.warehouses = warehouses
 
     async def execute(self, input_data: InventoryAdjustmentInput) -> InventoryOperationResult:
         branch_id = _require_branch(input_data.branch_id)
@@ -140,6 +148,12 @@ class CreateInventoryAdjustment:
             self.products,
             product_id=input_data.product_id,
             tenant_id=input_data.tenant_id,
+        )
+        await _ensure_warehouse_valid(
+            self.warehouses,
+            warehouse_id=input_data.warehouse_id,
+            tenant_id=input_data.tenant_id,
+            branch_id=branch_id,
         )
         balance = await self.inventory.get_or_create_balance(
             tenant_id=input_data.tenant_id,
@@ -199,9 +213,15 @@ class CreateInventoryAdjustment:
 
 
 class CreateInventoryReservation:
-    def __init__(self, inventory: InventoryRepository, products: ProductRepository) -> None:
+    def __init__(
+        self,
+        inventory: InventoryRepository,
+        products: ProductRepository,
+        warehouses: WarehouseRepository | None = None,
+    ) -> None:
         self.inventory = inventory
         self.products = products
+        self.warehouses = warehouses
 
     async def execute(self, input_data: InventoryReservationInput) -> InventoryOperationResult:
         branch_id = _require_branch(input_data.branch_id)
@@ -211,6 +231,12 @@ class CreateInventoryReservation:
             self.products,
             product_id=input_data.product_id,
             tenant_id=input_data.tenant_id,
+        )
+        await _ensure_warehouse_valid(
+            self.warehouses,
+            warehouse_id=input_data.warehouse_id,
+            tenant_id=input_data.tenant_id,
+            branch_id=branch_id,
         )
         balance = await self.inventory.get_or_create_balance(
             tenant_id=input_data.tenant_id,
@@ -339,3 +365,17 @@ async def _ensure_product_exists(
     product = await products.get_by_id(product_id, tenant_id=tenant_id)
     if product is None:
         raise InventoryProductNotFoundError("Product not found.")
+
+
+async def _ensure_warehouse_valid(
+    warehouses: WarehouseRepository | None,
+    *,
+    warehouse_id: UUID | None,
+    tenant_id: UUID,
+    branch_id: UUID,
+) -> None:
+    if warehouse_id is None or warehouses is None:
+        return
+    warehouse = await warehouses.get_by_id(warehouse_id, tenant_id=tenant_id)
+    if warehouse is None or warehouse.branch_id != branch_id or not warehouse.is_active:
+        raise InventoryWarehouseNotFoundError("Warehouse not found.")

@@ -18,6 +18,8 @@ class AppRoutes {
   static const categories = '/categories';
   static const categoryCreate = '/categories/new';
   static const inventory = '/inventory';
+  static const warehouses = '/warehouses';
+  static const warehouseCreate = '/warehouses/new';
   static const audit = '/audit';
   static const demo = '/demo';
   static const notFound = '/not-found';

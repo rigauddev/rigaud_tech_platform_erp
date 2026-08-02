@@ -1,7 +1,17 @@
 from decimal import Decimal
 from uuid import UUID, uuid4
 
-from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, Numeric, String, Text
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    Enum,
+    ForeignKey,
+    Index,
+    Numeric,
+    String,
+    Text,
+    text,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -13,7 +23,66 @@ from app.modules.inventory.domain.entities import (
     InventoryMovementStatus,
     InventoryMovementType,
     InventoryReservationStatus,
+    WarehouseStatus,
 )
+
+
+class WarehouseModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
+    __tablename__ = "warehouses"
+    __table_args__ = (
+        Index("uq_warehouses_tenant_branch_code", "tenant_id", "branch_id", "code", unique=True),
+        Index(
+            "uq_warehouses_tenant_branch_default",
+            "tenant_id",
+            "branch_id",
+            unique=True,
+            postgresql_where=text("is_default = true AND deleted_at IS NULL"),
+        ),
+        Index("ix_warehouses_tenant_branch", "tenant_id", "branch_id"),
+        Index("ix_warehouses_tenant_active", "tenant_id", "is_active"),
+    )
+
+    id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("companies.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    branch_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("branches.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    code: Mapped[str] = mapped_column(String(40), nullable=False)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    address: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    status: Mapped[WarehouseStatus] = mapped_column(
+        Enum(
+            WarehouseStatus,
+            name="warehouse_status",
+            values_callable=lambda enum: [item.value for item in enum],
+        ),
+        default=WarehouseStatus.ACTIVE,
+        nullable=False,
+    )
+    is_default: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+    def activate(self) -> None:
+        self.status = WarehouseStatus.ACTIVE
+        self.is_active = True
+
+    def deactivate(self) -> None:
+        self.status = WarehouseStatus.INACTIVE
+        self.is_active = False
+        self.is_default = False
+
+    def set_default(self) -> None:
+        self.is_default = True
+        self.activate()
 
 
 class InventoryBalanceModel(TenantMixin, TimestampMixin, AuditMixin, Base):
@@ -62,7 +131,11 @@ class InventoryBalanceModel(TenantMixin, TimestampMixin, AuditMixin, Base):
         index=True,
         nullable=False,
     )
-    warehouse_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
+    warehouse_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("warehouses.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
     location_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
     physical_quantity: Mapped[Decimal] = mapped_column(
         Numeric(14, 3), nullable=False, default=Decimal("0.000")
@@ -108,7 +181,11 @@ class InventoryMovementModel(TenantMixin, TimestampMixin, Base):
         index=True,
         nullable=False,
     )
-    warehouse_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
+    warehouse_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("warehouses.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
     location_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
     movement_type: Mapped[InventoryMovementType] = mapped_column(
         Enum(
@@ -172,7 +249,11 @@ class InventoryAdjustmentModel(TenantMixin, TimestampMixin, AuditMixin, Base):
         ForeignKey("inventory_movements.id", ondelete="RESTRICT"),
         nullable=True,
     )
-    warehouse_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
+    warehouse_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("warehouses.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
     location_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
     adjustment_type: Mapped[InventoryAdjustmentType] = mapped_column(
         Enum(
@@ -225,7 +306,11 @@ class InventoryReservationModel(TenantMixin, TimestampMixin, SoftDeleteMixin, Au
         index=True,
         nullable=False,
     )
-    warehouse_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
+    warehouse_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("warehouses.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
     location_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
     status: Mapped[InventoryReservationStatus] = mapped_column(
         Enum(
