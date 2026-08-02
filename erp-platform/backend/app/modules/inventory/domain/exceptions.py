@@ -30,6 +30,30 @@ class WarehouseInvalidDataError(WarehouseError):
     """Raised when warehouse payload violates validation rules."""
 
 
+class WarehouseZoneError(InventoryError):
+    """Base exception for warehouse zone use cases."""
+
+
+class WarehouseZoneNotFoundError(WarehouseZoneError):
+    """Raised when a warehouse zone does not exist for the current tenant."""
+
+
+class WarehouseZoneAlreadyExistsError(WarehouseZoneError):
+    """Raised when a warehouse zone unique value already exists."""
+
+
+class WarehouseZoneCodeAlreadyExistsError(WarehouseZoneAlreadyExistsError):
+    """Raised when zone code already exists in the same warehouse."""
+
+
+class WarehouseZoneBranchRequiredError(WarehouseZoneError):
+    """Raised when the authenticated context has no active branch."""
+
+
+class WarehouseZoneInvalidDataError(WarehouseZoneError):
+    """Raised when warehouse zone payload violates validation rules."""
+
+
 class InventoryBranchRequiredError(InventoryError):
     """Raised when the authenticated context has no active branch."""
 

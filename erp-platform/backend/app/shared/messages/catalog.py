@@ -405,6 +405,45 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     "WAREHOUSE_INVALID_DATA": MessageDefinition(
         "WAREHOUSE_INVALID_DATA", 400, "Dados do depósito inválidos.", "warning"
     ),
+    "WAREHOUSE_INACTIVE": MessageDefinition(
+        "WAREHOUSE_INACTIVE", 409, "Depósito inativo não aceita novas zonas.", "warning"
+    ),
+    "WAREHOUSE_ZONE_CREATED": MessageDefinition(
+        "WAREHOUSE_ZONE_CREATED", 201, "Zona criada com sucesso.", audit_required=True
+    ),
+    "WAREHOUSE_ZONE_UPDATED": MessageDefinition(
+        "WAREHOUSE_ZONE_UPDATED", 200, "Zona atualizada com sucesso.", audit_required=True
+    ),
+    "WAREHOUSE_ZONE_DELETED": MessageDefinition(
+        "WAREHOUSE_ZONE_DELETED", 200, "Zona removida com sucesso.", audit_required=True
+    ),
+    "WAREHOUSE_ZONE_REORDERED": MessageDefinition(
+        "WAREHOUSE_ZONE_REORDERED", 200, "Ordenação da zona atualizada.", audit_required=True
+    ),
+    "WAREHOUSE_ZONE_RETRIEVED": MessageDefinition(
+        "WAREHOUSE_ZONE_RETRIEVED", 200, "Zona consultada com sucesso."
+    ),
+    "WAREHOUSE_ZONE_LIST_RETRIEVED": MessageDefinition(
+        "WAREHOUSE_ZONE_LIST_RETRIEVED", 200, "Zonas consultadas com sucesso."
+    ),
+    "WAREHOUSE_ZONE_NOT_FOUND": MessageDefinition(
+        "WAREHOUSE_ZONE_NOT_FOUND", 404, "Zona não encontrada.", "warning"
+    ),
+    "WAREHOUSE_ZONE_CODE_ALREADY_EXISTS": MessageDefinition(
+        "WAREHOUSE_ZONE_CODE_ALREADY_EXISTS",
+        409,
+        "Código de zona já cadastrado neste depósito.",
+        "warning",
+    ),
+    "WAREHOUSE_ZONE_BRANCH_REQUIRED": MessageDefinition(
+        "WAREHOUSE_ZONE_BRANCH_REQUIRED",
+        409,
+        "Filial ativa obrigatória para cadastrar zona.",
+        "warning",
+    ),
+    "WAREHOUSE_ZONE_INVALID_DATA": MessageDefinition(
+        "WAREHOUSE_ZONE_INVALID_DATA", 400, "Dados da zona inválidos.", "warning"
+    ),
     "AUDIT_EVENTS_RETRIEVED": MessageDefinition(
         "AUDIT_EVENTS_RETRIEVED",
         200,

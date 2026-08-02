@@ -24,6 +24,8 @@ from app.modules.inventory.domain.entities import (
     InventoryMovementType,
     InventoryReservationStatus,
     WarehouseStatus,
+    WarehouseZoneStatus,
+    WarehouseZoneType,
 )
 
 
@@ -83,6 +85,81 @@ class WarehouseModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, B
     def set_default(self) -> None:
         self.is_default = True
         self.activate()
+
+
+class WarehouseZoneModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
+    __tablename__ = "warehouse_zones"
+    __table_args__ = (
+        Index(
+            "uq_warehouse_zones_tenant_warehouse_code",
+            "tenant_id",
+            "warehouse_id",
+            "code",
+            unique=True,
+            postgresql_where=text("deleted_at IS NULL"),
+        ),
+        Index("ix_warehouse_zones_tenant_branch", "tenant_id", "branch_id"),
+        Index("ix_warehouse_zones_tenant_warehouse", "tenant_id", "warehouse_id"),
+        Index("ix_warehouse_zones_tenant_active", "tenant_id", "is_active"),
+    )
+
+    id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("companies.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    branch_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("branches.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    warehouse_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("warehouses.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    code: Mapped[str] = mapped_column(String(40), nullable=False)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    type: Mapped[WarehouseZoneType] = mapped_column(
+        Enum(
+            WarehouseZoneType,
+            name="warehouse_zone_type",
+            values_callable=lambda enum: [item.value for item in enum],
+        ),
+        default=WarehouseZoneType.STORAGE,
+        nullable=False,
+    )
+    color: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    icon: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    sort_order: Mapped[int] = mapped_column(default=0, nullable=False)
+    is_receiving: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_shipping: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_storage: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    is_production: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_quarantine: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    status: Mapped[WarehouseZoneStatus] = mapped_column(
+        Enum(
+            WarehouseZoneStatus,
+            name="warehouse_zone_status",
+            values_callable=lambda enum: [item.value for item in enum],
+        ),
+        default=WarehouseZoneStatus.ACTIVE,
+        nullable=False,
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+    def activate(self) -> None:
+        self.status = WarehouseZoneStatus.ACTIVE
+        self.is_active = True
+
+    def deactivate(self) -> None:
+        self.status = WarehouseZoneStatus.INACTIVE
+        self.is_active = False
 
 
 class InventoryBalanceModel(TenantMixin, TimestampMixin, AuditMixin, Base):

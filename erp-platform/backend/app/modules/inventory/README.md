@@ -25,6 +25,16 @@ REST-004 adiciona Warehouse Management:
 - auditoria;
 - validação de `warehouse_id` em ajustes e reservas.
 
+REST-005 adiciona Warehouse Zones:
+
+- `WarehouseZone`;
+- CRUD em `/api/v1/warehouse-zones`;
+- tipos operacionais;
+- flags para recebimento, expedição, armazenagem, produção e quarentena;
+- ordenação;
+- soft delete;
+- auditoria.
+
 Documentação principal:
 
 - `docs/inventory/overview.md`
@@ -36,4 +46,5 @@ Documentação principal:
 - `docs/inventory/permissions.md`
 - `docs/inventory/validation.md`
 - `docs/warehouse/overview.md`
+- `docs/warehouse/zones.md`
 - `docs/inventory/offline-strategy.md`

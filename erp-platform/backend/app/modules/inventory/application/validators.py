@@ -3,6 +3,7 @@ from decimal import Decimal, InvalidOperation
 from app.modules.inventory.domain.exceptions import (
     InventoryInvalidQuantityError,
     WarehouseInvalidDataError,
+    WarehouseZoneInvalidDataError,
 )
 
 
@@ -48,3 +49,38 @@ def normalize_optional_warehouse_text(
     if len(text) > max_length:
         raise WarehouseInvalidDataError(f"{field} is invalid.")
     return text
+
+
+def normalize_warehouse_zone_code(value: str) -> str:
+    code = value.strip().upper()
+    if len(code) < 2 or len(code) > 40:
+        raise WarehouseZoneInvalidDataError("warehouse zone code must have between 2 and 40 chars.")
+    return code
+
+
+def normalize_warehouse_zone_text(value: str, field: str, *, max_length: int) -> str:
+    text = value.strip()
+    if not text or len(text) > max_length:
+        raise WarehouseZoneInvalidDataError(f"{field} is invalid.")
+    return text
+
+
+def normalize_optional_warehouse_zone_text(
+    value: str | None, field: str, *, max_length: int
+) -> str | None:
+    if value is None:
+        return None
+    text = value.strip()
+    if not text:
+        return None
+    if len(text) > max_length:
+        raise WarehouseZoneInvalidDataError(f"{field} is invalid.")
+    return text
+
+
+def normalize_sort_order(value: int | None) -> int:
+    if value is None:
+        return 0
+    if value < 0 or value > 9999:
+        raise WarehouseZoneInvalidDataError("sort_order must be between 0 and 9999.")
+    return value

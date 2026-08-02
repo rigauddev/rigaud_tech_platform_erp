@@ -117,6 +117,12 @@ Regra multiplataforma permanente:
 - validações completas de Windows e Linux podem ocorrer em ambientes próprios, mas a implementação Flutter não deve introduzir dependências ou fluxos incompatíveis com essas plataformas;
 - divergências entre SaaS e On-Premise não devem gerar bases de código separadas.
 
+Regra de preparação evolutiva de entidades:
+
+- toda nova entidade deve ser avaliada para suportar futuramente QR Code, código de barras, auditoria completa, sincronização offline, eventos Kafka, operação multi-filial e compatibilidade SaaS/On-Premise;
+- essa avaliação não autoriza implementar recursos futuros fora do escopo da Task;
+- quando a Task não implementar um desses recursos, a documentação deve registrar a preparação ou o limite do escopo.
+
 Organização esperada para módulos backend:
 
 ```text

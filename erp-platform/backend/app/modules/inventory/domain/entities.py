@@ -6,6 +6,22 @@ class WarehouseStatus(StrEnum):
     INACTIVE = "inactive"
 
 
+class WarehouseZoneStatus(StrEnum):
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+
+
+class WarehouseZoneType(StrEnum):
+    RECEIVING = "receiving"
+    SHIPPING = "shipping"
+    STORAGE = "storage"
+    PRODUCTION = "production"
+    QUARANTINE = "quarantine"
+    PICKING = "picking"
+    DISPLAY = "display"
+    OTHER = "other"
+
+
 class InventoryMovementType(StrEnum):
     ADJUSTMENT_IN = "adjustment_in"
     ADJUSTMENT_OUT = "adjustment_out"

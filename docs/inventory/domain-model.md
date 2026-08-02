@@ -24,7 +24,35 @@ Regras:
 
 ## StockLocation
 
-Representa um local interno dentro de um warehouse.
+Representa um local interno dentro de um warehouse e de uma zona.
+
+## WarehouseZone
+
+Representa uma zona operacional dentro de um warehouse.
+
+Campos REST-005:
+
+- `id`;
+- `tenant_id`;
+- `branch_id`;
+- `warehouse_id`;
+- `code`;
+- `name`;
+- `description`;
+- `type`;
+- `color`;
+- `icon`;
+- `sort_order`;
+- flags operacionais;
+- `status`;
+- auditoria e timestamps.
+
+Regras:
+
+- `code` deve ser único por warehouse entre zonas não removidas;
+- uma zona pertence a um único warehouse;
+- o warehouse precisa pertencer ao tenant e à filial ativa;
+- zona inativa não deve receber novas localizações em tasks futuras.
 
 Campos planejados:
 
@@ -173,4 +201,3 @@ Regras:
 - transação é append-only;
 - `idempotency_key` evita duplicidade em retries e sincronização futura;
 - transações serão a base para relatórios e conciliação.
-

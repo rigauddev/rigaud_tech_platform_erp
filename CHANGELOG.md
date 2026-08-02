@@ -4,6 +4,10 @@
 
 ### Added
 
+- REST-005: Warehouse Zones com CRUD de zonas, tipo operacional, flags de recebimento/expedição/armazenagem/produção/quarentena, ordenação, soft delete, auditoria, migration `0014_warehouse_zones` e endpoints `/api/v1/warehouse-zones`.
+- REST-005: Flutter Warehouse Zones com lista, cadastro, edição, detalhe, ativação/desativação e reordenação.
+- REST-005: Demo Environment atualizado com zonas operacionais para restaurante e varejo.
+- REST-005: documentação em `docs/warehouse/zones*.md` e Academy de Warehouse Zones.
 - REST-004: Warehouse Management com CRUD de depósitos, depósito padrão por filial, soft delete, auditoria, migration `0013_warehouses` e endpoints `/api/v1/warehouses`.
 - REST-004: Flutter Warehouses com lista, cadastro, edição, detalhe, status e definição de depósito padrão.
 - REST-004: Demo Environment atualizado com depósitos padrão e operacionais para restaurante e varejo.
