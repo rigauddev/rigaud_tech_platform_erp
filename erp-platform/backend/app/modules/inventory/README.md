@@ -1,16 +1,29 @@
 # Inventory
 
-Módulo reservado para contexto de estoque.
+Módulo do Inventory Engine.
 
 Estrutura independente preparada com camadas `application`, `domain`, `infrastructure`, `presentation` e `tests`.
 
-Nenhuma regra de negócio foi implementada nesta etapa.
-
 DOC-005 congela o domínio do Inventory Engine antes da REST-003.
+
+REST-003 implementa a primeira versão executável:
+
+- `InventoryBalance`;
+- `InventoryMovement`;
+- `InventoryAdjustment`;
+- `InventoryReservation`;
+- endpoints em `/api/v1/inventory/*`;
+- auditoria de ajustes e reservas;
+- eventos internos preparados para Kafka futuro.
 
 Documentação principal:
 
 - `docs/inventory/overview.md`
+- `docs/inventory/api.md`
+- `docs/inventory/endpoints.md`
+- `docs/inventory/entities.md`
 - `docs/inventory/domain-model.md`
 - `docs/inventory/events.md`
+- `docs/inventory/permissions.md`
+- `docs/inventory/validation.md`
 - `docs/inventory/offline-strategy.md`

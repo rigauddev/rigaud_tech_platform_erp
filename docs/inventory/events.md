@@ -6,15 +6,16 @@ Kafka é planejado para o futuro, mas a primeira implementação deve usar dispa
 
 ## Eventos Internos
 
-- `inventory.created`;
-- `inventory.updated`;
-- `inventory.adjusted`;
-- `inventory.transferred`;
+- `inventory.adjusted.in`;
+- `inventory.adjusted.out`;
 - `inventory.reserved`;
-- `inventory.released`;
+- `inventory.reservation.released`;
+- `inventory.transferred`;
 - `inventory.count.finished`;
 - `inventory.low.stock`;
 - `inventory.out.of.stock`.
+
+REST-003 implementa os quatro primeiros eventos. Os demais permanecem planejados.
 
 ## Eventos Kafka Planejados
 
@@ -73,4 +74,3 @@ Ela recomenda preparar um futuro módulo Core Events com:
 - idempotência;
 - outbox pattern futuro;
 - substituição futura por Kafka sem alterar contratos de domínio.
-
