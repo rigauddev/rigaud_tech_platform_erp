@@ -100,6 +100,11 @@ class _NavigationItems extends StatelessWidget {
           onTap: () => context.go(AppRoutes.warehouses),
         ),
         ListTile(
+          leading: const Icon(Icons.location_searching_outlined),
+          title: const Text('Zonas'),
+          onTap: () => context.go(AppRoutes.warehouseZones),
+        ),
+        ListTile(
           leading: const Icon(Icons.fact_check_outlined),
           title: const Text('Auditoria'),
           onTap: () => context.go(AppRoutes.audit),

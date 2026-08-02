@@ -22,7 +22,7 @@ DEV-012 — Authentication & Tenant Architecture Alignment
 Task atual:
 
 ```text
-REST-004 — Warehouse Management
+REST-005 — Warehouse Zones
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -78,7 +78,7 @@ make demo
 
 Contas disponíveis em `docs/demo/accounts.md`.
 
-Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. A REST-004 adiciona depósitos demo por filial para validar o fluxo de armazenagem. A API `/api/v1/demo/*` e o Dashboard Demo do Flutter existem apenas para desenvolvimento. Cenários completos de mesas, pedidos, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
+Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. A REST-004 adiciona depósitos demo por filial e a REST-005 adiciona zonas demo para validar o fluxo de armazenagem. A API `/api/v1/demo/*` e o Dashboard Demo do Flutter existem apenas para desenvolvimento. Cenários completos de mesas, pedidos, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
 
 ## Backend
 
@@ -105,6 +105,8 @@ O cadastro de categorias está documentado em `docs/categories/overview.md`.
 O Inventory Engine está documentado em `docs/inventory/api.md`.
 
 O cadastro de depósitos está documentado em `docs/warehouse/overview.md`.
+
+O cadastro de zonas de depósito está documentado em `docs/warehouse/zones.md`.
 
 O ambiente demo está documentado em `docs/demo/overview.md`.
 
@@ -173,6 +175,12 @@ Endpoints técnicos disponíveis:
 - `PUT /api/v1/warehouses/{warehouse_id}`
 - `POST /api/v1/warehouses/{warehouse_id}/default`
 - `DELETE /api/v1/warehouses/{warehouse_id}`
+- `GET /api/v1/warehouse-zones`
+- `GET /api/v1/warehouse-zones/{zone_id}`
+- `POST /api/v1/warehouse-zones`
+- `PUT /api/v1/warehouse-zones/{zone_id}`
+- `POST /api/v1/warehouse-zones/{zone_id}/reorder`
+- `DELETE /api/v1/warehouse-zones/{zone_id}`
 - `GET /api/v1/demo/status`
 - `GET /api/v1/demo/install`
 - `GET /api/v1/demo/reset`

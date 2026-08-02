@@ -26,9 +26,11 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Produto não possui saldo.
 - Saldo pertence ao Inventory Engine.
 - Estoque é controlado por tenant, filial, warehouse e location quando aplicável.
+- Warehouse Zone é a camada operacional entre Warehouse e Stock Location.
 - Reserva não altera saldo físico.
 - Movimento confirmado não é editado.
 - Correção de estoque deve gerar novo movimento ou ajuste.
+- Toda nova entidade deve ser avaliada para QR Code, código de barras, auditoria completa, sincronização offline, eventos Kafka, operação multi-filial e compatibilidade SaaS/On-Premise, sem antecipar implementação fora da task vigente.
 
 ## Segurança E Acesso
 

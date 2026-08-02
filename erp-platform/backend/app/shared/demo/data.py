@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from app.modules.companies.domain.entities import BranchType, CompanyRole
+from app.modules.inventory.domain.entities import WarehouseZoneType
 from app.modules.products.domain.entities import ProductType, UnitOfMeasure
 
 DEMO_PASSWORD = "123456"
@@ -87,6 +88,24 @@ class DemoWarehouse:
     description: str
     address: str
     is_default: bool = False
+
+
+@dataclass(frozen=True)
+class DemoWarehouseZone:
+    branch_code: str
+    warehouse_code: str
+    code: str
+    name: str
+    description: str
+    type: WarehouseZoneType
+    color: str
+    icon: str
+    sort_order: int
+    is_receiving: bool = False
+    is_shipping: bool = False
+    is_storage: bool = True
+    is_production: bool = False
+    is_quarantine: bool = False
 
 
 PLATFORM_COMPANY = DemoCompany(
@@ -223,6 +242,70 @@ RESTAURANT_WAREHOUSES = (
     ),
 )
 
+RESTAURANT_WAREHOUSE_ZONES = (
+    DemoWarehouseZone(
+        "MATRIZ",
+        "MAIN",
+        "REC",
+        "Recebimento",
+        "Conferencia inicial de mercadorias.",
+        WarehouseZoneType.RECEIVING,
+        "#2B6CB0",
+        "assignment_returned",
+        10,
+        is_receiving=True,
+        is_storage=False,
+    ),
+    DemoWarehouseZone(
+        "MATRIZ",
+        "MAIN",
+        "ALM",
+        "Almoxarifado",
+        "Insumos secos e materiais de apoio.",
+        WarehouseZoneType.STORAGE,
+        "#2F855A",
+        "inventory",
+        20,
+    ),
+    DemoWarehouseZone(
+        "MATRIZ",
+        "COLD",
+        "CAM",
+        "Camara Fria",
+        "Pereciveis refrigerados.",
+        WarehouseZoneType.STORAGE,
+        "#0088AA",
+        "ac_unit",
+        30,
+    ),
+    DemoWarehouseZone(
+        "MATRIZ",
+        "KITCHEN",
+        "PROD",
+        "Producao",
+        "Separacao para preparo da cozinha.",
+        WarehouseZoneType.PRODUCTION,
+        "#D69E2E",
+        "restaurant",
+        40,
+        is_storage=False,
+        is_production=True,
+    ),
+    DemoWarehouseZone(
+        "DELIVERY",
+        "EXPEDITION",
+        "EXP",
+        "Expedicao",
+        "Separacao e saida de pedidos delivery.",
+        WarehouseZoneType.SHIPPING,
+        "#805AD5",
+        "local_shipping",
+        50,
+        is_shipping=True,
+        is_storage=False,
+    ),
+)
+
 RESTAURANT_USERS = (
     DemoUser(
         "admin@demo.local", "Admin", "Demo", "Admin Demo", "75982165900", CompanyRole.COMPANY_ADMIN
@@ -353,6 +436,57 @@ RETAIL_WAREHOUSES = (
         description="Estoque principal da filial centro.",
         address="Avenida Comercial, 55 - Centro",
         is_default=True,
+    ),
+)
+
+RETAIL_WAREHOUSE_ZONES = (
+    DemoWarehouseZone(
+        "SHOPPING",
+        "STOCK",
+        "REC",
+        "Recebimento",
+        "Entrada e conferencia de mercadorias.",
+        WarehouseZoneType.RECEIVING,
+        "#2B6CB0",
+        "assignment_returned",
+        10,
+        is_receiving=True,
+        is_storage=False,
+    ),
+    DemoWarehouseZone(
+        "SHOPPING",
+        "SHOWCASE",
+        "VIT",
+        "Vitrine",
+        "Produtos expostos para venda imediata.",
+        WarehouseZoneType.DISPLAY,
+        "#B83280",
+        "storefront",
+        20,
+    ),
+    DemoWarehouseZone(
+        "SHOPPING",
+        "RESERVED",
+        "RES",
+        "Reserva",
+        "Produtos separados para clientes e pre-venda.",
+        WarehouseZoneType.PICKING,
+        "#D69E2E",
+        "bookmark",
+        30,
+    ),
+    DemoWarehouseZone(
+        "CENTRO",
+        "STOCK",
+        "EXP",
+        "Expedicao",
+        "Separacao para retirada e transferencia.",
+        WarehouseZoneType.SHIPPING,
+        "#2C7A7B",
+        "local_shipping",
+        40,
+        is_shipping=True,
+        is_storage=False,
     ),
 )
 

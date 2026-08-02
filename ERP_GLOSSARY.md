@@ -44,6 +44,8 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Warehouse`: unidade lógica de estoque dentro de uma filial.
 
+`Warehouse Zone`: zona operacional dentro de um warehouse, como recebimento, armazenagem, produção, picking, expedição ou quarentena.
+
 `Stock Location`: local interno dentro de um warehouse.
 
 `Inventory Balance`: saldo agregado por produto, filial, warehouse e location.
