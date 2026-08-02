@@ -28,7 +28,12 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Estoque é controlado por tenant, filial, warehouse e location quando aplicável.
 - Warehouse Zone é a camada operacional entre Warehouse e Stock Location.
 - Warehouse Location é o endereço físico ou bin dentro de uma Warehouse Zone.
+- Receiving Document registra chegada e conferência documental, sem movimentar estoque.
 - Reserva não altera saldo físico.
+- `InventoryBalance` nunca deve ser alterado diretamente por funcionalidades de negócio.
+- Toda alteração de saldo deve ocorrer por `InventoryMovement`, mantendo `InventoryBalance` como projeção auditável.
+- Tipos planejados de movimento: `RECEIPT`, `SALE`, `TRANSFER`, `ADJUSTMENT`, `RESERVATION`, `RELEASE`, `RETURN`, `LOSS` e `CONSUMPTION`.
+- Consumo automático de insumos do Restaurante será implementado em task futura do módulo Restaurant.
 - Movimento confirmado não é editado.
 - Correção de estoque deve gerar novo movimento ou ajuste.
 - Toda nova entidade operacional deve possuir UUID interno, código curto quando fizer sentido, e ser avaliada para QR Code, código de barras, auditoria completa, sincronização offline, eventos Kafka, operação multi-filial e compatibilidade SaaS/On-Premise, sem antecipar implementação fora da task vigente.

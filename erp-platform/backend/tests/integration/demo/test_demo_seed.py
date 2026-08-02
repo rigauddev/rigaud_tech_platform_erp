@@ -23,6 +23,8 @@ from app.modules.inventory.infrastructure.models import (
     InventoryBalanceModel,
     InventoryMovementModel,
     InventoryReservationModel,
+    ReceivingDocumentModel,
+    ReceivingItemModel,
     WarehouseLocationModel,
     WarehouseModel,
     WarehouseZoneModel,
@@ -54,6 +56,8 @@ async def _clean(session) -> None:
     await session.execute(delete(InventoryAdjustmentModel))
     await session.execute(delete(InventoryMovementModel))
     await session.execute(delete(InventoryBalanceModel))
+    await session.execute(delete(ReceivingItemModel))
+    await session.execute(delete(ReceivingDocumentModel))
     await session.execute(delete(WarehouseLocationModel))
     await session.execute(delete(WarehouseZoneModel))
     await session.execute(delete(WarehouseModel))
@@ -95,6 +99,8 @@ async def test_demo_seed_all_is_idempotent() -> None:
         "warehouses": 10,
         "warehouse_zones": 9,
         "warehouse_locations": 9,
+        "receiving_documents": 2,
+        "receiving_items": 4,
         "categories": 9,
         "products": 130,
         "deleted_rows": 0,
@@ -109,6 +115,8 @@ async def test_demo_seed_all_is_idempotent() -> None:
         "warehouses": await count_rows(WarehouseModel),
         "warehouse_zones": await count_rows(WarehouseZoneModel),
         "warehouse_locations": await count_rows(WarehouseLocationModel),
+        "receiving_documents": await count_rows(ReceivingDocumentModel),
+        "receiving_items": await count_rows(ReceivingItemModel),
         "categories": await count_rows(CategoryModel),
         "products": await count_rows(ProductModel),
     }
@@ -125,6 +133,8 @@ async def test_demo_seed_all_is_idempotent() -> None:
         "warehouses": await count_rows(WarehouseModel),
         "warehouse_zones": await count_rows(WarehouseZoneModel),
         "warehouse_locations": await count_rows(WarehouseLocationModel),
+        "receiving_documents": await count_rows(ReceivingDocumentModel),
+        "receiving_items": await count_rows(ReceivingItemModel),
         "categories": await count_rows(CategoryModel),
         "products": await count_rows(ProductModel),
     }
@@ -172,6 +182,10 @@ async def test_demo_segment_seeds_can_run_independently() -> None:
     assert retail.warehouse_zones == 4
     assert restaurant.warehouse_locations == 5
     assert retail.warehouse_locations == 4
+    assert restaurant.receiving_documents == 1
+    assert retail.receiving_documents == 1
+    assert restaurant.receiving_items == 2
+    assert retail.receiving_items == 2
 
     async with async_session_factory() as session:
         demo_slugs = (
@@ -197,6 +211,8 @@ async def test_demo_api_installs_reports_and_resets(demo_client: AsyncClient) ->
     assert install.json()["warehouses"] == 10
     assert install.json()["warehouse_zones"] == 9
     assert install.json()["warehouse_locations"] == 9
+    assert install.json()["receiving_documents"] == 2
+    assert install.json()["receiving_items"] == 4
     assert install.json()["products"] == 130
 
     status = await demo_client.get("/api/v1/demo/status")
@@ -205,6 +221,8 @@ async def test_demo_api_installs_reports_and_resets(demo_client: AsyncClient) ->
     assert status.json()["warehouses"] == 10
     assert status.json()["warehouse_zones"] == 9
     assert status.json()["warehouse_locations"] == 9
+    assert status.json()["receiving_documents"] == 2
+    assert status.json()["receiving_items"] == 4
     assert status.json()["scenarios"]["restaurant"] == 4
 
     scenarios = await demo_client.get("/api/v1/demo/scenarios")

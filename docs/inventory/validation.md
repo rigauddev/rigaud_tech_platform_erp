@@ -1,5 +1,17 @@
 # Inventory Validation
 
+## Receiving Documents
+
+REST-007 valida:
+
+- filial ativa obrigatória;
+- depósito existente, ativo e pertencente à filial ativa;
+- número do documento único por tenant e filial enquanto não excluído;
+- pelo menos um item;
+- produto existente no tenant;
+- quantidades não negativas;
+- `received_quantity + damaged_quantity <= ordered_quantity`.
+
 ## Quantidade
 
 - Deve ser maior que zero.

@@ -1,9 +1,11 @@
+from datetime import datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
     Boolean,
     CheckConstraint,
+    DateTime,
     Enum,
     ForeignKey,
     Index,
@@ -12,7 +14,7 @@ from sqlalchemy import (
     Text,
     text,
 )
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 from app.database.mixins import AuditMixin, SoftDeleteMixin, TenantMixin, TimestampMixin
@@ -23,6 +25,7 @@ from app.modules.inventory.domain.entities import (
     InventoryMovementStatus,
     InventoryMovementType,
     InventoryReservationStatus,
+    ReceivingDocumentStatus,
     WarehouseLocationStatus,
     WarehouseStatus,
     WarehouseZoneStatus,
@@ -258,6 +261,114 @@ class WarehouseLocationModel(TenantMixin, TimestampMixin, SoftDeleteMixin, Audit
         self.status = WarehouseLocationStatus.INACTIVE
         self.is_active = False
         self.is_default = False
+
+
+class ReceivingDocumentModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
+    __tablename__ = "receiving_documents"
+    __table_args__ = (
+        Index(
+            "uq_receiving_documents_tenant_branch_number",
+            "tenant_id",
+            "branch_id",
+            "document_number",
+            unique=True,
+            postgresql_where=text("deleted_at IS NULL"),
+        ),
+        Index("ix_receiving_documents_tenant_branch", "tenant_id", "branch_id"),
+        Index("ix_receiving_documents_tenant_warehouse", "tenant_id", "warehouse_id"),
+        Index("ix_receiving_documents_tenant_status", "tenant_id", "status"),
+    )
+
+    id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("companies.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    branch_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("branches.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    warehouse_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("warehouses.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    supplier_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
+    document_number: Mapped[str] = mapped_column(String(60), nullable=False)
+    document_type: Mapped[str] = mapped_column(String(40), nullable=False)
+    status: Mapped[ReceivingDocumentStatus] = mapped_column(
+        Enum(
+            ReceivingDocumentStatus,
+            name="receiving_document_status",
+            values_callable=lambda enum: [item.value for item in enum],
+        ),
+        default=ReceivingDocumentStatus.DRAFT,
+        nullable=False,
+    )
+    expected_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    received_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    items: Mapped[list["ReceivingItemModel"]] = relationship(
+        back_populates="document",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+
+
+class ReceivingItemModel(TenantMixin, TimestampMixin, Base):
+    __tablename__ = "receiving_items"
+    __table_args__ = (
+        Index("ix_receiving_items_tenant_document", "tenant_id", "document_id"),
+        Index("ix_receiving_items_tenant_product", "tenant_id", "product_id"),
+        CheckConstraint(
+            "ordered_quantity >= 0",
+            name="ck_receiving_item_ordered_non_negative",
+        ),
+        CheckConstraint(
+            "received_quantity >= 0",
+            name="ck_receiving_item_received_non_negative",
+        ),
+        CheckConstraint(
+            "damaged_quantity >= 0",
+            name="ck_receiving_item_damaged_non_negative",
+        ),
+        CheckConstraint(
+            "pending_quantity >= 0",
+            name="ck_receiving_item_pending_non_negative",
+        ),
+        CheckConstraint("unit_cost >= 0", name="ck_receiving_item_unit_cost_non_negative"),
+    )
+
+    id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("companies.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    document_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("receiving_documents.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
+    product_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("products.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    ordered_quantity: Mapped[Decimal] = mapped_column(Numeric(14, 3), nullable=False)
+    received_quantity: Mapped[Decimal] = mapped_column(Numeric(14, 3), nullable=False)
+    damaged_quantity: Mapped[Decimal] = mapped_column(Numeric(14, 3), nullable=False)
+    pending_quantity: Mapped[Decimal] = mapped_column(Numeric(14, 3), nullable=False)
+    unit_cost: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
+    document: Mapped[ReceivingDocumentModel] = relationship(back_populates="items")
 
 
 class InventoryBalanceModel(TenantMixin, TimestampMixin, AuditMixin, Base):

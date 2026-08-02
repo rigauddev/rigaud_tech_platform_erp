@@ -52,6 +52,14 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Bin`: endereço físico curto usado na operação do depósito.
 
+`Receiving Document`: documento de recebimento que registra chegada planejada ou iniciada de mercadorias sem atualizar saldo.
+
+`Receiving Item`: item de um documento de recebimento com quantidade pedida, recebida, avariada e pendente.
+
+`Goods Receipt`: confirmação física futura do recebimento, responsável por gerar movimento de estoque.
+
+`Put Away`: endereçamento físico futuro da mercadoria recebida para uma localização.
+
 `Inventory Balance`: saldo agregado por produto, filial, warehouse e location.
 
 `Inventory Movement`: mudança operacional de saldo.

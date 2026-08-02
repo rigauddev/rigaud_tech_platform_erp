@@ -2,6 +2,15 @@
 
 O Inventory Engine deve publicar eventos internos estáveis.
 
+REST-007 prepara eventos de documento de recebimento para Kafka futuro, mas ainda não publica em broker externo.
+
+Eventos planejados:
+
+- `receiving_document.created`;
+- `receiving_document.updated`;
+- `receiving_document.status_changed`;
+- `receiving_document.deleted`.
+
 Kafka é planejado para o futuro, mas a primeira implementação deve usar dispatcher interno desacoplado.
 
 ## Eventos Internos

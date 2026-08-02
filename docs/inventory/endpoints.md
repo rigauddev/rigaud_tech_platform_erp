@@ -77,6 +77,25 @@ Libera uma reserva ativa.
 
 Gera movimento `reservation_released` e reduz `reserved_quantity`.
 
+## Receiving Documents
+
+Base path:
+
+```text
+/api/v1/receiving-documents
+```
+
+Endpoints:
+
+- `GET /receiving-documents`;
+- `GET /receiving-documents/{document_id}`;
+- `POST /receiving-documents`;
+- `PUT /receiving-documents/{document_id}`;
+- `POST /receiving-documents/{document_id}/status`;
+- `DELETE /receiving-documents/{document_id}`.
+
+Receiving Documents pertencem à logística de entrada, mas não geram `InventoryMovement` na REST-007.
+
 ## Fluxo
 
 ```mermaid

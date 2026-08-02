@@ -46,6 +46,16 @@ REST-006 adiciona Warehouse Locations:
 - soft delete;
 - auditoria.
 
+REST-007 adiciona Receiving Documents:
+
+- `ReceivingDocument`;
+- `ReceivingItem`;
+- CRUD em `/api/v1/receiving-documents`;
+- status documental;
+- validação de quantidades;
+- auditoria;
+- sem movimentar estoque e sem alterar saldo.
+
 Documentação principal:
 
 - `docs/inventory/overview.md`
@@ -56,7 +66,13 @@ Documentação principal:
 - `docs/inventory/events.md`
 - `docs/inventory/permissions.md`
 - `docs/inventory/validation.md`
+- `docs/inventory/receiving-documents.md`
+- `docs/inventory/receiving-api.md`
+- `docs/inventory/receiving-database.md`
+- `docs/inventory/receiving-flutter.md`
+- `docs/inventory/receiving-testing.md`
 - `docs/warehouse/overview.md`
 - `docs/warehouse/zones.md`
 - `docs/warehouse/locations.md`
+- `docs/warehouse/receiving.md`
 - `docs/inventory/offline-strategy.md`

@@ -4,6 +4,10 @@
 
 ### Added
 
+- REST-007: Receiving Documents com `ReceivingDocument`, `ReceivingItem`, CRUD, status documental, validação de quantidades, soft delete, auditoria, migration `0016_receiving_documents` e endpoints `/api/v1/receiving-documents`.
+- REST-007: Flutter Receiving Documents com lista, cadastro, edição, detalhe, filtros e mudança de status.
+- REST-007: Demo Environment atualizado com documentos de recebimento para restaurante e varejo.
+- REST-007: documentação em `docs/inventory/receiving*.md`, `docs/warehouse/receiving.md` e Academy de Receiving Documents.
 - REST-006: Warehouse Locations com CRUD de localizações físicas, filtros por depósito/zona/pesquisa, QR Code e código de barras preparados, ativação/inativação, ordenação, soft delete, auditoria, migration `0015_warehouse_locations` e endpoints `/api/v1/warehouse-locations`.
 - REST-006: Flutter Warehouse Locations com lista, cadastro, edição, detalhe, filtros, status e ações operacionais.
 - REST-006: Demo Environment atualizado com localizações físicas para restaurante e varejo.

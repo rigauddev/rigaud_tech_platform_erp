@@ -16,6 +16,15 @@ class WarehouseLocationStatus(StrEnum):
     INACTIVE = "inactive"
 
 
+class ReceivingDocumentStatus(StrEnum):
+    DRAFT = "draft"
+    EXPECTED = "expected"
+    RECEIVING = "receiving"
+    PARTIAL = "partial"
+    RECEIVED = "received"
+    CANCELLED = "cancelled"
+
+
 class WarehouseZoneType(StrEnum):
     RECEIVING = "receiving"
     SHIPPING = "shipping"

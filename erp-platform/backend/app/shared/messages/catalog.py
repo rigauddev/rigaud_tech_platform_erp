@@ -519,6 +519,60 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     "WAREHOUSE_LOCATION_INVALID_DATA": MessageDefinition(
         "WAREHOUSE_LOCATION_INVALID_DATA", 400, "Dados da localização inválidos.", "warning"
     ),
+    "RECEIVING_DOCUMENT_CREATED": MessageDefinition(
+        "RECEIVING_DOCUMENT_CREATED",
+        201,
+        "Documento de recebimento criado com sucesso.",
+        audit_required=True,
+    ),
+    "RECEIVING_DOCUMENT_UPDATED": MessageDefinition(
+        "RECEIVING_DOCUMENT_UPDATED",
+        200,
+        "Documento de recebimento atualizado com sucesso.",
+        audit_required=True,
+    ),
+    "RECEIVING_DOCUMENT_STATUS_CHANGED": MessageDefinition(
+        "RECEIVING_DOCUMENT_STATUS_CHANGED",
+        200,
+        "Status do recebimento atualizado.",
+        audit_required=True,
+    ),
+    "RECEIVING_DOCUMENT_DELETED": MessageDefinition(
+        "RECEIVING_DOCUMENT_DELETED",
+        200,
+        "Documento de recebimento removido com sucesso.",
+        audit_required=True,
+    ),
+    "RECEIVING_DOCUMENT_RETRIEVED": MessageDefinition(
+        "RECEIVING_DOCUMENT_RETRIEVED", 200, "Recebimento consultado com sucesso."
+    ),
+    "RECEIVING_DOCUMENT_LIST_RETRIEVED": MessageDefinition(
+        "RECEIVING_DOCUMENT_LIST_RETRIEVED", 200, "Recebimentos consultados com sucesso."
+    ),
+    "RECEIVING_DOCUMENT_NOT_FOUND": MessageDefinition(
+        "RECEIVING_DOCUMENT_NOT_FOUND", 404, "Recebimento não encontrado.", "warning"
+    ),
+    "RECEIVING_DOCUMENT_NUMBER_ALREADY_EXISTS": MessageDefinition(
+        "RECEIVING_DOCUMENT_NUMBER_ALREADY_EXISTS",
+        409,
+        "Número de documento já cadastrado nesta filial.",
+        "warning",
+    ),
+    "RECEIVING_DOCUMENT_BRANCH_REQUIRED": MessageDefinition(
+        "RECEIVING_DOCUMENT_BRANCH_REQUIRED",
+        409,
+        "Filial ativa obrigatória para cadastrar recebimento.",
+        "warning",
+    ),
+    "RECEIVING_DOCUMENT_INVALID_DATA": MessageDefinition(
+        "RECEIVING_DOCUMENT_INVALID_DATA", 400, "Dados do recebimento inválidos.", "warning"
+    ),
+    "RECEIVING_DOCUMENT_ITEM_REQUIRED": MessageDefinition(
+        "RECEIVING_DOCUMENT_ITEM_REQUIRED",
+        400,
+        "Recebimento deve possuir pelo menos um item.",
+        "warning",
+    ),
     "AUDIT_EVENTS_RETRIEVED": MessageDefinition(
         "AUDIT_EVENTS_RETRIEVED",
         200,
