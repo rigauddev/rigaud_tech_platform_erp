@@ -41,13 +41,14 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/rest-005-warehouse-zones
-      commits: []
+      commits:
+        - 1e4ca5c
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
+    commit: 1e4ca5c
     review_status: ready
   - id: REST-004
     title: Warehouse Management
