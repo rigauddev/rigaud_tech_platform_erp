@@ -4,6 +4,10 @@
 
 ### Added
 
+- REST-004: Warehouse Management com CRUD de depósitos, depósito padrão por filial, soft delete, auditoria, migration `0013_warehouses` e endpoints `/api/v1/warehouses`.
+- REST-004: Flutter Warehouses com lista, cadastro, edição, detalhe, status e definição de depósito padrão.
+- REST-004: Demo Environment atualizado com depósitos padrão e operacionais para restaurante e varejo.
+- REST-004: documentação em `docs/warehouse/*` e Academy de Warehouse Management.
 - REST-003: Inventory Engine com saldos, movimentos, ajustes, reservas, migration `0012_inventory_engine`, auditoria e endpoints `/api/v1/inventory/*`.
 - REST-003: Flutter Inventory com consulta de saldos, movimentações, ajuste e reserva usando Riverpod, Repository Pattern e Dio.
 - REST-003: documentação em `docs/inventory/api.md`, `docs/inventory/endpoints.md`, `docs/inventory/entities.md`, `docs/inventory/permissions.md`, `docs/inventory/validation.md` e Academy de implementação.

@@ -30,6 +30,7 @@ from app.modules.inventory.domain.exceptions import (
     InventoryProductNotFoundError,
     InventoryReservationInactiveError,
     InventoryReservationNotFoundError,
+    InventoryWarehouseNotFoundError,
 )
 from app.modules.inventory.infrastructure.models import (
     InventoryAdjustmentModel,
@@ -38,6 +39,9 @@ from app.modules.inventory.infrastructure.models import (
     InventoryReservationModel,
 )
 from app.modules.inventory.infrastructure.repositories import SQLAlchemyInventoryRepository
+from app.modules.inventory.infrastructure.warehouse_repositories import (
+    SQLAlchemyWarehouseRepository,
+)
 from app.modules.inventory.presentation.schemas import (
     InventoryAdjustmentRequest,
     InventoryAdjustmentResponse,
@@ -281,6 +285,7 @@ async def create_inventory_adjustment(
         result = await CreateInventoryAdjustment(
             inventory_repository,
             SQLAlchemyProductRepository(session),
+            SQLAlchemyWarehouseRepository(session),
         ).execute(
             InventoryAdjustmentInput(
                 tenant_id=current_user.tenant_id,
@@ -350,6 +355,7 @@ async def create_inventory_reservation(
         result = await CreateInventoryReservation(
             inventory_repository,
             SQLAlchemyProductRepository(session),
+            SQLAlchemyWarehouseRepository(session),
         ).execute(
             InventoryReservationInput(
                 tenant_id=current_user.tenant_id,
@@ -437,6 +443,8 @@ def inventory_exception_to_response(exc: InventoryError) -> JSONResponse:
         return error_response("INVENTORY_BRANCH_REQUIRED")
     if isinstance(exc, InventoryProductNotFoundError):
         return error_response("PRODUCT_NOT_FOUND")
+    if isinstance(exc, InventoryWarehouseNotFoundError):
+        return error_response("WAREHOUSE_NOT_FOUND")
     if isinstance(exc, InventoryBalanceNotFoundError):
         return error_response("INVENTORY_BALANCE_NOT_FOUND")
     if isinstance(exc, InventoryInsufficientStockError):

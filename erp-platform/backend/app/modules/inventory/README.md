@@ -16,6 +16,15 @@ REST-003 implementa a primeira versão executável:
 - auditoria de ajustes e reservas;
 - eventos internos preparados para Kafka futuro.
 
+REST-004 adiciona Warehouse Management:
+
+- `Warehouse`;
+- CRUD em `/api/v1/warehouses`;
+- depósito padrão por filial;
+- soft delete;
+- auditoria;
+- validação de `warehouse_id` em ajustes e reservas.
+
 Documentação principal:
 
 - `docs/inventory/overview.md`
@@ -26,4 +35,5 @@ Documentação principal:
 - `docs/inventory/events.md`
 - `docs/inventory/permissions.md`
 - `docs/inventory/validation.md`
+- `docs/warehouse/overview.md`
 - `docs/inventory/offline-strategy.md`
