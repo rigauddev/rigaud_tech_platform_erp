@@ -41,13 +41,14 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/rest-007-receiving-documents
-      commits: []
+      commits:
+        - b287dc6
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
+    commit: b287dc6
     review_status: ready
   - id: REST-006
     title: Warehouse Locations
