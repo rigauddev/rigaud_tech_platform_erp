@@ -4,6 +4,9 @@
 
 ### Added
 
+- REST-003: Inventory Engine com saldos, movimentos, ajustes, reservas, migration `0012_inventory_engine`, auditoria e endpoints `/api/v1/inventory/*`.
+- REST-003: Flutter Inventory com consulta de saldos, movimentações, ajuste e reserva usando Riverpod, Repository Pattern e Dio.
+- REST-003: documentação em `docs/inventory/api.md`, `docs/inventory/endpoints.md`, `docs/inventory/entities.md`, `docs/inventory/permissions.md`, `docs/inventory/validation.md` e Academy de implementação.
 - UI-001: tela de login ganha background visual próprio inspirado na identidade Rigaud Tech e no contexto ERP.
 - UI-001: rodapé de login passa a exibir versão, build, API e ambiente.
 - UI-001: documentação criada em `docs/ui/login-screen.md` e Academy UI em `erp-blueprint/docs/academy/ui/001-login-experience.md`.
