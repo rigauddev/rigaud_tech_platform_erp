@@ -39,13 +39,14 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/rest-004-warehouse
-      commits: []
+      commits:
+        - c4e22ea
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
+    commit: c4e22ea
     review_status: ready
   - id: REST-003
     title: Inventory Engine
