@@ -23,6 +23,7 @@ from app.modules.inventory.domain.entities import (
     InventoryMovementStatus,
     InventoryMovementType,
     InventoryReservationStatus,
+    WarehouseLocationStatus,
     WarehouseStatus,
     WarehouseZoneStatus,
     WarehouseZoneType,
@@ -160,6 +161,103 @@ class WarehouseZoneModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixi
     def deactivate(self) -> None:
         self.status = WarehouseZoneStatus.INACTIVE
         self.is_active = False
+
+
+class WarehouseLocationModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
+    __tablename__ = "warehouse_locations"
+    __table_args__ = (
+        Index(
+            "uq_warehouse_locations_tenant_warehouse_code",
+            "tenant_id",
+            "warehouse_id",
+            "code",
+            unique=True,
+            postgresql_where=text("deleted_at IS NULL"),
+        ),
+        Index(
+            "uq_warehouse_locations_tenant_barcode",
+            "tenant_id",
+            "barcode",
+            unique=True,
+            postgresql_where=text("barcode IS NOT NULL AND deleted_at IS NULL"),
+        ),
+        Index(
+            "uq_warehouse_locations_tenant_qr_code",
+            "tenant_id",
+            "qr_code",
+            unique=True,
+            postgresql_where=text("qr_code IS NOT NULL AND deleted_at IS NULL"),
+        ),
+        Index("ix_warehouse_locations_tenant_branch", "tenant_id", "branch_id"),
+        Index("ix_warehouse_locations_tenant_warehouse", "tenant_id", "warehouse_id"),
+        Index("ix_warehouse_locations_tenant_zone", "tenant_id", "zone_id"),
+        Index("ix_warehouse_locations_tenant_active", "tenant_id", "is_active"),
+    )
+
+    id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("companies.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    branch_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("branches.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    warehouse_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("warehouses.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    zone_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("warehouse_zones.id", ondelete="RESTRICT"),
+        index=True,
+        nullable=False,
+    )
+    code: Mapped[str] = mapped_column(String(40), nullable=False)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    alias: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    barcode: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    qr_code: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    aisle: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    rack: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    shelf: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    level: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    position: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    capacity: Mapped[Decimal | None] = mapped_column(Numeric(14, 3), nullable=True)
+    capacity_unit: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    allow_negative: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    allow_mixed_items: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    allow_expired: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_pick_location: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_receive_location: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_shipping_location: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_default: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    sort_order: Mapped[int] = mapped_column(default=0, nullable=False)
+    status: Mapped[WarehouseLocationStatus] = mapped_column(
+        Enum(
+            WarehouseLocationStatus,
+            name="warehouse_location_status",
+            values_callable=lambda enum: [item.value for item in enum],
+        ),
+        default=WarehouseLocationStatus.ACTIVE,
+        nullable=False,
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+    def activate(self) -> None:
+        self.status = WarehouseLocationStatus.ACTIVE
+        self.is_active = True
+
+    def deactivate(self) -> None:
+        self.status = WarehouseLocationStatus.INACTIVE
+        self.is_active = False
+        self.is_default = False
 
 
 class InventoryBalanceModel(TenantMixin, TimestampMixin, AuditMixin, Base):

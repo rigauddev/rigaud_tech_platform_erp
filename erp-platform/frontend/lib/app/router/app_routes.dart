@@ -22,6 +22,8 @@ class AppRoutes {
   static const warehouseCreate = '/warehouses/new';
   static const warehouseZones = '/warehouse-zones';
   static const warehouseZoneCreate = '/warehouse-zones/new';
+  static const warehouseLocations = '/warehouse-locations';
+  static const warehouseLocationCreate = '/warehouse-locations/new';
   static const audit = '/audit';
   static const demo = '/demo';
   static const notFound = '/not-found';

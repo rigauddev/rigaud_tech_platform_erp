@@ -39,3 +39,8 @@ xattr -cr erp-platform/frontend
 ```
 
 Windows e Linux devem ser validados em ambientes próprios. A feature não adiciona dependências específicas de sistema operacional.
+
+## Documentação Relacionada
+
+- Zonas: `docs/warehouse/zones-testing.md`;
+- Localizações: `docs/warehouse/locations-testing.md`.

@@ -3,6 +3,7 @@ from decimal import Decimal, InvalidOperation
 from app.modules.inventory.domain.exceptions import (
     InventoryInvalidQuantityError,
     WarehouseInvalidDataError,
+    WarehouseLocationInvalidDataError,
     WarehouseZoneInvalidDataError,
 )
 
@@ -84,3 +85,52 @@ def normalize_sort_order(value: int | None) -> int:
     if value < 0 or value > 9999:
         raise WarehouseZoneInvalidDataError("sort_order must be between 0 and 9999.")
     return value
+
+
+def normalize_warehouse_location_code(value: str) -> str:
+    code = value.strip().upper()
+    if len(code) < 2 or len(code) > 40:
+        raise WarehouseLocationInvalidDataError(
+            "warehouse location code must have between 2 and 40 chars."
+        )
+    return code
+
+
+def normalize_warehouse_location_text(value: str, field: str, *, max_length: int) -> str:
+    text = value.strip()
+    if not text or len(text) > max_length:
+        raise WarehouseLocationInvalidDataError(f"{field} is invalid.")
+    return text
+
+
+def normalize_optional_warehouse_location_text(
+    value: str | None, field: str, *, max_length: int
+) -> str | None:
+    if value is None:
+        return None
+    text = value.strip()
+    if not text:
+        return None
+    if len(text) > max_length:
+        raise WarehouseLocationInvalidDataError(f"{field} is invalid.")
+    return text
+
+
+def normalize_location_sort_order(value: int | None) -> int:
+    if value is None:
+        return 0
+    if value < 0 or value > 9999:
+        raise WarehouseLocationInvalidDataError("sort_order must be between 0 and 9999.")
+    return value
+
+
+def normalize_location_capacity(value: Decimal | str | int | None) -> Decimal | None:
+    if value is None:
+        return None
+    try:
+        capacity = Decimal(str(value)).quantize(Decimal("0.001"))
+    except (InvalidOperation, ValueError) as exc:
+        raise WarehouseLocationInvalidDataError("capacity is invalid.") from exc
+    if capacity < 0:
+        raise WarehouseLocationInvalidDataError("capacity must be greater than or equal to zero.")
+    return capacity
