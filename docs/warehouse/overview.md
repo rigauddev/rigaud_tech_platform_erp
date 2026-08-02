@@ -47,9 +47,13 @@ Fora do escopo:
 
 Operações de estoque que informarem `warehouse_id` validam tenant, filial e status ativo do depósito.
 
+REST-005 adiciona `WarehouseZone` como camada entre depósito e localizações físicas. A documentação está em `docs/warehouse/zones.md`.
+
+REST-006 adiciona `WarehouseLocation` como endereço físico ou bin dentro das zonas. A documentação está em `docs/warehouse/locations.md`.
+
 ## Demo Environment
 
-`make demo`, `make demo-restaurant`, `make demo-retail` e `make playground` criam depósitos por filial.
+`make demo`, `make demo-restaurant`, `make demo-retail` e `make playground` criam depósitos, zonas e localizações por filial.
 
 Restaurante:
 

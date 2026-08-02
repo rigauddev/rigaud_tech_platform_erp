@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from app.modules.companies.domain.entities import BranchType, CompanyRole
+from app.modules.inventory.domain.entities import WarehouseZoneType
 from app.modules.products.domain.entities import ProductType, UnitOfMeasure
 
 DEMO_PASSWORD = "123456"
@@ -86,6 +87,51 @@ class DemoWarehouse:
     name: str
     description: str
     address: str
+    is_default: bool = False
+
+
+@dataclass(frozen=True)
+class DemoWarehouseZone:
+    branch_code: str
+    warehouse_code: str
+    code: str
+    name: str
+    description: str
+    type: WarehouseZoneType
+    color: str
+    icon: str
+    sort_order: int
+    is_receiving: bool = False
+    is_shipping: bool = False
+    is_storage: bool = True
+    is_production: bool = False
+    is_quarantine: bool = False
+
+
+@dataclass(frozen=True)
+class DemoWarehouseLocation:
+    branch_code: str
+    warehouse_code: str
+    zone_code: str
+    code: str
+    name: str
+    alias: str
+    aisle: str
+    rack: str
+    shelf: str
+    level: str
+    position: str
+    capacity: Decimal | None
+    capacity_unit: str | None
+    sort_order: int
+    barcode: str | None = None
+    qr_code: str | None = None
+    allow_negative: bool = False
+    allow_mixed_items: bool = True
+    allow_expired: bool = False
+    is_pick_location: bool = False
+    is_receive_location: bool = False
+    is_shipping_location: bool = False
     is_default: bool = False
 
 
@@ -223,6 +269,168 @@ RESTAURANT_WAREHOUSES = (
     ),
 )
 
+RESTAURANT_WAREHOUSE_ZONES = (
+    DemoWarehouseZone(
+        "MATRIZ",
+        "MAIN",
+        "REC",
+        "Recebimento",
+        "Conferencia inicial de mercadorias.",
+        WarehouseZoneType.RECEIVING,
+        "#2B6CB0",
+        "assignment_returned",
+        10,
+        is_receiving=True,
+        is_storage=False,
+    ),
+    DemoWarehouseZone(
+        "MATRIZ",
+        "MAIN",
+        "ALM",
+        "Almoxarifado",
+        "Insumos secos e materiais de apoio.",
+        WarehouseZoneType.STORAGE,
+        "#2F855A",
+        "inventory",
+        20,
+    ),
+    DemoWarehouseZone(
+        "MATRIZ",
+        "COLD",
+        "CAM",
+        "Camara Fria",
+        "Pereciveis refrigerados.",
+        WarehouseZoneType.STORAGE,
+        "#0088AA",
+        "ac_unit",
+        30,
+    ),
+    DemoWarehouseZone(
+        "MATRIZ",
+        "KITCHEN",
+        "PROD",
+        "Producao",
+        "Separacao para preparo da cozinha.",
+        WarehouseZoneType.PRODUCTION,
+        "#D69E2E",
+        "restaurant",
+        40,
+        is_storage=False,
+        is_production=True,
+    ),
+    DemoWarehouseZone(
+        "DELIVERY",
+        "EXPEDITION",
+        "EXP",
+        "Expedicao",
+        "Separacao e saida de pedidos delivery.",
+        WarehouseZoneType.SHIPPING,
+        "#805AD5",
+        "local_shipping",
+        50,
+        is_shipping=True,
+        is_storage=False,
+    ),
+)
+
+RESTAURANT_WAREHOUSE_LOCATIONS = (
+    DemoWarehouseLocation(
+        "MATRIZ",
+        "MAIN",
+        "REC",
+        "REC-A01",
+        "Recebimento A01",
+        "Entrada seca",
+        "A",
+        "01",
+        "01",
+        "01",
+        "01",
+        Decimal("120.000"),
+        "kg",
+        10,
+        barcode="REST-LOC-REC-A01",
+        qr_code="rigaud://warehouse-location/rest/rec-a01",
+        is_receive_location=True,
+    ),
+    DemoWarehouseLocation(
+        "MATRIZ",
+        "MAIN",
+        "ALM",
+        "ALM-A01",
+        "Almoxarifado A01",
+        "Secos A",
+        "A",
+        "01",
+        "02",
+        "01",
+        "01",
+        Decimal("200.000"),
+        "kg",
+        20,
+        barcode="REST-LOC-ALM-A01",
+        qr_code="rigaud://warehouse-location/rest/alm-a01",
+        is_default=True,
+    ),
+    DemoWarehouseLocation(
+        "MATRIZ",
+        "COLD",
+        "CAM",
+        "CAM-001",
+        "Camara Fria 001",
+        "Refrigerados",
+        "C",
+        "01",
+        "01",
+        "01",
+        "01",
+        Decimal("80.000"),
+        "kg",
+        30,
+        barcode="REST-LOC-CAM-001",
+        qr_code="rigaud://warehouse-location/rest/cam-001",
+        allow_expired=False,
+    ),
+    DemoWarehouseLocation(
+        "MATRIZ",
+        "KITCHEN",
+        "PROD",
+        "COZ-PREP",
+        "Preparo Cozinha",
+        "Preparo",
+        "P",
+        "01",
+        "01",
+        "01",
+        "01",
+        Decimal("40.000"),
+        "kg",
+        40,
+        barcode="REST-LOC-COZ-PREP",
+        qr_code="rigaud://warehouse-location/rest/coz-prep",
+        is_pick_location=True,
+    ),
+    DemoWarehouseLocation(
+        "DELIVERY",
+        "EXPEDITION",
+        "EXP",
+        "EXP-RET",
+        "Retirada Delivery",
+        "Saida",
+        "D",
+        "01",
+        "01",
+        "01",
+        "01",
+        Decimal("50.000"),
+        "un",
+        50,
+        barcode="REST-LOC-EXP-RET",
+        qr_code="rigaud://warehouse-location/rest/exp-ret",
+        is_shipping_location=True,
+    ),
+)
+
 RESTAURANT_USERS = (
     DemoUser(
         "admin@demo.local", "Admin", "Demo", "Admin Demo", "75982165900", CompanyRole.COMPANY_ADMIN
@@ -353,6 +561,135 @@ RETAIL_WAREHOUSES = (
         description="Estoque principal da filial centro.",
         address="Avenida Comercial, 55 - Centro",
         is_default=True,
+    ),
+)
+
+RETAIL_WAREHOUSE_ZONES = (
+    DemoWarehouseZone(
+        "SHOPPING",
+        "STOCK",
+        "REC",
+        "Recebimento",
+        "Entrada e conferencia de mercadorias.",
+        WarehouseZoneType.RECEIVING,
+        "#2B6CB0",
+        "assignment_returned",
+        10,
+        is_receiving=True,
+        is_storage=False,
+    ),
+    DemoWarehouseZone(
+        "SHOPPING",
+        "SHOWCASE",
+        "VIT",
+        "Vitrine",
+        "Produtos expostos para venda imediata.",
+        WarehouseZoneType.DISPLAY,
+        "#B83280",
+        "storefront",
+        20,
+    ),
+    DemoWarehouseZone(
+        "SHOPPING",
+        "RESERVED",
+        "RES",
+        "Reserva",
+        "Produtos separados para clientes e pre-venda.",
+        WarehouseZoneType.PICKING,
+        "#D69E2E",
+        "bookmark",
+        30,
+    ),
+    DemoWarehouseZone(
+        "CENTRO",
+        "STOCK",
+        "EXP",
+        "Expedicao",
+        "Separacao para retirada e transferencia.",
+        WarehouseZoneType.SHIPPING,
+        "#2C7A7B",
+        "local_shipping",
+        40,
+        is_shipping=True,
+        is_storage=False,
+    ),
+)
+
+RETAIL_WAREHOUSE_LOCATIONS = (
+    DemoWarehouseLocation(
+        "SHOPPING",
+        "STOCK",
+        "REC",
+        "REC-A01",
+        "Recebimento A01",
+        "Conferencia",
+        "A",
+        "01",
+        "01",
+        "01",
+        "01",
+        Decimal("300.000"),
+        "un",
+        10,
+        barcode="RETAIL-LOC-REC-A01",
+        qr_code="rigaud://warehouse-location/retail/rec-a01",
+        is_receive_location=True,
+    ),
+    DemoWarehouseLocation(
+        "SHOPPING",
+        "SHOWCASE",
+        "VIT",
+        "VIT-001",
+        "Vitrine 001",
+        "Vitrine principal",
+        "V",
+        "01",
+        "01",
+        "01",
+        "01",
+        Decimal("60.000"),
+        "un",
+        20,
+        barcode="RETAIL-LOC-VIT-001",
+        qr_code="rigaud://warehouse-location/retail/vit-001",
+        is_pick_location=True,
+    ),
+    DemoWarehouseLocation(
+        "SHOPPING",
+        "RESERVED",
+        "RES",
+        "RES-A01",
+        "Reserva A01",
+        "Pre-venda",
+        "R",
+        "01",
+        "01",
+        "01",
+        "01",
+        Decimal("80.000"),
+        "un",
+        30,
+        barcode="RETAIL-LOC-RES-A01",
+        qr_code="rigaud://warehouse-location/retail/res-a01",
+    ),
+    DemoWarehouseLocation(
+        "CENTRO",
+        "STOCK",
+        "EXP",
+        "EXP-A01",
+        "Expedicao A01",
+        "Retirada",
+        "E",
+        "01",
+        "01",
+        "01",
+        "01",
+        Decimal("100.000"),
+        "un",
+        40,
+        barcode="RETAIL-LOC-EXP-A01",
+        qr_code="rigaud://warehouse-location/retail/exp-a01",
+        is_shipping_location=True,
     ),
 )
 

@@ -32,3 +32,8 @@ lib/features/warehouses/
 A UI usa componentes Flutter compatíveis com Web, Android, iOS, Windows, Linux e macOS.
 
 Nenhum plugin específico de plataforma foi adicionado.
+
+## Documentação Relacionada
+
+- Zonas: `docs/warehouse/zones-flutter.md`;
+- Localizações: `docs/warehouse/locations-flutter.md`.

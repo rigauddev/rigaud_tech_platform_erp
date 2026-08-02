@@ -126,8 +126,10 @@ void main() {
     expect(find.text('Categorias'), findsOneWidget);
     expect(find.text('Estoque'), findsOneWidget);
     expect(find.text('Depósitos'), findsOneWidget);
+    expect(find.text('Zonas'), findsOneWidget);
+    expect(find.text('Localizações'), findsOneWidget);
     expect(find.text('Auditoria'), findsOneWidget);
-    expect(find.text('Operações'), findsOneWidget);
+    expect(find.text('Operações', skipOffstage: false), findsOneWidget);
   });
 
   test('permite rota de empresas para superuser', () {

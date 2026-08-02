@@ -41,3 +41,8 @@ REST-004 adiciona foreign keys de `warehouse_id` para `warehouses.id` nas tabela
 ## Soft Delete
 
 Depósitos removidos recebem `deleted_at` e deixam de aparecer nas consultas.
+
+## Documentação Relacionada
+
+- Zonas: `docs/warehouse/zones-database.md`;
+- Localizações: `docs/warehouse/locations-database.md`.

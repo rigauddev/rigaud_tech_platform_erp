@@ -97,6 +97,8 @@ Restaurante:
 - usuários demo para admin, gerente, caixa, garçons, cozinha, estoque e financeiro;
 - categorias `Bebidas`, `Entradas`, `Pratos`, `Sobremesas` e `Promocoes`;
 - depósitos `Deposito Principal`, `Camara Fria`, `Bar`, `Cozinha`, `Expedicao Delivery` e `Estoque Food Truck`;
+- zonas `Recebimento`, `Almoxarifado`, `Camara Fria`, `Producao` e `Expedicao`;
+- localizações `REC-A01`, `ALM-A01`, `CAM-001`, `COZ-PREP` e `EXP-RET`;
 - 50 produtos demo.
 
 Loja:
@@ -106,6 +108,8 @@ Loja:
 - usuários demo para admin, gerente, vendedor, caixa e estoque;
 - categorias `Calcados`, `Roupas`, `Bolsas` e `Acessorios`;
 - depósitos `Estoque`, `Vitrine`, `Reserva` e `Estoque Centro`;
+- zonas `Recebimento`, `Vitrine`, `Reserva` e `Expedicao`;
+- localizações `REC-A01`, `VIT-001`, `RES-A01` e `EXP-A01`;
 - 80 produtos demo.
 
 ## Limite Da DOC-003

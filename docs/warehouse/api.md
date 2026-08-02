@@ -45,3 +45,8 @@ DELETE /warehouses/{id}
 - `warehouse.updated`;
 - `warehouse.default.changed`;
 - `warehouse.deleted`.
+
+## Documentação Relacionada
+
+- Zonas: `docs/warehouse/zones-api.md`;
+- Localizações: `docs/warehouse/locations-api.md`.

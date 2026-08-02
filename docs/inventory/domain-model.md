@@ -22,11 +22,11 @@ Regras:
 - warehouse inativo não recebe novas operações;
 - warehouse inativo pode manter histórico.
 
-## StockLocation
+## WarehouseZone
 
-Representa um local interno dentro de um warehouse.
+Representa uma zona operacional dentro de um warehouse.
 
-Campos planejados:
+Campos REST-005:
 
 - `id`;
 - `tenant_id`;
@@ -34,14 +34,47 @@ Campos planejados:
 - `warehouse_id`;
 - `code`;
 - `name`;
-- `location_type`;
+- `description`;
+- `type`;
+- `color`;
+- `icon`;
+- `sort_order`;
+- flags operacionais;
 - `status`;
 - auditoria e timestamps.
 
 Regras:
 
-- `code` deve ser único por warehouse;
-- um local pertence a um único warehouse;
+- `code` deve ser único por warehouse entre zonas não removidas;
+- uma zona pertence a um único warehouse;
+- o warehouse precisa pertencer ao tenant e à filial ativa;
+- zona inativa não recebe novas localizações.
+
+## WarehouseLocation
+
+Representa um endereço físico dentro de uma zona de depósito.
+
+Também é o `Stock Location` ou `Bin` operacional do ERP.
+
+Campos REST-006:
+
+- identificação por UUID e código curto;
+- vínculo com `tenant_id`, `branch_id`, `warehouse_id` e `zone_id`;
+- `alias`;
+- `barcode`;
+- `qr_code`;
+- atributos físicos: corredor, rack, prateleira, nível e posição;
+- capacidade e unidade de capacidade;
+- flags operacionais para recebimento, picking e expedição;
+- flags de política preparatória para saldo negativo, itens mistos e vencidos;
+- status, ordenação, soft delete, auditoria e timestamps.
+
+Regras:
+
+- `code` deve ser único por warehouse entre localizações não removidas;
+- `barcode` e `qr_code` devem ser únicos por tenant quando informados;
+- um local pertence a uma única zona;
+- a zona deve pertencer ao mesmo warehouse;
 - movimentações devem informar local quando o warehouse exigir controle por localização.
 
 ## InventoryBalance
@@ -173,4 +206,3 @@ Regras:
 - transação é append-only;
 - `idempotency_key` evita duplicidade em retries e sincronização futura;
 - transações serão a base para relatórios e conciliação.
-

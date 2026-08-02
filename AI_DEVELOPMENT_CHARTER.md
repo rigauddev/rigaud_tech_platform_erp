@@ -22,6 +22,7 @@ Este documento deve ser lido antes de qualquer task, junto com `AGENTS.md`, `erp
 - Login sempre usa email e senha; tenant e filial são resolvidos pelo backend.
 - Todo módulo novo deve ser demonstrável no Demo Environment quando houver superfície funcional.
 - Toda funcionalidade Flutter deve nascer preparada para Web, Android, iOS, Windows, Linux e macOS, preservando uma única base de código.
+- Toda nova entidade deve ser avaliada para QR Code, código de barras, auditoria completa, sincronização offline, eventos Kafka, operação multi-filial e compatibilidade SaaS/On-Premise, sem implementar recursos futuros fora do escopo.
 
 ## Fluxo Obrigatório
 

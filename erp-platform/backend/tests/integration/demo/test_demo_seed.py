@@ -23,7 +23,9 @@ from app.modules.inventory.infrastructure.models import (
     InventoryBalanceModel,
     InventoryMovementModel,
     InventoryReservationModel,
+    WarehouseLocationModel,
     WarehouseModel,
+    WarehouseZoneModel,
 )
 from app.modules.products.infrastructure.models import ProductModel
 from app.security.passwords import verify_password
@@ -52,6 +54,8 @@ async def _clean(session) -> None:
     await session.execute(delete(InventoryAdjustmentModel))
     await session.execute(delete(InventoryMovementModel))
     await session.execute(delete(InventoryBalanceModel))
+    await session.execute(delete(WarehouseLocationModel))
+    await session.execute(delete(WarehouseZoneModel))
     await session.execute(delete(WarehouseModel))
     await session.execute(delete(ProductModel))
     await session.execute(delete(CategoryModel))
@@ -89,6 +93,8 @@ async def test_demo_seed_all_is_idempotent() -> None:
         "memberships": 18,
         "branch_memberships": 37,
         "warehouses": 10,
+        "warehouse_zones": 9,
+        "warehouse_locations": 9,
         "categories": 9,
         "products": 130,
         "deleted_rows": 0,
@@ -101,6 +107,8 @@ async def test_demo_seed_all_is_idempotent() -> None:
         "memberships": await count_rows(CompanyMembershipModel),
         "branch_memberships": await count_rows(BranchMembershipModel),
         "warehouses": await count_rows(WarehouseModel),
+        "warehouse_zones": await count_rows(WarehouseZoneModel),
+        "warehouse_locations": await count_rows(WarehouseLocationModel),
         "categories": await count_rows(CategoryModel),
         "products": await count_rows(ProductModel),
     }
@@ -115,6 +123,8 @@ async def test_demo_seed_all_is_idempotent() -> None:
         "memberships": await count_rows(CompanyMembershipModel),
         "branch_memberships": await count_rows(BranchMembershipModel),
         "warehouses": await count_rows(WarehouseModel),
+        "warehouse_zones": await count_rows(WarehouseZoneModel),
+        "warehouse_locations": await count_rows(WarehouseLocationModel),
         "categories": await count_rows(CategoryModel),
         "products": await count_rows(ProductModel),
     }
@@ -158,6 +168,10 @@ async def test_demo_segment_seeds_can_run_independently() -> None:
     assert retail.products == 80
     assert restaurant.warehouses == 6
     assert retail.warehouses == 4
+    assert restaurant.warehouse_zones == 5
+    assert retail.warehouse_zones == 4
+    assert restaurant.warehouse_locations == 5
+    assert retail.warehouse_locations == 4
 
     async with async_session_factory() as session:
         demo_slugs = (
@@ -181,12 +195,16 @@ async def test_demo_api_installs_reports_and_resets(demo_client: AsyncClient) ->
     assert install.status_code == 200
     assert install.json()["code"] == "DEMO_INSTALLED"
     assert install.json()["warehouses"] == 10
+    assert install.json()["warehouse_zones"] == 9
+    assert install.json()["warehouse_locations"] == 9
     assert install.json()["products"] == 130
 
     status = await demo_client.get("/api/v1/demo/status")
     assert status.status_code == 200
     assert status.json()["companies"] == 3
     assert status.json()["warehouses"] == 10
+    assert status.json()["warehouse_zones"] == 9
+    assert status.json()["warehouse_locations"] == 9
     assert status.json()["scenarios"]["restaurant"] == 4
 
     scenarios = await demo_client.get("/api/v1/demo/scenarios")
