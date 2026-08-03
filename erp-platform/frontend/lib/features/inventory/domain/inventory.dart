@@ -72,6 +72,8 @@ class InventoryMovement {
     required this.physicalQuantityDelta,
     required this.reservedQuantityDelta,
     required this.putawayPendingQuantityDelta,
+    required this.originModule,
+    required this.businessProcess,
     required this.reason,
     required this.eventName,
     required this.createdAt,
@@ -83,6 +85,8 @@ class InventoryMovement {
   final String physicalQuantityDelta;
   final String reservedQuantityDelta;
   final String putawayPendingQuantityDelta;
+  final String originModule;
+  final String businessProcess;
   final String reason;
   final String eventName;
   final DateTime createdAt;
@@ -98,11 +102,45 @@ class InventoryMovement {
           .toString(),
       putawayPendingQuantityDelta:
           (json['putaway_pending_quantity_delta'] ?? '0.000').toString(),
+      originModule: json['origin_module'] as String? ?? '',
+      businessProcess: json['business_process'] as String? ?? '',
       reason: json['reason'] as String? ?? '',
       eventName: json['event_name'] as String? ?? '',
       createdAt:
           DateTime.tryParse(json['created_at'] as String? ?? '') ??
           DateTime.fromMillisecondsSinceEpoch(0),
+    );
+  }
+}
+
+class PutAwayOperation {
+  const PutAwayOperation({
+    required this.documentId,
+    required this.documentStatus,
+    required this.sourceBalance,
+    required this.targetBalance,
+    required this.movement,
+  });
+
+  final String documentId;
+  final String documentStatus;
+  final InventoryBalance sourceBalance;
+  final InventoryBalance targetBalance;
+  final InventoryMovement movement;
+
+  factory PutAwayOperation.fromJson(Map<String, dynamic> json) {
+    return PutAwayOperation(
+      documentId: json['document_id'] as String? ?? '',
+      documentStatus: json['document_status'] as String? ?? '',
+      sourceBalance: InventoryBalance.fromJson(
+        json['source_balance'] as Map<String, dynamic>? ?? {},
+      ),
+      targetBalance: InventoryBalance.fromJson(
+        json['target_balance'] as Map<String, dynamic>? ?? {},
+      ),
+      movement: InventoryMovement.fromJson(
+        json['movement'] as Map<String, dynamic>? ?? {},
+      ),
     );
   }
 }

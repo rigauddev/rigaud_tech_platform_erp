@@ -31,11 +31,15 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Receiving Document registra chegada e conferência documental, sem movimentar estoque.
 - Goods Receipt confirma recebimento físico por `InventoryMovement` do tipo `receipt`.
 - Mercadoria recebida fica em `putaway_pending_quantity` até o Put Away liberar disponibilidade.
+- Put Away confirma armazenagem por `InventoryMovement` do tipo `putaway`.
+- `InventoryMovement` deve registrar `origin_module` e `business_process` para rastreabilidade de origem e processo.
 - Reserva não altera saldo físico.
 - `InventoryBalance` nunca deve ser alterado diretamente por funcionalidades de negócio.
 - Toda alteração de saldo deve ocorrer por `InventoryMovement`, mantendo `InventoryBalance` como projeção auditável.
 - Tipos planejados de movimento: `RECEIPT`, `SALE`, `TRANSFER`, `ADJUSTMENT`, `RESERVATION`, `RELEASE`, `RETURN`, `LOSS` e `CONSUMPTION`.
 - Consumo automático de insumos do Restaurante será implementado em task futura do módulo Restaurant.
+- Pratos não serão controlados diretamente pelo estoque. Restaurante usará EPIC futura `EPIC-RESTAURANT-PRODUCTION` com Recipe Engine, Production Planning, Daily Production, Kitchen Production, Consumption, Waste, Forecast e AI Insights.
+- Produção futura consumirá insumos por `InventoryMovement`, usando `origin_module=RESTAURANT_PRODUCTION` e `business_process=PRODUCTION`.
 - Movimento confirmado não é editado.
 - Correção de estoque deve gerar novo movimento ou ajuste.
 - Toda nova entidade operacional deve possuir UUID interno, código curto quando fizer sentido, e ser avaliada para QR Code, código de barras, auditoria completa, sincronização offline, eventos Kafka, operação multi-filial e compatibilidade SaaS/On-Premise, sem antecipar implementação fora da task vigente.

@@ -30,6 +30,7 @@ Histórico imutável de mudanças.
 Tipos REST-003:
 
 - `receipt`;
+- `putaway`;
 - `adjustment_in`;
 - `adjustment_out`;
 - `reservation_created`;
@@ -42,6 +43,8 @@ Campos:
 - delta pendente de put away;
 - motivo;
 - origem;
+- `origin_module`;
+- `business_process`;
 - evento planejado;
 - ator.
 
@@ -116,6 +119,18 @@ Ele não é uma entidade persistida própria nesta versão. A confirmação gera
 - status `putaway_pending` no `ReceivingDocument`;
 - `InventoryMovement` do tipo `receipt`;
 - atualização projetada em `InventoryBalance`.
+
+## PutAwayService
+
+Serviço de aplicação da REST-009.
+
+Ele não cria entidade persistida própria nesta versão. A confirmação gera:
+
+- `InventoryMovement` do tipo `putaway`;
+- redução de `putaway_pending_quantity`;
+- liberação do saldo na `WarehouseLocation` final;
+- status `available` quando o documento fica sem pendência;
+- rastreabilidade por `origin_module` e `business_process`.
 
 ## Warehouse E Location
 

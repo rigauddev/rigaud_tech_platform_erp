@@ -87,6 +87,7 @@ class SQLAlchemyInventoryRepository(InventoryRepository):
             location_id=location_id,
             physical_quantity=Decimal("0.000"),
             reserved_quantity=Decimal("0.000"),
+            putaway_pending_quantity=Decimal("0.000"),
         )
         return await self.add_balance(balance)
 

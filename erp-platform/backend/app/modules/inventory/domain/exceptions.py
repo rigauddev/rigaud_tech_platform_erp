@@ -122,6 +122,14 @@ class ReceivingDocumentCannotConfirmError(ReceivingDocumentError):
     """Raised when a receiving document cannot be physically confirmed."""
 
 
+class PutAwayError(InventoryError):
+    """Base exception for put away use cases."""
+
+
+class PutAwayCannotConfirmError(PutAwayError):
+    """Raised when put away cannot be confirmed."""
+
+
 class InventoryBranchRequiredError(InventoryError):
     """Raised when the authenticated context has no active branch."""
 

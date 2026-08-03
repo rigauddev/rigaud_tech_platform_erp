@@ -111,6 +111,36 @@ Na REST-008:
 - aumenta `putaway_pending_quantity`;
 - mantém `available_quantity` bloqueada até Put Away.
 
+## Put Away
+
+```text
+POST /api/v1/inventory/putaway
+```
+
+Confirma armazenagem física em uma localização final.
+
+Payload:
+
+```json
+{
+  "document_id": "uuid",
+  "product_id": "uuid",
+  "location_id": "uuid",
+  "quantity": "10.000",
+  "reason": "Armazenagem na câmara fria"
+}
+```
+
+Na REST-009:
+
+- cria `InventoryMovement` do tipo `putaway`;
+- reduz `putaway_pending_quantity` no saldo de recebimento;
+- incrementa `physical_quantity` na localização final;
+- mantém `InventoryBalance` como projeção gerada por movimento;
+- grava `origin_module=PURCHASE`;
+- grava `business_process=PUTAWAY`;
+- altera o documento para `available` quando não houver pendência.
+
 ## Fluxo
 
 ```mermaid

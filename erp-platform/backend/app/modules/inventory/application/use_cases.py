@@ -188,6 +188,8 @@ class CreateInventoryAdjustment:
                 putaway_pending_quantity_delta=Decimal("0.000"),
                 reason=reason,
                 source_module="inventory",
+                origin_module="ADJUSTMENT",
+                business_process="ADJUSTMENT",
                 event_name=event_name,
                 actor_id=input_data.actor_id,
             )
@@ -281,6 +283,8 @@ class CreateInventoryReservation:
                 reason=reason,
                 source_module=input_data.source_module,
                 source_id=input_data.source_id,
+                origin_module="RESERVATION",
+                business_process="RESERVATION",
                 event_name="inventory.reserved",
                 actor_id=input_data.actor_id,
             )
@@ -340,6 +344,8 @@ class ReleaseInventoryReservation:
                 reason=reservation.reason,
                 source_module=reservation.source_module,
                 source_id=reservation.source_id,
+                origin_module="RESERVATION",
+                business_process="RELEASE",
                 event_name="inventory.reservation.released",
                 actor_id=actor_id,
             )

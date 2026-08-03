@@ -153,6 +153,8 @@ def _movement_response(movement: InventoryMovementModel) -> InventoryMovementRes
         reason=movement.reason,
         source_module=movement.source_module,
         source_id=movement.source_id,
+        origin_module=movement.origin_module,
+        business_process=movement.business_process,
         event_name=movement.event_name,
         actor_id=movement.actor_id,
         created_at=movement.created_at,

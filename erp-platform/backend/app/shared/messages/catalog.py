@@ -585,6 +585,18 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         "Recebimento não pode ser confirmado no status atual.",
         "warning",
     ),
+    "PUTAWAY_CONFIRMED": MessageDefinition(
+        "PUTAWAY_CONFIRMED",
+        200,
+        "Put Away confirmado com sucesso.",
+        audit_required=True,
+    ),
+    "PUTAWAY_CANNOT_CONFIRM": MessageDefinition(
+        "PUTAWAY_CANNOT_CONFIRM",
+        409,
+        "Put Away não pode ser confirmado no estado atual.",
+        "warning",
+    ),
     "AUDIT_EVENTS_RETRIEVED": MessageDefinition(
         "AUDIT_EVENTS_RETRIEVED",
         200,

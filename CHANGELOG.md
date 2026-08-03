@@ -4,6 +4,10 @@
 
 ### Added
 
+- REST-009: Put Away com `PutAwayService`, endpoint `POST /api/v1/inventory/putaway`, movimento `putaway`, liberação de saldo por localização e status documental `available`.
+- REST-009: `InventoryMovement` passa a registrar `origin_module` e `business_process`, preparando auditoria, relatórios, Kafka, MCP e Restaurant Production futura.
+- REST-009: Flutter Inventory recebe aba Put Away para confirmação por documento, produto, localização e quantidade, além de histórico de armazenagens.
+- REST-009: documentação em `docs/inventory/putaway.md`, `docs/warehouse/putaway.md` e Academy de Put Away.
 - REST-008: Goods Receipt com `GoodsReceiptService`, confirmação física de `ReceivingDocument`, movimento `receipt`, saldo físico e `putaway_pending_quantity`.
 - REST-008: endpoint `POST /api/v1/receiving-documents/{document_id}/confirm-receipt`, auditoria `goods_receipt.confirmed` e evento interno `inventory.receipt.confirmed`.
 - REST-008: Flutter Receiving Documents passa a confirmar recebimento físico, exibir diferenças e acompanhar status `putaway_pending`.

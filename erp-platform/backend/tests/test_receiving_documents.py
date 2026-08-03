@@ -7,6 +7,7 @@ from app.modules.inventory.application.goods_receipt_service import (
     GoodsReceiptInput,
     GoodsReceiptService,
 )
+from app.modules.inventory.application.putaway_service import PutAwayInput, PutAwayService
 from app.modules.inventory.application.receiving_use_cases import (
     ChangeReceivingDocumentStatus,
     CreateReceivingDocument,
@@ -17,6 +18,7 @@ from app.modules.inventory.application.receiving_use_cases import (
 )
 from app.modules.inventory.domain.entities import InventoryMovementType, ReceivingDocumentStatus
 from app.modules.inventory.domain.exceptions import (
+    PutAwayCannotConfirmError,
     ReceivingDocumentCannotConfirmError,
     ReceivingDocumentInvalidDataError,
     ReceivingDocumentNumberAlreadyExistsError,
@@ -24,6 +26,9 @@ from app.modules.inventory.domain.exceptions import (
 )
 from app.modules.inventory.domain.receiving_repositories import ReceivingDocumentRepository
 from app.modules.inventory.domain.repositories import InventoryRepository
+from app.modules.inventory.domain.warehouse_location_repositories import (
+    WarehouseLocationRepository,
+)
 from app.modules.inventory.domain.warehouse_repositories import WarehouseRepository
 from app.modules.inventory.infrastructure.models import (
     InventoryAdjustmentModel,
@@ -31,6 +36,7 @@ from app.modules.inventory.infrastructure.models import (
     InventoryMovementModel,
     InventoryReservationModel,
     ReceivingDocumentModel,
+    WarehouseLocationModel,
     WarehouseModel,
 )
 from app.modules.products.domain.entities import ProductType, UnitOfMeasure
@@ -127,6 +133,146 @@ async def test_goods_receipt_confirms_document_and_keeps_stock_pending_putaway()
     assert result.balances[0].physical_quantity == Decimal("10.000")
     assert result.balances[0].putaway_pending_quantity == Decimal("10.000")
     assert result.balances[0].available_quantity == Decimal("0.000")
+
+
+@pytest.mark.asyncio
+async def test_putaway_confirms_pending_stock_into_location() -> None:
+    tenant_id = uuid4()
+    branch_id = uuid4()
+    warehouse = _warehouse(tenant_id, branch_id)
+    product = _product(tenant_id)
+    location = _location(tenant_id, branch_id, warehouse.id)
+    receiving = _FakeReceivingDocumentRepository()
+    inventory = _FakeInventoryRepository()
+    document = await CreateReceivingDocument(
+        receiving,
+        _FakeWarehouseRepository([warehouse]),
+        _FakeProductRepository([product]),
+    ).execute(
+        ReceivingDocumentCreateInput(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            warehouse_id=warehouse.id,
+            document_number="NF-001",
+            document_type="invoice",
+            items=[
+                ReceivingItemInput(
+                    product_id=product.id,
+                    ordered_quantity=Decimal("10.000"),
+                    received_quantity=Decimal("10.000"),
+                )
+            ],
+        )
+    )
+    await GoodsReceiptService(
+        receiving,
+        inventory,
+        _FakeWarehouseRepository([warehouse]),
+    ).confirm(
+        GoodsReceiptInput(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            document_id=document.id,
+        )
+    )
+
+    result = await PutAwayService(
+        receiving,
+        inventory,
+        _FakeWarehouseLocationRepository([location]),
+    ).confirm(
+        PutAwayInput(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            document_id=document.id,
+            product_id=product.id,
+            location_id=location.id,
+            quantity=Decimal("10.000"),
+            actor_id=uuid4(),
+        )
+    )
+
+    assert result.document.status == ReceivingDocumentStatus.AVAILABLE
+    assert result.movement.movement_type == InventoryMovementType.PUTAWAY
+    assert result.movement.putaway_pending_quantity_delta == Decimal("-10.000")
+    assert result.movement.origin_module == "PURCHASE"
+    assert result.movement.business_process == "PUTAWAY"
+    assert result.source_balance.physical_quantity == Decimal("0.000")
+    assert result.source_balance.putaway_pending_quantity == Decimal("0.000")
+    assert result.target_balance.physical_quantity == Decimal("10.000")
+    assert result.target_balance.available_quantity == Decimal("10.000")
+
+
+@pytest.mark.asyncio
+async def test_putaway_rejects_quantity_above_pending_stock() -> None:
+    tenant_id = uuid4()
+    branch_id = uuid4()
+    warehouse = _warehouse(tenant_id, branch_id)
+    product = _product(tenant_id)
+    location = _location(tenant_id, branch_id, warehouse.id)
+    receiving = _FakeReceivingDocumentRepository()
+    inventory = _FakeInventoryRepository()
+    document = await CreateReceivingDocument(
+        receiving,
+        _FakeWarehouseRepository([warehouse]),
+        _FakeProductRepository([product]),
+    ).execute(
+        ReceivingDocumentCreateInput(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            warehouse_id=warehouse.id,
+            document_number="NF-001",
+            document_type="invoice",
+            items=[
+                ReceivingItemInput(
+                    product_id=product.id,
+                    ordered_quantity=Decimal("2.000"),
+                    received_quantity=Decimal("2.000"),
+                )
+            ],
+        )
+    )
+    await GoodsReceiptService(
+        receiving,
+        inventory,
+        _FakeWarehouseRepository([warehouse]),
+    ).confirm(
+        GoodsReceiptInput(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            document_id=document.id,
+        )
+    )
+    await PutAwayService(
+        receiving,
+        inventory,
+        _FakeWarehouseLocationRepository([location]),
+    ).confirm(
+        PutAwayInput(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            document_id=document.id,
+            product_id=product.id,
+            location_id=location.id,
+            quantity=Decimal("1.500"),
+        )
+    )
+
+    with pytest.raises(PutAwayCannotConfirmError):
+        await PutAwayService(
+            receiving,
+            inventory,
+            _FakeWarehouseLocationRepository([location]),
+        ).confirm(
+            PutAwayInput(
+                tenant_id=tenant_id,
+                branch_id=branch_id,
+                document_id=document.id,
+                product_id=product.id,
+                location_id=location.id,
+                quantity=Decimal("1.000"),
+            )
+        )
 
 
 @pytest.mark.asyncio
@@ -326,6 +472,19 @@ def _product(tenant_id: UUID) -> ProductModel:
     )
 
 
+def _location(tenant_id: UUID, branch_id: UUID, warehouse_id: UUID) -> WarehouseLocationModel:
+    return WarehouseLocationModel(
+        id=uuid4(),
+        tenant_id=tenant_id,
+        branch_id=branch_id,
+        warehouse_id=warehouse_id,
+        zone_id=uuid4(),
+        code="A-01-01",
+        name="Prateleira A",
+        is_active=True,
+    )
+
+
 class _FakeReceivingDocumentRepository(ReceivingDocumentRepository):
     def __init__(self, items: list[ReceivingDocumentModel] | None = None) -> None:
         self.items = {item.id: item for item in items or []}
@@ -512,6 +671,77 @@ class _FakeProductRepository(ProductRepository):
     async def exists_by_barcode(
         self,
         barcode: str,
+        *,
+        tenant_id: UUID,
+        exclude_id: UUID | None = None,
+    ) -> bool:
+        return False
+
+
+class _FakeWarehouseLocationRepository(WarehouseLocationRepository):
+    def __init__(self, items: list[WarehouseLocationModel] | None = None) -> None:
+        self.items = {item.id: item for item in items or []}
+
+    async def add(self, location: WarehouseLocationModel) -> WarehouseLocationModel:
+        self.items[location.id] = location
+        return location
+
+    async def get_by_id(
+        self, location_id: UUID, *, tenant_id: UUID
+    ) -> WarehouseLocationModel | None:
+        location = self.items.get(location_id)
+        if location and location.tenant_id == tenant_id and location.deleted_at is None:
+            return location
+        return None
+
+    async def list(
+        self,
+        *,
+        tenant_id: UUID,
+        branch_id: UUID | None,
+        warehouse_id: UUID | None,
+        zone_id: UUID | None,
+        search: str | None,
+        is_active: bool | None,
+        limit: int,
+        offset: int,
+    ) -> list[WarehouseLocationModel]:
+        return list(self.items.values())[offset : offset + limit]
+
+    async def count(
+        self,
+        *,
+        tenant_id: UUID,
+        branch_id: UUID | None,
+        warehouse_id: UUID | None,
+        zone_id: UUID | None,
+        search: str | None,
+        is_active: bool | None,
+    ) -> int:
+        return len(self.items)
+
+    async def exists_by_code(
+        self,
+        code: str,
+        *,
+        tenant_id: UUID,
+        warehouse_id: UUID,
+        exclude_id: UUID | None = None,
+    ) -> bool:
+        return False
+
+    async def exists_by_barcode(
+        self,
+        barcode: str,
+        *,
+        tenant_id: UUID,
+        exclude_id: UUID | None = None,
+    ) -> bool:
+        return False
+
+    async def exists_by_qr_code(
+        self,
+        qr_code: str,
         *,
         tenant_id: UUID,
         exclude_id: UUID | None = None,

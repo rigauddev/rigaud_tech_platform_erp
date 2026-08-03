@@ -64,6 +64,19 @@ class InventoryBalancesController
     state = AsyncError(result.error!, result.stackTrace!);
     return null;
   }
+
+  Future<PutAwayOperation?> confirmPutAway(PutAwayInput input) async {
+    final result = await AsyncValue.guard(
+      () => ConfirmPutAwayUseCase(_repository).execute(input),
+    );
+    if (result.hasValue) {
+      await reload();
+      ref.invalidate(inventoryMovementsControllerProvider);
+      return result.value;
+    }
+    state = AsyncError(result.error!, result.stackTrace!);
+    return null;
+  }
 }
 
 class InventoryMovementsController

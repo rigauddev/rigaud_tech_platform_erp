@@ -11,5 +11,6 @@ Decisões registradas:
 - `0005-api-governance-audit-response-contract.md`
 - `0006-two-factor-authentication-channels.md`
 - `0007-engine-first-development-strategy.md`
+- `0008-restaurant-production-separated-from-inventory.md`
 
 Novas decisões devem preservar a numeração existente.

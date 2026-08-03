@@ -17,4 +17,6 @@ abstract interface class InventoryRepository {
   Future<InventoryOperation> createAdjustment(InventoryAdjustmentInput input);
 
   Future<InventoryOperation> createReservation(InventoryReservationInput input);
+
+  Future<PutAwayOperation> confirmPutAway(PutAwayInput input);
 }

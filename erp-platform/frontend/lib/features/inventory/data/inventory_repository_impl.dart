@@ -55,6 +55,11 @@ class InventoryRepositoryImpl implements InventoryRepository {
     return _guard(() => _remote.createReservation(input));
   }
 
+  @override
+  Future<PutAwayOperation> confirmPutAway(PutAwayInput input) {
+    return _guard(() => _remote.confirmPutAway(input));
+  }
+
   Future<T> _guard<T>(Future<T> Function() action) async {
     try {
       return await action();

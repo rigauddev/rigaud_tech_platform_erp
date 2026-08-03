@@ -37,6 +37,14 @@ class InventoryReservationRequest(InventoryBaseSchema):
     source_id: UUID | None = None
 
 
+class PutAwayConfirmRequest(InventoryBaseSchema):
+    document_id: UUID
+    product_id: UUID
+    location_id: UUID
+    quantity: Decimal = Field(gt=0)
+    reason: str | None = Field(default=None, max_length=240)
+
+
 class InventoryBalanceResponse(InventoryBaseSchema):
     id: UUID
     tenant_id: UUID
@@ -67,6 +75,8 @@ class InventoryMovementResponse(InventoryBaseSchema):
     reason: str
     source_module: str | None
     source_id: UUID | None
+    origin_module: str
+    business_process: str
     event_name: str
     actor_id: UUID | None
     created_at: datetime

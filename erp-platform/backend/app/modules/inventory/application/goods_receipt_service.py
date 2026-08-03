@@ -123,6 +123,8 @@ class GoodsReceiptService:
                     reason=reason,
                     source_module="receiving",
                     source_id=document.id,
+                    origin_module="PURCHASE",
+                    business_process="RECEIVING",
                     event_name="inventory.receipt.confirmed",
                     actor_id=input_data.actor_id,
                 )

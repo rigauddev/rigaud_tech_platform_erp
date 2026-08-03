@@ -23,6 +23,20 @@ REST-008 valida:
 - warehouse do documento deve existir, estar ativo e pertencer à filial ativa;
 - ao menos um item deve possuir `received_quantity > 0`.
 
+## Put Away
+
+REST-009 valida:
+
+- filial ativa obrigatória;
+- documento existente no tenant;
+- documento pertencente à filial ativa;
+- documento deve estar em `putaway_pending`;
+- produto deve existir entre os itens do documento;
+- localização deve existir, estar ativa e pertencer ao mesmo tenant, filial e warehouse do documento;
+- quantidade deve ser maior que zero;
+- quantidade não pode exceder `putaway_pending_quantity`;
+- ao zerar a pendência, o documento passa para `available`.
+
 ## Quantidade
 
 - Deve ser maior que zero.

@@ -5,6 +5,7 @@ enum ReceivingDocumentStatus {
   partial,
   received,
   putawayPending,
+  available,
   cancelled;
 
   String get label {
@@ -15,6 +16,7 @@ enum ReceivingDocumentStatus {
       ReceivingDocumentStatus.partial => 'Parcial',
       ReceivingDocumentStatus.received => 'Recebido',
       ReceivingDocumentStatus.putawayPending => 'Put away pendente',
+      ReceivingDocumentStatus.available => 'Disponível',
       ReceivingDocumentStatus.cancelled => 'Cancelado',
     };
   }

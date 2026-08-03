@@ -453,6 +453,7 @@ class InventoryMovementModel(TenantMixin, TimestampMixin, Base):
         Index("ix_inventory_movements_tenant_branch", "tenant_id", "branch_id"),
         Index("ix_inventory_movements_tenant_product", "tenant_id", "product_id"),
         Index("ix_inventory_movements_tenant_type", "tenant_id", "movement_type"),
+        Index("ix_inventory_movements_origin", "origin_module", "business_process"),
         Index("ix_inventory_movements_source", "source_module", "source_id"),
         CheckConstraint(
             "physical_quantity_delta <> 0 OR reserved_quantity_delta <> 0 "
@@ -515,6 +516,8 @@ class InventoryMovementModel(TenantMixin, TimestampMixin, Base):
     reason: Mapped[str] = mapped_column(String(240), nullable=False)
     source_module: Mapped[str | None] = mapped_column(String(80), nullable=True)
     source_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
+    origin_module: Mapped[str] = mapped_column(String(80), nullable=False, default="MANUAL")
+    business_process: Mapped[str] = mapped_column(String(80), nullable=False, default="MANUAL")
     event_name: Mapped[str] = mapped_column(String(120), nullable=False)
     actor_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
 

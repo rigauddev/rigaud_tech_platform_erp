@@ -23,9 +23,9 @@ Estado atual: concluído até DEV-012 em review.
 
 Próxima task prevista: DEV-011 — Assinaturas, Planos e Limites.
 
-## Fase 2 — MVP Restaurante
+## Fase 2 — Core Inventory E Inbound Logistics
 
-Objetivo: construir o fluxo operacional inicial de restaurante usando o Core compartilhado.
+Objetivo: concluir o fluxo compartilhado de estoque antes das operações de restaurante e varejo.
 
 Suporte transversal:
 
@@ -48,21 +48,36 @@ Sequência:
 - Assinaturas, planos e limites.
 - Categorias de Produtos.
 - Alinhamento Auth/Tenant.
-- Estoque.
+- Inventory Engine.
+- Warehouse Management.
+- Warehouse Zones.
+- Warehouse Locations.
+- Receiving Documents.
+- Goods Receipt.
+- Put Away.
+- Inventory Transactions.
+- Inventory Count.
+- Stock Adjustments.
+- Transfers.
+
+## Fase 3 — MVP Restaurante
+
+Objetivo: construir o fluxo operacional inicial de restaurante sobre o Core compartilhado.
+
+Sequência:
+
 - Mesas.
 - Setores.
 - Garçons.
 - QR Code.
 - Cardápio Online.
-- Pedido Cliente.
-- Pedido Garçom.
+- Pedidos.
 - KDS.
 - Delivery.
 - Caixa.
-- Fechamento da Venda.
 - Cupom ou NFC-e.
 
-## Fase 3 — MVP Loja de Roupas
+## Fase 4 — MVP Loja de Roupas
 
 Objetivo: reutilizar o Core e especializar o domínio Fashion.
 
@@ -70,7 +85,7 @@ Sequência:
 
 - Produtos e variações.
 - Categorias.
-- Estoque.
+- Estoque compartilhado.
 - Clientes.
 - Pré-venda.
 - Venda.
@@ -78,7 +93,20 @@ Sequência:
 - Cupom.
 - NFC-e.
 
-## Fase 4 — Evoluções Futuras
+## Fase 5 — Evoluções Futuras
+
+### EPIC-RESTAURANT-PRODUCTION
+
+- Recipe Engine.
+- Production Planning.
+- Daily Production.
+- Kitchen Production.
+- Consumption.
+- Waste.
+- Forecast.
+- AI Insights.
+
+Produção permanece separada do estoque. Estoque registra consumo e perdas por eventos de `InventoryMovement`; receitas, planejamento e cozinha pertencem ao domínio Restaurant Production.
 
 - Marketplace.
 - Offline-first.

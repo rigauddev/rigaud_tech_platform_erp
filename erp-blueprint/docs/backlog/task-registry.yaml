@@ -1,4 +1,54 @@
 tasks:
+  - id: REST-009
+    title: Put Away
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-008
+    started_at: "2026-08-03"
+    completed_at: null
+    documentation:
+      - docs/inventory/putaway.md
+      - docs/warehouse/putaway.md
+      - docs/ai/overview.md
+      - README.md
+      - CHANGELOG.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/adr/0008-restaurant-production-separated-from-inventory.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/inventory/README.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/005-putaway.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_receiving_documents.py
+      - erp-platform/frontend/test/inventory/inventory_controller_test.dart
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - flutter build apk --debug
+      - flutter build macos
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-009
+    migration: 0018_putaway
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-009-putaway
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
   - id: REST-008
     title: Goods Receipt
     epic: EPIC-003 Inbound Logistics

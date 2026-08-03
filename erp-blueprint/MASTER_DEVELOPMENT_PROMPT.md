@@ -258,25 +258,37 @@ Diretriz:
 
 ## Backlog e Roadmap
 
-Ordem oficial do MVP Restaurante:
+Ordem oficial do Core Inventory e Inbound Logistics:
 
 1. REST-001 — Cadastro de Produtos
 2. DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 3. DEV-011 — Assinaturas, Planos e Limites
 4. REST-002 — Categorias
-5. REST-003 — Controle de Estoque
-6. REST-004 — Mesas
-7. REST-005 — Setores
-8. REST-006 — Garçons
-9. REST-007 — QR Code das Mesas
-10. REST-008 — Cardápio Online
-11. REST-009 — Pedido pelo Cliente
-12. REST-010 — Pedido pelo Garçom
-13. REST-011 — Painel da Cozinha — KDS
-14. REST-012 — Delivery
-15. REST-013 — Caixa
-16. REST-014 — Fechamento da Venda
-17. REST-015 — Cupom ou NFC-e
+5. DEV-012 — Authentication & Tenant Architecture Alignment
+6. REST-003 — Inventory Engine
+7. REST-004 — Warehouse Management
+8. REST-005 — Warehouse Zones
+9. REST-006 — Warehouse Locations
+10. REST-007 — Receiving Documents
+11. REST-008 — Goods Receipt
+12. REST-009 — Put Away
+13. REST-010 — Inventory Transactions
+14. REST-011 — Inventory Count
+15. REST-012 — Stock Adjustments
+16. REST-013 — Transfers
+
+Após concluir esse núcleo, iniciar o MVP Restaurante:
+
+1. Restaurant-001 — Mesas
+2. Restaurant-002 — Setores
+3. Restaurant-003 — Garçons
+4. Restaurant-004 — QR Code das Mesas
+5. Restaurant-005 — Cardápio Online
+6. Restaurant-006 — Pedidos
+7. Restaurant-007 — Painel da Cozinha — KDS
+8. Restaurant-008 — Delivery
+9. Restaurant-009 — Caixa
+10. Restaurant-010 — Cupom ou NFC-e
 
 Não reordenar o backlog. Não avançar automaticamente para a próxima Task.
 

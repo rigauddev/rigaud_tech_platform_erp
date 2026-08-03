@@ -48,9 +48,9 @@ DEV-009 deverá permitir autenticação em dois fatores habilitável e desabilit
 
 DEV-012 congela a regra oficial: usuário pertence a uma empresa e possui uma filial ativa.
 
-## MVP Restaurante
+## Core Inventory E Inbound Logistics
 
-Task transversal de suporte antes da continuidade operacional:
+Tasks transversais de suporte:
 
 - DOC-003 — Demo Environment.
 - DOC-005 — Inventory Engine Domain.
@@ -64,28 +64,58 @@ Estratégia Engine-first:
 - ENGINE-005 — Financial Engine.
 - ENGINE-006 — Reporting Engine.
 
-Após DEV-009, executar exatamente nesta ordem:
+Sequência concluída/iniciada para o núcleo compartilhado:
 
 1. REST-001 — Cadastro de Produtos
 2. DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 3. DEV-011 — Assinaturas, Planos e Limites
 4. REST-002 — Categorias de Produtos
 5. DEV-012 — Authentication & Tenant Architecture Alignment
-6. REST-003 — Controle de Estoque
-6. REST-004 — Mesas
-7. REST-005 — Setores
-8. REST-006 — Garçons
-9. REST-007 — QR Code das Mesas
-10. REST-008 — Cardápio Online
-11. REST-009 — Pedido pelo Cliente
-12. REST-010 — Pedido pelo Garçom
-13. REST-011 — Painel da Cozinha — KDS
-14. REST-012 — Delivery
-15. REST-013 — Caixa
-16. REST-014 — Fechamento da Venda
-17. REST-015 — Cupom ou NFC-e
+6. REST-003 — Inventory Engine
+7. REST-004 — Warehouse Management
+8. REST-005 — Warehouse Zones
+9. REST-006 — Warehouse Locations
+10. REST-007 — Receiving Documents
+11. REST-008 — Goods Receipt
+12. REST-009 — Put Away
+13. REST-010 — Inventory Transactions
+14. REST-011 — Inventory Count
+15. REST-012 — Stock Adjustments
+16. REST-013 — Transfers
 
 Cada item é uma Task independente. A ordem não pode ser alterada.
+
+## MVP Restaurante
+
+Após concluir o núcleo de estoque e inbound logistics, iniciar o Restaurante nesta ordem:
+
+1. Restaurant-001 — Mesas
+2. Restaurant-002 — Setores
+3. Restaurant-003 — Garçons
+4. Restaurant-004 — QR Code das Mesas
+5. Restaurant-005 — Cardápio Online
+6. Restaurant-006 — Pedidos
+7. Restaurant-007 — Kitchen Display — KDS
+8. Restaurant-008 — Delivery
+9. Restaurant-009 — Caixa
+10. Restaurant-010 — Cupom ou NFC-e
+
+## EPIC-RESTAURANT-PRODUCTION — Futura
+
+Não implementar antes do MVP Restaurante.
+
+Escopo planejado:
+
+- Recipe Engine;
+- Production Planning;
+- Daily Production;
+- Kitchen Production;
+- Consumption;
+- Waste;
+- Forecast;
+- AI Insights.
+
+Produção de restaurante consumirá insumos por `InventoryMovement` com `origin_module=RESTAURANT_PRODUCTION` e `business_process=PRODUCTION`.
 
 ## MVP Loja de Roupas
 

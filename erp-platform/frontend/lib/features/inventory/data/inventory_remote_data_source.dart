@@ -68,6 +68,14 @@ class InventoryRemoteDataSource {
     );
     return InventoryOperation.fromJson(apiDataObject(response.data));
   }
+
+  Future<PutAwayOperation> confirmPutAway(PutAwayInput input) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/inventory/putaway',
+      data: input.toJson(),
+    );
+    return PutAwayOperation.fromJson(apiDataObject(response.data));
+  }
 }
 
 final inventoryRemoteDataSourceProvider = Provider<InventoryRemoteDataSource>((

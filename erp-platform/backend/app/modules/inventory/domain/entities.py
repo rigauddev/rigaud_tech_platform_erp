@@ -23,6 +23,7 @@ class ReceivingDocumentStatus(StrEnum):
     PARTIAL = "partial"
     RECEIVED = "received"
     PUTAWAY_PENDING = "putaway_pending"
+    AVAILABLE = "available"
     CANCELLED = "cancelled"
 
 
@@ -39,6 +40,7 @@ class WarehouseZoneType(StrEnum):
 
 class InventoryMovementType(StrEnum):
     RECEIPT = "receipt"
+    PUTAWAY = "putaway"
     ADJUSTMENT_IN = "adjustment_in"
     ADJUSTMENT_OUT = "adjustment_out"
     RESERVATION_CREATED = "reservation_created"

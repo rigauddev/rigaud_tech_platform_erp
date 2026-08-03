@@ -24,6 +24,7 @@ nav:
       - Inventory Engine Implementation: academy/inventory/002-inventory-engine-implementation.md
       - Receiving Documents: academy/inventory/003-receiving-documents.md
       - Goods Receipt: academy/inventory/004-goods-receipt.md
+      - Put Away: academy/inventory/005-putaway.md
       - Warehouse Management: academy/warehouse/001-warehouse-management.md
       - Warehouse Zones: academy/warehouse/002-warehouse-zones.md
       - Warehouse Locations: academy/warehouse/003-warehouse-locations.md
@@ -43,6 +44,7 @@ nav:
       - ADR 0005 API Governance Audit: adr/0005-api-governance-audit-response-contract.md
       - ADR 0006 Two Factor Authentication: adr/0006-two-factor-authentication-channels.md
       - ADR 0007 Engine First: adr/0007-engine-first-development-strategy.md
+      - ADR 0008 Restaurant Production: adr/0008-restaurant-production-separated-from-inventory.md
   - Modules: modules/README.md
   - Research: research/README.md
   - Backlog:

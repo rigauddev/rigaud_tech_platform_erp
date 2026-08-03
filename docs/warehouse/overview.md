@@ -55,6 +55,8 @@ REST-007 adiciona documentos de recebimento ligados ao warehouse da filial ativa
 
 REST-008 adiciona Goods Receipt e mantém quantidade recebida pendente de put away. A documentação está em `docs/warehouse/goods-receipt.md`.
 
+REST-009 adiciona Put Away e libera mercadoria recebida para a localização final. A documentação está em `docs/warehouse/putaway.md`.
+
 ## Demo Environment
 
 `make demo`, `make demo-restaurant`, `make demo-retail` e `make playground` criam depósitos, zonas, localizações e documentos de recebimento demo por filial.

@@ -41,3 +41,13 @@ class CreateInventoryReservationUseCase {
     return _repository.createReservation(input);
   }
 }
+
+class ConfirmPutAwayUseCase {
+  const ConfirmPutAwayUseCase(this._repository);
+
+  final InventoryRepository _repository;
+
+  Future<PutAwayOperation> execute(PutAwayInput input) {
+    return _repository.confirmPutAway(input);
+  }
+}

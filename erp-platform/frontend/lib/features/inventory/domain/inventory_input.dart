@@ -49,3 +49,29 @@ class InventoryReservationInput {
     };
   }
 }
+
+class PutAwayInput {
+  const PutAwayInput({
+    required this.documentId,
+    required this.productId,
+    required this.locationId,
+    required this.quantity,
+    this.reason,
+  });
+
+  final String documentId;
+  final String productId;
+  final String locationId;
+  final String quantity;
+  final String? reason;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'document_id': documentId,
+      'product_id': productId,
+      'location_id': locationId,
+      'quantity': quantity,
+      if (reason != null && reason!.trim().isNotEmpty) 'reason': reason,
+    };
+  }
+}
