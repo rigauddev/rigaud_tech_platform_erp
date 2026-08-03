@@ -41,13 +41,14 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/rest-009-putaway
-      commits: []
+      commits:
+        - 88c16cb
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
+    commit: 88c16cb
     review_status: ready
   - id: REST-008
     title: Goods Receipt
