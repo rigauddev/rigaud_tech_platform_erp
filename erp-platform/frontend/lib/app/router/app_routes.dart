@@ -24,6 +24,8 @@ class AppRoutes {
   static const warehouseZoneCreate = '/warehouse-zones/new';
   static const warehouseLocations = '/warehouse-locations';
   static const warehouseLocationCreate = '/warehouse-locations/new';
+  static const receivingDocuments = '/receiving-documents';
+  static const receivingDocumentCreate = '/receiving-documents/new';
   static const audit = '/audit';
   static const demo = '/demo';
   static const notFound = '/not-found';

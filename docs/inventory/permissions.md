@@ -2,6 +2,20 @@
 
 REST-003 prepara o Inventory Engine para RBAC, mas não cria um módulo completo de permissões.
 
+REST-007 usa o usuário autenticado, tenant e filial ativa para operar documentos de recebimento.
+
+Permissões planejadas:
+
+- listar recebimentos;
+- criar recebimento;
+- editar recebimento;
+- alterar status;
+- cancelar recebimento.
+
+REST-008 adiciona permissão planejada:
+
+- confirmar recebimento físico.
+
 ## Regras Atuais
 
 - usuário autenticado obrigatório;

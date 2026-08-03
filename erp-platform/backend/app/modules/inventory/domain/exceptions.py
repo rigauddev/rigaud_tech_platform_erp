@@ -90,6 +90,38 @@ class WarehouseZoneInactiveError(WarehouseZoneError):
     """Raised when operation requires an active warehouse zone."""
 
 
+class ReceivingDocumentError(InventoryError):
+    """Base exception for receiving document use cases."""
+
+
+class ReceivingDocumentNotFoundError(ReceivingDocumentError):
+    """Raised when a receiving document does not exist for the current tenant."""
+
+
+class ReceivingDocumentAlreadyExistsError(ReceivingDocumentError):
+    """Raised when a receiving document unique value already exists."""
+
+
+class ReceivingDocumentNumberAlreadyExistsError(ReceivingDocumentAlreadyExistsError):
+    """Raised when document number already exists in the same branch."""
+
+
+class ReceivingDocumentBranchRequiredError(ReceivingDocumentError):
+    """Raised when the authenticated context has no active branch."""
+
+
+class ReceivingDocumentInvalidDataError(ReceivingDocumentError):
+    """Raised when receiving document payload violates validation rules."""
+
+
+class ReceivingDocumentItemRequiredError(ReceivingDocumentError):
+    """Raised when a receiving document requires at least one item."""
+
+
+class ReceivingDocumentCannotConfirmError(ReceivingDocumentError):
+    """Raised when a receiving document cannot be physically confirmed."""
+
+
 class InventoryBranchRequiredError(InventoryError):
     """Raised when the authenticated context has no active branch."""
 

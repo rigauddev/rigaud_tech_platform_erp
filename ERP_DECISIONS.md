@@ -28,7 +28,14 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Estoque é controlado por tenant, filial, warehouse e location quando aplicável.
 - Warehouse Zone é a camada operacional entre Warehouse e Stock Location.
 - Warehouse Location é o endereço físico ou bin dentro de uma Warehouse Zone.
+- Receiving Document registra chegada e conferência documental, sem movimentar estoque.
+- Goods Receipt confirma recebimento físico por `InventoryMovement` do tipo `receipt`.
+- Mercadoria recebida fica em `putaway_pending_quantity` até o Put Away liberar disponibilidade.
 - Reserva não altera saldo físico.
+- `InventoryBalance` nunca deve ser alterado diretamente por funcionalidades de negócio.
+- Toda alteração de saldo deve ocorrer por `InventoryMovement`, mantendo `InventoryBalance` como projeção auditável.
+- Tipos planejados de movimento: `RECEIPT`, `SALE`, `TRANSFER`, `ADJUSTMENT`, `RESERVATION`, `RELEASE`, `RETURN`, `LOSS` e `CONSUMPTION`.
+- Consumo automático de insumos do Restaurante será implementado em task futura do módulo Restaurant.
 - Movimento confirmado não é editado.
 - Correção de estoque deve gerar novo movimento ou ajuste.
 - Toda nova entidade operacional deve possuir UUID interno, código curto quando fizer sentido, e ser avaliada para QR Code, código de barras, auditoria completa, sincronização offline, eventos Kafka, operação multi-filial e compatibilidade SaaS/On-Premise, sem antecipar implementação fora da task vigente.
@@ -69,3 +76,10 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Offline-first é planejado.
 - SQLite local só entra em task futura.
 - Operações offline devem considerar idempotência, fila, retry, conflitos e auditoria.
+
+## IA E MCP Futuro
+
+- IA não faz parte do MVP operacional inicial.
+- A arquitetura deve reservar espaço para providers, agentes, prompts, ferramentas, MCP, memória, embeddings, RAG e eventos.
+- IA deve consumir eventos do ERP e permanecer desacoplada das regras transacionais.
+- Insights futuros não devem alterar dados transacionais sem workflow explícito, auditoria e permissão.

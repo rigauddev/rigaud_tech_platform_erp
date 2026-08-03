@@ -20,6 +20,7 @@ class InventoryBalance {
     required this.productId,
     required this.physicalQuantity,
     required this.reservedQuantity,
+    required this.putawayPendingQuantity,
     required this.availableQuantity,
     required this.createdAt,
     required this.updatedAt,
@@ -35,6 +36,7 @@ class InventoryBalance {
   final String? locationId;
   final String physicalQuantity;
   final String reservedQuantity;
+  final String putawayPendingQuantity;
   final String availableQuantity;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -49,6 +51,8 @@ class InventoryBalance {
       locationId: json['location_id'] as String?,
       physicalQuantity: (json['physical_quantity'] ?? '0.000').toString(),
       reservedQuantity: (json['reserved_quantity'] ?? '0.000').toString(),
+      putawayPendingQuantity: (json['putaway_pending_quantity'] ?? '0.000')
+          .toString(),
       availableQuantity: (json['available_quantity'] ?? '0.000').toString(),
       createdAt:
           DateTime.tryParse(json['created_at'] as String? ?? '') ??
@@ -67,6 +71,7 @@ class InventoryMovement {
     required this.movementType,
     required this.physicalQuantityDelta,
     required this.reservedQuantityDelta,
+    required this.putawayPendingQuantityDelta,
     required this.reason,
     required this.eventName,
     required this.createdAt,
@@ -77,6 +82,7 @@ class InventoryMovement {
   final String movementType;
   final String physicalQuantityDelta;
   final String reservedQuantityDelta;
+  final String putawayPendingQuantityDelta;
   final String reason;
   final String eventName;
   final DateTime createdAt;
@@ -90,6 +96,8 @@ class InventoryMovement {
           .toString(),
       reservedQuantityDelta: (json['reserved_quantity_delta'] ?? '0.000')
           .toString(),
+      putawayPendingQuantityDelta:
+          (json['putaway_pending_quantity_delta'] ?? '0.000').toString(),
       reason: json['reason'] as String? ?? '',
       eventName: json['event_name'] as String? ?? '',
       createdAt:

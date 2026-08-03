@@ -1,4 +1,103 @@
 tasks:
+  - id: REST-008
+    title: Goods Receipt
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-007
+    started_at: "2026-08-02"
+    completed_at: null
+    documentation:
+      - docs/inventory/goods-receipt.md
+      - docs/warehouse/goods-receipt.md
+      - docs/ai/overview.md
+      - README.md
+      - CHANGELOG.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/receiving_documents/README.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/004-goods-receipt.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_receiving_documents.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - flutter build apk --debug
+      - flutter build macos
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-008
+    migration: 0017_goods_receipt
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-008-goods-receipt
+      commits:
+        - 7948e5f
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 7948e5f
+    review_status: ready
+  - id: REST-007
+    title: Receiving Documents
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-006
+    started_at: "2026-08-02"
+    completed_at: null
+    documentation:
+      - docs/inventory/receiving-documents.md
+      - docs/inventory/receiving-api.md
+      - docs/inventory/receiving-database.md
+      - docs/inventory/receiving-flutter.md
+      - docs/inventory/receiving-testing.md
+      - docs/warehouse/receiving.md
+      - README.md
+      - CHANGELOG.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/receiving_documents/README.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/003-receiving-documents.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_receiving_documents.py
+      - erp-platform/backend/tests/integration/demo/test_demo_seed.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - flutter build apk --debug
+      - flutter build macos
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-007
+    migration: 0016_receiving_documents
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-007-receiving-documents
+      commits:
+        - b287dc6
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: b287dc6
+    review_status: ready
   - id: REST-006
     title: Warehouse Locations
     epic: EPIC-002 Warehouse Management

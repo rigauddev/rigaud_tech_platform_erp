@@ -50,6 +50,8 @@ Leitura obrigatória antes de alterar arquivos:
 - documentação do módulo afetado em `docs/`
 - documentação local do módulo em `erp-platform/backend/app/modules/<module>/README.md` ou `erp-platform/frontend/lib/features/<feature>/README.md`, quando existir.
 
+Antes de cada Task, quando houver dúvida técnica, comportamento específico de biblioteca ou modelagem de processo de mercado, o agente deve consultar documentação oficial das tecnologias envolvidas e referências de ERPs/WMS consolidados. A documentação da Task deve registrar referências consultadas, decisão arquitetural adotada e impacto futuro.
+
 ## Stack Oficial
 
 Backend:

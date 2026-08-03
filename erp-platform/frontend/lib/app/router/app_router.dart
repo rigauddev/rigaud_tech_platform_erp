@@ -19,6 +19,9 @@ import '../../features/not_found/presentation/not_found_screen.dart';
 import '../../features/products/presentation/product_detail_screen.dart';
 import '../../features/products/presentation/product_form_screen.dart';
 import '../../features/products/presentation/product_list_screen.dart';
+import '../../features/receiving_documents/presentation/receiving_document_detail_screen.dart';
+import '../../features/receiving_documents/presentation/receiving_document_form_screen.dart';
+import '../../features/receiving_documents/presentation/receiving_document_list_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/users/presentation/user_detail_screen.dart';
 import '../../features/users/presentation/user_form_screen.dart';
@@ -146,6 +149,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.warehouseLocationCreate,
         builder: (context, state) => const WarehouseLocationFormScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.receivingDocuments,
+        builder: (context, state) => const ReceivingDocumentListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.receivingDocumentCreate,
+        builder: (context, state) => const ReceivingDocumentFormScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.receivingDocuments}/:documentId',
+        builder: (context, state) => ReceivingDocumentDetailScreen(
+          documentId: state.pathParameters['documentId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.receivingDocuments}/:documentId/edit',
+        builder: (context, state) => ReceivingDocumentFormScreen(
+          documentId: state.pathParameters['documentId'],
+        ),
       ),
       GoRoute(
         path: '${AppRoutes.warehouseLocations}/:locationId',
