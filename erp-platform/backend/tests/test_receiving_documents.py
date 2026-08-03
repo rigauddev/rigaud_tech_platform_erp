@@ -3,6 +3,10 @@ from uuid import UUID, uuid4
 
 import pytest
 
+from app.modules.inventory.application.goods_receipt_service import (
+    GoodsReceiptInput,
+    GoodsReceiptService,
+)
 from app.modules.inventory.application.receiving_use_cases import (
     ChangeReceivingDocumentStatus,
     CreateReceivingDocument,
@@ -11,15 +15,24 @@ from app.modules.inventory.application.receiving_use_cases import (
     ReceivingDocumentStatusInput,
     ReceivingItemInput,
 )
-from app.modules.inventory.domain.entities import ReceivingDocumentStatus
+from app.modules.inventory.domain.entities import InventoryMovementType, ReceivingDocumentStatus
 from app.modules.inventory.domain.exceptions import (
+    ReceivingDocumentCannotConfirmError,
     ReceivingDocumentInvalidDataError,
     ReceivingDocumentNumberAlreadyExistsError,
     WarehouseBranchRequiredError,
 )
 from app.modules.inventory.domain.receiving_repositories import ReceivingDocumentRepository
+from app.modules.inventory.domain.repositories import InventoryRepository
 from app.modules.inventory.domain.warehouse_repositories import WarehouseRepository
-from app.modules.inventory.infrastructure.models import ReceivingDocumentModel, WarehouseModel
+from app.modules.inventory.infrastructure.models import (
+    InventoryAdjustmentModel,
+    InventoryBalanceModel,
+    InventoryMovementModel,
+    InventoryReservationModel,
+    ReceivingDocumentModel,
+    WarehouseModel,
+)
 from app.modules.products.domain.entities import ProductType, UnitOfMeasure
 from app.modules.products.domain.repositories import ProductRepository
 from app.modules.products.infrastructure.models import ProductModel
@@ -62,6 +75,111 @@ async def test_create_receiving_document_calculates_pending_without_stock_moveme
     assert document.items[0].pending_quantity == Decimal("6.000")
     assert receiving.stock_movements_created == 0
     assert receiving.balances_changed == 0
+
+
+@pytest.mark.asyncio
+async def test_goods_receipt_confirms_document_and_keeps_stock_pending_putaway() -> None:
+    tenant_id = uuid4()
+    branch_id = uuid4()
+    warehouse = _warehouse(tenant_id, branch_id)
+    product = _product(tenant_id)
+    receiving = _FakeReceivingDocumentRepository()
+    inventory = _FakeInventoryRepository()
+    document = await CreateReceivingDocument(
+        receiving,
+        _FakeWarehouseRepository([warehouse]),
+        _FakeProductRepository([product]),
+    ).execute(
+        ReceivingDocumentCreateInput(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            warehouse_id=warehouse.id,
+            document_number="NF-001",
+            document_type="invoice",
+            status=ReceivingDocumentStatus.RECEIVING,
+            items=[
+                ReceivingItemInput(
+                    product_id=product.id,
+                    ordered_quantity=Decimal("10.000"),
+                    received_quantity=Decimal("10.000"),
+                )
+            ],
+        )
+    )
+
+    result = await GoodsReceiptService(
+        receiving,
+        inventory,
+        _FakeWarehouseRepository([warehouse]),
+    ).confirm(
+        GoodsReceiptInput(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            document_id=document.id,
+            actor_id=uuid4(),
+        )
+    )
+
+    assert result.document.status == ReceivingDocumentStatus.PUTAWAY_PENDING
+    assert result.movements[0].movement_type == InventoryMovementType.RECEIPT
+    assert result.movements[0].physical_quantity_delta == Decimal("10.000")
+    assert result.movements[0].putaway_pending_quantity_delta == Decimal("10.000")
+    assert result.balances[0].physical_quantity == Decimal("10.000")
+    assert result.balances[0].putaway_pending_quantity == Decimal("10.000")
+    assert result.balances[0].available_quantity == Decimal("0.000")
+
+
+@pytest.mark.asyncio
+async def test_goods_receipt_rejects_already_confirmed_document() -> None:
+    tenant_id = uuid4()
+    branch_id = uuid4()
+    warehouse = _warehouse(tenant_id, branch_id)
+    product = _product(tenant_id)
+    receiving = _FakeReceivingDocumentRepository()
+    document = await CreateReceivingDocument(
+        receiving,
+        _FakeWarehouseRepository([warehouse]),
+        _FakeProductRepository([product]),
+    ).execute(
+        ReceivingDocumentCreateInput(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            warehouse_id=warehouse.id,
+            document_number="NF-001",
+            document_type="invoice",
+            items=[
+                ReceivingItemInput(
+                    product_id=product.id,
+                    ordered_quantity=Decimal("1.000"),
+                    received_quantity=Decimal("1.000"),
+                )
+            ],
+        )
+    )
+    await GoodsReceiptService(
+        receiving,
+        _FakeInventoryRepository(),
+        _FakeWarehouseRepository([warehouse]),
+    ).confirm(
+        GoodsReceiptInput(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            document_id=document.id,
+        )
+    )
+
+    with pytest.raises(ReceivingDocumentCannotConfirmError):
+        await GoodsReceiptService(
+            receiving,
+            _FakeInventoryRepository(),
+            _FakeWarehouseRepository([warehouse]),
+        ).confirm(
+            GoodsReceiptInput(
+                tenant_id=tenant_id,
+                branch_id=branch_id,
+                document_id=document.id,
+            )
+        )
 
 
 @pytest.mark.asyncio
@@ -399,3 +517,125 @@ class _FakeProductRepository(ProductRepository):
         exclude_id: UUID | None = None,
     ) -> bool:
         return False
+
+
+class _FakeInventoryRepository(InventoryRepository):
+    def __init__(self) -> None:
+        self.balances: dict[
+            tuple[UUID, UUID, UUID, UUID | None, UUID | None], InventoryBalanceModel
+        ] = {}
+        self.movements: list[InventoryMovementModel] = []
+
+    async def add_balance(self, balance: InventoryBalanceModel) -> InventoryBalanceModel:
+        key = (
+            balance.tenant_id,
+            balance.branch_id,
+            balance.product_id,
+            balance.warehouse_id,
+            balance.location_id,
+        )
+        self.balances[key] = balance
+        return balance
+
+    async def add_movement(self, movement: InventoryMovementModel) -> InventoryMovementModel:
+        if movement.id is None:
+            movement.id = uuid4()
+        self.movements.append(movement)
+        return movement
+
+    async def add_adjustment(
+        self, adjustment: InventoryAdjustmentModel
+    ) -> InventoryAdjustmentModel:
+        return adjustment
+
+    async def add_reservation(
+        self, reservation: InventoryReservationModel
+    ) -> InventoryReservationModel:
+        return reservation
+
+    async def get_balance(
+        self,
+        *,
+        tenant_id: UUID,
+        branch_id: UUID,
+        product_id: UUID,
+        warehouse_id: UUID | None = None,
+        location_id: UUID | None = None,
+    ) -> InventoryBalanceModel | None:
+        return self.balances.get((tenant_id, branch_id, product_id, warehouse_id, location_id))
+
+    async def get_or_create_balance(
+        self,
+        *,
+        tenant_id: UUID,
+        branch_id: UUID,
+        product_id: UUID,
+        warehouse_id: UUID | None = None,
+        location_id: UUID | None = None,
+    ) -> InventoryBalanceModel:
+        balance = await self.get_balance(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            product_id=product_id,
+            warehouse_id=warehouse_id,
+            location_id=location_id,
+        )
+        if balance is not None:
+            return balance
+        balance = InventoryBalanceModel(
+            id=uuid4(),
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            product_id=product_id,
+            warehouse_id=warehouse_id,
+            location_id=location_id,
+            physical_quantity=Decimal("0.000"),
+            reserved_quantity=Decimal("0.000"),
+            putaway_pending_quantity=Decimal("0.000"),
+        )
+        return await self.add_balance(balance)
+
+    async def list_balances(
+        self,
+        *,
+        tenant_id: UUID,
+        branch_id: UUID | None,
+        product_id: UUID | None,
+        limit: int,
+        offset: int,
+    ) -> list[InventoryBalanceModel]:
+        return list(self.balances.values())[offset : offset + limit]
+
+    async def count_balances(
+        self,
+        *,
+        tenant_id: UUID,
+        branch_id: UUID | None,
+        product_id: UUID | None,
+    ) -> int:
+        return len(self.balances)
+
+    async def list_movements(
+        self,
+        *,
+        tenant_id: UUID,
+        branch_id: UUID | None,
+        product_id: UUID | None,
+        limit: int,
+        offset: int,
+    ) -> list[InventoryMovementModel]:
+        return self.movements[offset : offset + limit]
+
+    async def count_movements(
+        self,
+        *,
+        tenant_id: UUID,
+        branch_id: UUID | None,
+        product_id: UUID | None,
+    ) -> int:
+        return len(self.movements)
+
+    async def get_reservation_by_id(
+        self, reservation_id: UUID, *, tenant_id: UUID
+    ) -> InventoryReservationModel | None:
+        return None

@@ -53,6 +53,15 @@ void main() {
         .changeStatus(created!.id, ReceivingDocumentStatus.receiving);
 
     expect(repository._items.single.status, ReceivingDocumentStatus.receiving);
+
+    await container
+        .read(receivingDocumentsControllerProvider.notifier)
+        .confirmReceipt(created.id);
+
+    expect(
+      repository._items.single.status,
+      ReceivingDocumentStatus.putawayPending,
+    );
   });
 }
 
@@ -108,6 +117,17 @@ class _FakeReceivingDocumentRepository implements ReceivingDocumentRepository {
   ) async {
     final current = await get(id);
     final updated = _copy(current, status: input.status);
+    _items[_items.indexWhere((item) => item.id == id)] = updated;
+    return updated;
+  }
+
+  @override
+  Future<ReceivingDocument> confirmReceipt(String id, {String? notes}) async {
+    final current = await get(id);
+    final updated = _copy(
+      current,
+      status: ReceivingDocumentStatus.putawayPending,
+    );
     _items[_items.indexWhere((item) => item.id == id)] = updated;
     return updated;
   }

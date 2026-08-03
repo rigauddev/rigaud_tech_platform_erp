@@ -4,6 +4,7 @@ enum ReceivingDocumentStatus {
   receiving,
   partial,
   received,
+  putawayPending,
   cancelled;
 
   String get label {
@@ -13,7 +14,25 @@ enum ReceivingDocumentStatus {
       ReceivingDocumentStatus.receiving => 'Recebendo',
       ReceivingDocumentStatus.partial => 'Parcial',
       ReceivingDocumentStatus.received => 'Recebido',
+      ReceivingDocumentStatus.putawayPending => 'Put away pendente',
       ReceivingDocumentStatus.cancelled => 'Cancelado',
+    };
+  }
+
+  String get apiValue {
+    return switch (this) {
+      ReceivingDocumentStatus.putawayPending => 'putaway_pending',
+      _ => name,
+    };
+  }
+
+  static ReceivingDocumentStatus fromApi(String value) {
+    return switch (value) {
+      'putaway_pending' => ReceivingDocumentStatus.putawayPending,
+      _ => ReceivingDocumentStatus.values.firstWhere(
+        (status) => status.name == value,
+        orElse: () => ReceivingDocumentStatus.draft,
+      ),
     };
   }
 }
@@ -106,7 +125,7 @@ class ReceivingDocument {
       supplierId: json['supplier_id'] as String?,
       documentNumber: json['document_number'] as String? ?? '',
       documentType: json['document_type'] as String? ?? '',
-      status: ReceivingDocumentStatus.values.byName(
+      status: ReceivingDocumentStatus.fromApi(
         json['status'] as String? ?? 'draft',
       ),
       expectedDate: _toDate(json['expected_date']),

@@ -573,6 +573,18 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         "Recebimento deve possuir pelo menos um item.",
         "warning",
     ),
+    "GOODS_RECEIPT_CONFIRMED": MessageDefinition(
+        "GOODS_RECEIPT_CONFIRMED",
+        200,
+        "Recebimento físico confirmado com sucesso.",
+        audit_required=True,
+    ),
+    "GOODS_RECEIPT_CANNOT_CONFIRM": MessageDefinition(
+        "GOODS_RECEIPT_CANNOT_CONFIRM",
+        409,
+        "Recebimento não pode ser confirmado no status atual.",
+        "warning",
+    ),
     "AUDIT_EVENTS_RETRIEVED": MessageDefinition(
         "AUDIT_EVENTS_RETRIEVED",
         200,

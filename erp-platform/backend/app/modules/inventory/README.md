@@ -56,6 +56,15 @@ REST-007 adiciona Receiving Documents:
 - auditoria;
 - sem movimentar estoque e sem alterar saldo.
 
+REST-008 adiciona Goods Receipt:
+
+- `GoodsReceiptService`;
+- endpoint `/api/v1/receiving-documents/{document_id}/confirm-receipt`;
+- movimento `receipt`;
+- saldo físico com `putaway_pending_quantity`;
+- disponibilidade bloqueada até Put Away;
+- auditoria e evento interno preparados.
+
 Documentação principal:
 
 - `docs/inventory/overview.md`
@@ -71,8 +80,10 @@ Documentação principal:
 - `docs/inventory/receiving-database.md`
 - `docs/inventory/receiving-flutter.md`
 - `docs/inventory/receiving-testing.md`
+- `docs/inventory/goods-receipt.md`
 - `docs/warehouse/overview.md`
 - `docs/warehouse/zones.md`
 - `docs/warehouse/locations.md`
 - `docs/warehouse/receiving.md`
+- `docs/warehouse/goods-receipt.md`
 - `docs/inventory/offline-strategy.md`

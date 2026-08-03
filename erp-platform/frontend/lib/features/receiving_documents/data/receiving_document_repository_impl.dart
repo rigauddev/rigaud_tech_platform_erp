@@ -51,6 +51,11 @@ class ReceivingDocumentRepositoryImpl implements ReceivingDocumentRepository {
   }
 
   @override
+  Future<ReceivingDocument> confirmReceipt(String id, {String? notes}) {
+    return _remote.confirmReceipt(id, notes: notes);
+  }
+
+  @override
   Future<ReceivingDocument> delete(String id) {
     return _remote.delete(id);
   }

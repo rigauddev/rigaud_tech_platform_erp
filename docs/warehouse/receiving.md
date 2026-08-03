@@ -12,7 +12,9 @@ Company
   -> Location
 ```
 
-O Receiving Document registra a entrada documental da mercadoria no warehouse da filial ativa, mas ainda não realiza put away nem atualiza saldo.
+O Receiving Document registra a entrada documental da mercadoria no warehouse da filial ativa.
+
+REST-008 adiciona a confirmação física por Goods Receipt, mas ainda não realiza put away.
 
 ## Fluxo Planejado
 

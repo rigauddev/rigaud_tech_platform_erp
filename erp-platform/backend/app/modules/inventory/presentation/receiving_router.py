@@ -12,6 +12,10 @@ from app.modules.audit.application.service import AuditEventInput, AuditService
 from app.modules.audit.infrastructure.repositories import SQLAlchemyAuditEventRepository
 from app.modules.auth.domain.entities import AuthenticatedUser
 from app.modules.auth.presentation.dependencies import get_current_user
+from app.modules.inventory.application.goods_receipt_service import (
+    GoodsReceiptInput,
+    GoodsReceiptService,
+)
 from app.modules.inventory.application.receiving_use_cases import (
     ChangeReceivingDocumentStatus,
     CreateReceivingDocument,
@@ -29,6 +33,7 @@ from app.modules.inventory.domain.entities import ReceivingDocumentStatus
 from app.modules.inventory.domain.exceptions import (
     InventoryProductNotFoundError,
     ReceivingDocumentBranchRequiredError,
+    ReceivingDocumentCannotConfirmError,
     ReceivingDocumentError,
     ReceivingDocumentInvalidDataError,
     ReceivingDocumentItemRequiredError,
@@ -40,21 +45,29 @@ from app.modules.inventory.domain.exceptions import (
     WarehouseNotFoundError,
 )
 from app.modules.inventory.infrastructure.models import (
+    InventoryBalanceModel,
+    InventoryMovementModel,
     ReceivingDocumentModel,
     ReceivingItemModel,
 )
 from app.modules.inventory.infrastructure.receiving_repositories import (
     SQLAlchemyReceivingDocumentRepository,
 )
+from app.modules.inventory.infrastructure.repositories import SQLAlchemyInventoryRepository
 from app.modules.inventory.infrastructure.warehouse_repositories import (
     SQLAlchemyWarehouseRepository,
 )
 from app.modules.inventory.presentation.receiving_schemas import (
+    GoodsReceiptConfirmRequest,
     ReceivingDocumentCreateRequest,
     ReceivingDocumentResponse,
     ReceivingDocumentStatusRequest,
     ReceivingDocumentUpdateRequest,
     ReceivingItemResponse,
+)
+from app.modules.inventory.presentation.schemas import (
+    InventoryBalanceResponse,
+    InventoryMovementResponse,
 )
 from app.modules.products.infrastructure.repositories import SQLAlchemyProductRepository
 from app.shared.api.responses import PaginationMeta, error_response, success_response
@@ -107,6 +120,46 @@ def _document_response(document: ReceivingDocumentModel) -> ReceivingDocumentRes
     )
 
 
+def _balance_response(balance: InventoryBalanceModel) -> InventoryBalanceResponse:
+    return InventoryBalanceResponse(
+        id=balance.id,
+        tenant_id=balance.tenant_id,
+        branch_id=balance.branch_id,
+        product_id=balance.product_id,
+        warehouse_id=balance.warehouse_id,
+        location_id=balance.location_id,
+        physical_quantity=balance.physical_quantity,
+        reserved_quantity=balance.reserved_quantity,
+        putaway_pending_quantity=balance.putaway_pending_quantity,
+        available_quantity=balance.available_quantity,
+        created_at=balance.created_at,
+        updated_at=balance.updated_at,
+    )
+
+
+def _movement_response(movement: InventoryMovementModel) -> InventoryMovementResponse:
+    return InventoryMovementResponse(
+        id=movement.id,
+        tenant_id=movement.tenant_id,
+        branch_id=movement.branch_id,
+        product_id=movement.product_id,
+        warehouse_id=movement.warehouse_id,
+        location_id=movement.location_id,
+        movement_type=movement.movement_type,
+        status=movement.status,
+        physical_quantity_delta=movement.physical_quantity_delta,
+        reserved_quantity_delta=movement.reserved_quantity_delta,
+        putaway_pending_quantity_delta=movement.putaway_pending_quantity_delta,
+        reason=movement.reason,
+        source_module=movement.source_module,
+        source_id=movement.source_id,
+        event_name=movement.event_name,
+        actor_id=movement.actor_id,
+        created_at=movement.created_at,
+        updated_at=movement.updated_at,
+    )
+
+
 def _snapshot(document: ReceivingDocumentModel) -> dict[str, object]:
     return {
         "id": str(document.id),
@@ -154,6 +207,14 @@ def _repositories(
         SQLAlchemyReceivingDocumentRepository(session),
         SQLAlchemyWarehouseRepository(session),
         SQLAlchemyProductRepository(session),
+    )
+
+
+def _goods_receipt_service(session: AsyncSession) -> GoodsReceiptService:
+    return GoodsReceiptService(
+        SQLAlchemyReceivingDocumentRepository(session),
+        SQLAlchemyInventoryRepository(session),
+        SQLAlchemyWarehouseRepository(session),
     )
 
 
@@ -399,6 +460,74 @@ async def change_receiving_document_status(
         return receiving_exception_to_response(exc)
 
 
+@router.post("/{document_id}/confirm-receipt")
+async def confirm_goods_receipt(
+    document_id: UUID,
+    payload: GoodsReceiptConfirmRequest,
+    request: Request,
+    session: AsyncSessionDependency,
+    current_user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        current = await GetReceivingDocument(
+            SQLAlchemyReceivingDocumentRepository(session)
+        ).execute(document_id, tenant_id=current_user.tenant_id)
+        before = _snapshot(current)
+        result = await _goods_receipt_service(session).confirm(
+            GoodsReceiptInput(
+                tenant_id=current_user.tenant_id,
+                branch_id=current_user.branch_id,
+                document_id=document_id,
+                notes=payload.notes,
+                actor_id=current_user.id,
+            )
+        )
+        await _record_receiving_event(
+            session,
+            event_name="goods_receipt.confirmed",
+            action="confirmed",
+            document=result.document,
+            current_user=current_user,
+            before_data=before,
+            after_data={
+                "document": _snapshot(result.document),
+                "movements": [str(movement.id) for movement in result.movements],
+                "balances": [str(balance.id) for balance in result.balances],
+            },
+        )
+        audit_logger.info(
+            "goods_receipt.confirmed",
+            extra={
+                "event": "goods_receipt.confirmed",
+                "tenant_id": str(current_user.tenant_id),
+                "receiving_document_id": str(document_id),
+                "request_id": _request_id(request),
+            },
+        )
+        await session.commit()
+        return success_response(
+            "GOODS_RECEIPT_CONFIRMED",
+            data={
+                "document": _document_response(result.document).model_dump(mode="json"),
+                "balances": [
+                    _balance_response(balance).model_dump(mode="json")
+                    for balance in result.balances
+                ],
+                "movements": [
+                    _movement_response(movement).model_dump(mode="json")
+                    for movement in result.movements
+                ],
+            },
+        )
+    except (
+        ReceivingDocumentError,
+        WarehouseError,
+        InventoryProductNotFoundError,
+    ) as exc:
+        await session.rollback()
+        return receiving_exception_to_response(exc)
+
+
 @router.delete("/{document_id}", response_model=ReceivingDocumentResponse)
 async def delete_receiving_document(
     document_id: UUID,
@@ -456,6 +585,8 @@ def receiving_exception_to_response(exc: Exception) -> JSONResponse:
         return error_response("RECEIVING_DOCUMENT_INVALID_DATA")
     if isinstance(exc, ReceivingDocumentItemRequiredError):
         return error_response("RECEIVING_DOCUMENT_ITEM_REQUIRED")
+    if isinstance(exc, ReceivingDocumentCannotConfirmError):
+        return error_response("GOODS_RECEIPT_CANNOT_CONFIRM")
     if isinstance(exc, InventoryProductNotFoundError):
         return error_response("PRODUCT_NOT_FOUND")
     if isinstance(exc, WarehouseNotFoundError):

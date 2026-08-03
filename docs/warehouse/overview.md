@@ -53,6 +53,8 @@ REST-006 adiciona `WarehouseLocation` como endereço físico ou bin dentro das z
 
 REST-007 adiciona documentos de recebimento ligados ao warehouse da filial ativa. A documentação está em `docs/warehouse/receiving.md`.
 
+REST-008 adiciona Goods Receipt e mantém quantidade recebida pendente de put away. A documentação está em `docs/warehouse/goods-receipt.md`.
+
 ## Demo Environment
 
 `make demo`, `make demo-restaurant`, `make demo-retail` e `make playground` criam depósitos, zonas, localizações e documentos de recebimento demo por filial.

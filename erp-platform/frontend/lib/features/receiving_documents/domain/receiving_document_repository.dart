@@ -18,5 +18,7 @@ abstract interface class ReceivingDocumentRepository {
 
   Future<ReceivingDocument> changeStatus(String id, ReceivingStatusInput input);
 
+  Future<ReceivingDocument> confirmReceipt(String id, {String? notes});
+
   Future<ReceivingDocument> delete(String id);
 }

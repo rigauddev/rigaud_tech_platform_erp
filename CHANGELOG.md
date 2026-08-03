@@ -4,6 +4,11 @@
 
 ### Added
 
+- REST-008: Goods Receipt com `GoodsReceiptService`, confirmação física de `ReceivingDocument`, movimento `receipt`, saldo físico e `putaway_pending_quantity`.
+- REST-008: endpoint `POST /api/v1/receiving-documents/{document_id}/confirm-receipt`, auditoria `goods_receipt.confirmed` e evento interno `inventory.receipt.confirmed`.
+- REST-008: Flutter Receiving Documents passa a confirmar recebimento físico, exibir diferenças e acompanhar status `putaway_pending`.
+- REST-008: migration `0017_goods_receipt`, documentação em `docs/inventory/goods-receipt.md`, `docs/warehouse/goods-receipt.md` e Academy de Goods Receipt.
+- REST-008: fundação futura de IA/MCP criada em `erp-platform/backend/app/ai/` e documentação `docs/ai/overview.md`, sem implementar IA.
 - REST-007: Receiving Documents com `ReceivingDocument`, `ReceivingItem`, CRUD, status documental, validação de quantidades, soft delete, auditoria, migration `0016_receiving_documents` e endpoints `/api/v1/receiving-documents`.
 - REST-007: Flutter Receiving Documents com lista, cadastro, edição, detalhe, filtros e mudança de status.
 - REST-007: Demo Environment atualizado com documentos de recebimento para restaurante e varejo.

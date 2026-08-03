@@ -396,6 +396,14 @@ class InventoryBalanceModel(TenantMixin, TimestampMixin, AuditMixin, Base):
             "reserved_quantity <= physical_quantity",
             name="ck_inventory_balance_reserved_lte_physical",
         ),
+        CheckConstraint(
+            "putaway_pending_quantity >= 0",
+            name="ck_inventory_balance_putaway_pending_non_negative",
+        ),
+        CheckConstraint(
+            "reserved_quantity + putaway_pending_quantity <= physical_quantity",
+            name="ck_inventory_balance_committed_lte_physical",
+        ),
     )
 
     id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
@@ -429,10 +437,14 @@ class InventoryBalanceModel(TenantMixin, TimestampMixin, AuditMixin, Base):
     reserved_quantity: Mapped[Decimal] = mapped_column(
         Numeric(14, 3), nullable=False, default=Decimal("0.000")
     )
+    putaway_pending_quantity: Mapped[Decimal] = mapped_column(
+        Numeric(14, 3), nullable=False, default=Decimal("0.000")
+    )
 
     @property
     def available_quantity(self) -> Decimal:
-        return self.physical_quantity - self.reserved_quantity
+        putaway_pending = self.putaway_pending_quantity or Decimal("0.000")
+        return self.physical_quantity - self.reserved_quantity - putaway_pending
 
 
 class InventoryMovementModel(TenantMixin, TimestampMixin, Base):
@@ -443,7 +455,8 @@ class InventoryMovementModel(TenantMixin, TimestampMixin, Base):
         Index("ix_inventory_movements_tenant_type", "tenant_id", "movement_type"),
         Index("ix_inventory_movements_source", "source_module", "source_id"),
         CheckConstraint(
-            "physical_quantity_delta <> 0 OR reserved_quantity_delta <> 0",
+            "physical_quantity_delta <> 0 OR reserved_quantity_delta <> 0 "
+            "OR putaway_pending_quantity_delta <> 0",
             name="ck_inventory_movement_has_delta",
         ),
     )
@@ -494,6 +507,9 @@ class InventoryMovementModel(TenantMixin, TimestampMixin, Base):
         Numeric(14, 3), nullable=False, default=Decimal("0.000")
     )
     reserved_quantity_delta: Mapped[Decimal] = mapped_column(
+        Numeric(14, 3), nullable=False, default=Decimal("0.000")
+    )
+    putaway_pending_quantity_delta: Mapped[Decimal] = mapped_column(
         Numeric(14, 3), nullable=False, default=Decimal("0.000")
     )
     reason: Mapped[str] = mapped_column(String(240), nullable=False)

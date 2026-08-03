@@ -25,7 +25,7 @@ class ReceivingDocumentRemoteDataSource {
         'page_size': pageSize,
         if (warehouseId case final String id) 'warehouse_id': id,
         if (status case final ReceivingDocumentStatus value)
-          'status': value.name,
+          'status': value.apiValue,
         if (search case final String value) 'search': value,
       },
     );
@@ -69,6 +69,15 @@ class ReceivingDocumentRemoteDataSource {
       data: input.toJson(),
     );
     return ReceivingDocument.fromJson(apiDataObject(response.data));
+  }
+
+  Future<ReceivingDocument> confirmReceipt(String id, {String? notes}) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/receiving-documents/$id/confirm-receipt',
+      data: {'notes': notes},
+    );
+    final data = apiDataObject(response.data);
+    return ReceivingDocument.fromJson(data['document'] as Map<String, dynamic>);
   }
 
   Future<ReceivingDocument> delete(String id) async {

@@ -23,6 +23,7 @@ nav:
       - Inventory Engine Domain: academy/inventory/001-inventory-engine-domain.md
       - Inventory Engine Implementation: academy/inventory/002-inventory-engine-implementation.md
       - Receiving Documents: academy/inventory/003-receiving-documents.md
+      - Goods Receipt: academy/inventory/004-goods-receipt.md
       - Warehouse Management: academy/warehouse/001-warehouse-management.md
       - Warehouse Zones: academy/warehouse/002-warehouse-zones.md
       - Warehouse Locations: academy/warehouse/003-warehouse-locations.md

@@ -77,6 +77,10 @@ class ReceivingDocumentsController
     );
   }
 
+  Future<void> confirmReceipt(String id, {String? notes}) {
+    return _change(id, () => _repository.confirmReceipt(id, notes: notes));
+  }
+
   Future<void> deleteDocument(String id) {
     return _change(id, () => _repository.delete(id));
   }

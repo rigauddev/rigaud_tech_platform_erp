@@ -75,6 +75,7 @@ def _balance_response(balance: InventoryBalanceModel) -> InventoryBalanceRespons
         location_id=balance.location_id,
         physical_quantity=balance.physical_quantity,
         reserved_quantity=balance.reserved_quantity,
+        putaway_pending_quantity=balance.putaway_pending_quantity,
         available_quantity=balance.available_quantity,
         created_at=balance.created_at,
         updated_at=balance.updated_at,
@@ -93,6 +94,7 @@ def _movement_response(movement: InventoryMovementModel) -> InventoryMovementRes
         status=movement.status,
         physical_quantity_delta=movement.physical_quantity_delta,
         reserved_quantity_delta=movement.reserved_quantity_delta,
+        putaway_pending_quantity_delta=movement.putaway_pending_quantity_delta,
         reason=movement.reason,
         source_module=movement.source_module,
         source_id=movement.source_id,
@@ -157,6 +159,7 @@ def _snapshot(balance: InventoryBalanceModel) -> dict[str, str]:
         "product_id": str(balance.product_id),
         "physical_quantity": str(balance.physical_quantity),
         "reserved_quantity": str(balance.reserved_quantity),
+        "putaway_pending_quantity": str(balance.putaway_pending_quantity),
         "available_quantity": str(balance.available_quantity),
     }
 

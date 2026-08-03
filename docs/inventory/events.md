@@ -11,6 +11,11 @@ Eventos planejados:
 - `receiving_document.status_changed`;
 - `receiving_document.deleted`.
 
+REST-008 adiciona:
+
+- `goods_receipt.confirmed`;
+- `inventory.receipt.confirmed`.
+
 Kafka é planejado para o futuro, mas a primeira implementação deve usar dispatcher interno desacoplado.
 
 ## Eventos Internos

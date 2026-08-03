@@ -118,6 +118,10 @@ class ReceivingDocumentItemRequiredError(ReceivingDocumentError):
     """Raised when a receiving document requires at least one item."""
 
 
+class ReceivingDocumentCannotConfirmError(ReceivingDocumentError):
+    """Raised when a receiving document cannot be physically confirmed."""
+
+
 class InventoryBranchRequiredError(InventoryError):
     """Raised when the authenticated context has no active branch."""
 

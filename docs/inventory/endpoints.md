@@ -96,6 +96,21 @@ Endpoints:
 
 Receiving Documents pertencem à logística de entrada, mas não geram `InventoryMovement` na REST-007.
 
+## Goods Receipt
+
+```text
+POST /api/v1/receiving-documents/{document_id}/confirm-receipt
+```
+
+Confirma fisicamente o documento de recebimento.
+
+Na REST-008:
+
+- cria `InventoryMovement` do tipo `receipt`;
+- aumenta `physical_quantity`;
+- aumenta `putaway_pending_quantity`;
+- mantém `available_quantity` bloqueada até Put Away.
+
 ## Fluxo
 
 ```mermaid

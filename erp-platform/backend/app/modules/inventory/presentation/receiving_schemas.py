@@ -5,6 +5,10 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.modules.inventory.domain.entities import ReceivingDocumentStatus
+from app.modules.inventory.presentation.schemas import (
+    InventoryBalanceResponse,
+    InventoryMovementResponse,
+)
 
 
 class ReceivingBaseSchema(BaseModel):
@@ -47,6 +51,10 @@ class ReceivingDocumentStatusRequest(ReceivingBaseSchema):
     received_date: datetime | None = None
 
 
+class GoodsReceiptConfirmRequest(ReceivingBaseSchema):
+    notes: str | None = Field(default=None, max_length=240)
+
+
 class ReceivingItemResponse(ReceivingBaseSchema):
     id: UUID
     tenant_id: UUID
@@ -76,3 +84,9 @@ class ReceivingDocumentResponse(ReceivingBaseSchema):
     items: list[ReceivingItemResponse]
     created_at: datetime
     updated_at: datetime
+
+
+class GoodsReceiptResponse(ReceivingBaseSchema):
+    document: ReceivingDocumentResponse
+    balances: list[InventoryBalanceResponse]
+    movements: list[InventoryMovementResponse]

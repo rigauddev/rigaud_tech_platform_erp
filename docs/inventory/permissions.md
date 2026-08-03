@@ -12,6 +12,10 @@ Permissões planejadas:
 - alterar status;
 - cancelar recebimento.
 
+REST-008 adiciona permissão planejada:
+
+- confirmar recebimento físico.
+
 ## Regras Atuais
 
 - usuário autenticado obrigatório;

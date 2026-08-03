@@ -60,6 +60,8 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Put Away`: endereçamento físico futuro da mercadoria recebida para uma localização.
 
+`Putaway Pending Quantity`: quantidade recebida fisicamente, mas ainda não armazenada na localização final e, portanto, não disponível.
+
 `Inventory Balance`: saldo agregado por produto, filial, warehouse e location.
 
 `Inventory Movement`: mudança operacional de saldo.
@@ -107,3 +109,11 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 `Scenario Engine`: mecanismo planejado para montar cenários operacionais.
 
 `Demo Account`: conta criada para testes e demonstrações.
+
+## AI
+
+`MCP`: Model Context Protocol, integração futura para ferramentas e agentes externos.
+
+`AI Event`: evento derivado do ERP para análise futura por IA.
+
+`Insight`: recomendação ou análise gerada por agente, sem efeito transacional automático.

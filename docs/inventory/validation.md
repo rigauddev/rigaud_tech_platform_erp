@@ -12,6 +12,17 @@ REST-007 valida:
 - quantidades não negativas;
 - `received_quantity + damaged_quantity <= ordered_quantity`.
 
+## Goods Receipt
+
+REST-008 valida:
+
+- filial ativa obrigatória;
+- documento existente no tenant;
+- documento pertencente à filial ativa;
+- documento não pode estar `received`, `putaway_pending` ou `cancelled`;
+- warehouse do documento deve existir, estar ativo e pertencer à filial ativa;
+- ao menos um item deve possuir `received_quantity > 0`.
+
 ## Quantidade
 
 - Deve ser maior que zero.

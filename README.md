@@ -22,7 +22,7 @@ DEV-012 — Authentication & Tenant Architecture Alignment
 Task atual:
 
 ```text
-REST-007 — Receiving Documents
+REST-008 — Goods Receipt
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -78,7 +78,7 @@ make demo
 
 Contas disponíveis em `docs/demo/accounts.md`.
 
-Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. A REST-004 adiciona depósitos demo por filial, a REST-005 adiciona zonas demo, a REST-006 adiciona localizações físicas e a REST-007 adiciona documentos de recebimento demo sem movimentar estoque. A API `/api/v1/demo/*` e o Dashboard Demo do Flutter existem apenas para desenvolvimento. Cenários completos de mesas, pedidos, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
+Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. A REST-004 adiciona depósitos demo por filial, a REST-005 adiciona zonas demo, a REST-006 adiciona localizações físicas, a REST-007 adiciona documentos de recebimento demo e a REST-008 confirma recebimento físico mantendo quantidade pendente de put away. A API `/api/v1/demo/*` e o Dashboard Demo do Flutter existem apenas para desenvolvimento. Cenários completos de mesas, pedidos, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
 
 ## Backend
 
@@ -111,6 +111,10 @@ O cadastro de zonas de depósito está documentado em `docs/warehouse/zones.md`.
 O cadastro de localizações de depósito está documentado em `docs/warehouse/locations.md`.
 
 Os documentos de recebimento estão documentados em `docs/inventory/receiving-documents.md`.
+
+Goods Receipt está documentado em `docs/inventory/goods-receipt.md`.
+
+IA futura e MCP estão documentados em `docs/ai/overview.md`.
 
 O ambiente demo está documentado em `docs/demo/overview.md`.
 
@@ -198,6 +202,7 @@ Endpoints técnicos disponíveis:
 - `POST /api/v1/receiving-documents`
 - `PUT /api/v1/receiving-documents/{document_id}`
 - `POST /api/v1/receiving-documents/{document_id}/status`
+- `POST /api/v1/receiving-documents/{document_id}/confirm-receipt`
 - `DELETE /api/v1/receiving-documents/{document_id}`
 - `GET /api/v1/demo/status`
 - `GET /api/v1/demo/install`

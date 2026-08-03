@@ -55,7 +55,7 @@ class ReceivingDocumentInput {
       'supplier_id': supplierId,
       'document_number': documentNumber,
       'document_type': documentType,
-      'status': status.name,
+      'status': status.apiValue,
       'expected_date': expectedDate?.toIso8601String(),
       'received_date': receivedDate?.toIso8601String(),
       'notes': notes,
@@ -72,7 +72,7 @@ class ReceivingStatusInput {
 
   Map<String, dynamic> toJson() {
     return {
-      'status': status.name,
+      'status': status.apiValue,
       'received_date': receivedDate?.toIso8601String(),
     };
   }
