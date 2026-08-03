@@ -39,6 +39,8 @@ from app.modules.inventory.infrastructure.models import (
     InventoryBalanceModel,
     InventoryMovementModel,
     InventoryReservationModel,
+    ReceivingDocumentModel,
+    ReceivingItemModel,
     WarehouseLocationModel,
     WarehouseModel,
     WarehouseZoneModel,
@@ -56,6 +58,7 @@ from app.shared.demo.data import (
     RESTAURANT_BRANCHES,
     RESTAURANT_CATEGORIES,
     RESTAURANT_COMPANY,
+    RESTAURANT_RECEIVING_DOCUMENTS,
     RESTAURANT_USERS,
     RESTAURANT_WAREHOUSE_LOCATIONS,
     RESTAURANT_WAREHOUSE_ZONES,
@@ -63,6 +66,7 @@ from app.shared.demo.data import (
     RETAIL_BRANCHES,
     RETAIL_CATEGORIES,
     RETAIL_COMPANY,
+    RETAIL_RECEIVING_DOCUMENTS,
     RETAIL_USERS,
     RETAIL_WAREHOUSE_LOCATIONS,
     RETAIL_WAREHOUSE_ZONES,
@@ -71,6 +75,7 @@ from app.shared.demo.data import (
     DemoCategory,
     DemoCompany,
     DemoProduct,
+    DemoReceivingDocument,
     DemoUser,
     DemoWarehouse,
     DemoWarehouseLocation,
@@ -91,6 +96,8 @@ class DemoSeedSummary:
     warehouses: int = 0
     warehouse_zones: int = 0
     warehouse_locations: int = 0
+    receiving_documents: int = 0
+    receiving_items: int = 0
     categories: int = 0
     products: int = 0
     deleted_rows: int = 0
@@ -115,6 +122,8 @@ class DemoSeeder:
             "warehouses": await self._count(WarehouseModel),
             "warehouse_zones": await self._count(WarehouseZoneModel),
             "warehouse_locations": await self._count(WarehouseLocationModel),
+            "receiving_documents": await self._count(ReceivingDocumentModel),
+            "receiving_items": await self._count(ReceivingItemModel),
             "categories": await self._count(CategoryModel),
             "products": await self._count(ProductModel),
             "scenarios": {key: len(value) for key, value in DEMO_SCENARIOS.items()},
@@ -142,6 +151,8 @@ class DemoSeeder:
             warehouses=restaurant.warehouses + retail.warehouses,
             warehouse_zones=restaurant.warehouse_zones + retail.warehouse_zones,
             warehouse_locations=restaurant.warehouse_locations + retail.warehouse_locations,
+            receiving_documents=restaurant.receiving_documents + retail.receiving_documents,
+            receiving_items=restaurant.receiving_items + retail.receiving_items,
             categories=restaurant.categories + retail.categories,
             products=restaurant.products + retail.products,
         )
@@ -178,6 +189,13 @@ class DemoSeeder:
         branch_memberships = await self._ensure_branch_memberships(users, branches)
         categories = await self._ensure_categories(company.id, RESTAURANT_CATEGORIES)
         products = await self._ensure_products(company.id, restaurant_products())
+        receiving = await self._ensure_receiving_documents(
+            company.id,
+            branches,
+            warehouses,
+            products,
+            RESTAURANT_RECEIVING_DOCUMENTS,
+        )
         await self.session.commit()
         return DemoSeedSummary(
             mode="restaurant",
@@ -189,6 +207,8 @@ class DemoSeeder:
             warehouses=len(warehouses),
             warehouse_zones=len(zones),
             warehouse_locations=len(locations),
+            receiving_documents=len(receiving),
+            receiving_items=sum(len(document.items) for document in receiving),
             categories=len(categories),
             products=len(products),
         )
@@ -214,6 +234,13 @@ class DemoSeeder:
         branch_memberships = await self._ensure_branch_memberships(users, branches)
         categories = await self._ensure_categories(company.id, RETAIL_CATEGORIES)
         products = await self._ensure_products(company.id, retail_products())
+        receiving = await self._ensure_receiving_documents(
+            company.id,
+            branches,
+            warehouses,
+            products,
+            RETAIL_RECEIVING_DOCUMENTS,
+        )
         await self.session.commit()
         return DemoSeedSummary(
             mode="retail",
@@ -225,6 +252,8 @@ class DemoSeeder:
             warehouses=len(warehouses),
             warehouse_zones=len(zones),
             warehouse_locations=len(locations),
+            receiving_documents=len(receiving),
+            receiving_items=sum(len(document.items) for document in receiving),
             categories=len(categories),
             products=len(products),
         )
@@ -293,6 +322,9 @@ class DemoSeeder:
         )
         deleted_rows += await self._delete_where(
             InventoryBalanceModel, InventoryBalanceModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            ReceivingDocumentModel, ReceivingDocumentModel.tenant_id.in_(tenant_ids)
         )
         deleted_rows += await self._delete_where(
             WarehouseLocationModel, WarehouseLocationModel.tenant_id.in_(tenant_ids)
@@ -729,6 +761,68 @@ class DemoSeeder:
             product.is_available_for_sale = True
             product.deleted_at = None
             models.append(product)
+        await self.session.flush()
+        return models
+
+    async def _ensure_receiving_documents(
+        self,
+        tenant_id: UUID,
+        branches: Iterable[BranchModel],
+        warehouses: Iterable[WarehouseModel],
+        products: Iterable[ProductModel],
+        documents: Iterable[DemoReceivingDocument],
+    ) -> list[ReceivingDocumentModel]:
+        branch_by_code = {branch.code: branch for branch in branches}
+        warehouse_by_scope = {
+            (warehouse.branch_id, warehouse.code): warehouse for warehouse in warehouses
+        }
+        product_by_code = {product.internal_code: product for product in products}
+        models: list[ReceivingDocumentModel] = []
+
+        for data in documents:
+            branch = branch_by_code[data.branch_code]
+            warehouse = warehouse_by_scope[(branch.id, data.warehouse_code)]
+            document = (
+                await self.session.execute(
+                    select(ReceivingDocumentModel).where(
+                        ReceivingDocumentModel.tenant_id == tenant_id,
+                        ReceivingDocumentModel.branch_id == branch.id,
+                        ReceivingDocumentModel.document_number == data.document_number,
+                    )
+                )
+            ).scalar_one_or_none()
+            if document is None:
+                document = ReceivingDocumentModel(
+                    tenant_id=tenant_id,
+                    branch_id=branch.id,
+                    warehouse_id=warehouse.id,
+                    document_number=data.document_number,
+                )
+                self.session.add(document)
+
+            document.warehouse_id = warehouse.id
+            document.supplier_id = None
+            document.document_type = data.document_type
+            document.status = data.status
+            document.expected_date = None
+            document.received_date = None
+            document.notes = data.notes
+            document.deleted_at = None
+            document.items = [
+                ReceivingItemModel(
+                    tenant_id=tenant_id,
+                    product_id=product_by_code[item.product_internal_code].id,
+                    ordered_quantity=item.ordered_quantity,
+                    received_quantity=item.received_quantity,
+                    damaged_quantity=item.damaged_quantity,
+                    pending_quantity=(
+                        item.ordered_quantity - item.received_quantity - item.damaged_quantity
+                    ),
+                    unit_cost=item.unit_cost,
+                )
+                for item in data.items
+            ]
+            models.append(document)
         await self.session.flush()
         return models
 

@@ -52,6 +52,16 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Bin`: endereço físico curto usado na operação do depósito.
 
+`Receiving Document`: documento de recebimento que registra chegada planejada ou iniciada de mercadorias sem atualizar saldo.
+
+`Receiving Item`: item de um documento de recebimento com quantidade pedida, recebida, avariada e pendente.
+
+`Goods Receipt`: confirmação física futura do recebimento, responsável por gerar movimento de estoque.
+
+`Put Away`: endereçamento físico futuro da mercadoria recebida para uma localização.
+
+`Putaway Pending Quantity`: quantidade recebida fisicamente, mas ainda não armazenada na localização final e, portanto, não disponível.
+
 `Inventory Balance`: saldo agregado por produto, filial, warehouse e location.
 
 `Inventory Movement`: mudança operacional de saldo.
@@ -99,3 +109,11 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 `Scenario Engine`: mecanismo planejado para montar cenários operacionais.
 
 `Demo Account`: conta criada para testes e demonstrações.
+
+## AI
+
+`MCP`: Model Context Protocol, integração futura para ferramentas e agentes externos.
+
+`AI Event`: evento derivado do ERP para análise futura por IA.
+
+`Insight`: recomendação ou análise gerada por agente, sem efeito transacional automático.

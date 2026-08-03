@@ -99,7 +99,7 @@ class _MovementsView extends ConsumerWidget {
                 leading: const Icon(Icons.swap_vert_circle_outlined),
                 title: Text(item.reason),
                 subtitle: Text(
-                  '${item.movementType} · Físico ${item.physicalQuantityDelta} · Reservado ${item.reservedQuantityDelta}',
+                  '${item.movementType} · Físico ${item.physicalQuantityDelta} · Reservado ${item.reservedQuantityDelta} · Put away ${item.putawayPendingQuantityDelta}',
                 ),
                 trailing: Text(item.eventName),
               ),
@@ -297,6 +297,7 @@ class _BalanceTable extends StatelessWidget {
           DataColumn(label: Text('Produto')),
           DataColumn(label: Text('Físico')),
           DataColumn(label: Text('Reservado')),
+          DataColumn(label: Text('Put away')),
           DataColumn(label: Text('Disponível')),
         ],
         rows: items
@@ -306,6 +307,7 @@ class _BalanceTable extends StatelessWidget {
                   DataCell(Text(item.productId)),
                   DataCell(Text(item.physicalQuantity)),
                   DataCell(Text(item.reservedQuantity)),
+                  DataCell(Text(item.putawayPendingQuantity)),
                   DataCell(Text(item.availableQuantity)),
                 ],
               ),
@@ -335,7 +337,7 @@ class _BalanceCards extends StatelessWidget {
             leading: const Icon(Icons.inventory_outlined),
             title: Text(item.productId),
             subtitle: Text(
-              'Físico ${item.physicalQuantity} · Reservado ${item.reservedQuantity}',
+              'Físico ${item.physicalQuantity} · Reservado ${item.reservedQuantity} · Put away ${item.putawayPendingQuantity}',
             ),
             trailing: Text(item.availableQuantity),
           ),

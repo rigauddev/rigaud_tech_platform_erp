@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from app.modules.companies.domain.entities import BranchType, CompanyRole
-from app.modules.inventory.domain.entities import WarehouseZoneType
+from app.modules.inventory.domain.entities import ReceivingDocumentStatus, WarehouseZoneType
 from app.modules.products.domain.entities import ProductType, UnitOfMeasure
 
 DEMO_PASSWORD = "123456"
@@ -133,6 +133,26 @@ class DemoWarehouseLocation:
     is_receive_location: bool = False
     is_shipping_location: bool = False
     is_default: bool = False
+
+
+@dataclass(frozen=True)
+class DemoReceivingItem:
+    product_internal_code: str
+    ordered_quantity: Decimal
+    received_quantity: Decimal
+    damaged_quantity: Decimal
+    unit_cost: Decimal
+
+
+@dataclass(frozen=True)
+class DemoReceivingDocument:
+    branch_code: str
+    warehouse_code: str
+    document_number: str
+    document_type: str
+    status: ReceivingDocumentStatus
+    notes: str
+    items: tuple[DemoReceivingItem, ...]
 
 
 PLATFORM_COMPANY = DemoCompany(
@@ -476,6 +496,33 @@ RESTAURANT_USERS = (
     ),
 )
 
+RESTAURANT_RECEIVING_DOCUMENTS = (
+    DemoReceivingDocument(
+        branch_code="MATRIZ",
+        warehouse_code="MAIN",
+        document_number="NF-REST-0001",
+        document_type="invoice",
+        status=ReceivingDocumentStatus.EXPECTED,
+        notes="Recebimento demo aguardando conferencia.",
+        items=(
+            DemoReceivingItem(
+                "REST-PRD-001",
+                Decimal("10.000"),
+                Decimal("0.000"),
+                Decimal("0.000"),
+                Decimal("18.00"),
+            ),
+            DemoReceivingItem(
+                "REST-PRD-004",
+                Decimal("24.000"),
+                Decimal("0.000"),
+                Decimal("0.000"),
+                Decimal("4.00"),
+            ),
+        ),
+    ),
+)
+
 RESTAURANT_CATEGORIES = (
     DemoCategory(
         "REST-CAT-001", "Bebidas", "bebidas", "Bebidas frias e quentes.", "local_bar", "#0088AA", 1
@@ -728,6 +775,33 @@ RETAIL_USERS = (
         "Estoque Moda",
         "75982165924",
         CompanyRole.MEMBER,
+    ),
+)
+
+RETAIL_RECEIVING_DOCUMENTS = (
+    DemoReceivingDocument(
+        branch_code="SHOPPING",
+        warehouse_code="STOCK",
+        document_number="NF-MODA-0001",
+        document_type="invoice",
+        status=ReceivingDocumentStatus.EXPECTED,
+        notes="Recebimento demo de pecas para loja.",
+        items=(
+            DemoReceivingItem(
+                "RETAIL-PRD-001",
+                Decimal("20.000"),
+                Decimal("0.000"),
+                Decimal("0.000"),
+                Decimal("35.00"),
+            ),
+            DemoReceivingItem(
+                "RETAIL-PRD-010",
+                Decimal("12.000"),
+                Decimal("0.000"),
+                Decimal("0.000"),
+                Decimal("49.00"),
+            ),
+        ),
     ),
 )
 

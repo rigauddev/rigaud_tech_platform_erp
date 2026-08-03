@@ -16,6 +16,16 @@ class WarehouseLocationStatus(StrEnum):
     INACTIVE = "inactive"
 
 
+class ReceivingDocumentStatus(StrEnum):
+    DRAFT = "draft"
+    EXPECTED = "expected"
+    RECEIVING = "receiving"
+    PARTIAL = "partial"
+    RECEIVED = "received"
+    PUTAWAY_PENDING = "putaway_pending"
+    CANCELLED = "cancelled"
+
+
 class WarehouseZoneType(StrEnum):
     RECEIVING = "receiving"
     SHIPPING = "shipping"
@@ -28,6 +38,7 @@ class WarehouseZoneType(StrEnum):
 
 
 class InventoryMovementType(StrEnum):
+    RECEIPT = "receipt"
     ADJUSTMENT_IN = "adjustment_in"
     ADJUSTMENT_OUT = "adjustment_out"
     RESERVATION_CREATED = "reservation_created"

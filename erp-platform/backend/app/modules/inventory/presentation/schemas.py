@@ -46,6 +46,7 @@ class InventoryBalanceResponse(InventoryBaseSchema):
     location_id: UUID | None
     physical_quantity: Decimal
     reserved_quantity: Decimal
+    putaway_pending_quantity: Decimal
     available_quantity: Decimal
     created_at: datetime
     updated_at: datetime
@@ -62,6 +63,7 @@ class InventoryMovementResponse(InventoryBaseSchema):
     status: InventoryMovementStatus
     physical_quantity_delta: Decimal
     reserved_quantity_delta: Decimal
+    putaway_pending_quantity_delta: Decimal
     reason: str
     source_module: str | None
     source_id: UUID | None
