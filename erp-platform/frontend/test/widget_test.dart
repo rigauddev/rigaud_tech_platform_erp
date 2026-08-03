@@ -23,6 +23,9 @@ void main() {
 
     expect(find.byType(SingleChildScrollView), findsNothing);
     expect(find.byType(Image), findsOneWidget);
+    expect(find.byType(PageView), findsOneWidget);
+    expect(find.text('Informativo do sistema'), findsOneWidget);
+    expect(find.text('Operação integrada em tempo real'), findsOneWidget);
     expect(find.text('Rigaud Tech Platform ERP'), findsOneWidget);
     expect(
       find.text('Gestão inteligente para pequenas e médias empresas'),
@@ -35,7 +38,7 @@ void main() {
     expect(find.text('Esqueci minha senha'), findsOneWidget);
     expect(find.text('Lembrar acesso'), findsOneWidget);
     expect(find.textContaining('Versão'), findsOneWidget);
-    expect(find.textContaining('Ambiente'), findsOneWidget);
+    expect(find.textContaining('Ambiente'), findsWidgets);
   });
 
   testWidgets('renderiza pagina 404 para rota desconhecida', (tester) async {
