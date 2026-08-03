@@ -128,6 +128,8 @@
 
 ### Changed
 
+- UI-001 Review: login passa a exibir carrossel informativo lateral em desktop com o mesmo design e tamanho do card de acesso, mantendo a tela sem scroll.
+- UI-001 Review: renderização da logo no card de login ajustada para exibir a área útil do asset `assets/images/logo_rigaud_tech.png`.
 - UI-001: tela de login remove scroll externo, centraliza card responsivo e ajusta renderização horizontal da logo.
 - DEV-012: tela de login Flutter remove o campo Tenant e envia somente email e senha.
 - DEV-012: endpoint `/api/v1/auth/login` deixa de aceitar tenant no payload.

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +12,7 @@ import '../../../shared/components/app_button.dart';
 import '../../../shared/components/app_text_field.dart';
 import '../domain/auth_state.dart';
 import 'auth_controller.dart';
+import 'login_info_carousel.dart';
 
 final rememberAccessProvider = NotifierProvider<RememberAccessNotifier, bool>(
   RememberAccessNotifier.new,
@@ -43,10 +46,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _carouselController = PageController();
+  Timer? _carouselTimer;
+  int _currentInfoPage = 0;
   bool _isSubmitting = false;
 
   @override
+  void initState() {
+    super.initState();
+    _carouselTimer = Timer.periodic(const Duration(seconds: 6), (_) {
+      if (!mounted || !_carouselController.hasClients) {
+        return;
+      }
+      final nextPage = (_currentInfoPage + 1) % loginInfoItemsCount;
+      _carouselController.animateToPage(
+        nextPage,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeOutCubic,
+      );
+    });
+  }
+
+  @override
   void dispose() {
+    _carouselTimer?.cancel();
+    _carouselController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -81,6 +105,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final isCompact = constraints.maxWidth < 700;
+                final cardWidth = isCompact ? 392.0 : 440.0;
+                final cardHeight = isCompact ? 640.0 : 640.0;
                 return AnimatedPadding(
                   duration: const Duration(milliseconds: 220),
                   curve: Curves.easeOutCubic,
@@ -94,30 +120,69 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       Expanded(
                         child: Align(
-                          alignment: isCompact
-                              ? Alignment.center
-                              : const Alignment(0.48, 0),
+                          alignment: Alignment.center,
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxWidth: isCompact ? 392 : 448,
-                                minWidth: isCompact ? 320 : 420,
-                              ),
-                              child: _LoginForm(
-                                emailController: _emailController,
-                                passwordController: _passwordController,
-                                rememberAccess: rememberAccess,
-                                authState: authState,
-                                isSubmitting: _isSubmitting,
-                                onRememberChanged: (value) {
-                                  ref
-                                      .read(rememberAccessProvider.notifier)
-                                      .update(value ?? false);
-                                },
-                                onSubmit: _submit,
-                              ),
-                            ),
+                            child: isCompact
+                                ? SizedBox(
+                                    width: cardWidth,
+                                    height: cardHeight,
+                                    child: _LoginForm(
+                                      emailController: _emailController,
+                                      passwordController: _passwordController,
+                                      rememberAccess: rememberAccess,
+                                      authState: authState,
+                                      isSubmitting: _isSubmitting,
+                                      onRememberChanged: (value) {
+                                        ref
+                                            .read(
+                                              rememberAccessProvider.notifier,
+                                            )
+                                            .update(value ?? false);
+                                      },
+                                      onSubmit: _submit,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(
+                                        width: cardWidth,
+                                        height: cardHeight,
+                                        child: LoginInfoCarousel(
+                                          controller: _carouselController,
+                                          currentPage: _currentInfoPage,
+                                          onPageChanged: (page) {
+                                            setState(() {
+                                              _currentInfoPage = page;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(width: AppSpacing.lg),
+                                      SizedBox(
+                                        width: cardWidth,
+                                        height: cardHeight,
+                                        child: _LoginForm(
+                                          emailController: _emailController,
+                                          passwordController:
+                                              _passwordController,
+                                          rememberAccess: rememberAccess,
+                                          authState: authState,
+                                          isSubmitting: _isSubmitting,
+                                          onRememberChanged: (value) {
+                                            ref
+                                                .read(
+                                                  rememberAccessProvider
+                                                      .notifier,
+                                                )
+                                                .update(value ?? false);
+                                          },
+                                          onSubmit: _submit,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                           ),
                         ),
                       ),
@@ -465,27 +530,14 @@ class _LoginForm extends StatelessWidget {
       null => null,
     };
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.92),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0E2A5A).withValues(alpha: 0.16),
-            blurRadius: 32,
-            offset: const Offset(0, 20),
-          ),
-        ],
-      ),
+    return LoginCardShell(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const _BrandLogo(),
-            const SizedBox(height: AppSpacing.lg),
+            const SizedBox(height: AppSpacing.md),
             Text(
               'Rigaud Tech Platform ERP',
               textAlign: TextAlign.center,
@@ -501,7 +553,7 @@ class _LoginForm extends StatelessWidget {
                 context,
               ).textTheme.bodyMedium?.copyWith(color: const Color(0xFF344054)),
             ),
-            const SizedBox(height: AppSpacing.xl),
+            const Spacer(),
             AppTextField(
               controller: emailController,
               label: 'Email',
@@ -550,15 +602,14 @@ class _BrandLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 78,
+      height: 92,
       child: ClipRect(
-        child: Align(
-          alignment: Alignment.center,
-          heightFactor: 0.34,
+        child: Transform.scale(
+          scale: 1.85,
           child: Image.asset(
             'assets/images/logo_rigaud_tech.png',
-            width: 300,
             fit: BoxFit.contain,
+            alignment: Alignment.center,
             filterQuality: FilterQuality.high,
             semanticLabel: 'Rigaud Tech',
             errorBuilder: (context, error, stackTrace) {
