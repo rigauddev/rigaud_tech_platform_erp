@@ -38,13 +38,14 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/rest-008-goods-receipt
-      commits: []
+      commits:
+        - 7948e5f
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
+    commit: 7948e5f
     review_status: ready
   - id: REST-007
     title: Receiving Documents
