@@ -4,6 +4,11 @@
 
 ### Added
 
+- DOC-009: arquitetura de documentação do produto, Central de Ajuda e conhecimento criada em `docs/index.md` e `docs/help/*`.
+- DOC-009: mapa planejado do produto criado em `docs/architecture/product-map.md`, separando itens implementados, em desenvolvimento, planejados e futuros.
+- DOC-009: padrao oficial de documentação por funcionalidade definido em `docs/help/feature-documentation-standard.md`.
+- DOC-009: documentação futura de parceiros, revendedores, AI/MCP e Marketing AI registrada sem implementar funcionalidades.
+- DOC-009: Academy, MkDocs, README, backlog, roadmap, task registry, decisões e glossário atualizados para Docs-as-Product.
 - DOC-008: arquitetura oficial de distribuicao criada para Cloud, Cloud Dedicated, On-Premise e Hybrid.
 - DOC-008: separacao entre Tenant e Deployment congelada, preservando `tenant_id = companies.id`.
 - DOC-008: estrategia de operacao offline em tres niveis, Sync Gateway futuro e AI Gateway/MCP documentados.

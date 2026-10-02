@@ -22,7 +22,7 @@ DEV-012 — Authentication & Tenant Architecture Alignment
 Task atual:
 
 ```text
-DOC-008 — Deployment & Distribution Architecture
+DOC-009 — Product Documentation, Help Center & Knowledge Architecture
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -117,6 +117,14 @@ Goods Receipt está documentado em `docs/inventory/goods-receipt.md`.
 IA futura e MCP estão documentados em `docs/ai/overview.md`.
 
 Arquitetura de distribuicao, Cloud, On-Premise, Hybrid, Offline Strategy e Resellers esta documentada em `docs/architecture/deployment/README.md`.
+
+A entrada principal de documentacao do produto esta em `docs/index.md`.
+
+O mapa planejado do produto esta em `docs/architecture/product-map.md`.
+
+A arquitetura da Central de Ajuda e conhecimento esta documentada em `docs/help/README.md`.
+
+A documentacao de deployment para times tecnicos, implantacao e suporte esta em `docs/deployment/README.md`.
 
 O ambiente demo está documentado em `docs/demo/overview.md`.
 

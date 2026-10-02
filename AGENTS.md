@@ -44,3 +44,5 @@ Antes de implementar, confirme as decisões permanentes em `ERP_DECISIONS.md` e 
 Decisão congelada da DEV-012: login usa email e senha; usuário pertence a uma empresa e possui uma filial ativa única.
 
 Decisão congelada da DOC-008: tenant e deployment sao conceitos diferentes. Tenant e `Company`; deployment pode ser `CLOUD_SHARED`, `CLOUD_DEDICATED`, `ON_PREMISE` ou `HYBRID`.
+
+Decisão congelada da DOC-009: documentacao e parte do produto. Toda funcionalidade deve avaliar documentacao tecnica, Academy, Help Center, FAQ e tutorial, sem implementar telas ou agentes fora da task vigente.

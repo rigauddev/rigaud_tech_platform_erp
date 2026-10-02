@@ -89,6 +89,17 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Módulos funcionais devem incluir dados demo ou registrar por que ainda não podem ser demonstrados.
 - Cenários completos só devem materializar tabelas existentes.
 
+## Documentacao E Conhecimento
+
+- Documentacao e parte do produto, nao apenas suporte ao desenvolvimento.
+- A entrada principal de produto fica em `docs/index.md`.
+- O mapa vivo do produto fica em `docs/architecture/product-map.md`.
+- Funcionalidades operacionais devem nascer com documentacao tecnica, Academy e, quando aplicavel, conteudo de Help Center.
+- O Help Center futuro deve reutilizar conteudo versionado do repositorio.
+- Conteudo de usuario final nao deve expor detalhes internos desnecessarios.
+- Conteudo para parceiros e revendedores nao altera o modelo de tenant.
+- Conteudo usado por AI/MCP deve respeitar tenant, filial, role, permissoes e auditoria.
+
 ## Offline Futuro
 
 - Offline-first é planejado.
