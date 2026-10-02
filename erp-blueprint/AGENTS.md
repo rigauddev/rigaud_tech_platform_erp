@@ -45,6 +45,7 @@ A implementação existente tem prioridade sobre suposições, desde que não co
 - Conferir `ERP_DECISIONS.md` antes de rediscutir decisões de negócio já congeladas.
 - Usar `ERP_GLOSSARY.md` para nomes oficiais do domínio.
 - Obedecer a DEV-012: login por email/senha, empresa única por usuário e filial ativa única.
+- Obedecer a DOC-008: tenant e deployment sao conceitos diferentes; partner/reseller nao e tenant; On-Premise continua sendo o mesmo ERP.
 
 ## Quando Houver Dúvida
 

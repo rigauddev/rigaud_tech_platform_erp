@@ -9,6 +9,7 @@ nav:
       - Overview: architecture/README.md
       - Product Vision: architecture/product-vision.md
       - Development Workflow: architecture/development-workflow.md
+      - Deployment Distribution Architecture: architecture/deployment-distribution-architecture.md
   - Academy:
       - Overview: academy/README.md
       - Flutter Multiplataforma: academy/flutter/001-flutter-multiplataforma.md
@@ -24,6 +25,7 @@ nav:
       - Inventory Engine Implementation: academy/inventory/002-inventory-engine-implementation.md
       - Receiving Documents: academy/inventory/003-receiving-documents.md
       - Goods Receipt: academy/inventory/004-goods-receipt.md
+      - Deployment Distribution Architecture: academy/architecture/001-deployment-distribution-architecture.md
       - Warehouse Management: academy/warehouse/001-warehouse-management.md
       - Warehouse Zones: academy/warehouse/002-warehouse-zones.md
       - Warehouse Locations: academy/warehouse/003-warehouse-locations.md
@@ -43,6 +45,7 @@ nav:
       - ADR 0005 API Governance Audit: adr/0005-api-governance-audit-response-contract.md
       - ADR 0006 Two Factor Authentication: adr/0006-two-factor-authentication-channels.md
       - ADR 0007 Engine First: adr/0007-engine-first-development-strategy.md
+      - ADR 0008 Deployment Distribution: adr/0008-deployment-distribution-architecture.md
   - Modules: modules/README.md
   - Research: research/README.md
   - Backlog:

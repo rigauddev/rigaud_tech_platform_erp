@@ -34,6 +34,29 @@ InventoryMovementCreated
   -> Insight
 ```
 
+## AI Gateway E MCP Futuro
+
+Arquitetura planejada:
+
+```text
+AI Gateway
+  ↓
+MCP
+  ↓
+Domain-specific tools
+```
+
+MCPs futuros:
+
+- Finance;
+- Inventory;
+- Restaurant;
+- Production;
+- HR;
+- Commercial.
+
+Cada MCP devera respeitar tenant, branch, role, permissions e audit.
+
 ## Limite Atual
 
 Não há providers, agentes, prompts, RAG, embeddings, memória, ferramentas MCP ou chamadas externas nesta task.
