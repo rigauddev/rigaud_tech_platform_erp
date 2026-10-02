@@ -46,13 +46,14 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/doc-009-product-documentation-help-center
-      commits: []
+      commits:
+        - 4294faf
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
+    commit: 4294faf
     review_status: ready
   - id: DOC-008
     title: Deployment & Distribution Architecture
