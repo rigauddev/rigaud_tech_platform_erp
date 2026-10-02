@@ -4,6 +4,7 @@ from uuid import UUID
 from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.inventory.domain.entities import InventoryMovementType
 from app.modules.inventory.domain.repositories import InventoryRepository
 from app.modules.inventory.infrastructure.models import (
     InventoryAdjustmentModel,
@@ -87,6 +88,7 @@ class SQLAlchemyInventoryRepository(InventoryRepository):
             location_id=location_id,
             physical_quantity=Decimal("0.000"),
             reserved_quantity=Decimal("0.000"),
+            putaway_pending_quantity=Decimal("0.000"),
         )
         return await self.add_balance(balance)
 
@@ -131,6 +133,12 @@ class SQLAlchemyInventoryRepository(InventoryRepository):
         tenant_id: UUID,
         branch_id: UUID | None,
         product_id: UUID | None,
+        warehouse_id: UUID | None,
+        location_id: UUID | None,
+        movement_type: InventoryMovementType | None,
+        origin_module: str | None,
+        business_process: str | None,
+        source_module: str | None,
         limit: int,
         offset: int,
     ) -> list[InventoryMovementModel]:
@@ -138,6 +146,12 @@ class SQLAlchemyInventoryRepository(InventoryRepository):
             tenant_id=tenant_id,
             branch_id=branch_id,
             product_id=product_id,
+            warehouse_id=warehouse_id,
+            location_id=location_id,
+            movement_type=movement_type,
+            origin_module=origin_module,
+            business_process=business_process,
+            source_module=source_module,
         )
         statement = (
             statement.order_by(InventoryMovementModel.created_at.desc()).limit(limit).offset(offset)
@@ -151,14 +165,40 @@ class SQLAlchemyInventoryRepository(InventoryRepository):
         tenant_id: UUID,
         branch_id: UUID | None,
         product_id: UUID | None,
+        warehouse_id: UUID | None,
+        location_id: UUID | None,
+        movement_type: InventoryMovementType | None,
+        origin_module: str | None,
+        business_process: str | None,
+        source_module: str | None,
     ) -> int:
         statement = self._movements_select(
             tenant_id=tenant_id,
             branch_id=branch_id,
             product_id=product_id,
+            warehouse_id=warehouse_id,
+            location_id=location_id,
+            movement_type=movement_type,
+            origin_module=origin_module,
+            business_process=business_process,
+            source_module=source_module,
         )
         result = await self.session.execute(select(func.count()).select_from(statement.subquery()))
         return int(result.scalar_one())
+
+    async def get_movement_by_id(
+        self,
+        movement_id: UUID,
+        *,
+        tenant_id: UUID,
+    ) -> InventoryMovementModel | None:
+        result = await self.session.execute(
+            select(InventoryMovementModel).where(
+                InventoryMovementModel.id == movement_id,
+                InventoryMovementModel.tenant_id == tenant_id,
+            )
+        )
+        return result.scalar_one_or_none()
 
     async def get_reservation_by_id(
         self, reservation_id: UUID, *, tenant_id: UUID
@@ -194,6 +234,12 @@ class SQLAlchemyInventoryRepository(InventoryRepository):
         tenant_id: UUID,
         branch_id: UUID | None,
         product_id: UUID | None,
+        warehouse_id: UUID | None,
+        location_id: UUID | None,
+        movement_type: InventoryMovementType | None,
+        origin_module: str | None,
+        business_process: str | None,
+        source_module: str | None,
     ) -> Select[tuple[InventoryMovementModel]]:
         statement = select(InventoryMovementModel).where(
             InventoryMovementModel.tenant_id == tenant_id
@@ -202,6 +248,18 @@ class SQLAlchemyInventoryRepository(InventoryRepository):
             statement = statement.where(InventoryMovementModel.branch_id == branch_id)
         if product_id is not None:
             statement = statement.where(InventoryMovementModel.product_id == product_id)
+        if warehouse_id is not None:
+            statement = statement.where(InventoryMovementModel.warehouse_id == warehouse_id)
+        if location_id is not None:
+            statement = statement.where(InventoryMovementModel.location_id == location_id)
+        if movement_type is not None:
+            statement = statement.where(InventoryMovementModel.movement_type == movement_type)
+        if origin_module is not None:
+            statement = statement.where(InventoryMovementModel.origin_module == origin_module)
+        if business_process is not None:
+            statement = statement.where(InventoryMovementModel.business_process == business_process)
+        if source_module is not None:
+            statement = statement.where(InventoryMovementModel.source_module == source_module)
         return statement
 
     def _optional_scope(

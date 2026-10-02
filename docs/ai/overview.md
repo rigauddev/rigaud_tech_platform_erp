@@ -34,6 +34,8 @@ InventoryMovementCreated
   -> Insight
 ```
 
+Eventos de estoque como `inventory.receipt.confirmed` e `inventory.putaway.confirmed` já carregam origem funcional planejada por `origin_module` e processo operacional por `business_process`.
+
 ## AI Gateway E MCP Futuro
 
 Arquitetura planejada:

@@ -22,6 +22,32 @@ class ListInventoryMovementsUseCase {
   }
 }
 
+class ListInventoryTransactionsUseCase {
+  const ListInventoryTransactionsUseCase(this._repository);
+
+  final InventoryRepository _repository;
+
+  Future<List<InventoryMovement>> execute({
+    String? productId,
+    String? warehouseId,
+    String? locationId,
+    String? movementType,
+    String? originModule,
+    String? businessProcess,
+    String? sourceModule,
+  }) {
+    return _repository.listTransactions(
+      productId: productId,
+      warehouseId: warehouseId,
+      locationId: locationId,
+      movementType: movementType,
+      originModule: originModule,
+      businessProcess: businessProcess,
+      sourceModule: sourceModule,
+    );
+  }
+}
+
 class CreateInventoryAdjustmentUseCase {
   const CreateInventoryAdjustmentUseCase(this._repository);
 
@@ -39,5 +65,15 @@ class CreateInventoryReservationUseCase {
 
   Future<InventoryOperation> execute(InventoryReservationInput input) {
     return _repository.createReservation(input);
+  }
+}
+
+class ConfirmPutAwayUseCase {
+  const ConfirmPutAwayUseCase(this._repository);
+
+  final InventoryRepository _repository;
+
+  Future<PutAwayOperation> execute(PutAwayInput input) {
+    return _repository.confirmPutAway(input);
   }
 }

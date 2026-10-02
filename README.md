@@ -22,7 +22,7 @@ DEV-012 — Authentication & Tenant Architecture Alignment
 Task atual:
 
 ```text
-DOC-009 — Product Documentation, Help Center & Knowledge Architecture
+REST-010 — Inventory Transactions
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -78,7 +78,7 @@ make demo
 
 Contas disponíveis em `docs/demo/accounts.md`.
 
-Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. A REST-004 adiciona depósitos demo por filial, a REST-005 adiciona zonas demo, a REST-006 adiciona localizações físicas, a REST-007 adiciona documentos de recebimento demo e a REST-008 confirma recebimento físico mantendo quantidade pendente de put away. A API `/api/v1/demo/*` e o Dashboard Demo do Flutter existem apenas para desenvolvimento. Cenários completos de mesas, pedidos, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
+Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. A REST-004 adiciona depósitos demo por filial, a REST-005 adiciona zonas demo, a REST-006 adiciona localizações físicas, a REST-007 adiciona documentos de recebimento demo, a REST-008 confirma recebimento físico mantendo quantidade pendente de put away e a REST-009 libera mercadoria para localização final. A API `/api/v1/demo/*` e o Dashboard Demo do Flutter existem apenas para desenvolvimento. Cenários completos de mesas, pedidos, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
 
 ## Backend
 
@@ -113,6 +113,10 @@ O cadastro de localizações de depósito está documentado em `docs/warehouse/l
 Os documentos de recebimento estão documentados em `docs/inventory/receiving-documents.md`.
 
 Goods Receipt está documentado em `docs/inventory/goods-receipt.md`.
+
+Put Away está documentado em `docs/inventory/putaway.md` e `docs/warehouse/putaway.md`.
+
+Inventory Transactions está documentado em `docs/inventory/transactions.md`.
 
 IA futura e MCP estão documentados em `docs/ai/overview.md`.
 
@@ -184,6 +188,8 @@ Endpoints técnicos disponíveis:
 - `DELETE /api/v1/categories/{category_id}`
 - `GET /api/v1/inventory/balances`
 - `GET /api/v1/inventory/movements`
+- `GET /api/v1/inventory/transactions`
+- `GET /api/v1/inventory/transactions/{transaction_id}`
 - `POST /api/v1/inventory/adjustments`
 - `POST /api/v1/inventory/reservations`
 - `POST /api/v1/inventory/reservations/{reservation_id}/release`
@@ -214,6 +220,7 @@ Endpoints técnicos disponíveis:
 - `POST /api/v1/receiving-documents/{document_id}/status`
 - `POST /api/v1/receiving-documents/{document_id}/confirm-receipt`
 - `DELETE /api/v1/receiving-documents/{document_id}`
+- `POST /api/v1/inventory/putaway`
 - `GET /api/v1/demo/status`
 - `GET /api/v1/demo/install`
 - `GET /api/v1/demo/reset`
@@ -232,5 +239,3 @@ Documentação complementar:
 - `docs/frontend/project-structure.md`
 - `docs/frontend/platforms.md`
 - `docs/frontend/responsive-design.md`
-# rigaud_tech_platform_erp
-# rigaud_tech_platform_erp

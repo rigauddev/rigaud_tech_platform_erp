@@ -4,6 +4,14 @@
 
 ### Added
 
+- REST-010: Inventory Transactions expõe `InventoryMovement` como livro razão imutável com filtros por produto, depósito, localização, tipo, origem, processo e módulo de origem.
+- REST-010: endpoints `GET /api/v1/inventory/transactions` e `GET /api/v1/inventory/transactions/{transaction_id}` adicionados ao Inventory Engine.
+- REST-010: Flutter Inventory passa a consultar transações de estoque com filtros por processo operacional.
+- REST-010: documentação em `docs/inventory/transactions.md` e Academy de Inventory Transactions.
+- REST-009: Put Away com `PutAwayService`, endpoint `POST /api/v1/inventory/putaway`, movimento `putaway`, liberação de saldo por localização e status documental `available`.
+- REST-009: `InventoryMovement` passa a registrar `origin_module` e `business_process`, preparando auditoria, relatórios, Kafka, MCP e Restaurant Production futura.
+- REST-009: Flutter Inventory recebe aba Put Away para confirmação por documento, produto, localização e quantidade, além de histórico de armazenagens.
+- REST-009: documentação em `docs/inventory/putaway.md`, `docs/warehouse/putaway.md` e Academy de Put Away.
 - DOC-009: arquitetura de documentação do produto, Central de Ajuda e conhecimento criada em `docs/index.md` e `docs/help/*`.
 - DOC-009: mapa planejado do produto criado em `docs/architecture/product-map.md`, separando itens implementados, em desenvolvimento, planejados e futuros.
 - DOC-009: padrao oficial de documentação por funcionalidade definido em `docs/help/feature-documentation-standard.md`.
@@ -138,6 +146,7 @@
 
 ### Changed
 
+- REVIEW DEV-001: proxy Nginx resolve `backend` e `frontend` dinamicamente no DNS interno do Docker, evitando `502` após recriação dos containers.
 - UI-001 Review: login passa a exibir carrossel informativo lateral em desktop com o mesmo design e tamanho do card de acesso, mantendo a tela sem scroll.
 - UI-001 Review: renderização da logo no card de login ajustada para exibir a área útil do asset `assets/images/logo_rigaud_tech.png`.
 - UI-001: tela de login remove scroll externo, centraliza card responsivo e ajusta renderização horizontal da logo.

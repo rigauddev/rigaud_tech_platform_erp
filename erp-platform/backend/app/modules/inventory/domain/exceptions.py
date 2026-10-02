@@ -122,6 +122,14 @@ class ReceivingDocumentCannotConfirmError(ReceivingDocumentError):
     """Raised when a receiving document cannot be physically confirmed."""
 
 
+class PutAwayError(InventoryError):
+    """Base exception for put away use cases."""
+
+
+class PutAwayCannotConfirmError(PutAwayError):
+    """Raised when put away cannot be confirmed."""
+
+
 class InventoryBranchRequiredError(InventoryError):
     """Raised when the authenticated context has no active branch."""
 
@@ -136,6 +144,10 @@ class InventoryWarehouseNotFoundError(InventoryError):
 
 class InventoryBalanceNotFoundError(InventoryError):
     """Raised when a balance projection does not exist."""
+
+
+class InventoryMovementNotFoundError(InventoryError):
+    """Raised when an inventory transaction does not exist for the tenant."""
 
 
 class InventoryInsufficientStockError(InventoryError):

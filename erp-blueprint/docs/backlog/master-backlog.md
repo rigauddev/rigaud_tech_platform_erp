@@ -48,9 +48,9 @@ DEV-009 deverá permitir autenticação em dois fatores habilitável e desabilit
 
 DEV-012 congela a regra oficial: usuário pertence a uma empresa e possui uma filial ativa.
 
-## MVP Restaurante
+## Core Inventory E Inbound Logistics
 
-Task transversal de suporte antes da continuidade operacional:
+Tasks transversais de suporte:
 
 - DOC-003 — Demo Environment.
 - DOC-005 — Inventory Engine Domain.
@@ -66,7 +66,7 @@ Estratégia Engine-first:
 - ENGINE-005 — Financial Engine.
 - ENGINE-006 — Reporting Engine.
 
-Após DEV-009, executar exatamente nesta ordem:
+Sequência concluída/iniciada para o núcleo compartilhado:
 
 1. REST-001 — Cadastro de Produtos
 2. DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
@@ -87,7 +87,11 @@ Após DEV-009, executar exatamente nesta ordem:
 17. REST-012 — Stock Adjustments
 18. REST-013 — Transfers
 
-Depois do nucleo de Inventory:
+Cada item é uma Task independente. A ordem não pode ser alterada.
+
+## MVP Restaurante
+
+Após concluir o núcleo de estoque e inbound logistics, iniciar o Restaurante nesta ordem:
 
 1. Restaurant-001 — Mesas
 2. Restaurant-002 — Setores
@@ -95,12 +99,27 @@ Depois do nucleo de Inventory:
 4. Restaurant-004 — QR Code das Mesas
 5. Restaurant-005 — Cardápio Online
 6. Restaurant-006 — Pedidos
-7. Restaurant-007 — Painel da Cozinha — KDS
+7. Restaurant-007 — Kitchen Display — KDS
 8. Restaurant-008 — Delivery
 9. Restaurant-009 — Caixa
 10. Restaurant-010 — Cupom ou NFC-e
 
-Cada item é uma Task independente. A ordem não pode ser alterada.
+## EPIC-RESTAURANT-PRODUCTION — Futura
+
+Não implementar antes do MVP Restaurante.
+
+Escopo planejado:
+
+- Recipe Engine;
+- Production Planning;
+- Daily Production;
+- Kitchen Production;
+- Consumption;
+- Waste;
+- Forecast;
+- AI Insights.
+
+Produção de restaurante consumirá insumos por `InventoryMovement` com `origin_module=RESTAURANT_PRODUCTION` e `business_process=PRODUCTION`.
 
 ## MVP Loja de Roupas
 

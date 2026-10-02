@@ -74,11 +74,15 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Receiving Item`: item de um documento de recebimento com quantidade pedida, recebida, avariada e pendente.
 
-`Goods Receipt`: confirmação física futura do recebimento, responsável por gerar movimento de estoque.
+`Goods Receipt`: confirmação física do recebimento, responsável por gerar movimento de estoque e saldo pendente de armazenagem.
 
-`Put Away`: endereçamento físico futuro da mercadoria recebida para uma localização.
+`Put Away`: confirmação de armazenagem física da mercadoria recebida em uma localização final.
 
 `Putaway Pending Quantity`: quantidade recebida fisicamente, mas ainda não armazenada na localização final e, portanto, não disponível.
+
+`Origin Module`: origem funcional de uma movimentação de estoque, como `PURCHASE`, `POS`, `RESTAURANT_PRODUCTION`, `TRANSFER`, `LOSS` ou `INVENTORY_COUNT`.
+
+`Business Process`: processo operacional da movimentação, como `RECEIVING`, `PUTAWAY`, `PRODUCTION`, `SALE`, `DELIVERY`, `RETURN`, `TRANSFER` ou `COUNT`.
 
 `Inventory Balance`: saldo agregado por produto, filial, warehouse e location.
 
@@ -92,7 +96,13 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Inventory Transfer`: transferência entre warehouses, locations ou filiais.
 
-`Inventory Transaction`: registro técnico imutável para reconstrução e auditoria de saldo.
+`Recipe Engine`: engine futura de receitas do restaurante, separada do Inventory Engine.
+
+`Daily Production`: planejamento e execução futura de produção diária do restaurante.
+
+`Restaurant Production`: domínio futuro responsável por receitas, produção, consumo de insumos, desperdício, forecast e insights de IA.
+
+`Inventory Transaction`: visão de consulta imutável de um `Inventory Movement`, usada como livro-razão operacional para reconstrução e auditoria de saldo. Não é uma segunda entidade de escrita.
 
 ## Restaurant
 
@@ -105,6 +115,10 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 `Sector`: área do restaurante, como salão, varanda ou área VIP.
 
 `Waiter`: usuário ou papel operacional responsável por atendimento.
+
+`Recipe Engine`: engine futura para ficha técnica de pratos e consumo planejado de insumos.
+
+`Daily Production`: produção diária futura de porções/pratos, separada do saldo bruto de insumos.
 
 ## Sales, Fiscal E Finance
 

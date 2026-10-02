@@ -15,4 +15,18 @@ REST-003 adiciona:
 - Riverpod controllers;
 - repository/data source com Dio.
 
+REST-009 adiciona:
+
+- aba Put Away;
+- confirmação por documento, produto, localização e quantidade;
+- histórico de armazenagens filtrado por `business_process`;
+- repository/data source para `POST /api/v1/inventory/putaway`.
+
+REST-010 adiciona:
+
+- aba de transações;
+- consulta em `/api/v1/inventory/transactions`;
+- filtros por processo operacional;
+- indicacao visual de transacao imutavel.
+
 As telas não implementam regra de negócio. Validações críticas permanecem no backend.

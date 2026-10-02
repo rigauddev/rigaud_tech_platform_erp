@@ -14,6 +14,7 @@ from app.modules.inventory.domain.exceptions import (
     InventoryBalanceNotFoundError,
     InventoryBranchRequiredError,
     InventoryInsufficientStockError,
+    InventoryMovementNotFoundError,
     InventoryProductNotFoundError,
     InventoryReservationInactiveError,
     InventoryReservationNotFoundError,
@@ -35,6 +36,12 @@ class InventoryListInput:
     tenant_id: UUID
     branch_id: UUID | None = None
     product_id: UUID | None = None
+    warehouse_id: UUID | None = None
+    location_id: UUID | None = None
+    movement_type: InventoryMovementType | None = None
+    origin_module: str | None = None
+    business_process: str | None = None
+    source_module: str | None = None
     page: int = 1
     page_size: int = 20
 
@@ -118,6 +125,12 @@ class ListInventoryMovements:
             tenant_id=input_data.tenant_id,
             branch_id=input_data.branch_id,
             product_id=input_data.product_id,
+            warehouse_id=input_data.warehouse_id,
+            location_id=input_data.location_id,
+            movement_type=input_data.movement_type,
+            origin_module=_normalize_upper_filter(input_data.origin_module),
+            business_process=_normalize_upper_filter(input_data.business_process),
+            source_module=_normalize_lower_filter(input_data.source_module),
             limit=page_size,
             offset=offset,
         )
@@ -125,8 +138,38 @@ class ListInventoryMovements:
             tenant_id=input_data.tenant_id,
             branch_id=input_data.branch_id,
             product_id=input_data.product_id,
+            warehouse_id=input_data.warehouse_id,
+            location_id=input_data.location_id,
+            movement_type=input_data.movement_type,
+            origin_module=_normalize_upper_filter(input_data.origin_module),
+            business_process=_normalize_upper_filter(input_data.business_process),
+            source_module=_normalize_lower_filter(input_data.source_module),
         )
         return InventoryListResult(items=items, total=total, page=page, page_size=page_size)
+
+
+class ListInventoryTransactions(ListInventoryMovements):
+    """Inventory transactions are the immutable ledger of movements."""
+
+
+class GetInventoryTransaction:
+    def __init__(self, inventory: InventoryRepository) -> None:
+        self.inventory = inventory
+
+    async def execute(
+        self,
+        movement_id: UUID,
+        *,
+        tenant_id: UUID,
+        branch_id: UUID | None,
+    ) -> InventoryMovementModel:
+        movement = await self.inventory.get_movement_by_id(
+            movement_id,
+            tenant_id=tenant_id,
+        )
+        if movement is None or (branch_id is not None and movement.branch_id != branch_id):
+            raise InventoryMovementNotFoundError("Inventory transaction not found.")
+        return movement
 
 
 class CreateInventoryAdjustment:
@@ -188,6 +231,8 @@ class CreateInventoryAdjustment:
                 putaway_pending_quantity_delta=Decimal("0.000"),
                 reason=reason,
                 source_module="inventory",
+                origin_module="ADJUSTMENT",
+                business_process="ADJUSTMENT",
                 event_name=event_name,
                 actor_id=input_data.actor_id,
             )
@@ -281,6 +326,8 @@ class CreateInventoryReservation:
                 reason=reason,
                 source_module=input_data.source_module,
                 source_id=input_data.source_id,
+                origin_module="RESERVATION",
+                business_process="RESERVATION",
                 event_name="inventory.reserved",
                 actor_id=input_data.actor_id,
             )
@@ -340,6 +387,8 @@ class ReleaseInventoryReservation:
                 reason=reservation.reason,
                 source_module=reservation.source_module,
                 source_id=reservation.source_id,
+                origin_module="RESERVATION",
+                business_process="RELEASE",
                 event_name="inventory.reservation.released",
                 actor_id=actor_id,
             )
@@ -357,6 +406,20 @@ def _require_branch(branch_id: UUID | None) -> UUID:
     if branch_id is None:
         raise InventoryBranchRequiredError("Active branch is required.")
     return branch_id
+
+
+def _normalize_upper_filter(value: str | None) -> str | None:
+    if value is None:
+        return None
+    normalized = value.strip().upper()
+    return normalized or None
+
+
+def _normalize_lower_filter(value: str | None) -> str | None:
+    if value is None:
+        return None
+    normalized = value.strip().lower()
+    return normalized or None
 
 
 async def _ensure_product_exists(

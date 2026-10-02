@@ -6,14 +6,20 @@ import pytest
 from app.modules.inventory.application.use_cases import (
     CreateInventoryAdjustment,
     CreateInventoryReservation,
+    GetInventoryTransaction,
     InventoryAdjustmentInput,
+    InventoryListInput,
     InventoryReservationInput,
+    ListInventoryTransactions,
 )
 from app.modules.inventory.domain.entities import (
     InventoryAdjustmentType,
     InventoryMovementType,
 )
-from app.modules.inventory.domain.exceptions import InventoryInsufficientStockError
+from app.modules.inventory.domain.exceptions import (
+    InventoryInsufficientStockError,
+    InventoryMovementNotFoundError,
+)
 from app.modules.inventory.domain.repositories import InventoryRepository
 from app.modules.inventory.infrastructure.models import (
     InventoryAdjustmentModel,
@@ -108,6 +114,73 @@ async def test_reservation_fails_when_available_stock_is_insufficient() -> None:
                 quantity="1",
                 reason="Pedido em aberto",
             )
+        )
+
+
+@pytest.mark.asyncio
+async def test_transactions_filter_and_detail_are_tenant_and_branch_scoped() -> None:
+    tenant_id = uuid4()
+    branch_id = uuid4()
+    movement_id = uuid4()
+    inventory = _FakeInventoryRepository()
+    inventory.movements.append(
+        InventoryMovementModel(
+            id=movement_id,
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            product_id=uuid4(),
+            movement_type=InventoryMovementType.ADJUSTMENT_IN,
+            physical_quantity_delta=Decimal("4.000"),
+            reserved_quantity_delta=Decimal("0.000"),
+            putaway_pending_quantity_delta=Decimal("0.000"),
+            reason="Entrada inicial",
+            origin_module="ADJUSTMENT",
+            business_process="ADJUSTMENT",
+            source_module="inventory",
+            event_name="inventory.adjusted.in",
+        )
+    )
+    inventory.movements.append(
+        InventoryMovementModel(
+            id=uuid4(),
+            tenant_id=tenant_id,
+            branch_id=uuid4(),
+            product_id=uuid4(),
+            movement_type=InventoryMovementType.PUTAWAY,
+            physical_quantity_delta=Decimal("0.000"),
+            reserved_quantity_delta=Decimal("0.000"),
+            putaway_pending_quantity_delta=Decimal("-1.000"),
+            reason="Put Away",
+            origin_module="PURCHASE",
+            business_process="PUTAWAY",
+            source_module="receiving",
+            event_name="inventory.putaway.confirmed",
+        )
+    )
+
+    result = await ListInventoryTransactions(inventory).execute(
+        InventoryListInput(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            origin_module="adjustment",
+            business_process="adjustment",
+        )
+    )
+
+    assert result.total == 1
+    assert result.items[0].id == movement_id
+    transaction = await GetInventoryTransaction(inventory).execute(
+        movement_id,
+        tenant_id=tenant_id,
+        branch_id=branch_id,
+    )
+    assert transaction.event_name == "inventory.adjusted.in"
+
+    with pytest.raises(InventoryMovementNotFoundError):
+        await GetInventoryTransaction(inventory).execute(
+            movement_id,
+            tenant_id=tenant_id,
+            branch_id=uuid4(),
         )
 
 
@@ -225,10 +298,29 @@ class _FakeInventoryRepository(InventoryRepository):
         tenant_id: UUID,
         branch_id: UUID | None,
         product_id: UUID | None,
+        warehouse_id: UUID | None,
+        location_id: UUID | None,
+        movement_type: InventoryMovementType | None,
+        origin_module: str | None,
+        business_process: str | None,
+        source_module: str | None,
         limit: int,
         offset: int,
     ) -> list[InventoryMovementModel]:
-        return self.movements
+        items = [
+            movement
+            for movement in self.movements
+            if movement.tenant_id == tenant_id
+            and (branch_id is None or movement.branch_id == branch_id)
+            and (product_id is None or movement.product_id == product_id)
+            and (warehouse_id is None or movement.warehouse_id == warehouse_id)
+            and (location_id is None or movement.location_id == location_id)
+            and (movement_type is None or movement.movement_type == movement_type)
+            and (origin_module is None or movement.origin_module == origin_module)
+            and (business_process is None or movement.business_process == business_process)
+            and (source_module is None or movement.source_module == source_module)
+        ]
+        return items[offset : offset + limit]
 
     async def count_movements(
         self,
@@ -236,8 +328,43 @@ class _FakeInventoryRepository(InventoryRepository):
         tenant_id: UUID,
         branch_id: UUID | None,
         product_id: UUID | None,
+        warehouse_id: UUID | None,
+        location_id: UUID | None,
+        movement_type: InventoryMovementType | None,
+        origin_module: str | None,
+        business_process: str | None,
+        source_module: str | None,
     ) -> int:
-        return len(self.movements)
+        return len(
+            await self.list_movements(
+                tenant_id=tenant_id,
+                branch_id=branch_id,
+                product_id=product_id,
+                warehouse_id=warehouse_id,
+                location_id=location_id,
+                movement_type=movement_type,
+                origin_module=origin_module,
+                business_process=business_process,
+                source_module=source_module,
+                limit=100,
+                offset=0,
+            )
+        )
+
+    async def get_movement_by_id(
+        self,
+        movement_id: UUID,
+        *,
+        tenant_id: UUID,
+    ) -> InventoryMovementModel | None:
+        return next(
+            (
+                movement
+                for movement in self.movements
+                if movement.id == movement_id and movement.tenant_id == tenant_id
+            ),
+            None,
+        )
 
     async def get_reservation_by_id(
         self, reservation_id: UUID, *, tenant_id: UUID
