@@ -54,6 +54,8 @@ Tasks transversais de suporte:
 
 - DOC-003 — Demo Environment.
 - DOC-005 — Inventory Engine Domain.
+- DOC-008 — Deployment & Distribution Architecture.
+- DOC-009 — Product Documentation, Help Center & Knowledge Architecture.
 
 Estratégia Engine-first:
 
@@ -77,11 +79,13 @@ Sequência concluída/iniciada para o núcleo compartilhado:
 9. REST-006 — Warehouse Locations
 10. REST-007 — Receiving Documents
 11. REST-008 — Goods Receipt
-12. REST-009 — Put Away
-13. REST-010 — Inventory Transactions
-14. REST-011 — Inventory Count
-15. REST-012 — Stock Adjustments
-16. REST-013 — Transfers
+12. DOC-008 — Deployment & Distribution Architecture
+13. DOC-009 — Product Documentation, Help Center & Knowledge Architecture
+14. REST-009 — Put Away
+15. REST-010 — Inventory Transactions
+16. REST-011 — Inventory Count
+17. REST-012 — Stock Adjustments
+18. REST-013 — Transfers
 
 Cada item é uma Task independente. A ordem não pode ser alterada.
 
@@ -132,3 +136,20 @@ Após a conclusão do Restaurante, iniciar o módulo Fashion nesta ordem:
 9. STORE-009 — NFC-e
 
 A Loja deve reutilizar o máximo possível do Core.
+
+## Prioridade Pos-MVP
+
+1. Finalizar Inventory Engine.
+2. Restaurant MVP.
+3. Financial MVP.
+4. HR MVP:
+   - Employees;
+   - Departments;
+   - Shifts;
+   - Schedules;
+   - Vacation;
+   - Attendance.
+5. Production MVP.
+6. AI/MCP incremental.
+
+Existe cliente real aguardando Production MVP. Production Engine permanece independente do Restaurant.

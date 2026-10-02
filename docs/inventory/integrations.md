@@ -42,6 +42,17 @@ Ele consome eventos para:
 - conciliação;
 - relatórios.
 
+## Deployment
+
+Inventory deve funcionar nos deployments oficiais:
+
+- `CLOUD_SHARED`;
+- `CLOUD_DEDICATED`;
+- `ON_PREMISE`;
+- `HYBRID`.
+
+O `tenant_id` permanece estavel e independente do deployment.
+
 ## Restaurant
 
 Restaurant Engine usa Inventory para:
@@ -72,4 +83,3 @@ Reporting Engine consome transações e eventos para:
 - giro;
 - divergências;
 - histórico de movimentações.
-

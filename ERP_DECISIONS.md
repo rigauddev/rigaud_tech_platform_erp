@@ -13,6 +13,10 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 
 - `Company` é a raiz oficial do tenant.
 - `tenant_id = companies.id`.
+- Tenant e deployment sao conceitos diferentes.
+- Tipos oficiais de deployment: `CLOUD_SHARED`, `CLOUD_DEDICATED`, `ON_PREMISE` e `HYBRID`.
+- Um tenant pode migrar entre deployments sem criar nova empresa.
+- O `tenant_id` deve permanecer estavel durante migracoes sempre que tecnicamente possivel.
 - `Branch` representa filial operacional dentro de um tenant.
 - DEC-001: um usuário pertence a exatamente uma empresa/tenant.
 - DEC-002: um usuário possui exatamente uma filial ativa.
@@ -20,6 +24,20 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - DEC-004: `tenant_id` permanece obrigatório em tabelas SaaS e On-Premise.
 - O frontend nunca define `tenant_id` confiável.
 - O backend resolve tenant e filial pelo usuário autenticado e contexto ativo.
+- Usuario comum nao escolhe empresa no login.
+
+## Deployment E Distribuicao
+
+- Cloud inicial usa modelo SaaS multi-tenant compartilhado.
+- `CLOUD_DEDICATED` fica reservado para isolamento operacional ou contrato especial.
+- On-Premise e o mesmo produto executando no ambiente local do cliente.
+- Servidor de producao recomendado para On-Premise e Linux.
+- Windows, macOS, Linux, Android e iOS sao plataformas de acesso; nao definem o servidor recomendado.
+- Hybrid prepara servidor local com Sync Gateway futuro para Rigaud Cloud.
+- Nem todos os dados precisam ser enviados para a nuvem em deployments Hybrid.
+- Partner/Reseller nao e tenant.
+- Inadimplencia ou suspensao nunca apaga dados automaticamente.
+- Suspensao bloqueia acesso conforme politica comercial, preservando dados.
 
 ## Produtos E Estoque
 
@@ -76,6 +94,17 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Módulos funcionais devem incluir dados demo ou registrar por que ainda não podem ser demonstrados.
 - Cenários completos só devem materializar tabelas existentes.
 
+## Documentacao E Conhecimento
+
+- Documentacao e parte do produto, nao apenas suporte ao desenvolvimento.
+- A entrada principal de produto fica em `docs/index.md`.
+- O mapa vivo do produto fica em `docs/architecture/product-map.md`.
+- Funcionalidades operacionais devem nascer com documentacao tecnica, Academy e, quando aplicavel, conteudo de Help Center.
+- O Help Center futuro deve reutilizar conteudo versionado do repositorio.
+- Conteudo de usuario final nao deve expor detalhes internos desnecessarios.
+- Conteudo para parceiros e revendedores nao altera o modelo de tenant.
+- Conteudo usado por AI/MCP deve respeitar tenant, filial, role, permissoes e auditoria.
+
 ## Offline Futuro
 
 - Offline-first é planejado.
@@ -86,5 +115,8 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 
 - IA não faz parte do MVP operacional inicial.
 - A arquitetura deve reservar espaço para providers, agentes, prompts, ferramentas, MCP, memória, embeddings, RAG e eventos.
+- A arquitetura futura podera usar AI Gateway -> MCP -> ferramentas especificas de dominio.
+- MCPs futuros planejados: Finance, Inventory, Restaurant, Production, HR e Commercial.
+- Todo MCP deve respeitar tenant, branch, role, permissions e audit.
 - IA deve consumir eventos do ERP e permanecer desacoplada das regras transacionais.
 - Insights futuros não devem alterar dados transacionais sem workflow explícito, auditoria e permissão.

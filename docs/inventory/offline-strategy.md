@@ -4,6 +4,12 @@ DOC-005 não implementa offline.
 
 Ela congela as perguntas e restrições que REST-003 deve respeitar para permitir offline-first em tarefa futura.
 
+DOC-008 define tres niveis oficiais de operacao:
+
+- internet disponivel: cliente acessa Rigaud Cloud;
+- internet indisponivel, rede local disponivel: cliente acessa servidor On-Premise;
+- servidor local indisponivel: futuro Offline-First.
+
 ## Pode Funcionar Offline?
 
 Parcialmente.
@@ -67,4 +73,3 @@ O cliente futuro deve manter fila local com:
 - contador de tentativas;
 - última mensagem de erro;
 - próxima tentativa.
-

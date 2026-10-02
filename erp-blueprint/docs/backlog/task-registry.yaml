@@ -67,7 +67,7 @@ tasks:
       - CHANGELOG.md
       - ERP_DECISIONS.md
       - ERP_GLOSSARY.md
-      - erp-blueprint/docs/adr/0008-restaurant-production-separated-from-inventory.md
+      - erp-blueprint/docs/adr/0009-restaurant-production-separated-from-inventory.md
       - erp-blueprint/docs/backlog/master-backlog.md
       - erp-blueprint/docs/roadmap/master-roadmap.md
       - erp-platform/backend/app/modules/inventory/README.md
@@ -100,6 +100,122 @@ tasks:
       merge_commit_main: null
       tag: null
     commit: 88c16cb
+    review_status: ready
+  - id: DOC-009
+    title: Product Documentation, Help Center & Knowledge Architecture
+    epic: Documentation
+    module: documentation
+    status: review
+    dependencies:
+      - DOC-008
+    started_at: "2026-10-02"
+    completed_at: null
+    documentation:
+      - docs/index.md
+      - docs/architecture/product-map.md
+      - docs/architecture/README.md
+      - docs/help/README.md
+      - docs/help/knowledge-architecture.md
+      - docs/help/feature-documentation-standard.md
+      - docs/help/partners-resellers.md
+      - docs/help/ai-marketing.md
+      - docs/deployment/README.md
+      - docs/governance/documentation-policy.md
+      - README.md
+      - CHANGELOG.md
+      - AGENTS.md
+      - AI_DEVELOPMENT_CHARTER.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/AGENTS.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-blueprint/docs/architecture/product-map.md
+      - erp-blueprint/docs/help/README.md
+      - erp-blueprint/docs/academy/documentation/001-product-documentation-help-center.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/documentation/001-product-documentation-help-center.md
+    tests:
+      - make format
+      - make lint
+      - make test
+      - make check-task TASK=DOC-009
+      - mkdocs build
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-009-product-documentation-help-center
+      commits:
+        - 4294faf
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 4294faf
+    review_status: ready
+  - id: DOC-008
+    title: Deployment & Distribution Architecture
+    epic: Architecture
+    module: architecture
+    status: review
+    dependencies:
+      - DEV-010
+      - DEV-011
+      - DEV-012
+      - REST-008
+    started_at: "2026-10-02"
+    completed_at: null
+    documentation:
+      - docs/architecture/README.md
+      - docs/architecture/deployment/README.md
+      - docs/architecture/deployment/cloud.md
+      - docs/architecture/deployment/on-premise.md
+      - docs/architecture/deployment/hybrid.md
+      - docs/architecture/deployment/tenancy.md
+      - docs/architecture/deployment/subscriptions.md
+      - docs/architecture/system-map.md
+      - docs/architecture/offline-strategy.md
+      - docs/architecture/cloud.md
+      - docs/architecture/on-premise.md
+      - docs/architecture/hybrid.md
+      - docs/architecture/resellers.md
+      - docs/ai/overview.md
+      - README.md
+      - CHANGELOG.md
+      - AGENTS.md
+      - erp-blueprint/AGENTS.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-blueprint/docs/architecture/deployment-distribution-architecture.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/adr/0008-deployment-distribution-architecture.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/architecture/001-deployment-distribution-architecture.md
+    tests:
+      - make format
+      - make lint
+      - make test
+      - make check-task TASK=DOC-008
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-008-deployment-distribution-architecture
+      commits:
+        - fc99175
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: fc99175
     review_status: ready
   - id: REST-008
     title: Goods Receipt

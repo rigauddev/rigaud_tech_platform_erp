@@ -12,6 +12,16 @@
 - REST-009: `InventoryMovement` passa a registrar `origin_module` e `business_process`, preparando auditoria, relatórios, Kafka, MCP e Restaurant Production futura.
 - REST-009: Flutter Inventory recebe aba Put Away para confirmação por documento, produto, localização e quantidade, além de histórico de armazenagens.
 - REST-009: documentação em `docs/inventory/putaway.md`, `docs/warehouse/putaway.md` e Academy de Put Away.
+- DOC-009: arquitetura de documentação do produto, Central de Ajuda e conhecimento criada em `docs/index.md` e `docs/help/*`.
+- DOC-009: mapa planejado do produto criado em `docs/architecture/product-map.md`, separando itens implementados, em desenvolvimento, planejados e futuros.
+- DOC-009: padrao oficial de documentação por funcionalidade definido em `docs/help/feature-documentation-standard.md`.
+- DOC-009: documentação futura de parceiros, revendedores, AI/MCP e Marketing AI registrada sem implementar funcionalidades.
+- DOC-009: Academy, MkDocs, README, backlog, roadmap, task registry, decisões e glossário atualizados para Docs-as-Product.
+- DOC-008: arquitetura oficial de distribuicao criada para Cloud, Cloud Dedicated, On-Premise e Hybrid.
+- DOC-008: separacao entre Tenant e Deployment congelada, preservando `tenant_id = companies.id`.
+- DOC-008: estrategia de operacao offline em tres niveis, Sync Gateway futuro e AI Gateway/MCP documentados.
+- DOC-008: mapa funcional oficial documentado com Commercial, Inventory, Restaurant, Production, Financial, HR, Reports e AI/MCP.
+- DOC-008: ADR `0008-deployment-distribution-architecture`, Academy e documentacao em `docs/architecture/*`.
 - REST-008: Goods Receipt com `GoodsReceiptService`, confirmação física de `ReceivingDocument`, movimento `receipt`, saldo físico e `putaway_pending_quantity`.
 - REST-008: endpoint `POST /api/v1/receiving-documents/{document_id}/confirm-receipt`, auditoria `goods_receipt.confirmed` e evento interno `inventory.receipt.confirmed`.
 - REST-008: Flutter Receiving Documents passa a confirmar recebimento físico, exibir diferenças e acompanhar status `putaway_pending`.
@@ -136,6 +146,8 @@
 
 ### Changed
 
+- UI-001 Review: login passa a exibir carrossel informativo lateral em desktop com o mesmo design e tamanho do card de acesso, mantendo a tela sem scroll.
+- UI-001 Review: renderização da logo no card de login ajustada para exibir a área útil do asset `assets/images/logo_rigaud_tech.png`.
 - UI-001: tela de login remove scroll externo, centraliza card responsivo e ajusta renderização horizontal da logo.
 - DEV-012: tela de login Flutter remove o campo Tenant e envia somente email e senha.
 - DEV-012: endpoint `/api/v1/auth/login` deixa de aceitar tenant no payload.

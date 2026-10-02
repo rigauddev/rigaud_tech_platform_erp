@@ -31,6 +31,8 @@ Suporte transversal:
 
 - Demo Environment para desenvolvimento, QA e demonstrações.
 - Inventory Engine Domain antes da implementação REST-003.
+- Deployment & Distribution Architecture antes de ampliar distribuicao Cloud/On-Premise/Hybrid.
+- Product Documentation, Help Center & Knowledge Architecture antes de ampliar funcionalidades operacionais.
 
 Engines planejadas:
 
@@ -54,6 +56,8 @@ Sequência:
 - Warehouse Locations.
 - Receiving Documents.
 - Goods Receipt.
+- Deployment & Distribution Architecture.
+- Product Documentation, Help Center & Knowledge Architecture.
 - Put Away.
 - Inventory Transactions.
 - Inventory Count.
@@ -108,6 +112,10 @@ Sequência:
 
 Produção permanece separada do estoque. Estoque registra consumo e perdas por eventos de `InventoryMovement`; receitas, planejamento e cozinha pertencem ao domínio Restaurant Production.
 
+- Financial MVP.
+- HR MVP com Employees, Departments, Shifts, Schedules, Vacation e Attendance.
+- Production MVP, com cliente real aguardando esta capacidade.
+- AI/MCP incremental.
 - Marketplace.
 - Offline-first.
 - Armazenamento externo de backups.

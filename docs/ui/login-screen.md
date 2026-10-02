@@ -6,9 +6,17 @@ UI-001 refina a tela de login sem alterar regra de negócio.
 
 - A tela ocupa 100% do viewport.
 - O fundo é fixo e não rola.
-- O card de login fica centralizado e usa `FittedBox` para evitar overflow em telas menores.
+- Em desktop, o card informativo e o card de login ficam centralizados lado a lado, com a mesma largura, altura, raio e sombra.
+- Em telas compactas, o login permanece como foco principal para preservar a experiência sem scroll.
+- O layout usa `FittedBox` para evitar overflow em telas menores.
 - Ao abrir o teclado, apenas a área do formulário é reposicionada por `viewInsets`.
 - Não há `SingleChildScrollView` na tela de login.
+
+## Informativos
+
+O carrossel lateral possui um primeiro card fixo de informativo do sistema e deixa os próximos cards preparados para informativos da empresa.
+
+Os cards seguem o mesmo design visual do login e podem evoluir futuramente para conteúdo administrável com texto ou imagem, sem alterar o fluxo de autenticação.
 
 ## Identidade Visual
 
@@ -21,7 +29,7 @@ O background usa gradiente claro, grade técnica, conexões e cartões discretos
 - cloud;
 - conectividade entre módulos.
 
-A logo usa o asset `assets/images/logo_rigaud_tech.png` declarado no `pubspec.yaml`. Como o arquivo possui margem transparente grande, a UI aplica recorte visual horizontal para preservar leitura da marca.
+A logo usa o asset `assets/images/logo_rigaud_tech.png` declarado no `pubspec.yaml`. Como o arquivo possui margem grande, a UI aplica recorte visual central para preservar leitura da marca no card de login.
 
 ## Rodapé
 

@@ -120,6 +120,16 @@ Inventory Transactions está documentado em `docs/inventory/transactions.md`.
 
 IA futura e MCP estão documentados em `docs/ai/overview.md`.
 
+Arquitetura de distribuicao, Cloud, On-Premise, Hybrid, Offline Strategy e Resellers esta documentada em `docs/architecture/deployment/README.md`.
+
+A entrada principal de documentacao do produto esta em `docs/index.md`.
+
+O mapa planejado do produto esta em `docs/architecture/product-map.md`.
+
+A arquitetura da Central de Ajuda e conhecimento esta documentada em `docs/help/README.md`.
+
+A documentacao de deployment para times tecnicos, implantacao e suporte esta em `docs/deployment/README.md`.
+
 O ambiente demo está documentado em `docs/demo/overview.md`.
 
 O domínio do Inventory Engine está documentado em `docs/inventory/overview.md`.

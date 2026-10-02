@@ -8,6 +8,18 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Company`: empresa raiz do tenant.
 
+`Deployment`: ambiente tecnico onde o ERP executa, podendo ser Cloud, On-Premise ou Hybrid.
+
+`CLOUD_SHARED`: deployment SaaS compartilhado por varios tenants.
+
+`CLOUD_DEDICATED`: deployment cloud dedicado para um tenant ou grupo controlado.
+
+`ON_PREMISE`: deployment local no ambiente do cliente.
+
+`HYBRID`: deployment local com sincronizacao futura para Rigaud Cloud.
+
+`Deployment Stamp`: unidade repetivel de infraestrutura usada para escalar tenants e isolar grupos de clientes.
+
 `Branch`: filial operacional de uma empresa.
 
 `Active Branch`: filial operacional única ativa do usuário autenticado.
@@ -23,6 +35,12 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 `Feature Flag`: chave que habilita ou desabilita comportamento.
 
 `Entitlement`: direito de uso derivado de plano, assinatura ou regra comercial.
+
+`Partner`: parceiro comercial ou operacional da Rigaud Tech, sem ser tenant.
+
+`Reseller`: revendedor que atende clientes, sem substituir a empresa tenant.
+
+`Sync Gateway`: componente futuro responsavel por sincronizar eventos e dados selecionados entre servidor local e cloud.
 
 ## Auth
 
@@ -124,6 +142,22 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Demo Account`: conta criada para testes e demonstrações.
 
+## Documentation
+
+`Product Map`: mapa vivo do produto, com modulos implementados, em desenvolvimento, planejados e futuros.
+
+`Knowledge Architecture`: organizacao oficial do conhecimento do ERP entre documentacao tecnica, Academy, Help Center, tutoriais, FAQ, materiais comerciais e AI/MCP.
+
+`Help Center`: central futura de ajuda para usuarios finais, administradores, suporte, parceiros e implantadores.
+
+`Tutorial`: guia passo a passo orientado a uma tarefa de usuario.
+
+`FAQ`: perguntas frequentes sobre uso, configuracao, erros comuns ou comportamento esperado.
+
+`Docs-as-Product`: principio de tratar documentacao como parte do produto entregue.
+
+`Feature Documentation Standard`: padrao minimo para documentar uma funcionalidade nova.
+
 ## AI
 
 `MCP`: Model Context Protocol, integração futura para ferramentas e agentes externos.
@@ -131,3 +165,9 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 `AI Event`: evento derivado do ERP para análise futura por IA.
 
 `Insight`: recomendação ou análise gerada por agente, sem efeito transacional automático.
+
+`AI Gateway`: camada futura para controlar acesso de agentes, modelos e ferramentas ao contexto do ERP.
+
+`Domain Tool`: ferramenta MCP futura especializada em um dominio, como Finance, Inventory, Restaurant, Production, HR ou Commercial.
+
+`Marketing AI`: conjunto futuro de agentes para conteudo, campanhas, social media, copywriting, analytics e briefs de design.

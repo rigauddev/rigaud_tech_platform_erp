@@ -160,6 +160,34 @@ Regras permanentes:
 - filiais devem pertencer ao tenant ativo;
 - instalações SaaS usam API central e PostgreSQL compartilhado;
 - instalações on-premises usam um único PostgreSQL local por empresa.
+- tenant e deployment sao conceitos diferentes;
+- deployments oficiais: `CLOUD_SHARED`, `CLOUD_DEDICATED`, `ON_PREMISE` e `HYBRID`;
+- um tenant pode migrar entre deployments sem criar nova empresa;
+- partner/reseller nao e tenant.
+
+## Deployment E Distribuicao
+
+Arquitetura oficial:
+
+```text
+ERP
+  ↓
+Deployment Layer
+  ├── Cloud
+  ├── On-Premise
+  └── Hybrid
+```
+
+Regras:
+
+- Cloud inicial e SaaS multi-tenant.
+- Cloud Dedicated fica reservado para isolamento operacional ou contrato especial.
+- On-Premise e o mesmo ERP rodando no ambiente local do cliente.
+- Servidor On-Premise de producao recomendado: Linux.
+- Windows, macOS, Linux, Android e iOS sao plataformas de acesso.
+- Hybrid usa servidor local com Sync Gateway futuro para Rigaud Cloud.
+- Offline-First completo e futuro, mas toda arquitetura deve considerar cache local, fila, idempotencia, sync, conflitos e versionamento.
+- AI/MCP futuro deve respeitar tenant, branch, role, permissions e audit.
 
 ## SaaS, Planos e Feature Flags
 
@@ -256,6 +284,21 @@ Diretriz:
 - não implementar carregamento automático de presets sem Task específica;
 - não misturar Form Blueprint com regra comercial do módulo.
 
+## Documentacao Como Produto
+
+DOC-009 congela a arquitetura de documentacao, Central de Ajuda e conhecimento.
+
+Regras:
+
+- documentacao nasce junto com a funcionalidade;
+- `docs/index.md` e a entrada principal do produto;
+- `docs/architecture/product-map.md` mantem o mapa vivo do produto;
+- funcionalidades operacionais devem avaliar documentacao tecnica, Academy, Help Center, tutorial e FAQ;
+- documentacao para usuario final deve explicar uso e resultado esperado, sem expor detalhes internos desnecessarios;
+- documentacao tecnica deve registrar API, banco, regras, testes, troubleshooting e limites conhecidos quando aplicavel;
+- conteudo de parceiros, revendedores, AI/MCP e Marketing AI permanece futuro ate task especifica;
+- nenhum agente deve implementar Help Center, CMS, busca, portal de parceiro, IA ou automacao de marketing sem task propria.
+
 ## Backlog e Roadmap
 
 Ordem oficial do Core Inventory e Inbound Logistics:
@@ -271,13 +314,15 @@ Ordem oficial do Core Inventory e Inbound Logistics:
 9. REST-006 — Warehouse Locations
 10. REST-007 — Receiving Documents
 11. REST-008 — Goods Receipt
-12. REST-009 — Put Away
-13. REST-010 — Inventory Transactions
-14. REST-011 — Inventory Count
-15. REST-012 — Stock Adjustments
-16. REST-013 — Transfers
+12. DOC-008 — Deployment & Distribution Architecture
+13. DOC-009 — Product Documentation, Help Center & Knowledge Architecture
+14. REST-009 — Put Away
+15. REST-010 — Inventory Transactions
+16. REST-011 — Inventory Count
+17. REST-012 — Stock Adjustments
+18. REST-013 — Transfers
 
-Após concluir esse núcleo, iniciar o MVP Restaurante:
+Depois do Core Inventory, iniciar MVP Restaurante:
 
 1. Restaurant-001 — Mesas
 2. Restaurant-002 — Setores
@@ -389,6 +434,8 @@ Cada Task deve atualizar, quando aplicável:
 - `README.md`
 - `CHANGELOG.md`
 - `docs/<module>/`
+- `docs/help/` para conteudo de ajuda, FAQ ou tutorial;
+- `docs/architecture/product-map.md` quando o status do produto mudar;
 - README local do módulo;
 - Academy em `erp-blueprint/docs/academy/`;
 - backlog;
