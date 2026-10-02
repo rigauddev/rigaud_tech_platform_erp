@@ -23,6 +23,8 @@ Estado atual: concluído até DEV-012 em review.
 
 Próxima task prevista: DEV-011 — Assinaturas, Planos e Limites.
 
+DOC-008 congela a arquitetura de distribuicao: Cloud, Cloud Dedicated, On-Premise e Hybrid.
+
 ## Fase 2 — MVP Restaurante
 
 Objetivo: construir o fluxo operacional inicial de restaurante usando o Core compartilhado.
@@ -31,6 +33,7 @@ Suporte transversal:
 
 - Demo Environment para desenvolvimento, QA e demonstrações.
 - Inventory Engine Domain antes da implementação REST-003.
+- Deployment & Distribution Architecture antes de ampliar distribuicao Cloud/On-Premise/Hybrid.
 
 Engines planejadas:
 
@@ -48,18 +51,26 @@ Sequência:
 - Assinaturas, planos e limites.
 - Categorias de Produtos.
 - Alinhamento Auth/Tenant.
-- Estoque.
+- Inventory Engine.
+- Warehouse Management.
+- Warehouse Zones.
+- Warehouse Locations.
+- Receiving Documents.
+- Goods Receipt.
+- Put Away.
+- Inventory Transactions.
+- Inventory Count.
+- Stock Adjustments.
+- Transfers.
 - Mesas.
 - Setores.
 - Garçons.
 - QR Code.
 - Cardápio Online.
-- Pedido Cliente.
-- Pedido Garçom.
+- Pedidos.
 - KDS.
 - Delivery.
 - Caixa.
-- Fechamento da Venda.
 - Cupom ou NFC-e.
 
 ## Fase 3 — MVP Loja de Roupas
@@ -80,6 +91,10 @@ Sequência:
 
 ## Fase 4 — Evoluções Futuras
 
+- Financial MVP.
+- HR MVP com Employees, Departments, Shifts, Schedules, Vacation e Attendance.
+- Production MVP, com cliente real aguardando esta capacidade.
+- AI/MCP incremental.
 - Marketplace.
 - Offline-first.
 - Armazenamento externo de backups.

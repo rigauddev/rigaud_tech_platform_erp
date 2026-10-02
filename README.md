@@ -22,7 +22,7 @@ DEV-012 — Authentication & Tenant Architecture Alignment
 Task atual:
 
 ```text
-REST-008 — Goods Receipt
+DOC-008 — Deployment & Distribution Architecture
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -115,6 +115,8 @@ Os documentos de recebimento estão documentados em `docs/inventory/receiving-do
 Goods Receipt está documentado em `docs/inventory/goods-receipt.md`.
 
 IA futura e MCP estão documentados em `docs/ai/overview.md`.
+
+Arquitetura de distribuicao, Cloud, On-Premise, Hybrid, Offline Strategy e Resellers esta documentada em `docs/architecture/deployment/README.md`.
 
 O ambiente demo está documentado em `docs/demo/overview.md`.
 

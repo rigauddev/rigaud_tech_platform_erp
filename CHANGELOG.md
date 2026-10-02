@@ -4,6 +4,11 @@
 
 ### Added
 
+- DOC-008: arquitetura oficial de distribuicao criada para Cloud, Cloud Dedicated, On-Premise e Hybrid.
+- DOC-008: separacao entre Tenant e Deployment congelada, preservando `tenant_id = companies.id`.
+- DOC-008: estrategia de operacao offline em tres niveis, Sync Gateway futuro e AI Gateway/MCP documentados.
+- DOC-008: mapa funcional oficial documentado com Commercial, Inventory, Restaurant, Production, Financial, HR, Reports e AI/MCP.
+- DOC-008: ADR `0008-deployment-distribution-architecture`, Academy e documentacao em `docs/architecture/*`.
 - REST-008: Goods Receipt com `GoodsReceiptService`, confirmação física de `ReceivingDocument`, movimento `receipt`, saldo físico e `putaway_pending_quantity`.
 - REST-008: endpoint `POST /api/v1/receiving-documents/{document_id}/confirm-receipt`, auditoria `goods_receipt.confirmed` e evento interno `inventory.receipt.confirmed`.
 - REST-008: Flutter Receiving Documents passa a confirmar recebimento físico, exibir diferenças e acompanhar status `putaway_pending`.
