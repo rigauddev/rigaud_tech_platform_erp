@@ -146,6 +146,7 @@
 
 ### Changed
 
+- REVIEW DEV-001: proxy Nginx resolve `backend` e `frontend` dinamicamente no DNS interno do Docker, evitando `502` após recriação dos containers.
 - UI-001 Review: login passa a exibir carrossel informativo lateral em desktop com o mesmo design e tamanho do card de acesso, mantendo a tela sem scroll.
 - UI-001 Review: renderização da logo no card de login ajustada para exibir a área útil do asset `assets/images/logo_rigaud_tech.png`.
 - UI-001: tela de login remove scroll externo, centraliza card responsivo e ajusta renderização horizontal da logo.
