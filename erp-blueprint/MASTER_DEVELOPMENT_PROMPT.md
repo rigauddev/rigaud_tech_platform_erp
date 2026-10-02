@@ -284,6 +284,21 @@ Diretriz:
 - não implementar carregamento automático de presets sem Task específica;
 - não misturar Form Blueprint com regra comercial do módulo.
 
+## Documentacao Como Produto
+
+DOC-009 congela a arquitetura de documentacao, Central de Ajuda e conhecimento.
+
+Regras:
+
+- documentacao nasce junto com a funcionalidade;
+- `docs/index.md` e a entrada principal do produto;
+- `docs/architecture/product-map.md` mantem o mapa vivo do produto;
+- funcionalidades operacionais devem avaliar documentacao tecnica, Academy, Help Center, tutorial e FAQ;
+- documentacao para usuario final deve explicar uso e resultado esperado, sem expor detalhes internos desnecessarios;
+- documentacao tecnica deve registrar API, banco, regras, testes, troubleshooting e limites conhecidos quando aplicavel;
+- conteudo de parceiros, revendedores, AI/MCP e Marketing AI permanece futuro ate task especifica;
+- nenhum agente deve implementar Help Center, CMS, busca, portal de parceiro, IA ou automacao de marketing sem task propria.
+
 ## Backlog e Roadmap
 
 Ordem oficial do Core Inventory e Inbound Logistics:
@@ -300,11 +315,12 @@ Ordem oficial do Core Inventory e Inbound Logistics:
 10. REST-007 — Receiving Documents
 11. REST-008 — Goods Receipt
 12. DOC-008 — Deployment & Distribution Architecture
-13. REST-009 — Put Away
-14. REST-010 — Inventory Transactions
-15. REST-011 — Inventory Count
-16. REST-012 — Stock Adjustments
-17. REST-013 — Transfers
+13. DOC-009 — Product Documentation, Help Center & Knowledge Architecture
+14. REST-009 — Put Away
+15. REST-010 — Inventory Transactions
+16. REST-011 — Inventory Count
+17. REST-012 — Stock Adjustments
+18. REST-013 — Transfers
 
 Depois do Core Inventory, iniciar MVP Restaurante:
 
@@ -418,6 +434,8 @@ Cada Task deve atualizar, quando aplicável:
 - `README.md`
 - `CHANGELOG.md`
 - `docs/<module>/`
+- `docs/help/` para conteudo de ajuda, FAQ ou tutorial;
+- `docs/architecture/product-map.md` quando o status do produto mudar;
 - README local do módulo;
 - Academy em `erp-blueprint/docs/academy/`;
 - backlog;

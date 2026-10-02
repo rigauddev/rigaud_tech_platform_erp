@@ -34,6 +34,7 @@ Suporte transversal:
 - Demo Environment para desenvolvimento, QA e demonstrações.
 - Inventory Engine Domain antes da implementação REST-003.
 - Deployment & Distribution Architecture antes de ampliar distribuicao Cloud/On-Premise/Hybrid.
+- Product Documentation, Help Center & Knowledge Architecture antes de ampliar funcionalidades operacionais.
 
 Engines planejadas:
 
@@ -57,6 +58,7 @@ Sequência:
 - Warehouse Locations.
 - Receiving Documents.
 - Goods Receipt.
+- Product Documentation, Help Center & Knowledge Architecture.
 - Put Away.
 - Inventory Transactions.
 - Inventory Count.

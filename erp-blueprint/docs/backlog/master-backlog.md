@@ -55,6 +55,7 @@ Task transversal de suporte antes da continuidade operacional:
 - DOC-003 — Demo Environment.
 - DOC-005 — Inventory Engine Domain.
 - DOC-008 — Deployment & Distribution Architecture.
+- DOC-009 — Product Documentation, Help Center & Knowledge Architecture.
 
 Estratégia Engine-first:
 
@@ -79,11 +80,12 @@ Após DEV-009, executar exatamente nesta ordem:
 10. REST-007 — Receiving Documents
 11. REST-008 — Goods Receipt
 12. DOC-008 — Deployment & Distribution Architecture
-13. REST-009 — Put Away
-14. REST-010 — Inventory Transactions
-15. REST-011 — Inventory Count
-16. REST-012 — Stock Adjustments
-17. REST-013 — Transfers
+13. DOC-009 — Product Documentation, Help Center & Knowledge Architecture
+14. REST-009 — Put Away
+15. REST-010 — Inventory Transactions
+16. REST-011 — Inventory Count
+17. REST-012 — Stock Adjustments
+18. REST-013 — Transfers
 
 Depois do nucleo de Inventory:
 

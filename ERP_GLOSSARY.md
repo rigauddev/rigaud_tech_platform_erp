@@ -128,6 +128,22 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Demo Account`: conta criada para testes e demonstrações.
 
+## Documentation
+
+`Product Map`: mapa vivo do produto, com modulos implementados, em desenvolvimento, planejados e futuros.
+
+`Knowledge Architecture`: organizacao oficial do conhecimento do ERP entre documentacao tecnica, Academy, Help Center, tutoriais, FAQ, materiais comerciais e AI/MCP.
+
+`Help Center`: central futura de ajuda para usuarios finais, administradores, suporte, parceiros e implantadores.
+
+`Tutorial`: guia passo a passo orientado a uma tarefa de usuario.
+
+`FAQ`: perguntas frequentes sobre uso, configuracao, erros comuns ou comportamento esperado.
+
+`Docs-as-Product`: principio de tratar documentacao como parte do produto entregue.
+
+`Feature Documentation Standard`: padrao minimo para documentar uma funcionalidade nova.
+
 ## AI
 
 `MCP`: Model Context Protocol, integração futura para ferramentas e agentes externos.
@@ -139,3 +155,5 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 `AI Gateway`: camada futura para controlar acesso de agentes, modelos e ferramentas ao contexto do ERP.
 
 `Domain Tool`: ferramenta MCP futura especializada em um dominio, como Finance, Inventory, Restaurant, Production, HR ou Commercial.
+
+`Marketing AI`: conjunto futuro de agentes para conteudo, campanhas, social media, copywriting, analytics e briefs de design.

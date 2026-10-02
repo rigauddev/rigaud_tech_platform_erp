@@ -8,10 +8,12 @@ nav:
   - Architecture:
       - Overview: architecture/README.md
       - Product Vision: architecture/product-vision.md
+      - Product Map: architecture/product-map.md
       - Development Workflow: architecture/development-workflow.md
       - Deployment Distribution Architecture: architecture/deployment-distribution-architecture.md
   - Academy:
       - Overview: academy/README.md
+      - Product Documentation Help Center: academy/documentation/001-product-documentation-help-center.md
       - Flutter Multiplataforma: academy/flutter/001-flutter-multiplataforma.md
       - Login Experience: academy/ui/001-login-experience.md
       - Database Core: academy/backend/001-database-core.md
@@ -47,6 +49,8 @@ nav:
       - ADR 0007 Engine First: adr/0007-engine-first-development-strategy.md
       - ADR 0008 Deployment Distribution: adr/0008-deployment-distribution-architecture.md
   - Modules: modules/README.md
+  - Help Center:
+      - Overview: help/README.md
   - Research: research/README.md
   - Backlog:
       - Overview: backlog/README.md

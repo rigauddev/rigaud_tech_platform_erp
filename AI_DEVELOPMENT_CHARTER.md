@@ -7,6 +7,7 @@ Este documento deve ser lido antes de qualquer task, junto com `AGENTS.md`, `erp
 ## Princípios Permanentes
 
 - Documentação é parte da entrega.
+- Documentação é parte do produto e deve considerar uso técnico, Academy, Help Center, tutorial e FAQ quando aplicável.
 - Nenhuma funcionalidade sem testes.
 - Nenhuma funcionalidade crítica sem auditoria.
 - Nenhuma funcionalidade comercial sem cenário de demonstração quando aplicável.
@@ -95,6 +96,8 @@ Nenhuma engine deve começar pela implementação quando o domínio ainda não e
 Cada entrega deve atualizar:
 
 - documentação operacional;
+- mapa do produto quando status, modulo ou dependencia mudar;
+- Help Center, tutorial ou FAQ quando houver uso operacional pelo usuario;
 - Academy, quando houver aprendizado reutilizável;
 - CHANGELOG;
 - Task Registry;
