@@ -851,6 +851,12 @@ class _FakeInventoryRepository(InventoryRepository):
         tenant_id: UUID,
         branch_id: UUID | None,
         product_id: UUID | None,
+        warehouse_id: UUID | None,
+        location_id: UUID | None,
+        movement_type,
+        origin_module: str | None,
+        business_process: str | None,
+        source_module: str | None,
         limit: int,
         offset: int,
     ) -> list[InventoryMovementModel]:
@@ -862,8 +868,29 @@ class _FakeInventoryRepository(InventoryRepository):
         tenant_id: UUID,
         branch_id: UUID | None,
         product_id: UUID | None,
+        warehouse_id: UUID | None,
+        location_id: UUID | None,
+        movement_type,
+        origin_module: str | None,
+        business_process: str | None,
+        source_module: str | None,
     ) -> int:
         return len(self.movements)
+
+    async def get_movement_by_id(
+        self,
+        movement_id: UUID,
+        *,
+        tenant_id: UUID,
+    ) -> InventoryMovementModel | None:
+        return next(
+            (
+                movement
+                for movement in self.movements
+                if movement.id == movement_id and movement.tenant_id == tenant_id
+            ),
+            None,
+        )
 
     async def get_reservation_by_id(
         self, reservation_id: UUID, *, tenant_id: UUID

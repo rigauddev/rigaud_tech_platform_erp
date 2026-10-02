@@ -84,7 +84,7 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Restaurant Production`: domínio futuro responsável por receitas, produção, consumo de insumos, desperdício, forecast e insights de IA.
 
-`Inventory Transaction`: registro técnico imutável para reconstrução e auditoria de saldo.
+`Inventory Transaction`: visão de consulta imutável de um `Inventory Movement`, usada como livro-razão operacional para reconstrução e auditoria de saldo. Não é uma segunda entidade de escrita.
 
 ## Restaurant
 

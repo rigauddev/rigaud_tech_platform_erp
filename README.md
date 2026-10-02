@@ -22,7 +22,7 @@ DEV-012 — Authentication & Tenant Architecture Alignment
 Task atual:
 
 ```text
-REST-009 — Put Away
+REST-010 — Inventory Transactions
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -116,6 +116,8 @@ Goods Receipt está documentado em `docs/inventory/goods-receipt.md`.
 
 Put Away está documentado em `docs/inventory/putaway.md` e `docs/warehouse/putaway.md`.
 
+Inventory Transactions está documentado em `docs/inventory/transactions.md`.
+
 IA futura e MCP estão documentados em `docs/ai/overview.md`.
 
 O ambiente demo está documentado em `docs/demo/overview.md`.
@@ -176,6 +178,8 @@ Endpoints técnicos disponíveis:
 - `DELETE /api/v1/categories/{category_id}`
 - `GET /api/v1/inventory/balances`
 - `GET /api/v1/inventory/movements`
+- `GET /api/v1/inventory/transactions`
+- `GET /api/v1/inventory/transactions/{transaction_id}`
 - `POST /api/v1/inventory/adjustments`
 - `POST /api/v1/inventory/reservations`
 - `POST /api/v1/inventory/reservations/{reservation_id}/release`

@@ -20,6 +20,8 @@ REST-009 adiciona:
 
 - `inventory.putaway.confirmed`.
 
+REST-010 nao adiciona novos eventos transacionais. Ela expoe o livro razao filtravel das transacoes ja registradas.
+
 Movimentos de estoque passam a registrar:
 
 - `origin_module`: origem funcional da movimentação;

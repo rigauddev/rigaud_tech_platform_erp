@@ -146,6 +146,10 @@ class InventoryBalanceNotFoundError(InventoryError):
     """Raised when a balance projection does not exist."""
 
 
+class InventoryMovementNotFoundError(InventoryError):
+    """Raised when an inventory transaction does not exist for the tenant."""
+
+
 class InventoryInsufficientStockError(InventoryError):
     """Raised when an operation would make stock unavailable."""
 

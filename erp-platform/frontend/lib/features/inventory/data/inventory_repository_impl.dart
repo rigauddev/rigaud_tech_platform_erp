@@ -44,6 +44,33 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
+  Future<List<InventoryMovement>> listTransactions({
+    String? productId,
+    String? warehouseId,
+    String? locationId,
+    String? movementType,
+    String? originModule,
+    String? businessProcess,
+    String? sourceModule,
+    int page = 1,
+    int pageSize = 20,
+  }) {
+    return _guard(
+      () => _remote.listTransactions(
+        productId: productId,
+        warehouseId: warehouseId,
+        locationId: locationId,
+        movementType: movementType,
+        originModule: originModule,
+        businessProcess: businessProcess,
+        sourceModule: sourceModule,
+        page: page,
+        pageSize: pageSize,
+      ),
+    );
+  }
+
+  @override
   Future<InventoryOperation> createAdjustment(InventoryAdjustmentInput input) {
     return _guard(() => _remote.createAdjustment(input));
   }

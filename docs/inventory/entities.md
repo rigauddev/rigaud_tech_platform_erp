@@ -27,6 +27,8 @@ physical_quantity - reserved_quantity - putaway_pending_quantity
 
 Histórico imutável de mudanças.
 
+Na REST-010, `InventoryMovement` tambem passa a ser exposto como Inventory Transaction.
+
 Tipos REST-003:
 
 - `receipt`;

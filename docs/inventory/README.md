@@ -12,6 +12,8 @@ REST-008 adiciona Goods Receipt, gerando movimento de recebimento e saldo físic
 
 REST-009 adiciona Put Away, movendo quantidade pendente para localização final e liberando disponibilidade por `InventoryMovement`.
 
+REST-010 adiciona Inventory Transactions, expondo `InventoryMovement` como livro razao imutavel e filtravel.
+
 Documentos principais:
 
 - `api.md`;
@@ -20,4 +22,5 @@ Documentos principais:
 - `events.md`;
 - `permissions.md`;
 - `putaway.md`;
+- `transactions.md`;
 - `validation.md`.

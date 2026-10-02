@@ -22,6 +22,32 @@ class ListInventoryMovementsUseCase {
   }
 }
 
+class ListInventoryTransactionsUseCase {
+  const ListInventoryTransactionsUseCase(this._repository);
+
+  final InventoryRepository _repository;
+
+  Future<List<InventoryMovement>> execute({
+    String? productId,
+    String? warehouseId,
+    String? locationId,
+    String? movementType,
+    String? originModule,
+    String? businessProcess,
+    String? sourceModule,
+  }) {
+    return _repository.listTransactions(
+      productId: productId,
+      warehouseId: warehouseId,
+      locationId: locationId,
+      movementType: movementType,
+      originModule: originModule,
+      businessProcess: businessProcess,
+      sourceModule: sourceModule,
+    );
+  }
+}
+
 class CreateInventoryAdjustmentUseCase {
   const CreateInventoryAdjustmentUseCase(this._repository);
 

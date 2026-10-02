@@ -49,6 +49,43 @@ class InventoryRemoteDataSource {
         .toList();
   }
 
+  Future<List<InventoryMovement>> listTransactions({
+    String? productId,
+    String? warehouseId,
+    String? locationId,
+    String? movementType,
+    String? originModule,
+    String? businessProcess,
+    String? sourceModule,
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/inventory/transactions',
+      queryParameters: {
+        'page': page,
+        'page_size': pageSize,
+        if (productId != null && productId.trim().isNotEmpty)
+          'product_id': productId,
+        if (warehouseId != null && warehouseId.trim().isNotEmpty)
+          'warehouse_id': warehouseId,
+        if (locationId != null && locationId.trim().isNotEmpty)
+          'location_id': locationId,
+        if (movementType != null && movementType.trim().isNotEmpty)
+          'movement_type': movementType,
+        if (originModule != null && originModule.trim().isNotEmpty)
+          'origin_module': originModule,
+        if (businessProcess != null && businessProcess.trim().isNotEmpty)
+          'business_process': businessProcess,
+        if (sourceModule != null && sourceModule.trim().isNotEmpty)
+          'source_module': sourceModule,
+      },
+    );
+    return apiDataList(response.data)
+        .map((item) => InventoryMovement.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<InventoryOperation> createAdjustment(
     InventoryAdjustmentInput input,
   ) async {

@@ -75,6 +75,14 @@ REST-009 adiciona Put Away:
 - campos `origin_module` e `business_process` em `InventoryMovement`;
 - auditoria e evento interno preparados.
 
+REST-010 adiciona Inventory Transactions:
+
+- `InventoryMovement` exposto como livro razao imutavel;
+- endpoint `/api/v1/inventory/transactions`;
+- endpoint `/api/v1/inventory/transactions/{transaction_id}`;
+- filtros por produto, warehouse, location, tipo, origem, processo e modulo de origem;
+- sem criar nova tabela e sem alterar saldo diretamente.
+
 Documentação principal:
 
 - `docs/inventory/overview.md`
@@ -92,6 +100,7 @@ Documentação principal:
 - `docs/inventory/receiving-testing.md`
 - `docs/inventory/goods-receipt.md`
 - `docs/inventory/putaway.md`
+- `docs/inventory/transactions.md`
 - `docs/warehouse/overview.md`
 - `docs/warehouse/zones.md`
 - `docs/warehouse/locations.md`

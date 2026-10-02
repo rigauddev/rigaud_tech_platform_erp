@@ -54,6 +54,18 @@ void main() {
       container.read(inventoryBalancesControllerProvider).value,
       hasLength(2),
     );
+
+    final transactions = await container.read(
+      inventoryTransactionsControllerProvider.future,
+    );
+    expect(transactions, hasLength(2));
+    await container
+        .read(inventoryTransactionsControllerProvider.notifier)
+        .reload(businessProcess: 'PUTAWAY');
+    expect(
+      container.read(inventoryTransactionsControllerProvider).value,
+      hasLength(1),
+    );
   });
 }
 
@@ -77,6 +89,33 @@ class _FakeInventoryRepository implements InventoryRepository {
     int pageSize = 20,
   }) async {
     return _movements;
+  }
+
+  @override
+  Future<List<InventoryMovement>> listTransactions({
+    String? productId,
+    String? warehouseId,
+    String? locationId,
+    String? movementType,
+    String? originModule,
+    String? businessProcess,
+    String? sourceModule,
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    return _movements
+        .where(
+          (movement) =>
+              (productId == null || movement.productId == productId) &&
+              (warehouseId == null || movement.warehouseId == warehouseId) &&
+              (locationId == null || movement.locationId == locationId) &&
+              (movementType == null || movement.movementType == movementType) &&
+              (originModule == null || movement.originModule == originModule) &&
+              (businessProcess == null ||
+                  movement.businessProcess == businessProcess) &&
+              (sourceModule == null || movement.sourceModule == sourceModule),
+        )
+        .toList();
   }
 
   @override
@@ -104,6 +143,7 @@ class _FakeInventoryRepository implements InventoryRepository {
       putawayPendingQuantityDelta: '0.000',
       originModule: 'ADJUSTMENT',
       businessProcess: 'ADJUSTMENT',
+      sourceModule: 'inventory',
       reason: input.reason,
       eventName: 'inventory.adjusted.in',
       createdAt: DateTime.utc(2026, 8, 1),
@@ -129,6 +169,7 @@ class _FakeInventoryRepository implements InventoryRepository {
       putawayPendingQuantityDelta: '0.000',
       originModule: 'RESERVATION',
       businessProcess: 'RESERVATION',
+      sourceModule: input.sourceModule,
       reason: input.reason,
       eventName: 'inventory.reserved',
       createdAt: DateTime.utc(2026, 8, 1),
@@ -169,12 +210,15 @@ class _FakeInventoryRepository implements InventoryRepository {
     final movement = InventoryMovement(
       id: 'movement-putaway',
       productId: input.productId,
+      warehouseId: 'warehouse-1',
+      locationId: input.locationId,
       movementType: 'putaway',
       physicalQuantityDelta: '0.000',
       reservedQuantityDelta: '0.000',
       putawayPendingQuantityDelta: '-${input.quantity}',
       originModule: 'PURCHASE',
       businessProcess: 'PUTAWAY',
+      sourceModule: 'receiving',
       reason: input.reason ?? 'Put Away',
       eventName: 'inventory.putaway.confirmed',
       createdAt: DateTime.utc(2026, 8, 1),

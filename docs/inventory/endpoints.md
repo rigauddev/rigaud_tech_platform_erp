@@ -32,6 +32,29 @@ Query:
 
 Retorna `InventoryMovement`.
 
+## GET /transactions
+
+Consulta o livro razao de transacoes de estoque.
+
+Query:
+
+- `page`;
+- `page_size`;
+- `branch_id` opcional;
+- `product_id` opcional;
+- `warehouse_id` opcional;
+- `location_id` opcional;
+- `movement_type` opcional;
+- `origin_module` opcional;
+- `business_process` opcional;
+- `source_module` opcional.
+
+Retorna `InventoryMovement` com `immutable=true`.
+
+## GET /transactions/{transaction_id}
+
+Consulta uma transacao de estoque por ID, limitada ao tenant e filial ativa.
+
 ## POST /adjustments
 
 Registra ajuste manual ou técnico.

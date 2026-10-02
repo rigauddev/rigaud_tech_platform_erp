@@ -312,6 +312,16 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         200,
         "Movimentações de estoque consultadas com sucesso.",
     ),
+    "INVENTORY_TRANSACTION_LIST_RETRIEVED": MessageDefinition(
+        "INVENTORY_TRANSACTION_LIST_RETRIEVED",
+        200,
+        "Transações de estoque consultadas com sucesso.",
+    ),
+    "INVENTORY_TRANSACTION_RETRIEVED": MessageDefinition(
+        "INVENTORY_TRANSACTION_RETRIEVED",
+        200,
+        "Transação de estoque consultada com sucesso.",
+    ),
     "INVENTORY_ADJUSTMENT_CREATED": MessageDefinition(
         "INVENTORY_ADJUSTMENT_CREATED",
         200,
@@ -334,6 +344,12 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         "INVENTORY_BALANCE_NOT_FOUND",
         404,
         "Saldo de estoque não encontrado.",
+        "warning",
+    ),
+    "INVENTORY_TRANSACTION_NOT_FOUND": MessageDefinition(
+        "INVENTORY_TRANSACTION_NOT_FOUND",
+        404,
+        "Transação de estoque não encontrada.",
         "warning",
     ),
     "INVENTORY_RESERVATION_NOT_FOUND": MessageDefinition(

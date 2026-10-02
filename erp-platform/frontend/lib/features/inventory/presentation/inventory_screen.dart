@@ -24,7 +24,7 @@ class InventoryScreen extends ConsumerWidget {
             TabBar(
               tabs: [
                 Tab(text: 'Saldos'),
-                Tab(text: 'Movimentos'),
+                Tab(text: 'Transações'),
                 Tab(text: 'Put Away'),
                 Tab(text: 'Ajuste'),
                 Tab(text: 'Reserva'),
@@ -34,7 +34,7 @@ class InventoryScreen extends ConsumerWidget {
               child: TabBarView(
                 children: [
                   _BalancesView(),
-                  _MovementsView(),
+                  _TransactionsView(),
                   _PutAwayView(),
                   _AdjustmentView(),
                   _ReservationView(),
@@ -77,43 +77,104 @@ class _BalancesView extends ConsumerWidget {
   }
 }
 
-class _MovementsView extends ConsumerWidget {
-  const _MovementsView();
+class _TransactionsView extends ConsumerStatefulWidget {
+  const _TransactionsView();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final movements = ref.watch(inventoryMovementsControllerProvider);
+  ConsumerState<_TransactionsView> createState() => _TransactionsViewState();
+}
+
+class _TransactionsViewState extends ConsumerState<_TransactionsView> {
+  String? _businessProcess;
+
+  @override
+  Widget build(BuildContext context) {
+    final movements = ref.watch(inventoryTransactionsControllerProvider);
     return movements.when(
       data: (items) {
         if (items.isEmpty) {
           return const AppEmptyState(
-            title: 'Nenhuma movimentação encontrada',
-            message: 'Ajustes e reservas aparecerão neste histórico.',
+            title: 'Nenhuma transação encontrada',
+            message: 'O livro razão do estoque aparecerá neste histórico.',
           );
         }
-        return ListView.separated(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          itemCount: items.length,
-          separatorBuilder: (context, index) =>
-              const SizedBox(height: AppSpacing.sm),
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return Card(
-              child: ListTile(
-                leading: const Icon(Icons.swap_vert_circle_outlined),
-                title: Text(item.reason),
-                subtitle: Text(
-                  '${item.movementType} · Físico ${item.physicalQuantityDelta} · Reservado ${item.reservedQuantityDelta} · Put away ${item.putawayPendingQuantityDelta}',
-                ),
-                trailing: Text(item.businessProcess),
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+                0,
               ),
-            );
-          },
+              child: Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: [
+                  FilterChip(
+                    label: const Text('Todas'),
+                    selected: _businessProcess == null,
+                    onSelected: (_) => _applyProcess(null),
+                  ),
+                  for (final process in const [
+                    'RECEIVING',
+                    'PUTAWAY',
+                    'ADJUSTMENT',
+                    'RESERVATION',
+                    'RELEASE',
+                  ])
+                    FilterChip(
+                      label: Text(process),
+                      selected: _businessProcess == process,
+                      onSelected: (_) => _applyProcess(process),
+                    ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                itemCount: items.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: AppSpacing.sm),
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  return Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.receipt_long_outlined),
+                      title: Text(item.reason),
+                      subtitle: Text(
+                        '${item.movementType} · Físico ${item.physicalQuantityDelta} · Reservado ${item.reservedQuantityDelta} · Put away ${item.putawayPendingQuantityDelta}',
+                      ),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(item.businessProcess),
+                          Text(
+                            item.immutable ? 'Imutável' : 'Editável',
+                            style: Theme.of(context).textTheme.labelSmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         );
       },
       error: (error, stackTrace) => Center(child: Text(_message(error))),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
+  }
+
+  Future<void> _applyProcess(String? process) async {
+    setState(() => _businessProcess = process);
+    await ref
+        .read(inventoryTransactionsControllerProvider.notifier)
+        .reload(businessProcess: process);
   }
 }
 
@@ -357,7 +418,7 @@ class _PutAwayHistory extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final movements = ref.watch(inventoryMovementsControllerProvider);
+    final movements = ref.watch(inventoryTransactionsControllerProvider);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),

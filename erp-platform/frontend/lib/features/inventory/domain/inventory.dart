@@ -77,10 +77,17 @@ class InventoryMovement {
     required this.reason,
     required this.eventName,
     required this.createdAt,
+    this.warehouseId,
+    this.locationId,
+    this.sourceModule,
+    this.immutable = true,
   });
 
   final String id;
   final String productId;
+  final String? warehouseId;
+  final String? locationId;
+  final String? sourceModule;
   final String movementType;
   final String physicalQuantityDelta;
   final String reservedQuantityDelta;
@@ -89,12 +96,16 @@ class InventoryMovement {
   final String businessProcess;
   final String reason;
   final String eventName;
+  final bool immutable;
   final DateTime createdAt;
 
   factory InventoryMovement.fromJson(Map<String, dynamic> json) {
     return InventoryMovement(
       id: json['id'] as String? ?? '',
       productId: json['product_id'] as String? ?? '',
+      warehouseId: json['warehouse_id'] as String?,
+      locationId: json['location_id'] as String?,
+      sourceModule: json['source_module'] as String?,
       movementType: json['movement_type'] as String? ?? '',
       physicalQuantityDelta: (json['physical_quantity_delta'] ?? '0.000')
           .toString(),
@@ -106,6 +117,7 @@ class InventoryMovement {
       businessProcess: json['business_process'] as String? ?? '',
       reason: json['reason'] as String? ?? '',
       eventName: json['event_name'] as String? ?? '',
+      immutable: json['immutable'] as bool? ?? true,
       createdAt:
           DateTime.tryParse(json['created_at'] as String? ?? '') ??
           DateTime.fromMillisecondsSinceEpoch(0),

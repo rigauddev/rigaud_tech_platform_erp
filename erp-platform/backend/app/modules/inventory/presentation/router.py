@@ -15,19 +15,23 @@ from app.modules.inventory.application.putaway_service import PutAwayInput, PutA
 from app.modules.inventory.application.use_cases import (
     CreateInventoryAdjustment,
     CreateInventoryReservation,
+    GetInventoryTransaction,
     InventoryAdjustmentInput,
     InventoryListInput,
     InventoryReservationInput,
     ListInventoryBalances,
     ListInventoryMovements,
+    ListInventoryTransactions,
     ReleaseInventoryReservation,
 )
+from app.modules.inventory.domain.entities import InventoryMovementType
 from app.modules.inventory.domain.exceptions import (
     InventoryBalanceNotFoundError,
     InventoryBranchRequiredError,
     InventoryError,
     InventoryInsufficientStockError,
     InventoryInvalidQuantityError,
+    InventoryMovementNotFoundError,
     InventoryProductNotFoundError,
     InventoryReservationInactiveError,
     InventoryReservationNotFoundError,
@@ -114,6 +118,7 @@ def _movement_response(movement: InventoryMovementModel) -> InventoryMovementRes
         business_process=movement.business_process,
         event_name=movement.event_name,
         actor_id=movement.actor_id,
+        immutable=True,
         created_at=movement.created_at,
         updated_at=movement.updated_at,
     )
@@ -286,6 +291,67 @@ async def list_inventory_movements(
             total=result.total,
         ),
     )
+
+
+@router.get("/transactions", response_model=list[InventoryMovementResponse])
+async def list_inventory_transactions(
+    session: AsyncSessionDependency,
+    current_user: CurrentUserDependency,
+    page: PageQuery = 1,
+    page_size: PageSizeQuery = 20,
+    branch_id: OptionalUUIDQuery = None,
+    product_id: OptionalUUIDQuery = None,
+    warehouse_id: OptionalUUIDQuery = None,
+    location_id: OptionalUUIDQuery = None,
+    movement_type: Annotated[InventoryMovementType | None, Query()] = None,
+    origin_module: Annotated[str | None, Query(max_length=80)] = None,
+    business_process: Annotated[str | None, Query(max_length=80)] = None,
+    source_module: Annotated[str | None, Query(max_length=80)] = None,
+) -> JSONResponse:
+    result = await ListInventoryTransactions(SQLAlchemyInventoryRepository(session)).execute(
+        InventoryListInput(
+            tenant_id=current_user.tenant_id,
+            branch_id=branch_id or current_user.branch_id,
+            product_id=product_id,
+            warehouse_id=warehouse_id,
+            location_id=location_id,
+            movement_type=movement_type,
+            origin_module=origin_module,
+            business_process=business_process,
+            source_module=source_module,
+            page=page,
+            page_size=page_size,
+        )
+    )
+    return success_response(
+        "INVENTORY_TRANSACTION_LIST_RETRIEVED",
+        data=[_movement_response(item).model_dump(mode="json") for item in result.items],
+        meta=PaginationMeta.from_total(
+            page=result.page,
+            page_size=result.page_size,
+            total=result.total,
+        ),
+    )
+
+
+@router.get("/transactions/{transaction_id}", response_model=InventoryMovementResponse)
+async def get_inventory_transaction(
+    transaction_id: UUID,
+    session: AsyncSessionDependency,
+    current_user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        movement = await GetInventoryTransaction(SQLAlchemyInventoryRepository(session)).execute(
+            transaction_id,
+            tenant_id=current_user.tenant_id,
+            branch_id=current_user.branch_id,
+        )
+        return success_response(
+            "INVENTORY_TRANSACTION_RETRIEVED",
+            data=_movement_response(movement).model_dump(mode="json"),
+        )
+    except InventoryError as exc:
+        return inventory_exception_to_response(exc)
 
 
 @router.post("/adjustments", response_model=InventoryOperationResponse)
@@ -533,6 +599,8 @@ def inventory_exception_to_response(exc: InventoryError) -> JSONResponse:
         return error_response("WAREHOUSE_NOT_FOUND")
     if isinstance(exc, InventoryBalanceNotFoundError):
         return error_response("INVENTORY_BALANCE_NOT_FOUND")
+    if isinstance(exc, InventoryMovementNotFoundError):
+        return error_response("INVENTORY_TRANSACTION_NOT_FOUND")
     if isinstance(exc, InventoryInsufficientStockError):
         return error_response("INVENTORY_INSUFFICIENT_STOCK")
     if isinstance(exc, InventoryInvalidQuantityError):

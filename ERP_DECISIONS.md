@@ -36,6 +36,7 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Reserva não altera saldo físico.
 - `InventoryBalance` nunca deve ser alterado diretamente por funcionalidades de negócio.
 - Toda alteração de saldo deve ocorrer por `InventoryMovement`, mantendo `InventoryBalance` como projeção auditável.
+- `Inventory Transaction` é a visão de consulta imutável de um `InventoryMovement`, usada como livro-razão operacional; não cria uma segunda fonte de verdade.
 - Tipos planejados de movimento: `RECEIPT`, `SALE`, `TRANSFER`, `ADJUSTMENT`, `RESERVATION`, `RELEASE`, `RETURN`, `LOSS` e `CONSUMPTION`.
 - Consumo automático de insumos do Restaurante será implementado em task futura do módulo Restaurant.
 - Pratos não serão controlados diretamente pelo estoque. Restaurante usará EPIC futura `EPIC-RESTAURANT-PRODUCTION` com Recipe Engine, Production Planning, Daily Production, Kitchen Production, Consumption, Waste, Forecast e AI Insights.

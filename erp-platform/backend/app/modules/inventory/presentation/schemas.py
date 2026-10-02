@@ -79,6 +79,7 @@ class InventoryMovementResponse(InventoryBaseSchema):
     business_process: str
     event_name: str
     actor_id: UUID | None
+    immutable: bool = True
     created_at: datetime
     updated_at: datetime
 
