@@ -11,6 +11,7 @@ from app.modules.inventory.application.use_cases import (
     InventoryListInput,
     InventoryReservationInput,
     ListInventoryTransactions,
+    ReverseInventoryAdjustment,
 )
 from app.modules.inventory.domain.entities import (
     InventoryAdjustmentType,
@@ -88,6 +89,21 @@ async def test_reservation_changes_only_reserved_quantity() -> None:
     assert result.balance.available_quantity == Decimal("5.000")
     assert result.movement.movement_type == InventoryMovementType.RESERVATION_CREATED
     assert result.movement.reserved_quantity_delta == Decimal("2.000")
+
+
+@pytest.mark.asyncio
+async def test_adjustment_reversal_creates_compensating_movement() -> None:
+    tenant_id, branch_id, product_id = uuid4(), uuid4(), uuid4()
+    inventory = _FakeInventoryRepository()
+    created = await CreateInventoryAdjustment(inventory, _FakeProductRepository()).execute(
+        InventoryAdjustmentInput(tenant_id=tenant_id, branch_id=branch_id, product_id=product_id, adjustment_type=InventoryAdjustmentType.INCREASE, quantity="5", reason="Correção")
+    )
+    result = await ReverseInventoryAdjustment(inventory, _FakeProductRepository()).execute(
+        created.adjustment.id, tenant_id=tenant_id, branch_id=branch_id, reason="Estorno autorizado", actor_id=None
+    )
+    assert result.balance.physical_quantity == Decimal("0.000")
+    assert result.adjustment.reversal_of_id == created.adjustment.id
+    assert len(inventory.movements) == 2
 
 
 @pytest.mark.asyncio
@@ -377,6 +393,14 @@ class _FakeInventoryRepository(InventoryRepository):
             ),
             None,
         )
+
+    async def get_adjustment_by_id(
+        self, adjustment_id: UUID, *, tenant_id: UUID
+    ) -> InventoryAdjustmentModel | None:
+        return next((item for item in self.adjustments if item.id == adjustment_id and item.tenant_id == tenant_id), None)
+
+    async def has_adjustment_reversal(self, adjustment_id: UUID, *, tenant_id: UUID) -> bool:
+        return any(item.tenant_id == tenant_id and item.reversal_of_id == adjustment_id for item in self.adjustments)
 
 
 class _FakeProductRepository(ProductRepository):

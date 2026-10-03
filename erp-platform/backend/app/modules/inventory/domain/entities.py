@@ -61,6 +61,16 @@ class InventoryAdjustmentStatus(StrEnum):
     CONFIRMED = "confirmed"
 
 
+class InventoryAdjustmentReason(StrEnum):
+    CORRECTION = "correction"
+    DAMAGE = "damage"
+    LOSS = "loss"
+    EXPIRY = "expiry"
+    OPENING_BALANCE = "opening_balance"
+    RETURN = "return"
+    REVERSAL = "reversal"
+
+
 class InventoryReservationStatus(StrEnum):
     ACTIVE = "active"
     RELEASED = "released"

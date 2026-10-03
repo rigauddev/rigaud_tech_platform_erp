@@ -376,6 +376,7 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         "Quantidade de estoque inválida.",
         "warning",
     ),
+    "INVENTORY_ADJUSTMENT_REVERSED": MessageDefinition("INVENTORY_ADJUSTMENT_REVERSED", 200, "Ajuste de estoque estornado com sucesso.", audit_required=True),
     "INVENTORY_BRANCH_REQUIRED": MessageDefinition(
         "INVENTORY_BRANCH_REQUIRED",
         409,

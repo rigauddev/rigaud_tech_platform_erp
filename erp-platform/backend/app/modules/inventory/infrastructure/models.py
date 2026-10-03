@@ -21,6 +21,7 @@ from app.database.mixins import AuditMixin, SoftDeleteMixin, TenantMixin, Timest
 from app.database.types import UUIDType
 from app.modules.inventory.domain.entities import (
     InventoryAdjustmentStatus,
+    InventoryAdjustmentReason,
     InventoryAdjustmentType,
     InventoryCountStatus,
     InventoryMovementStatus,
@@ -314,6 +315,14 @@ class ReceivingDocumentModel(TenantMixin, TimestampMixin, SoftDeleteMixin, Audit
     expected_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     received_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    reason_code: Mapped[InventoryAdjustmentReason] = mapped_column(
+        Enum(InventoryAdjustmentReason, name="inventory_adjustment_reason", values_callable=lambda enum: [item.value for item in enum]),
+        default=InventoryAdjustmentReason.CORRECTION,
+        nullable=False,
+    )
+    reversal_of_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True), ForeignKey("inventory_adjustments.id", ondelete="RESTRICT"), nullable=True
+    )
     items: Mapped[list["ReceivingItemModel"]] = relationship(
         back_populates="document",
         cascade="all, delete-orphan",

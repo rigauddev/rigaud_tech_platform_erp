@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.modules.inventory.domain.entities import (
     InventoryAdjustmentStatus,
+    InventoryAdjustmentReason,
     InventoryAdjustmentType,
     InventoryCountStatus,
     InventoryMovementStatus,
@@ -26,6 +27,11 @@ class InventoryAdjustmentRequest(InventoryBaseSchema):
     warehouse_id: UUID | None = None
     location_id: UUID | None = None
     notes: str | None = Field(default=None, max_length=2000)
+    reason_code: InventoryAdjustmentReason = InventoryAdjustmentReason.CORRECTION
+
+
+class InventoryAdjustmentReverseRequest(InventoryBaseSchema):
+    reason: str = Field(min_length=3, max_length=240)
 
 
 class InventoryReservationRequest(InventoryBaseSchema):
@@ -110,6 +116,8 @@ class InventoryAdjustmentResponse(InventoryBaseSchema):
     quantity: Decimal
     reason: str
     notes: str | None
+    reason_code: InventoryAdjustmentReason
+    reversal_of_id: UUID | None
     created_at: datetime
     updated_at: datetime
 

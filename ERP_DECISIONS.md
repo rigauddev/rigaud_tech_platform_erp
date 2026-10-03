@@ -63,6 +63,7 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Pedido originado pelo cardápio online deve portar o contexto da mesa, direcionar notificação ao garçom responsável e ser roteado para a estação/impressora de cozinha configurada.
 - Movimento confirmado não é editado.
 - Correção de estoque deve gerar novo movimento ou ajuste.
+- Ajustes de estoque possuem motivo padronizado e texto descritivo obrigatório. Estornos são compensatórios e vinculados ao ajuste original; o lançamento original permanece imutável.
 - Toda nova entidade operacional deve possuir UUID interno, código curto quando fizer sentido, e ser avaliada para QR Code, código de barras, auditoria completa, sincronização offline, eventos Kafka, operação multi-filial e compatibilidade SaaS/On-Premise, sem antecipar implementação fora da task vigente.
 
 ## Segurança E Acesso

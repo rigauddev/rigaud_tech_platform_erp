@@ -125,3 +125,11 @@ class InventoryRepository(ABC):
         self, reservation_id: UUID, *, tenant_id: UUID
     ) -> InventoryReservationModel | None:
         raise NotImplementedError
+
+    @abstractmethod
+    async def get_adjustment_by_id(self, adjustment_id: UUID, *, tenant_id: UUID) -> InventoryAdjustmentModel | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def has_adjustment_reversal(self, adjustment_id: UUID, *, tenant_id: UUID) -> bool:
+        raise NotImplementedError
