@@ -59,7 +59,7 @@ class LoginInfoCarousel extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(height: AppSpacing.lg),
+            const SizedBox(height: AppSpacing.md),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -203,10 +203,9 @@ class _LoginInfoPage extends StatelessWidget {
             ),
           ),
         ),
-        const Spacer(),
         Container(
-          width: 96,
-          height: 96,
+          width: 72,
+          height: 72,
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [Color(0xFF1777D3), Color(0xFF33C7D8)],
@@ -220,9 +219,9 @@ class _LoginInfoPage extends StatelessWidget {
               ),
             ],
           ),
-          child: Icon(item.icon, color: Colors.white, size: 44),
+          child: Icon(item.icon, color: Colors.white, size: 34),
         ),
-        const SizedBox(height: AppSpacing.xl),
+        const SizedBox(height: AppSpacing.lg),
         Text(
           item.title,
           maxLines: 2,
@@ -235,14 +234,14 @@ class _LoginInfoPage extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         Text(
           item.description,
-          maxLines: 4,
+          maxLines: 3,
           overflow: TextOverflow.ellipsis,
           style: textTheme.bodyLarge?.copyWith(
             color: const Color(0xFF344054),
             height: 1.35,
           ),
         ),
-        const SizedBox(height: AppSpacing.xl),
+        const SizedBox(height: AppSpacing.lg),
         Row(
           children: [
             for (final metric in item.metrics) ...[
@@ -265,8 +264,8 @@ class _LoginMetricTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 92,
-      padding: const EdgeInsets.all(AppSpacing.md),
+      height: 76,
+      padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
         color: const Color(0xFFF8FBFF),
         border: Border.all(color: const Color(0xFFE4E7EC)),
@@ -274,7 +273,7 @@ class _LoginMetricTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(metric.icon, color: const Color(0xFF1777D3), size: 24),
+          Icon(metric.icon, color: const Color(0xFF1777D3), size: 20),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
