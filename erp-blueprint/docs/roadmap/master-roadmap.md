@@ -75,10 +75,11 @@ Sequência:
 - Mesas.
 - Setores.
 - Garçons.
-- QR Code.
+- Menu do Dia e Disponibilidade Comercial.
+- QR Code da Mesa.
 - Cardápio Online.
-- Pedidos.
-- KDS.
+- Pedidos, notificação ao garçom e roteamento para cozinha.
+- KDS e impressão de produção.
 - Delivery.
 - Caixa.
 - Cupom ou NFC-e.
@@ -115,6 +116,8 @@ Sequência:
 - AI Insights.
 
 Produção permanece separada do estoque. Estoque registra consumo e perdas por eventos de `InventoryMovement`; receitas, planejamento e cozinha pertencem ao domínio Restaurant Production.
+
+No MVP, a equipe publica diariamente os pratos disponíveis e a quantidade comercial vendável. Esta cota não substitui saldo físico: a futura integração com Restaurant Production poderá sugeri-la ou limitá-la por produção, insumos e capacidade.
 
 - Financial MVP.
 - HR MVP com Employees, Departments, Shifts, Schedules, Vacation e Attendance.
