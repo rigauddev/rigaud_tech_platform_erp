@@ -35,7 +35,7 @@ tasks:
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: pending
+    commit: 1292746
     review_status: ready
   - id: UI-002
     title: Navigation & Application Shell
