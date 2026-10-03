@@ -1,7 +1,110 @@
 # Inventory
 
-Módulo reservado para contexto de estoque.
+Módulo do Inventory Engine.
 
 Estrutura independente preparada com camadas `application`, `domain`, `infrastructure`, `presentation` e `tests`.
 
-Nenhuma regra de negócio foi implementada nesta etapa.
+DOC-005 congela o domínio do Inventory Engine antes da REST-003.
+
+REST-003 implementa a primeira versão executável:
+
+- `InventoryBalance`;
+- `InventoryMovement`;
+- `InventoryAdjustment`;
+- `InventoryReservation`;
+- endpoints em `/api/v1/inventory/*`;
+- auditoria de ajustes e reservas;
+- eventos internos preparados para Kafka futuro.
+
+REST-004 adiciona Warehouse Management:
+
+- `Warehouse`;
+- CRUD em `/api/v1/warehouses`;
+- depósito padrão por filial;
+- soft delete;
+- auditoria;
+- validação de `warehouse_id` em ajustes e reservas.
+
+REST-005 adiciona Warehouse Zones:
+
+- `WarehouseZone`;
+- CRUD em `/api/v1/warehouse-zones`;
+- tipos operacionais;
+- flags para recebimento, expedição, armazenagem, produção e quarentena;
+- ordenação;
+- soft delete;
+- auditoria.
+
+REST-006 adiciona Warehouse Locations:
+
+- `WarehouseLocation`;
+- CRUD em `/api/v1/warehouse-locations`;
+- filtros por depósito, zona e pesquisa;
+- QR Code e código de barras preparados;
+- ativação e inativação;
+- ordenação;
+- soft delete;
+- auditoria.
+
+REST-007 adiciona Receiving Documents:
+
+- `ReceivingDocument`;
+- `ReceivingItem`;
+- CRUD em `/api/v1/receiving-documents`;
+- status documental;
+- validação de quantidades;
+- auditoria;
+- sem movimentar estoque e sem alterar saldo.
+
+REST-008 adiciona Goods Receipt:
+
+- `GoodsReceiptService`;
+- endpoint `/api/v1/receiving-documents/{document_id}/confirm-receipt`;
+- movimento `receipt`;
+- saldo físico com `putaway_pending_quantity`;
+- disponibilidade bloqueada até Put Away;
+- auditoria e evento interno preparados.
+
+REST-009 adiciona Put Away:
+
+- `PutAwayService`;
+- endpoint `/api/v1/inventory/putaway`;
+- movimento `putaway`;
+- liberação de saldo para `WarehouseLocation`;
+- status documental `available`;
+- campos `origin_module` e `business_process` em `InventoryMovement`;
+- auditoria e evento interno preparados.
+
+REST-010 adiciona Inventory Transactions:
+
+- `InventoryMovement` exposto como livro razao imutavel;
+- endpoint `/api/v1/inventory/transactions`;
+- endpoint `/api/v1/inventory/transactions/{transaction_id}`;
+- filtros por produto, warehouse, location, tipo, origem, processo e modulo de origem;
+- sem criar nova tabela e sem alterar saldo diretamente.
+
+Documentação principal:
+
+- `docs/inventory/overview.md`
+- `docs/inventory/api.md`
+- `docs/inventory/endpoints.md`
+- `docs/inventory/entities.md`
+- `docs/inventory/domain-model.md`
+- `docs/inventory/events.md`
+- `docs/inventory/permissions.md`
+- `docs/inventory/validation.md`
+- `docs/inventory/receiving-documents.md`
+- `docs/inventory/receiving-api.md`
+- `docs/inventory/receiving-database.md`
+- `docs/inventory/receiving-flutter.md`
+- `docs/inventory/receiving-testing.md`
+- `docs/inventory/goods-receipt.md`
+- `docs/inventory/putaway.md`
+- `docs/inventory/transactions.md`
+- `docs/warehouse/overview.md`
+- `docs/warehouse/zones.md`
+- `docs/warehouse/locations.md`
+- `docs/warehouse/receiving.md`
+- `docs/warehouse/goods-receipt.md`
+- `docs/warehouse/putaway.md`
+- `docs/inventory/offline-strategy.md`

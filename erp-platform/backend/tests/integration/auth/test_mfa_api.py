@@ -90,7 +90,7 @@ async def test_totp_setup_confirm_and_login_requires_mfa(mfa_client: AsyncClient
     user = await _create_user()
     login = await mfa_client.post(
         "/api/v1/auth/login",
-        json={"tenant": "mfa-demo", "email": "mfa@example.com", "password": "Senha123"},
+        json={"email": "mfa@example.com", "password": "Senha123"},
     )
     token = login.json()["access_token"]
 
@@ -113,7 +113,7 @@ async def test_totp_setup_confirm_and_login_requires_mfa(mfa_client: AsyncClient
 
     second_login = await mfa_client.post(
         "/api/v1/auth/login",
-        json={"tenant": "mfa-demo", "email": "mfa@example.com", "password": "Senha123"},
+        json={"email": "mfa@example.com", "password": "Senha123"},
     )
     assert second_login.status_code == 200
     assert second_login.json()["code"] == "AUTH_MFA_REQUIRED"

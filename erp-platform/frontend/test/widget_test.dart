@@ -21,12 +21,24 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 500));
 
+    expect(find.byType(SingleChildScrollView), findsNothing);
+    expect(find.byType(Image), findsOneWidget);
+    expect(find.byType(PageView), findsOneWidget);
+    expect(find.text('Informativo do sistema'), findsOneWidget);
+    expect(find.text('Operação integrada em tempo real'), findsOneWidget);
+    expect(find.text('Rigaud Tech Platform ERP'), findsOneWidget);
+    expect(
+      find.text('Gestão inteligente para pequenas e médias empresas'),
+      findsOneWidget,
+    );
     expect(find.text('Email'), findsOneWidget);
-    expect(find.text('Tenant'), findsOneWidget);
+    expect(find.text('Tenant'), findsNothing);
     expect(find.text('Senha'), findsOneWidget);
     expect(find.text('Entrar'), findsOneWidget);
-    expect(find.text('Recuperar senha'), findsOneWidget);
+    expect(find.text('Esqueci minha senha'), findsOneWidget);
     expect(find.text('Lembrar acesso'), findsOneWidget);
+    expect(find.textContaining('Versão'), findsOneWidget);
+    expect(find.textContaining('Ambiente'), findsWidgets);
   });
 
   testWidgets('renderiza pagina 404 para rota desconhecida', (tester) async {
@@ -81,6 +93,16 @@ void main() {
     expect(guard.redirect('/audit'), '/users/me');
   });
 
+  test('protege rota de categorias sem sessao autenticada', () {
+    const guard = RouteGuard(
+      enabled: true,
+      isAuthenticated: false,
+      isSuperuser: false,
+    );
+
+    expect(guard.redirect('/categories'), '/login');
+  });
+
   testWidgets('renderiza layout responsivo basico em desktop', (tester) async {
     tester.view.physicalSize = const Size(1280, 800);
     tester.view.devicePixelRatio = 1;
@@ -104,8 +126,13 @@ void main() {
     expect(find.text('Empresas'), findsOneWidget);
     expect(find.text('Usuários'), findsOneWidget);
     expect(find.text('Meu perfil'), findsOneWidget);
+    expect(find.text('Categorias'), findsOneWidget);
+    expect(find.text('Estoque'), findsOneWidget);
+    expect(find.text('Depósitos'), findsOneWidget);
+    expect(find.text('Zonas'), findsOneWidget);
+    expect(find.text('Localizações'), findsOneWidget);
     expect(find.text('Auditoria'), findsOneWidget);
-    expect(find.text('Operações'), findsOneWidget);
+    expect(find.text('Operações', skipOffstage: false), findsOneWidget);
   });
 
   test('permite rota de empresas para superuser', () {

@@ -44,6 +44,11 @@ class AppScaffold extends StatelessWidget {
 class _NavigationItems extends StatelessWidget {
   const _NavigationItems();
 
+  static const _environment = String.fromEnvironment(
+    'APP_ENV',
+    defaultValue: 'development',
+  );
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -80,10 +85,46 @@ class _NavigationItems extends StatelessWidget {
           onTap: () => context.go(AppRoutes.products),
         ),
         ListTile(
+          leading: const Icon(Icons.account_tree_outlined),
+          title: const Text('Categorias'),
+          onTap: () => context.go(AppRoutes.categories),
+        ),
+        ListTile(
+          leading: const Icon(Icons.warehouse_outlined),
+          title: const Text('Estoque'),
+          onTap: () => context.go(AppRoutes.inventory),
+        ),
+        ListTile(
+          leading: const Icon(Icons.store_mall_directory_outlined),
+          title: const Text('Depósitos'),
+          onTap: () => context.go(AppRoutes.warehouses),
+        ),
+        ListTile(
+          leading: const Icon(Icons.location_searching_outlined),
+          title: const Text('Zonas'),
+          onTap: () => context.go(AppRoutes.warehouseZones),
+        ),
+        ListTile(
+          leading: const Icon(Icons.place_outlined),
+          title: const Text('Localizações'),
+          onTap: () => context.go(AppRoutes.warehouseLocations),
+        ),
+        ListTile(
+          leading: const Icon(Icons.inventory_outlined),
+          title: const Text('Recebimentos'),
+          onTap: () => context.go(AppRoutes.receivingDocuments),
+        ),
+        ListTile(
           leading: const Icon(Icons.fact_check_outlined),
           title: const Text('Auditoria'),
           onTap: () => context.go(AppRoutes.audit),
         ),
+        if (_environment != 'production')
+          ListTile(
+            leading: const Icon(Icons.tune_outlined),
+            title: const Text('Demo'),
+            onTap: () => context.go(AppRoutes.demo),
+          ),
         const ListTile(
           leading: Icon(Icons.inventory_2_outlined),
           title: Text('Operações'),

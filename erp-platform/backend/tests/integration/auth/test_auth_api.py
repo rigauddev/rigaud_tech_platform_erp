@@ -107,7 +107,6 @@ async def test_login_refresh_logout_and_me(auth_client: AsyncClient) -> None:
     login_response = await auth_client.post(
         "/api/v1/auth/login",
         json={
-            "tenant": "rigaud-demo",
             "email": " ADMIN@RIGAUDTECH.COM.BR ",
             "password": "Senha123",
         },
@@ -159,7 +158,7 @@ async def test_invalid_login_is_generic(auth_client: AsyncClient) -> None:
 
     response = await auth_client.post(
         "/api/v1/auth/login",
-        json={"tenant": "rigaud-demo", "email": "admin@rigaudtech.com.br", "password": "errada123"},
+        json={"email": "admin@rigaudtech.com.br", "password": "errada123"},
     )
 
     assert response.status_code == 401
@@ -168,12 +167,12 @@ async def test_invalid_login_is_generic(auth_client: AsyncClient) -> None:
 
 @pytest.mark.integration
 @pytest.mark.asyncio
-async def test_login_accepts_company_code(auth_client: AsyncClient) -> None:
+async def test_login_resolves_tenant_from_user_email(auth_client: AsyncClient) -> None:
     await create_auth_user(tenant_slug="rigaud-demo", tenant_code="RIGAUD")
 
     response = await auth_client.post(
         "/api/v1/auth/login",
-        json={"tenant": "RIGAUD", "email": "admin@rigaudtech.com.br", "password": "Senha123"},
+        json={"email": "admin@rigaudtech.com.br", "password": "Senha123"},
     )
 
     assert response.status_code == 200
@@ -198,7 +197,6 @@ async def test_inactive_and_suspended_company_blocks_login(auth_client: AsyncCli
     inactive = await auth_client.post(
         "/api/v1/auth/login",
         json={
-            "tenant": "inactive-company",
             "email": "inactive-company@example.com",
             "password": "Senha123",
         },
@@ -206,7 +204,6 @@ async def test_inactive_and_suspended_company_blocks_login(auth_client: AsyncCli
     suspended = await auth_client.post(
         "/api/v1/auth/login",
         json={
-            "tenant": "suspended-company",
             "email": "suspended-company@example.com",
             "password": "Senha123",
         },
@@ -224,11 +221,11 @@ async def test_inactive_and_deleted_users_cannot_login(auth_client: AsyncClient)
 
     inactive = await auth_client.post(
         "/api/v1/auth/login",
-        json={"tenant": "rigaud-demo", "email": "inactive@example.com", "password": "Senha123"},
+        json={"email": "inactive@example.com", "password": "Senha123"},
     )
     deleted = await auth_client.post(
         "/api/v1/auth/login",
-        json={"tenant": "rigaud-demo", "email": "deleted@example.com", "password": "Senha123"},
+        json={"email": "deleted@example.com", "password": "Senha123"},
     )
 
     assert inactive.status_code == 403
@@ -237,22 +234,11 @@ async def test_inactive_and_deleted_users_cannot_login(auth_client: AsyncClient)
 
 @pytest.mark.integration
 @pytest.mark.asyncio
-async def test_same_email_can_exist_in_different_tenants(auth_client: AsyncClient) -> None:
-    user_one = await create_auth_user(tenant_slug="tenant-one", email="shared@example.com")
-    user_two = await create_auth_user(tenant_slug="tenant-two", email="shared@example.com")
+async def test_same_email_cannot_exist_in_different_tenants(auth_client: AsyncClient) -> None:
+    await create_auth_user(tenant_slug="tenant-one", email="shared@example.com")
 
-    response = await auth_client.post(
-        "/api/v1/auth/login",
-        json={"tenant": "tenant-two", "email": "shared@example.com", "password": "Senha123"},
-    )
-    me_response = await auth_client.get(
-        "/api/v1/auth/me",
-        headers={"Authorization": f"Bearer {response.json()['access_token']}"},
-    )
-
-    assert response.status_code == 200
-    assert me_response.json()["id"] == str(user_two.id)
-    assert me_response.json()["id"] != str(user_one.id)
+    with pytest.raises(IntegrityError):
+        await create_auth_user(tenant_slug="tenant-two", email="shared@example.com")
 
 
 @pytest.mark.integration
@@ -293,7 +279,7 @@ async def test_refresh_hash_is_persisted_without_plain_token(auth_client: AsyncC
     await create_auth_user()
     response = await auth_client.post(
         "/api/v1/auth/login",
-        json={"tenant": "rigaud-demo", "email": "admin@rigaudtech.com.br", "password": "Senha123"},
+        json={"email": "admin@rigaudtech.com.br", "password": "Senha123"},
     )
     refresh_token = response.json()["refresh_token"]
 

@@ -9,6 +9,10 @@ from app.modules.auth.domain.mfa import MfaMethodType
 
 class UserAuthRepository(ABC):
     @abstractmethod
+    async def get_by_email(self, email: str) -> Any | None:
+        raise NotImplementedError
+
+    @abstractmethod
     async def get_by_email_and_tenant_id(self, email: str, tenant_id: UUID) -> Any | None:
         raise NotImplementedError
 
@@ -50,6 +54,10 @@ class AuthSessionRepository(ABC):
 class TenantResolver(ABC):
     @abstractmethod
     async def resolve_by_slug_or_code(self, tenant: str) -> UUID | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def ensure_active(self, tenant_id: UUID) -> None:
         raise NotImplementedError
 
 

@@ -4,6 +4,70 @@
 
 ### Added
 
+- REST-010: Inventory Transactions expõe `InventoryMovement` como livro razão imutável com filtros por produto, depósito, localização, tipo, origem, processo e módulo de origem.
+- REST-010: endpoints `GET /api/v1/inventory/transactions` e `GET /api/v1/inventory/transactions/{transaction_id}` adicionados ao Inventory Engine.
+- REST-010: Flutter Inventory passa a consultar transações de estoque com filtros por processo operacional.
+- REST-010: documentação em `docs/inventory/transactions.md` e Academy de Inventory Transactions.
+- REST-009: Put Away com `PutAwayService`, endpoint `POST /api/v1/inventory/putaway`, movimento `putaway`, liberação de saldo por localização e status documental `available`.
+- REST-009: `InventoryMovement` passa a registrar `origin_module` e `business_process`, preparando auditoria, relatórios, Kafka, MCP e Restaurant Production futura.
+- REST-009: Flutter Inventory recebe aba Put Away para confirmação por documento, produto, localização e quantidade, além de histórico de armazenagens.
+- REST-009: documentação em `docs/inventory/putaway.md`, `docs/warehouse/putaway.md` e Academy de Put Away.
+- DOC-009: arquitetura de documentação do produto, Central de Ajuda e conhecimento criada em `docs/index.md` e `docs/help/*`.
+- DOC-009: mapa planejado do produto criado em `docs/architecture/product-map.md`, separando itens implementados, em desenvolvimento, planejados e futuros.
+- DOC-009: padrao oficial de documentação por funcionalidade definido em `docs/help/feature-documentation-standard.md`.
+- DOC-009: documentação futura de parceiros, revendedores, AI/MCP e Marketing AI registrada sem implementar funcionalidades.
+- DOC-009: Academy, MkDocs, README, backlog, roadmap, task registry, decisões e glossário atualizados para Docs-as-Product.
+- DOC-008: arquitetura oficial de distribuicao criada para Cloud, Cloud Dedicated, On-Premise e Hybrid.
+- DOC-008: separacao entre Tenant e Deployment congelada, preservando `tenant_id = companies.id`.
+- DOC-008: estrategia de operacao offline em tres niveis, Sync Gateway futuro e AI Gateway/MCP documentados.
+- DOC-008: mapa funcional oficial documentado com Commercial, Inventory, Restaurant, Production, Financial, HR, Reports e AI/MCP.
+- DOC-008: ADR `0008-deployment-distribution-architecture`, Academy e documentacao em `docs/architecture/*`.
+- REST-008: Goods Receipt com `GoodsReceiptService`, confirmação física de `ReceivingDocument`, movimento `receipt`, saldo físico e `putaway_pending_quantity`.
+- REST-008: endpoint `POST /api/v1/receiving-documents/{document_id}/confirm-receipt`, auditoria `goods_receipt.confirmed` e evento interno `inventory.receipt.confirmed`.
+- REST-008: Flutter Receiving Documents passa a confirmar recebimento físico, exibir diferenças e acompanhar status `putaway_pending`.
+- REST-008: migration `0017_goods_receipt`, documentação em `docs/inventory/goods-receipt.md`, `docs/warehouse/goods-receipt.md` e Academy de Goods Receipt.
+- REST-008: fundação futura de IA/MCP criada em `erp-platform/backend/app/ai/` e documentação `docs/ai/overview.md`, sem implementar IA.
+- REST-007: Receiving Documents com `ReceivingDocument`, `ReceivingItem`, CRUD, status documental, validação de quantidades, soft delete, auditoria, migration `0016_receiving_documents` e endpoints `/api/v1/receiving-documents`.
+- REST-007: Flutter Receiving Documents com lista, cadastro, edição, detalhe, filtros e mudança de status.
+- REST-007: Demo Environment atualizado com documentos de recebimento para restaurante e varejo.
+- REST-007: documentação em `docs/inventory/receiving*.md`, `docs/warehouse/receiving.md` e Academy de Receiving Documents.
+- REST-006: Warehouse Locations com CRUD de localizações físicas, filtros por depósito/zona/pesquisa, QR Code e código de barras preparados, ativação/inativação, ordenação, soft delete, auditoria, migration `0015_warehouse_locations` e endpoints `/api/v1/warehouse-locations`.
+- REST-006: Flutter Warehouse Locations com lista, cadastro, edição, detalhe, filtros, status e ações operacionais.
+- REST-006: Demo Environment atualizado com localizações físicas para restaurante e varejo.
+- REST-006: documentação em `docs/warehouse/locations*.md` e Academy de Warehouse Locations.
+- REST-005: Warehouse Zones com CRUD de zonas, tipo operacional, flags de recebimento/expedição/armazenagem/produção/quarentena, ordenação, soft delete, auditoria, migration `0014_warehouse_zones` e endpoints `/api/v1/warehouse-zones`.
+- REST-005: Flutter Warehouse Zones com lista, cadastro, edição, detalhe, ativação/desativação e reordenação.
+- REST-005: Demo Environment atualizado com zonas operacionais para restaurante e varejo.
+- REST-005: documentação em `docs/warehouse/zones*.md` e Academy de Warehouse Zones.
+- REST-004: Warehouse Management com CRUD de depósitos, depósito padrão por filial, soft delete, auditoria, migration `0013_warehouses` e endpoints `/api/v1/warehouses`.
+- REST-004: Flutter Warehouses com lista, cadastro, edição, detalhe, status e definição de depósito padrão.
+- REST-004: Demo Environment atualizado com depósitos padrão e operacionais para restaurante e varejo.
+- REST-004: documentação em `docs/warehouse/*` e Academy de Warehouse Management.
+- REST-003: Inventory Engine com saldos, movimentos, ajustes, reservas, migration `0012_inventory_engine`, auditoria e endpoints `/api/v1/inventory/*`.
+- REST-003: Flutter Inventory com consulta de saldos, movimentações, ajuste e reserva usando Riverpod, Repository Pattern e Dio.
+- REST-003: documentação em `docs/inventory/api.md`, `docs/inventory/endpoints.md`, `docs/inventory/entities.md`, `docs/inventory/permissions.md`, `docs/inventory/validation.md` e Academy de implementação.
+- UI-001: tela de login ganha background visual próprio inspirado na identidade Rigaud Tech e no contexto ERP.
+- UI-001: rodapé de login passa a exibir versão, build, API e ambiente.
+- UI-001: documentação criada em `docs/ui/login-screen.md` e Academy UI em `erp-blueprint/docs/academy/ui/001-login-experience.md`.
+- DEV-012: alinhamento de autenticação e tenant com login por email/senha, resolução backend de empresa, filial ativa e papel.
+- DEV-012: migration `0011_auth_tenant_alignment` adiciona filial ativa, papel, permissões, histórico de troca de filial e lotação de trabalho.
+- DEV-012: documentação de arquitetura em `docs/authentication/tenant-alignment.md` e Academy de alinhamento Auth/Tenant.
+- DOC-006: criados `AI_DEVELOPMENT_CHARTER.md`, `ERP_DECISIONS.md` e `ERP_GLOSSARY.md` como base permanente para desenvolvimento com IA.
+- DOC-006: `AGENTS.md`, `erp-blueprint/AGENTS.md` e `MASTER_DEVELOPMENT_PROMPT.md` passam a exigir leitura dos novos documentos.
+- DOC-006: Academy de AI Development Charter criada em `erp-blueprint/docs/academy/engineering/002-ai-development-charter.md`.
+- DOC-006: corrigido carregamento da logo na tela de login Flutter usando o asset registrado em `assets/images/logo_rigaud_tech.png`.
+- DOC-005: domínio do Inventory Engine congelado em `docs/inventory/*` antes da implementação REST-003.
+- DOC-005: ADR `0007-engine-first-development-strategy` oficializa o fluxo DOC → Implementação → Review → Integração para engines.
+- DOC-005: Academy `erp-blueprint/docs/academy/inventory/001-inventory-engine-domain.md` criada para explicar estoque como engine compartilhada.
+- DOC-003: Demo Environment com comandos `make demo`, `make demo-platform`, `make demo-restaurant`, `make demo-retail` e `make demo-reset`.
+- DOC-003: seed idempotente para plataforma, Restaurante Sabor da Serra, Moda Center, filiais, usuários, memberships, categorias e 130 produtos demo.
+- DOC-003: `make test` passa a limpar tenants demo operacionais antes do pytest para evitar conflito entre dados persistentes e fixtures de integração.
+- DOC-003: documentação em `docs/demo/*` e aula Academy `erp-blueprint/docs/academy/demo/001-demo-environment.md`.
+- DOC-003: evoluída para Demo Environment & Scenario Engine com API DEV-only `/api/v1/demo/*`, Dashboard Demo Flutter, scripts em `scripts/demo*.py`, comandos `make demo-scenarios`, `make playground` e senha demo `123456`.
+- REST-002: módulo Categories com CRUD multi-tenant, hierarquia por `parent_id`, slug/código interno únicos, soft delete, ativação, desativação e ordenação manual.
+- REST-002: endpoints `/api/v1/categories`, migration `0010_product_categories`, auditoria de categorias e mensagens centralizadas.
+- REST-002: feature Flutter Categories com lista hierárquica, cadastro, edição, detalhe e ações de ativar/desativar/remover.
+- REST-002: documentação em `docs/categories/*`, Academy de Categorias e registro inicial de Form Blueprint.
 - DOC-002: prompt mestre de desenvolvimento criado em `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`, consolidando arquitetura, Git Flow, testes, documentação, auditoria, SaaS, multitenancy, feature flags, roadmap e convenções.
 - DOC-002: diretriz de Form Blueprint registrada para cadastros reutilizáveis por segmento a partir de REST-002.
 - DEV-001: infraestrutura Docker de desenvolvimento com Backend, PostgreSQL 16, Redis, Mailpit, PgAdmin, Flutter Web e Nginx.
@@ -82,6 +146,13 @@
 
 ### Changed
 
+- REVIEW DEV-001: proxy Nginx resolve `backend` e `frontend` dinamicamente no DNS interno do Docker, evitando `502` após recriação dos containers.
+- UI-001 Review: login passa a exibir carrossel informativo lateral em desktop com o mesmo design e tamanho do card de acesso, mantendo a tela sem scroll.
+- UI-001 Review: renderização da logo no card de login ajustada para exibir a área útil do asset `assets/images/logo_rigaud_tech.png`.
+- UI-001: tela de login remove scroll externo, centraliza card responsivo e ajusta renderização horizontal da logo.
+- DEV-012: tela de login Flutter remove o campo Tenant e envia somente email e senha.
+- DEV-012: endpoint `/api/v1/auth/login` deixa de aceitar tenant no payload.
+- DEV-012: troca de contexto passa a negar usuário comum e manter tenant único por usuário.
 - REVIEW DEV-001: removidas configuracoes Docker duplicadas, ajustado healthcheck do frontend, habilitada persistencia AOF no Redis, revisado proxy `/api` e removida variavel legada `FLUTTER_WEB_PORT`.
 - REVIEW DEV-001: `make up`, `make backend` e `make flutter` agora executam preflight de Docker, Compose e espaco livre antes do build.
 - REVIEW DEV-001: Dockerfile Flutter ajustado para executar como usuario `ubuntu` e evitar preparacao do Flutter toolchain como root durante o build.

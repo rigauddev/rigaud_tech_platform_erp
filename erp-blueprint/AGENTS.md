@@ -7,6 +7,9 @@ Regras permanentes para qualquer agente ou sessão do Codex na Rigaud Tech Platf
 Antes de executar qualquer Task, leia:
 
 - `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`
+- `AI_DEVELOPMENT_CHARTER.md`
+- `ERP_DECISIONS.md`
+- `ERP_GLOSSARY.md`
 - `erp-blueprint/docs/project-plan.md`
 - `erp-blueprint/docs/architecture/product-vision.md`
 - `erp-blueprint/docs/architecture/development-workflow.md`
@@ -39,6 +42,11 @@ A implementação existente tem prioridade sobre suposições, desde que não co
 - Atualizar testes, documentação, Academy e `CHANGELOG.md`.
 - Executar validações da Task.
 - Apresentar relatório final e parar.
+- Conferir `ERP_DECISIONS.md` antes de rediscutir decisões de negócio já congeladas.
+- Usar `ERP_GLOSSARY.md` para nomes oficiais do domínio.
+- Obedecer a DEV-012: login por email/senha, empresa única por usuário e filial ativa única.
+- Obedecer a DOC-008: tenant e deployment sao conceitos diferentes; partner/reseller nao e tenant; On-Premise continua sendo o mesmo ERP.
+- Obedecer a DOC-009: documentacao e parte do produto; cada funcionalidade deve avaliar documentacao tecnica, Academy, Help Center, FAQ e tutorial, sem antecipar implementacoes futuras.
 
 ## Quando Houver Dúvida
 

@@ -14,13 +14,12 @@ class AuthRemoteDataSource {
   final Dio _dio;
 
   Future<AuthLoginResult> login({
-    required String tenant,
     required String email,
     required String password,
   }) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/api/v1/auth/login',
-      data: {'tenant': tenant, 'email': email, 'password': password},
+      data: {'email': email, 'password': password},
     );
     final envelope = ApiEnvelope.fromJson(response.data ?? {});
     final data = apiDataObject(response.data);

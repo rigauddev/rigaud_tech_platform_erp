@@ -1,0 +1,184 @@
+# Inventory Endpoints
+
+Base path:
+
+```text
+/api/v1/inventory
+```
+
+## GET /balances
+
+Consulta saldos projetados.
+
+Query:
+
+- `page`;
+- `page_size`;
+- `branch_id` opcional;
+- `product_id` opcional.
+
+Retorna `InventoryBalance`.
+
+## GET /movements
+
+Consulta histórico de movimentações.
+
+Query:
+
+- `page`;
+- `page_size`;
+- `branch_id` opcional;
+- `product_id` opcional.
+
+Retorna `InventoryMovement`.
+
+## GET /transactions
+
+Consulta o livro razao de transacoes de estoque.
+
+Query:
+
+- `page`;
+- `page_size`;
+- `branch_id` opcional;
+- `product_id` opcional;
+- `warehouse_id` opcional;
+- `location_id` opcional;
+- `movement_type` opcional;
+- `origin_module` opcional;
+- `business_process` opcional;
+- `source_module` opcional.
+
+Retorna `InventoryMovement` com `immutable=true`.
+
+## GET /transactions/{transaction_id}
+
+Consulta uma transacao de estoque por ID, limitada ao tenant e filial ativa.
+
+## POST /adjustments
+
+Registra ajuste manual ou técnico.
+
+Payload:
+
+```json
+{
+  "product_id": "uuid",
+  "adjustment_type": "increase",
+  "quantity": "10.000",
+  "reason": "Entrada inicial",
+  "notes": "opcional"
+}
+```
+
+Tipos:
+
+- `increase`;
+- `decrease`.
+
+## POST /reservations
+
+Registra reserva lógica de estoque disponível.
+
+Payload:
+
+```json
+{
+  "product_id": "uuid",
+  "quantity": "2.000",
+  "reason": "Pedido em aberto",
+  "source_module": "restaurant",
+  "source_id": "uuid"
+}
+```
+
+Reserva não altera saldo físico.
+
+## POST /reservations/{reservation_id}/release
+
+Libera uma reserva ativa.
+
+Gera movimento `reservation_released` e reduz `reserved_quantity`.
+
+## Receiving Documents
+
+Base path:
+
+```text
+/api/v1/receiving-documents
+```
+
+Endpoints:
+
+- `GET /receiving-documents`;
+- `GET /receiving-documents/{document_id}`;
+- `POST /receiving-documents`;
+- `PUT /receiving-documents/{document_id}`;
+- `POST /receiving-documents/{document_id}/status`;
+- `DELETE /receiving-documents/{document_id}`.
+
+Receiving Documents pertencem à logística de entrada, mas não geram `InventoryMovement` na REST-007.
+
+## Goods Receipt
+
+```text
+POST /api/v1/receiving-documents/{document_id}/confirm-receipt
+```
+
+Confirma fisicamente o documento de recebimento.
+
+Na REST-008:
+
+- cria `InventoryMovement` do tipo `receipt`;
+- aumenta `physical_quantity`;
+- aumenta `putaway_pending_quantity`;
+- mantém `available_quantity` bloqueada até Put Away.
+
+## Put Away
+
+```text
+POST /api/v1/inventory/putaway
+```
+
+Confirma armazenagem física em uma localização final.
+
+Payload:
+
+```json
+{
+  "document_id": "uuid",
+  "product_id": "uuid",
+  "location_id": "uuid",
+  "quantity": "10.000",
+  "reason": "Armazenagem na câmara fria"
+}
+```
+
+Na REST-009:
+
+- cria `InventoryMovement` do tipo `putaway`;
+- reduz `putaway_pending_quantity` no saldo de recebimento;
+- incrementa `physical_quantity` na localização final;
+- mantém `InventoryBalance` como projeção gerada por movimento;
+- grava `origin_module=PURCHASE`;
+- grava `business_process=PUTAWAY`;
+- altera o documento para `available` quando não houver pendência.
+
+## Fluxo
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant API
+    participant UseCase
+    participant Balance
+    participant Movement
+    participant Audit
+
+    User->>API: POST /inventory/adjustments
+    API->>UseCase: input + contexto autenticado
+    UseCase->>Balance: atualiza projeção
+    UseCase->>Movement: registra movimento confirmado
+    API->>Audit: registra evento crítico
+    API-->>User: envelope padrão
+```

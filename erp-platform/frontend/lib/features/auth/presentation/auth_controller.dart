@@ -31,16 +31,12 @@ class AuthController extends AsyncNotifier<AuthState> {
     }
   }
 
-  Future<void> login({
-    required String tenant,
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final result = await LoginUseCase(
         _repository,
-      ).execute(tenant: tenant, email: email, password: password);
+      ).execute(email: email, password: password);
       if (result.requiresMfa) {
         return AuthState.mfaRequired(result.mfaChallenge);
       }

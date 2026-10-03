@@ -8,20 +8,38 @@ nav:
   - Architecture:
       - Overview: architecture/README.md
       - Product Vision: architecture/product-vision.md
+      - Product Map: architecture/product-map.md
       - Development Workflow: architecture/development-workflow.md
+      - Deployment Distribution Architecture: architecture/deployment-distribution-architecture.md
   - Academy:
       - Overview: academy/README.md
+      - Product Documentation Help Center: academy/documentation/001-product-documentation-help-center.md
       - Flutter Multiplataforma: academy/flutter/001-flutter-multiplataforma.md
+      - Login Experience: academy/ui/001-login-experience.md
       - Database Core: academy/backend/001-database-core.md
       - Fundamentos PostgreSQL: academy/postgresql/001-fundamentos-do-banco-do-erp.md
       - Autenticação Multi-Tenant JWT: academy/security/001-autenticacao-multitenant-jwt.md
       - Empresa como Tenant: academy/multi-tenancy/001-empresa-como-tenant.md
       - Usuários Multi-Tenant: academy/core/001-usuarios-multitenant.md
+      - Categorias de Produtos: academy/core/004-categorias-de-produtos.md
+      - Demo Environment: academy/demo/001-demo-environment.md
+      - Inventory Engine Domain: academy/inventory/001-inventory-engine-domain.md
+      - Inventory Engine Implementation: academy/inventory/002-inventory-engine-implementation.md
+      - Receiving Documents: academy/inventory/003-receiving-documents.md
+      - Goods Receipt: academy/inventory/004-goods-receipt.md
+      - Put Away: academy/inventory/005-putaway.md
+      - Inventory Transactions: academy/inventory/006-inventory-transactions.md
+      - Deployment Distribution Architecture: academy/architecture/001-deployment-distribution-architecture.md
+      - Warehouse Management: academy/warehouse/001-warehouse-management.md
+      - Warehouse Zones: academy/warehouse/002-warehouse-zones.md
+      - Warehouse Locations: academy/warehouse/003-warehouse-locations.md
       - Logs Estruturados: academy/observability/001-logs-estruturados.md
       - Request ID: academy/observability/002-rastreabilidade-com-request-id.md
       - Auditoria de Sistemas: academy/security/002-auditoria-de-sistemas.md
+      - Auth Tenant Alignment: academy/security/003-auth-tenant-alignment.md
       - Respostas de API: academy/api/001-respostas-e-erros-padronizados.md
       - Tasks Docs-as-Code: academy/engineering/001-gestao-de-tasks-docs-as-code.md
+      - AI Development Charter: academy/engineering/002-ai-development-charter.md
   - ADR:
       - Overview: adr/README.md
       - ADR 0001 Database Tenancy: adr/0001-database-tenancy-strategy.md
@@ -30,7 +48,12 @@ nav:
       - ADR 0004 User Company Tenant: adr/0004-user-company-tenant.md
       - ADR 0005 API Governance Audit: adr/0005-api-governance-audit-response-contract.md
       - ADR 0006 Two Factor Authentication: adr/0006-two-factor-authentication-channels.md
+      - ADR 0007 Engine First: adr/0007-engine-first-development-strategy.md
+      - ADR 0008 Deployment Distribution: adr/0008-deployment-distribution-architecture.md
+      - ADR 0009 Restaurant Production: adr/0009-restaurant-production-separated-from-inventory.md
   - Modules: modules/README.md
+  - Help Center:
+      - Overview: help/README.md
   - Research: research/README.md
   - Backlog:
       - Overview: backlog/README.md

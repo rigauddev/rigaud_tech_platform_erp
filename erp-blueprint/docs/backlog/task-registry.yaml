@@ -1,4 +1,762 @@
 tasks:
+  - id: REST-010
+    title: Inventory Transactions
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-009
+    started_at: "2026-10-02"
+    completed_at: null
+    documentation:
+      - docs/inventory/transactions.md
+      - docs/inventory/README.md
+      - docs/inventory/endpoints.md
+      - docs/inventory/entities.md
+      - docs/inventory/events.md
+      - README.md
+      - CHANGELOG.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/inventory/README.md
+      - erp-blueprint/docs/academy/inventory/006-inventory-transactions.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/006-inventory-transactions.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_inventory_engine.py
+      - erp-platform/backend/tests/test_receiving_documents.py
+      - erp-platform/frontend/test/inventory/inventory_controller_test.dart
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-010
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-010-inventory-transactions
+      commits:
+        - 5653db3
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 5653db3
+    review_status: ready
+  - id: REST-009
+    title: Put Away
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-008
+    started_at: "2026-08-03"
+    completed_at: null
+    documentation:
+      - docs/inventory/putaway.md
+      - docs/warehouse/putaway.md
+      - docs/ai/overview.md
+      - README.md
+      - CHANGELOG.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/adr/0009-restaurant-production-separated-from-inventory.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/inventory/README.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/005-putaway.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_receiving_documents.py
+      - erp-platform/frontend/test/inventory/inventory_controller_test.dart
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - flutter build apk --debug
+      - flutter build macos
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-009
+    migration: 0018_putaway
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-009-putaway
+      commits:
+        - 88c16cb
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 88c16cb
+    review_status: ready
+  - id: DOC-009
+    title: Product Documentation, Help Center & Knowledge Architecture
+    epic: Documentation
+    module: documentation
+    status: review
+    dependencies:
+      - DOC-008
+    started_at: "2026-10-02"
+    completed_at: null
+    documentation:
+      - docs/index.md
+      - docs/architecture/product-map.md
+      - docs/architecture/README.md
+      - docs/help/README.md
+      - docs/help/knowledge-architecture.md
+      - docs/help/feature-documentation-standard.md
+      - docs/help/partners-resellers.md
+      - docs/help/ai-marketing.md
+      - docs/deployment/README.md
+      - docs/governance/documentation-policy.md
+      - README.md
+      - CHANGELOG.md
+      - AGENTS.md
+      - AI_DEVELOPMENT_CHARTER.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/AGENTS.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-blueprint/docs/architecture/product-map.md
+      - erp-blueprint/docs/help/README.md
+      - erp-blueprint/docs/academy/documentation/001-product-documentation-help-center.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/documentation/001-product-documentation-help-center.md
+    tests:
+      - make format
+      - make lint
+      - make test
+      - make check-task TASK=DOC-009
+      - mkdocs build
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-009-product-documentation-help-center
+      commits:
+        - 4294faf
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 4294faf
+    review_status: ready
+  - id: DOC-008
+    title: Deployment & Distribution Architecture
+    epic: Architecture
+    module: architecture
+    status: review
+    dependencies:
+      - DEV-010
+      - DEV-011
+      - DEV-012
+      - REST-008
+    started_at: "2026-10-02"
+    completed_at: null
+    documentation:
+      - docs/architecture/README.md
+      - docs/architecture/deployment/README.md
+      - docs/architecture/deployment/cloud.md
+      - docs/architecture/deployment/on-premise.md
+      - docs/architecture/deployment/hybrid.md
+      - docs/architecture/deployment/tenancy.md
+      - docs/architecture/deployment/subscriptions.md
+      - docs/architecture/system-map.md
+      - docs/architecture/offline-strategy.md
+      - docs/architecture/cloud.md
+      - docs/architecture/on-premise.md
+      - docs/architecture/hybrid.md
+      - docs/architecture/resellers.md
+      - docs/ai/overview.md
+      - README.md
+      - CHANGELOG.md
+      - AGENTS.md
+      - erp-blueprint/AGENTS.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-blueprint/docs/architecture/deployment-distribution-architecture.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/adr/0008-deployment-distribution-architecture.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/architecture/001-deployment-distribution-architecture.md
+    tests:
+      - make format
+      - make lint
+      - make test
+      - make check-task TASK=DOC-008
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-008-deployment-distribution-architecture
+      commits:
+        - fc99175
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: fc99175
+    review_status: ready
+  - id: REST-008
+    title: Goods Receipt
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-007
+    started_at: "2026-08-02"
+    completed_at: null
+    documentation:
+      - docs/inventory/goods-receipt.md
+      - docs/warehouse/goods-receipt.md
+      - docs/ai/overview.md
+      - README.md
+      - CHANGELOG.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/receiving_documents/README.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/004-goods-receipt.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_receiving_documents.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - flutter build apk --debug
+      - flutter build macos
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-008
+    migration: 0017_goods_receipt
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-008-goods-receipt
+      commits:
+        - 7948e5f
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 7948e5f
+    review_status: ready
+  - id: REST-007
+    title: Receiving Documents
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-006
+    started_at: "2026-08-02"
+    completed_at: null
+    documentation:
+      - docs/inventory/receiving-documents.md
+      - docs/inventory/receiving-api.md
+      - docs/inventory/receiving-database.md
+      - docs/inventory/receiving-flutter.md
+      - docs/inventory/receiving-testing.md
+      - docs/warehouse/receiving.md
+      - README.md
+      - CHANGELOG.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/receiving_documents/README.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/003-receiving-documents.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_receiving_documents.py
+      - erp-platform/backend/tests/integration/demo/test_demo_seed.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - flutter build apk --debug
+      - flutter build macos
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-007
+    migration: 0016_receiving_documents
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-007-receiving-documents
+      commits:
+        - b287dc6
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: b287dc6
+    review_status: ready
+  - id: REST-006
+    title: Warehouse Locations
+    epic: EPIC-002 Warehouse Management
+    module: inventory
+    status: review
+    dependencies:
+      - REST-005
+    started_at: "2026-08-02"
+    completed_at: null
+    documentation:
+      - docs/warehouse/locations.md
+      - docs/warehouse/locations-api.md
+      - docs/warehouse/locations-database.md
+      - docs/warehouse/locations-flutter.md
+      - docs/warehouse/locations-testing.md
+      - README.md
+      - CHANGELOG.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/warehouse_locations/README.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/warehouse/003-warehouse-locations.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_warehouse_locations.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - flutter build apk --debug
+      - flutter build macos
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-006
+    migration: 0015_warehouse_locations
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-006-warehouse-locations
+      commits:
+        - a0c5136
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: a0c5136
+    review_status: ready
+  - id: REST-005
+    title: Warehouse Zones
+    epic: EPIC-002 Warehouse Management
+    module: inventory
+    status: review
+    dependencies:
+      - REST-004
+    started_at: "2026-08-02"
+    completed_at: null
+    documentation:
+      - docs/warehouse/zones.md
+      - docs/warehouse/zones-api.md
+      - docs/warehouse/zones-database.md
+      - docs/warehouse/zones-flutter.md
+      - docs/warehouse/zones-testing.md
+      - README.md
+      - CHANGELOG.md
+      - AI_DEVELOPMENT_CHARTER.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/warehouse_zones/README.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/warehouse/002-warehouse-zones.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_warehouse_zones.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - flutter build apk --debug
+      - flutter build macos
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-005
+    migration: 0014_warehouse_zones
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-005-warehouse-zones
+      commits:
+        - 1e4ca5c
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 1e4ca5c
+    review_status: ready
+  - id: REST-004
+    title: Warehouse Management
+    epic: EPIC-002 Warehouse Management
+    module: inventory
+    status: review
+    dependencies:
+      - REST-003
+    started_at: "2026-08-02"
+    completed_at: null
+    documentation:
+      - docs/warehouse/overview.md
+      - docs/warehouse/api.md
+      - docs/warehouse/database.md
+      - docs/warehouse/flutter.md
+      - docs/warehouse/testing.md
+      - README.md
+      - CHANGELOG.md
+      - AI_DEVELOPMENT_CHARTER.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/warehouses/README.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/warehouse/001-warehouse-management.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_warehouse_management.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - flutter build apk --debug
+      - flutter build macos
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-004
+    migration: 0013_warehouses
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-004-warehouse
+      commits:
+        - c4e22ea
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: c4e22ea
+    review_status: ready
+  - id: REST-003
+    title: Inventory Engine
+    epic: MVP Restaurante
+    module: inventory
+    status: review
+    dependencies:
+      - DOC-005
+      - REST-001
+      - REST-002
+      - DEV-010
+      - DEV-012
+    started_at: "2026-08-01"
+    completed_at: null
+    documentation:
+      - docs/inventory/api.md
+      - docs/inventory/endpoints.md
+      - docs/inventory/entities.md
+      - docs/inventory/events.md
+      - docs/inventory/permissions.md
+      - docs/inventory/validation.md
+      - README.md
+      - CHANGELOG.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/inventory/README.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/002-inventory-engine-implementation.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_inventory_engine.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-003
+    migration: 0012_inventory_engine
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-003-inventory-engine
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
+  - id: UI-001
+    title: Login Experience
+    epic: ui
+    module: frontend
+    status: review
+    dependencies:
+      - DEV-012
+    started_at: "2026-08-01"
+    completed_at: null
+    documentation:
+      - docs/ui/login-screen.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/ui/001-login-experience.md
+    tests:
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - flutter build apk --debug
+      - flutter build macos
+      - make check-task TASK=UI-001
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/ui-001-login-experience
+      commits:
+        - 1068ebf
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 1068ebf
+    review_status: ready
+  - id: DEV-012
+    title: Authentication & Tenant Architecture Alignment
+    epic: foundation
+    module: auth
+    status: review
+    dependencies:
+      - DEV-010
+      - DEV-011
+      - REST-002
+    started_at: "2026-08-01"
+    completed_at: null
+    documentation:
+      - docs/authentication/tenant-alignment.md
+      - README.md
+      - CHANGELOG.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/adr/0002-authentication-strategy.md
+      - erp-blueprint/docs/adr/0004-user-company-tenant.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/security/003-auth-tenant-alignment.md
+    tests:
+      - make lint
+      - make test
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - make check-task TASK=DEV-012
+    migration: 0011_auth_tenant_alignment
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/dev-012-auth-tenant-alignment
+      commits:
+        - 85a9a40
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 85a9a40
+    review_status: ready
+  - id: DOC-006
+    title: AI Development Charter, ERP Decisions e ERP Glossary
+    epic: governance
+    module: documentation
+    status: review
+    dependencies:
+      - DOC-005
+    started_at: "2026-08-01"
+    completed_at: null
+    documentation:
+      - docs/governance/ai-development-knowledge-base.md
+      - README.md
+      - AGENTS.md
+      - AI_DEVELOPMENT_CHARTER.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/AGENTS.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-platform/frontend/lib/features/auth/presentation/login_screen.dart
+    academy:
+      - erp-blueprint/docs/academy/engineering/002-ai-development-charter.md
+    tests:
+      - make check-task TASK=DOC-006
+      - flutter analyze
+      - flutter test
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-006-ai-development-charter
+      commits:
+        - 0997987
+        - 7dc9f3b
+        - 9f0e93f
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 9f0e93f
+    review_status: ready
+  - id: DOC-005
+    title: Inventory Engine Domain
+    epic: governance
+    module: inventory
+    status: review
+    dependencies:
+      - DOC-003
+      - REST-002
+    started_at: "2026-08-01"
+    completed_at: null
+    documentation:
+      - docs/inventory/overview.md
+      - docs/inventory/domain-model.md
+      - docs/inventory/movement-types.md
+      - docs/inventory/events.md
+      - docs/inventory/integrations.md
+      - docs/inventory/offline-strategy.md
+      - docs/inventory/flows.md
+      - docs/inventory/use-cases.md
+      - docs/inventory/audit-security.md
+      - docs/inventory/multi-tenancy.md
+      - erp-blueprint/docs/adr/0007-engine-first-development-strategy.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/inventory/README.md
+    academy:
+      - erp-blueprint/docs/academy/inventory/001-inventory-engine-domain.md
+    tests:
+      - make check-task TASK=DOC-005
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-005-inventory-engine
+      commits:
+        - fcfe4aa
+        - e679bb0
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: e679bb0
+    review_status: ready
+  - id: DOC-003
+    title: Demo Environment & Scenario Engine
+    epic: governance
+    module: demo
+    status: review
+    dependencies:
+      - DEV-010
+      - REST-001
+      - REST-002
+    started_at: "2026-07-31"
+    completed_at: null
+    documentation:
+      - docs/demo/overview.md
+      - docs/demo/accounts.md
+      - docs/demo/scenario-engine.md
+      - docs/demo/testing.md
+      - README.md
+      - erp-platform/frontend/lib/features/demo/README.md
+    academy:
+      - erp-blueprint/docs/academy/demo/001-demo-environment.md
+    tests:
+      - erp-platform/backend/tests/integration/demo/test_demo_seed.py
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-003-demo-environment
+      commits:
+        - 1fbeaa1
+        - 52041a0
+        - 048bd6d
+        - b5b9caa
+        - 9c6579e
+        - 4edecca
+        - 221749b
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 221749b
+    review_status: ready
+  - id: REST-002
+    title: Categorias de Produtos
+    epic: MVP Restaurante
+    module: categories
+    status: review
+    dependencies:
+      - REST-001
+      - DEV-010
+    started_at: "2026-07-31"
+    completed_at: null
+    documentation:
+      - docs/categories/overview.md
+      - docs/categories/backend.md
+      - docs/categories/database.md
+      - docs/categories/flutter.md
+      - docs/categories/testing.md
+      - erp-platform/backend/app/modules/categories/README.md
+      - erp-platform/frontend/lib/features/categories/README.md
+    academy:
+      - erp-blueprint/docs/academy/core/004-categorias-de-produtos.md
+    tests:
+      - erp-platform/backend/tests/unit/categories/test_category_validators.py
+      - erp-platform/backend/tests/integration/categories/test_categories_api.py
+      - erp-platform/frontend/test/categories/category_controller_test.dart
+    migration: 0010_product_categories
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-002-product-categories
+      commits:
+        - 626d1c5
+        - 6b94bb5
+        - ceebe58
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
   - id: DOC-002
     title: Master Development Prompt
     epic: governance

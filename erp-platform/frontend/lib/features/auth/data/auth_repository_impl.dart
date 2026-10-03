@@ -22,13 +22,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<AuthLoginResult> login({
-    required String tenant,
     required String email,
     required String password,
   }) async {
     try {
       final result = await _remoteDataSource.login(
-        tenant: tenant,
         email: email,
         password: password,
       );

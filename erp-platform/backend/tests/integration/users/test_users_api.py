@@ -202,7 +202,7 @@ async def test_common_user_can_only_manage_own_profile(users_client: AsyncClient
 
 @pytest.mark.integration
 @pytest.mark.asyncio
-async def test_duplicate_email_is_scoped_by_company(users_client: AsyncClient) -> None:
+async def test_duplicate_email_is_global_for_login(users_client: AsyncClient) -> None:
     company_one = await create_company(slug="company-one", code="COMP1", document_seed=4)
     company_two = await create_company(slug="company-two", code="COMP2", document_seed=5)
     admin = await create_user(company_one, email="admin@example.com", is_superuser=True)
@@ -229,7 +229,7 @@ async def test_duplicate_email_is_scoped_by_company(users_client: AsyncClient) -
     )
 
     assert duplicate.status_code == 409
-    assert allowed.status_code == 201
+    assert allowed.status_code == 409
 
 
 @pytest.mark.integration
@@ -255,7 +255,7 @@ async def test_block_revokes_sessions_and_blocks_login(users_client: AsyncClient
 
     login = await users_client.post(
         "/api/v1/auth/login",
-        json={"tenant": "block-company", "email": "blocked@example.com", "password": "Senha123"},
+        json={"email": "blocked@example.com", "password": "Senha123"},
     )
     refresh = await users_client.post("/api/v1/auth/refresh", json={"refresh_token": refresh_token})
 
@@ -271,7 +271,7 @@ async def test_failed_login_attempts_are_tracked_and_reset(users_client: AsyncCl
 
     failed = await users_client.post(
         "/api/v1/auth/login",
-        json={"tenant": "login-company", "email": "login@example.com", "password": "errada123"},
+        json={"email": "login@example.com", "password": "errada123"},
     )
     assert failed.status_code == 401
 
@@ -282,7 +282,7 @@ async def test_failed_login_attempts_are_tracked_and_reset(users_client: AsyncCl
 
     success = await users_client.post(
         "/api/v1/auth/login",
-        json={"tenant": "login-company", "email": "login@example.com", "password": "Senha123"},
+        json={"email": "login@example.com", "password": "Senha123"},
     )
     assert success.status_code == 200
 

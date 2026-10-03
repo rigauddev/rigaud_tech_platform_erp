@@ -248,6 +248,371 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     "PRODUCT_NOT_AVAILABLE": MessageDefinition(
         "PRODUCT_NOT_AVAILABLE", 409, "Produto indisponível para venda.", "warning"
     ),
+    "CATEGORY_CREATED": MessageDefinition(
+        "CATEGORY_CREATED", 201, "Categoria criada com sucesso.", audit_required=True
+    ),
+    "CATEGORY_UPDATED": MessageDefinition(
+        "CATEGORY_UPDATED", 200, "Categoria atualizada com sucesso.", audit_required=True
+    ),
+    "CATEGORY_ACTIVATED": MessageDefinition(
+        "CATEGORY_ACTIVATED", 200, "Categoria ativada com sucesso.", audit_required=True
+    ),
+    "CATEGORY_DEACTIVATED": MessageDefinition(
+        "CATEGORY_DEACTIVATED", 200, "Categoria desativada com sucesso.", audit_required=True
+    ),
+    "CATEGORY_REORDERED": MessageDefinition(
+        "CATEGORY_REORDERED", 200, "Categoria reordenada com sucesso.", audit_required=True
+    ),
+    "CATEGORY_DELETED": MessageDefinition(
+        "CATEGORY_DELETED", 200, "Categoria removida com sucesso.", audit_required=True
+    ),
+    "CATEGORY_RETRIEVED": MessageDefinition(
+        "CATEGORY_RETRIEVED", 200, "Categoria consultada com sucesso."
+    ),
+    "CATEGORY_LIST_RETRIEVED": MessageDefinition(
+        "CATEGORY_LIST_RETRIEVED", 200, "Categorias consultadas com sucesso."
+    ),
+    "CATEGORY_NOT_FOUND": MessageDefinition(
+        "CATEGORY_NOT_FOUND", 404, "Categoria não encontrada.", "warning"
+    ),
+    "CATEGORY_ALREADY_EXISTS": MessageDefinition(
+        "CATEGORY_ALREADY_EXISTS", 409, "Categoria já cadastrada.", "warning"
+    ),
+    "CATEGORY_INTERNAL_CODE_ALREADY_EXISTS": MessageDefinition(
+        "CATEGORY_INTERNAL_CODE_ALREADY_EXISTS",
+        409,
+        "Código interno já cadastrado nesta empresa.",
+        "warning",
+    ),
+    "CATEGORY_SLUG_ALREADY_EXISTS": MessageDefinition(
+        "CATEGORY_SLUG_ALREADY_EXISTS",
+        409,
+        "Slug já cadastrado nesta empresa.",
+        "warning",
+    ),
+    "CATEGORY_CYCLE_DETECTED": MessageDefinition(
+        "CATEGORY_CYCLE_DETECTED",
+        409,
+        "A hierarquia da categoria não pode criar ciclos.",
+        "warning",
+    ),
+    "CATEGORY_IN_USE": MessageDefinition(
+        "CATEGORY_IN_USE",
+        409,
+        "Categoria em uso não pode ser removida.",
+        "warning",
+    ),
+    "INVENTORY_BALANCE_LIST_RETRIEVED": MessageDefinition(
+        "INVENTORY_BALANCE_LIST_RETRIEVED",
+        200,
+        "Saldos de estoque consultados com sucesso.",
+    ),
+    "INVENTORY_MOVEMENT_LIST_RETRIEVED": MessageDefinition(
+        "INVENTORY_MOVEMENT_LIST_RETRIEVED",
+        200,
+        "Movimentações de estoque consultadas com sucesso.",
+    ),
+    "INVENTORY_TRANSACTION_LIST_RETRIEVED": MessageDefinition(
+        "INVENTORY_TRANSACTION_LIST_RETRIEVED",
+        200,
+        "Transações de estoque consultadas com sucesso.",
+    ),
+    "INVENTORY_TRANSACTION_RETRIEVED": MessageDefinition(
+        "INVENTORY_TRANSACTION_RETRIEVED",
+        200,
+        "Transação de estoque consultada com sucesso.",
+    ),
+    "INVENTORY_ADJUSTMENT_CREATED": MessageDefinition(
+        "INVENTORY_ADJUSTMENT_CREATED",
+        200,
+        "Ajuste de estoque registrado com sucesso.",
+        audit_required=True,
+    ),
+    "INVENTORY_RESERVATION_CREATED": MessageDefinition(
+        "INVENTORY_RESERVATION_CREATED",
+        200,
+        "Reserva de estoque registrada com sucesso.",
+        audit_required=True,
+    ),
+    "INVENTORY_RESERVATION_RELEASED": MessageDefinition(
+        "INVENTORY_RESERVATION_RELEASED",
+        200,
+        "Reserva de estoque liberada com sucesso.",
+        audit_required=True,
+    ),
+    "INVENTORY_BALANCE_NOT_FOUND": MessageDefinition(
+        "INVENTORY_BALANCE_NOT_FOUND",
+        404,
+        "Saldo de estoque não encontrado.",
+        "warning",
+    ),
+    "INVENTORY_TRANSACTION_NOT_FOUND": MessageDefinition(
+        "INVENTORY_TRANSACTION_NOT_FOUND",
+        404,
+        "Transação de estoque não encontrada.",
+        "warning",
+    ),
+    "INVENTORY_RESERVATION_NOT_FOUND": MessageDefinition(
+        "INVENTORY_RESERVATION_NOT_FOUND",
+        404,
+        "Reserva de estoque não encontrada.",
+        "warning",
+    ),
+    "INVENTORY_RESERVATION_INACTIVE": MessageDefinition(
+        "INVENTORY_RESERVATION_INACTIVE",
+        409,
+        "Reserva de estoque não está ativa.",
+        "warning",
+    ),
+    "INVENTORY_INSUFFICIENT_STOCK": MessageDefinition(
+        "INVENTORY_INSUFFICIENT_STOCK",
+        409,
+        "Saldo disponível insuficiente.",
+        "warning",
+    ),
+    "INVENTORY_INVALID_QUANTITY": MessageDefinition(
+        "INVENTORY_INVALID_QUANTITY",
+        400,
+        "Quantidade de estoque inválida.",
+        "warning",
+    ),
+    "INVENTORY_BRANCH_REQUIRED": MessageDefinition(
+        "INVENTORY_BRANCH_REQUIRED",
+        409,
+        "Filial ativa obrigatória para movimentar estoque.",
+        "warning",
+    ),
+    "WAREHOUSE_CREATED": MessageDefinition(
+        "WAREHOUSE_CREATED", 201, "Depósito criado com sucesso.", audit_required=True
+    ),
+    "WAREHOUSE_UPDATED": MessageDefinition(
+        "WAREHOUSE_UPDATED", 200, "Depósito atualizado com sucesso.", audit_required=True
+    ),
+    "WAREHOUSE_DELETED": MessageDefinition(
+        "WAREHOUSE_DELETED", 200, "Depósito removido com sucesso.", audit_required=True
+    ),
+    "WAREHOUSE_DEFAULT_SET": MessageDefinition(
+        "WAREHOUSE_DEFAULT_SET",
+        200,
+        "Depósito padrão atualizado com sucesso.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_RETRIEVED": MessageDefinition(
+        "WAREHOUSE_RETRIEVED", 200, "Depósito consultado com sucesso."
+    ),
+    "WAREHOUSE_LIST_RETRIEVED": MessageDefinition(
+        "WAREHOUSE_LIST_RETRIEVED", 200, "Depósitos consultados com sucesso."
+    ),
+    "WAREHOUSE_NOT_FOUND": MessageDefinition(
+        "WAREHOUSE_NOT_FOUND", 404, "Depósito não encontrado.", "warning"
+    ),
+    "WAREHOUSE_CODE_ALREADY_EXISTS": MessageDefinition(
+        "WAREHOUSE_CODE_ALREADY_EXISTS",
+        409,
+        "Código de depósito já cadastrado nesta filial.",
+        "warning",
+    ),
+    "WAREHOUSE_BRANCH_REQUIRED": MessageDefinition(
+        "WAREHOUSE_BRANCH_REQUIRED",
+        409,
+        "Filial ativa obrigatória para cadastrar depósito.",
+        "warning",
+    ),
+    "WAREHOUSE_INVALID_DATA": MessageDefinition(
+        "WAREHOUSE_INVALID_DATA", 400, "Dados do depósito inválidos.", "warning"
+    ),
+    "WAREHOUSE_INACTIVE": MessageDefinition(
+        "WAREHOUSE_INACTIVE", 409, "Depósito inativo não aceita novas zonas.", "warning"
+    ),
+    "WAREHOUSE_ZONE_CREATED": MessageDefinition(
+        "WAREHOUSE_ZONE_CREATED", 201, "Zona criada com sucesso.", audit_required=True
+    ),
+    "WAREHOUSE_ZONE_UPDATED": MessageDefinition(
+        "WAREHOUSE_ZONE_UPDATED", 200, "Zona atualizada com sucesso.", audit_required=True
+    ),
+    "WAREHOUSE_ZONE_DELETED": MessageDefinition(
+        "WAREHOUSE_ZONE_DELETED", 200, "Zona removida com sucesso.", audit_required=True
+    ),
+    "WAREHOUSE_ZONE_REORDERED": MessageDefinition(
+        "WAREHOUSE_ZONE_REORDERED", 200, "Ordenação da zona atualizada.", audit_required=True
+    ),
+    "WAREHOUSE_ZONE_RETRIEVED": MessageDefinition(
+        "WAREHOUSE_ZONE_RETRIEVED", 200, "Zona consultada com sucesso."
+    ),
+    "WAREHOUSE_ZONE_LIST_RETRIEVED": MessageDefinition(
+        "WAREHOUSE_ZONE_LIST_RETRIEVED", 200, "Zonas consultadas com sucesso."
+    ),
+    "WAREHOUSE_ZONE_NOT_FOUND": MessageDefinition(
+        "WAREHOUSE_ZONE_NOT_FOUND", 404, "Zona não encontrada.", "warning"
+    ),
+    "WAREHOUSE_ZONE_CODE_ALREADY_EXISTS": MessageDefinition(
+        "WAREHOUSE_ZONE_CODE_ALREADY_EXISTS",
+        409,
+        "Código de zona já cadastrado neste depósito.",
+        "warning",
+    ),
+    "WAREHOUSE_ZONE_BRANCH_REQUIRED": MessageDefinition(
+        "WAREHOUSE_ZONE_BRANCH_REQUIRED",
+        409,
+        "Filial ativa obrigatória para cadastrar zona.",
+        "warning",
+    ),
+    "WAREHOUSE_ZONE_INVALID_DATA": MessageDefinition(
+        "WAREHOUSE_ZONE_INVALID_DATA", 400, "Dados da zona inválidos.", "warning"
+    ),
+    "WAREHOUSE_ZONE_INACTIVE": MessageDefinition(
+        "WAREHOUSE_ZONE_INACTIVE", 409, "Zona inativa não aceita novas localizações.", "warning"
+    ),
+    "WAREHOUSE_LOCATION_CREATED": MessageDefinition(
+        "WAREHOUSE_LOCATION_CREATED",
+        201,
+        "Localização criada com sucesso.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_LOCATION_UPDATED": MessageDefinition(
+        "WAREHOUSE_LOCATION_UPDATED",
+        200,
+        "Localização atualizada com sucesso.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_LOCATION_ACTIVATED": MessageDefinition(
+        "WAREHOUSE_LOCATION_ACTIVATED",
+        200,
+        "Localização ativada com sucesso.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_LOCATION_DEACTIVATED": MessageDefinition(
+        "WAREHOUSE_LOCATION_DEACTIVATED",
+        200,
+        "Localização inativada com sucesso.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_LOCATION_DELETED": MessageDefinition(
+        "WAREHOUSE_LOCATION_DELETED",
+        200,
+        "Localização removida com sucesso.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_LOCATION_REORDERED": MessageDefinition(
+        "WAREHOUSE_LOCATION_REORDERED",
+        200,
+        "Ordenação da localização atualizada.",
+        audit_required=True,
+    ),
+    "WAREHOUSE_LOCATION_RETRIEVED": MessageDefinition(
+        "WAREHOUSE_LOCATION_RETRIEVED", 200, "Localização consultada com sucesso."
+    ),
+    "WAREHOUSE_LOCATION_LIST_RETRIEVED": MessageDefinition(
+        "WAREHOUSE_LOCATION_LIST_RETRIEVED", 200, "Localizações consultadas com sucesso."
+    ),
+    "WAREHOUSE_LOCATION_NOT_FOUND": MessageDefinition(
+        "WAREHOUSE_LOCATION_NOT_FOUND", 404, "Localização não encontrada.", "warning"
+    ),
+    "WAREHOUSE_LOCATION_CODE_ALREADY_EXISTS": MessageDefinition(
+        "WAREHOUSE_LOCATION_CODE_ALREADY_EXISTS",
+        409,
+        "Código de localização já cadastrado neste depósito.",
+        "warning",
+    ),
+    "WAREHOUSE_LOCATION_BARCODE_ALREADY_EXISTS": MessageDefinition(
+        "WAREHOUSE_LOCATION_BARCODE_ALREADY_EXISTS",
+        409,
+        "Código de barras já cadastrado em outra localização.",
+        "warning",
+    ),
+    "WAREHOUSE_LOCATION_QR_CODE_ALREADY_EXISTS": MessageDefinition(
+        "WAREHOUSE_LOCATION_QR_CODE_ALREADY_EXISTS",
+        409,
+        "QR Code já cadastrado em outra localização.",
+        "warning",
+    ),
+    "WAREHOUSE_LOCATION_BRANCH_REQUIRED": MessageDefinition(
+        "WAREHOUSE_LOCATION_BRANCH_REQUIRED",
+        409,
+        "Filial ativa obrigatória para cadastrar localização.",
+        "warning",
+    ),
+    "WAREHOUSE_LOCATION_INVALID_DATA": MessageDefinition(
+        "WAREHOUSE_LOCATION_INVALID_DATA", 400, "Dados da localização inválidos.", "warning"
+    ),
+    "RECEIVING_DOCUMENT_CREATED": MessageDefinition(
+        "RECEIVING_DOCUMENT_CREATED",
+        201,
+        "Documento de recebimento criado com sucesso.",
+        audit_required=True,
+    ),
+    "RECEIVING_DOCUMENT_UPDATED": MessageDefinition(
+        "RECEIVING_DOCUMENT_UPDATED",
+        200,
+        "Documento de recebimento atualizado com sucesso.",
+        audit_required=True,
+    ),
+    "RECEIVING_DOCUMENT_STATUS_CHANGED": MessageDefinition(
+        "RECEIVING_DOCUMENT_STATUS_CHANGED",
+        200,
+        "Status do recebimento atualizado.",
+        audit_required=True,
+    ),
+    "RECEIVING_DOCUMENT_DELETED": MessageDefinition(
+        "RECEIVING_DOCUMENT_DELETED",
+        200,
+        "Documento de recebimento removido com sucesso.",
+        audit_required=True,
+    ),
+    "RECEIVING_DOCUMENT_RETRIEVED": MessageDefinition(
+        "RECEIVING_DOCUMENT_RETRIEVED", 200, "Recebimento consultado com sucesso."
+    ),
+    "RECEIVING_DOCUMENT_LIST_RETRIEVED": MessageDefinition(
+        "RECEIVING_DOCUMENT_LIST_RETRIEVED", 200, "Recebimentos consultados com sucesso."
+    ),
+    "RECEIVING_DOCUMENT_NOT_FOUND": MessageDefinition(
+        "RECEIVING_DOCUMENT_NOT_FOUND", 404, "Recebimento não encontrado.", "warning"
+    ),
+    "RECEIVING_DOCUMENT_NUMBER_ALREADY_EXISTS": MessageDefinition(
+        "RECEIVING_DOCUMENT_NUMBER_ALREADY_EXISTS",
+        409,
+        "Número de documento já cadastrado nesta filial.",
+        "warning",
+    ),
+    "RECEIVING_DOCUMENT_BRANCH_REQUIRED": MessageDefinition(
+        "RECEIVING_DOCUMENT_BRANCH_REQUIRED",
+        409,
+        "Filial ativa obrigatória para cadastrar recebimento.",
+        "warning",
+    ),
+    "RECEIVING_DOCUMENT_INVALID_DATA": MessageDefinition(
+        "RECEIVING_DOCUMENT_INVALID_DATA", 400, "Dados do recebimento inválidos.", "warning"
+    ),
+    "RECEIVING_DOCUMENT_ITEM_REQUIRED": MessageDefinition(
+        "RECEIVING_DOCUMENT_ITEM_REQUIRED",
+        400,
+        "Recebimento deve possuir pelo menos um item.",
+        "warning",
+    ),
+    "GOODS_RECEIPT_CONFIRMED": MessageDefinition(
+        "GOODS_RECEIPT_CONFIRMED",
+        200,
+        "Recebimento físico confirmado com sucesso.",
+        audit_required=True,
+    ),
+    "GOODS_RECEIPT_CANNOT_CONFIRM": MessageDefinition(
+        "GOODS_RECEIPT_CANNOT_CONFIRM",
+        409,
+        "Recebimento não pode ser confirmado no status atual.",
+        "warning",
+    ),
+    "PUTAWAY_CONFIRMED": MessageDefinition(
+        "PUTAWAY_CONFIRMED",
+        200,
+        "Put Away confirmado com sucesso.",
+        audit_required=True,
+    ),
+    "PUTAWAY_CANNOT_CONFIRM": MessageDefinition(
+        "PUTAWAY_CANNOT_CONFIRM",
+        409,
+        "Put Away não pode ser confirmado no estado atual.",
+        "warning",
+    ),
     "AUDIT_EVENTS_RETRIEVED": MessageDefinition(
         "AUDIT_EVENTS_RETRIEVED",
         200,
@@ -260,6 +625,19 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     ),
     "AUDIT_EVENT_NOT_FOUND": MessageDefinition(
         "AUDIT_EVENT_NOT_FOUND", 404, "Evento de auditoria não encontrado.", "warning"
+    ),
+    "DEMO_STATUS_RETRIEVED": MessageDefinition(
+        "DEMO_STATUS_RETRIEVED", 200, "Status do ambiente demo consultado."
+    ),
+    "DEMO_INSTALLED": MessageDefinition(
+        "DEMO_INSTALLED", 200, "Ambiente demo instalado com sucesso."
+    ),
+    "DEMO_RESET": MessageDefinition("DEMO_RESET", 200, "Ambiente demo resetado com sucesso."),
+    "DEMO_SCENARIOS_RETRIEVED": MessageDefinition(
+        "DEMO_SCENARIOS_RETRIEVED", 200, "Cenários demo consultados com sucesso."
+    ),
+    "DEMO_NOT_AVAILABLE": MessageDefinition(
+        "DEMO_NOT_AVAILABLE", 404, "Demo Environment indisponível neste ambiente.", "warning"
     ),
     "INTERNAL_SERVER_ERROR": MessageDefinition(
         "INTERNAL_SERVER_ERROR",

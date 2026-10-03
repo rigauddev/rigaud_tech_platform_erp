@@ -5,7 +5,7 @@ from uuid import UUID
 
 from app.core.config import settings
 from app.database import set_tenant_id
-from app.modules.auth.application.email import normalize_email, normalize_tenant
+from app.modules.auth.application.email import normalize_email
 from app.modules.auth.application.mfa_services import (
     DevelopmentEmailOtpSender,
     DevelopmentSmsOtpSender,
@@ -53,7 +53,6 @@ from app.modules.users.domain.entities import UserStatus
 
 @dataclass(frozen=True)
 class LoginInput:
-    tenant: str
     email: str
     password: str
     user_agent: str | None = None
@@ -101,18 +100,14 @@ class AuthenticateUser:
 
     async def execute(self, input_data: LoginInput) -> TokenPair | LoginMfaChallenge:
         try:
-            tenant = normalize_tenant(input_data.tenant)
             email = normalize_email(input_data.email)
         except ValueError as exc:
             raise InvalidCredentialsError("Invalid credentials.") from exc
 
-        tenant_id = await self.tenants.resolve_by_slug_or_code(tenant)
-        if tenant_id is None:
-            raise InvalidCredentialsError("Invalid credentials.")
-
-        user = await self.users.get_by_email_and_tenant_id(email=email, tenant_id=tenant_id)
+        user = await self.users.get_by_email(email=email)
         if user is None:
             raise InvalidCredentialsError("Invalid credentials.")
+        await self.tenants.ensure_active(user.tenant_id)
         if not self.password_service.verify(input_data.password, user.password_hash):
             await self.users.increment_failed_login(user)
             raise InvalidCredentialsError("Invalid credentials.")
@@ -304,6 +299,8 @@ async def issue_token_pair(
     memberships: MembershipRepository | None = None,
     active_context: ActiveContext | None = None,
 ) -> TokenPair:
+    if active_context is None:
+        active_context = _active_context_from_user(user)
     if active_context is None and memberships is not None:
         try:
             active_context = await ResolveDefaultContext(memberships).execute(
@@ -352,6 +349,21 @@ async def issue_token_pair(
     )
 
 
+def _active_context_from_user(user: Any) -> ActiveContext | None:
+    branch_id = getattr(user, "active_branch_id", None)
+    role = getattr(user, "role", None)
+    if branch_id is None and role is None:
+        return None
+    return ActiveContext(
+        tenant_id=user.tenant_id,
+        membership_id=None,
+        branch_id=branch_id,
+        branch_membership_id=None,
+        role=role,
+        access_scope=None,
+    )
+
+
 class RefreshSession:
     def __init__(
         self,
@@ -391,7 +403,7 @@ class RefreshSession:
         if user.status != UserStatus.ACTIVE or not user.is_active:
             raise InactiveUserError("Inactive user.")
 
-        active_context = await self._validate_session_context(session)
+        active_context = await self._validate_session_context(session, user)
         active_tenant_id = active_context.tenant_id if active_context else user.tenant_id
 
         refresh_token = self.token_service.create_refresh_token()
@@ -438,7 +450,16 @@ class RefreshSession:
             expires_in=self.token_service.access_token_expires_in,
         )
 
-    async def _validate_session_context(self, session: AuthSessionModel) -> ActiveContext | None:
+    async def _validate_session_context(
+        self, session: AuthSessionModel, user: Any
+    ) -> ActiveContext | None:
+        if session.tenant_id != user.tenant_id:
+            raise InvalidTokenError("Invalid refresh token.")
+        active_context = _active_context_from_user(user)
+        if active_context is not None:
+            if session.branch_id and active_context.branch_id != session.branch_id:
+                raise InvalidTokenError("Invalid refresh token.")
+            return active_context
         if not _has_context_claims(
             {
                 "membership_id": session.membership_id,
@@ -526,6 +547,7 @@ class GetCurrentUser:
 
         active_context = await self._validate_access_context(
             user_id=user.id,
+            user=user,
             tenant_id=tenant_id,
             membership_id=membership_id,
             branch_id=branch_id,
@@ -565,6 +587,7 @@ class GetCurrentUser:
         self,
         *,
         user_id: UUID,
+        user: Any,
         tenant_id: UUID,
         membership_id: UUID | None,
         branch_id: UUID | None,
@@ -572,6 +595,13 @@ class GetCurrentUser:
         access_scope: str | None,
         payload: dict[str, Any],
     ) -> ActiveContext | None:
+        if tenant_id != user.tenant_id:
+            raise InvalidTokenError("Invalid token.")
+        active_context = _active_context_from_user(user)
+        if active_context is not None:
+            if branch_id and active_context.branch_id != branch_id:
+                raise InvalidTokenError("Invalid token.")
+            return active_context
         if not _has_context_claims(payload):
             return None
         if self.memberships is None or self.branches is None:

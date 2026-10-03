@@ -4,6 +4,12 @@ Fonte operacional para qualquer agente, desenvolvedor ou sessão Codex da Rigaud
 
 Este documento consolida a estratégia do projeto. Ele deve ser lido antes de qualquer Task, junto com `AGENTS.md`, `erp-blueprint/AGENTS.md`, ADRs, backlog, roadmap e documentação do módulo afetado.
 
+Também devem ser lidos:
+
+- `AI_DEVELOPMENT_CHARTER.md`
+- `ERP_DECISIONS.md`
+- `ERP_GLOSSARY.md`
+
 ## Identidade do Projeto
 
 Nome oficial:
@@ -30,6 +36,9 @@ Leitura obrigatória antes de alterar arquivos:
 
 - `AGENTS.md`
 - `erp-blueprint/AGENTS.md`
+- `AI_DEVELOPMENT_CHARTER.md`
+- `ERP_DECISIONS.md`
+- `ERP_GLOSSARY.md`
 - `CONTRIBUTING.md`
 - `docs/governance/git-flow.md`
 - `erp-blueprint/docs/project-plan.md`
@@ -40,6 +49,8 @@ Leitura obrigatória antes de alterar arquivos:
 - ADRs em `erp-blueprint/docs/adr/`
 - documentação do módulo afetado em `docs/`
 - documentação local do módulo em `erp-platform/backend/app/modules/<module>/README.md` ou `erp-platform/frontend/lib/features/<feature>/README.md`, quando existir.
+
+Antes de cada Task, quando houver dúvida técnica, comportamento específico de biblioteca ou modelagem de processo de mercado, o agente deve consultar documentação oficial das tecnologias envolvidas e referências de ERPs/WMS consolidados. A documentação da Task deve registrar referências consultadas, decisão arquitetural adotada e impacto futuro.
 
 ## Stack Oficial
 
@@ -102,6 +113,19 @@ Frontend:
 - responsividade por plataforma
 - widgets sem regra de negócio.
 
+Regra multiplataforma permanente:
+
+- nenhuma funcionalidade é considerada concluída se não nascer preparada para Web, Android, iOS, Windows, Linux e macOS;
+- validações completas de Windows e Linux podem ocorrer em ambientes próprios, mas a implementação Flutter não deve introduzir dependências ou fluxos incompatíveis com essas plataformas;
+- divergências entre SaaS e On-Premise não devem gerar bases de código separadas.
+
+Regra de preparação evolutiva de entidades:
+
+- toda nova entidade deve ser avaliada para suportar futuramente QR Code, código de barras, auditoria completa, sincronização offline, eventos Kafka, operação multi-filial e compatibilidade SaaS/On-Premise;
+- toda nova entidade operacional deve possuir UUID interno e avaliar a necessidade de código curto para uso humano na operação;
+- essa avaliação não autoriza implementar recursos futuros fora do escopo da Task;
+- quando a Task não implementar um desses recursos, a documentação deve registrar a preparação ou o limite do escopo.
+
 Organização esperada para módulos backend:
 
 ```text
@@ -127,12 +151,43 @@ tenant_id = companies.id
 Regras permanentes:
 
 - o frontend nunca define `tenant_id` confiável;
-- o backend resolve tenant pelo usuário autenticado e contexto ativo;
+- login usa somente email e senha;
+- o usuário pertence a exatamente uma empresa;
+- o usuário possui exatamente uma filial ativa;
+- o backend resolve tenant, filial ativa e papel pelo usuário autenticado;
 - filtros por tenant são obrigatórios em repositórios e use cases;
 - não misturar dados entre empresas;
 - filiais devem pertencer ao tenant ativo;
 - instalações SaaS usam API central e PostgreSQL compartilhado;
 - instalações on-premises usam um único PostgreSQL local por empresa.
+- tenant e deployment sao conceitos diferentes;
+- deployments oficiais: `CLOUD_SHARED`, `CLOUD_DEDICATED`, `ON_PREMISE` e `HYBRID`;
+- um tenant pode migrar entre deployments sem criar nova empresa;
+- partner/reseller nao e tenant.
+
+## Deployment E Distribuicao
+
+Arquitetura oficial:
+
+```text
+ERP
+  ↓
+Deployment Layer
+  ├── Cloud
+  ├── On-Premise
+  └── Hybrid
+```
+
+Regras:
+
+- Cloud inicial e SaaS multi-tenant.
+- Cloud Dedicated fica reservado para isolamento operacional ou contrato especial.
+- On-Premise e o mesmo ERP rodando no ambiente local do cliente.
+- Servidor On-Premise de producao recomendado: Linux.
+- Windows, macOS, Linux, Android e iOS sao plataformas de acesso.
+- Hybrid usa servidor local com Sync Gateway futuro para Rigaud Cloud.
+- Offline-First completo e futuro, mas toda arquitetura deve considerar cache local, fila, idempotencia, sync, conflitos e versionamento.
+- AI/MCP futuro deve respeitar tenant, branch, role, permissions e audit.
 
 ## SaaS, Planos e Feature Flags
 
@@ -159,6 +214,7 @@ Regras:
 Padrões obrigatórios:
 
 - JWT com claims controladas pelo backend;
+- JWT deve carregar `user_id`, `tenant_id`, `branch_id` e `role`;
 - refresh token opaco e rotacionável;
 - senhas sempre com hash;
 - dados sensíveis nunca em logs;
@@ -228,29 +284,83 @@ Diretriz:
 - não implementar carregamento automático de presets sem Task específica;
 - não misturar Form Blueprint com regra comercial do módulo.
 
+## Documentacao Como Produto
+
+DOC-009 congela a arquitetura de documentacao, Central de Ajuda e conhecimento.
+
+Regras:
+
+- documentacao nasce junto com a funcionalidade;
+- `docs/index.md` e a entrada principal do produto;
+- `docs/architecture/product-map.md` mantem o mapa vivo do produto;
+- funcionalidades operacionais devem avaliar documentacao tecnica, Academy, Help Center, tutorial e FAQ;
+- documentacao para usuario final deve explicar uso e resultado esperado, sem expor detalhes internos desnecessarios;
+- documentacao tecnica deve registrar API, banco, regras, testes, troubleshooting e limites conhecidos quando aplicavel;
+- conteudo de parceiros, revendedores, AI/MCP e Marketing AI permanece futuro ate task especifica;
+- nenhum agente deve implementar Help Center, CMS, busca, portal de parceiro, IA ou automacao de marketing sem task propria.
+
 ## Backlog e Roadmap
 
-Ordem oficial do MVP Restaurante:
+Ordem oficial do Core Inventory e Inbound Logistics:
 
 1. REST-001 — Cadastro de Produtos
 2. DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
 3. DEV-011 — Assinaturas, Planos e Limites
 4. REST-002 — Categorias
-5. REST-003 — Controle de Estoque
-6. REST-004 — Mesas
-7. REST-005 — Setores
-8. REST-006 — Garçons
-9. REST-007 — QR Code das Mesas
-10. REST-008 — Cardápio Online
-11. REST-009 — Pedido pelo Cliente
-12. REST-010 — Pedido pelo Garçom
-13. REST-011 — Painel da Cozinha — KDS
-14. REST-012 — Delivery
-15. REST-013 — Caixa
-16. REST-014 — Fechamento da Venda
-17. REST-015 — Cupom ou NFC-e
+5. DEV-012 — Authentication & Tenant Architecture Alignment
+6. REST-003 — Inventory Engine
+7. REST-004 — Warehouse Management
+8. REST-005 — Warehouse Zones
+9. REST-006 — Warehouse Locations
+10. REST-007 — Receiving Documents
+11. REST-008 — Goods Receipt
+12. DOC-008 — Deployment & Distribution Architecture
+13. DOC-009 — Product Documentation, Help Center & Knowledge Architecture
+14. REST-009 — Put Away
+15. REST-010 — Inventory Transactions
+16. REST-011 — Inventory Count
+17. REST-012 — Stock Adjustments
+18. REST-013 — Transfers
+
+Depois do Core Inventory, iniciar MVP Restaurante:
+
+1. Restaurant-001 — Mesas
+2. Restaurant-002 — Setores
+3. Restaurant-003 — Garçons
+4. Restaurant-004 — QR Code das Mesas
+5. Restaurant-005 — Cardápio Online
+6. Restaurant-006 — Pedidos
+7. Restaurant-007 — Painel da Cozinha — KDS
+8. Restaurant-008 — Delivery
+9. Restaurant-009 — Caixa
+10. Restaurant-010 — Cupom ou NFC-e
 
 Não reordenar o backlog. Não avançar automaticamente para a próxima Task.
+
+## Estratégia Engine-First
+
+A partir da DOC-005, domínios comerciais reutilizáveis devem nascer como engines.
+
+Fluxo obrigatório para engines:
+
+```text
+DOC
+    ↓
+IMPLEMENTAÇÃO
+    ↓
+REVIEW
+    ↓
+INTEGRAÇÃO
+```
+
+Regras:
+
+- DOC congela domínio, eventos, fluxos, estados, integrações, offline strategy e limites.
+- Implementação cria backend, frontend, testes e documentação operacional.
+- Review estabiliza comportamento, segurança, performance e aderência arquitetural.
+- Integração conecta a engine aos demais módulos.
+- Toda engine deve ser demonstrável pelo Demo Environment quando aplicável.
+- Kafka e Event Store permanecem planejados até tasks específicas.
 
 ## Git Flow
 
@@ -324,6 +434,8 @@ Cada Task deve atualizar, quando aplicável:
 - `README.md`
 - `CHANGELOG.md`
 - `docs/<module>/`
+- `docs/help/` para conteudo de ajuda, FAQ ou tutorial;
+- `docs/architecture/product-map.md` quando o status do produto mudar;
 - README local do módulo;
 - Academy em `erp-blueprint/docs/academy/`;
 - backlog;

@@ -16,16 +16,22 @@ Este repositório contém apenas a estrutura inicial de pastas e documentação 
 Fundação concluída até:
 
 ```text
-DEV-010 — Tenant, Memberships, Filiais e Contexto Ativo
+DEV-012 — Authentication & Tenant Architecture Alignment
 ```
 
-Task documental atual:
+Task atual:
 
 ```text
-DOC-002 — Master Development Prompt
+REST-010 — Inventory Transactions
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
+
+Fontes permanentes adicionais:
+
+- `AI_DEVELOPMENT_CHARTER.md`
+- `ERP_DECISIONS.md`
+- `ERP_GLOSSARY.md`
 
 ## Desenvolvimento com Docker
 
@@ -48,8 +54,31 @@ Comandos disponíveis:
 - `make lint`
 - `make format`
 - `make test`
+- `make demo`
+- `make demo-users`
+- `make demo-platform`
+- `make demo-restaurant`
+- `make demo-retail`
+- `make demo-scenarios`
+- `make demo-reset`
+- `make playground`
 
 Detalhes em `docs/development/docker.md`.
+
+## Ambiente Demo
+
+O ambiente demo oficial e o Scenario Engine estão documentados em `docs/demo/overview.md`.
+
+Fluxo rápido:
+
+```bash
+make up
+make demo
+```
+
+Contas disponíveis em `docs/demo/accounts.md`.
+
+Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. A REST-004 adiciona depósitos demo por filial, a REST-005 adiciona zonas demo, a REST-006 adiciona localizações físicas, a REST-007 adiciona documentos de recebimento demo, a REST-008 confirma recebimento físico mantendo quantidade pendente de put away e a REST-009 libera mercadoria para localização final. A API `/api/v1/demo/*` e o Dashboard Demo do Flutter existem apenas para desenvolvimento. Cenários completos de mesas, pedidos, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
 
 ## Backend
 
@@ -67,9 +96,47 @@ A fundação transversal de governança, auditoria, logs e respostas da API est�
 
 A autenticação em dois fatores está documentada em `docs/authentication/mfa-overview.md`.
 
-O contexto ativo multi-empresa e multi-filial está documentado em `docs/authentication/context.md` e `docs/companies/multi-tenancy.md`.
+O contexto ativo foi alinhado para usuário com uma empresa e uma filial ativa em `docs/authentication/tenant-alignment.md`.
 
 O cadastro de produtos está documentado em `docs/products/overview.md`.
+
+O cadastro de categorias está documentado em `docs/categories/overview.md`.
+
+O Inventory Engine está documentado em `docs/inventory/api.md`.
+
+O cadastro de depósitos está documentado em `docs/warehouse/overview.md`.
+
+O cadastro de zonas de depósito está documentado em `docs/warehouse/zones.md`.
+
+O cadastro de localizações de depósito está documentado em `docs/warehouse/locations.md`.
+
+Os documentos de recebimento estão documentados em `docs/inventory/receiving-documents.md`.
+
+Goods Receipt está documentado em `docs/inventory/goods-receipt.md`.
+
+Put Away está documentado em `docs/inventory/putaway.md` e `docs/warehouse/putaway.md`.
+
+Inventory Transactions está documentado em `docs/inventory/transactions.md`.
+
+IA futura e MCP estão documentados em `docs/ai/overview.md`.
+
+Arquitetura de distribuicao, Cloud, On-Premise, Hybrid, Offline Strategy e Resellers esta documentada em `docs/architecture/deployment/README.md`.
+
+A entrada principal de documentacao do produto esta em `docs/index.md`.
+
+O mapa planejado do produto esta em `docs/architecture/product-map.md`.
+
+A arquitetura da Central de Ajuda e conhecimento esta documentada em `docs/help/README.md`.
+
+A documentacao de deployment para times tecnicos, implantacao e suporte esta em `docs/deployment/README.md`.
+
+O ambiente demo está documentado em `docs/demo/overview.md`.
+
+O domínio do Inventory Engine está documentado em `docs/inventory/overview.md`.
+
+## Frontend E UI
+
+A experiência visual da tela de login está documentada em `docs/ui/login-screen.md`.
 
 Endpoints técnicos disponíveis:
 
@@ -111,6 +178,53 @@ Endpoints técnicos disponíveis:
 - `POST /api/v1/products/{product_id}/deactivate`
 - `POST /api/v1/products/{product_id}/availability`
 - `DELETE /api/v1/products/{product_id}`
+- `POST /api/v1/categories`
+- `GET /api/v1/categories`
+- `GET /api/v1/categories/{category_id}`
+- `PATCH /api/v1/categories/{category_id}`
+- `POST /api/v1/categories/{category_id}/activate`
+- `POST /api/v1/categories/{category_id}/deactivate`
+- `POST /api/v1/categories/{category_id}/reorder`
+- `DELETE /api/v1/categories/{category_id}`
+- `GET /api/v1/inventory/balances`
+- `GET /api/v1/inventory/movements`
+- `GET /api/v1/inventory/transactions`
+- `GET /api/v1/inventory/transactions/{transaction_id}`
+- `POST /api/v1/inventory/adjustments`
+- `POST /api/v1/inventory/reservations`
+- `POST /api/v1/inventory/reservations/{reservation_id}/release`
+- `GET /api/v1/warehouses`
+- `GET /api/v1/warehouses/{warehouse_id}`
+- `POST /api/v1/warehouses`
+- `PUT /api/v1/warehouses/{warehouse_id}`
+- `POST /api/v1/warehouses/{warehouse_id}/default`
+- `DELETE /api/v1/warehouses/{warehouse_id}`
+- `GET /api/v1/warehouse-zones`
+- `GET /api/v1/warehouse-zones/{zone_id}`
+- `POST /api/v1/warehouse-zones`
+- `PUT /api/v1/warehouse-zones/{zone_id}`
+- `POST /api/v1/warehouse-zones/{zone_id}/reorder`
+- `DELETE /api/v1/warehouse-zones/{zone_id}`
+- `GET /api/v1/warehouse-locations`
+- `GET /api/v1/warehouse-locations/{location_id}`
+- `POST /api/v1/warehouse-locations`
+- `PUT /api/v1/warehouse-locations/{location_id}`
+- `POST /api/v1/warehouse-locations/{location_id}/activate`
+- `POST /api/v1/warehouse-locations/{location_id}/deactivate`
+- `POST /api/v1/warehouse-locations/{location_id}/reorder`
+- `DELETE /api/v1/warehouse-locations/{location_id}`
+- `GET /api/v1/receiving-documents`
+- `GET /api/v1/receiving-documents/{document_id}`
+- `POST /api/v1/receiving-documents`
+- `PUT /api/v1/receiving-documents/{document_id}`
+- `POST /api/v1/receiving-documents/{document_id}/status`
+- `POST /api/v1/receiving-documents/{document_id}/confirm-receipt`
+- `DELETE /api/v1/receiving-documents/{document_id}`
+- `POST /api/v1/inventory/putaway`
+- `GET /api/v1/demo/status`
+- `GET /api/v1/demo/install`
+- `GET /api/v1/demo/reset`
+- `GET /api/v1/demo/scenarios`
 - Swagger em `/docs`
 - OpenAPI em `/openapi.json`
 
@@ -125,5 +239,3 @@ Documentação complementar:
 - `docs/frontend/project-structure.md`
 - `docs/frontend/platforms.md`
 - `docs/frontend/responsive-design.md`
-# rigaud_tech_platform_erp
-# rigaud_tech_platform_erp

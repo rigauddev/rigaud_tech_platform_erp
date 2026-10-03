@@ -15,6 +15,18 @@ class AppRoutes {
   static const mfaSettings = '/users/me/mfa';
   static const products = '/products';
   static const productCreate = '/products/new';
+  static const categories = '/categories';
+  static const categoryCreate = '/categories/new';
+  static const inventory = '/inventory';
+  static const warehouses = '/warehouses';
+  static const warehouseCreate = '/warehouses/new';
+  static const warehouseZones = '/warehouse-zones';
+  static const warehouseZoneCreate = '/warehouse-zones/new';
+  static const warehouseLocations = '/warehouse-locations';
+  static const warehouseLocationCreate = '/warehouse-locations/new';
+  static const receivingDocuments = '/receiving-documents';
+  static const receivingDocumentCreate = '/receiving-documents/new';
   static const audit = '/audit';
+  static const demo = '/demo';
   static const notFound = '/not-found';
 }

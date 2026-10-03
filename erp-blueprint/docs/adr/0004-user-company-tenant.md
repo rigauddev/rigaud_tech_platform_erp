@@ -18,6 +18,10 @@ O usuário funcional do ERP é o registro existente em `auth_users`.
 
 Não será criada uma tabela `users` concorrente nesta etapa.
 
+Cada usuário pertence a uma única empresa/tenant e possui uma única filial ativa.
+
+O login não recebe tenant. O backend encontra o usuário por email, valida a empresa ativa e emite JWT com tenant, filial ativa e papel.
+
 `status` é a fonte funcional de verdade para acesso:
 
 - `active`
@@ -29,7 +33,9 @@ Não será criada uma tabela `users` concorrente nesta etapa.
 ## Consequências
 
 - Login e gestão de usuários usam a mesma identidade.
-- Email permanece único por empresa.
-- O mesmo email pode existir em empresas diferentes.
+- Email autenticável é único globalmente.
+- O mesmo email não pode existir em empresas diferentes enquanto não houver uma task específica de usuário multiempresa.
+- Troca de filial deve gerar histórico em `user_branch_history`.
+- Lotação atual deve ser representável em `user_work_assignments`.
 - Futuro RBAC deve se conectar ao usuário existente.
 - Migrações futuras devem evoluir `auth_users` com cuidado para preservar sessões e autenticação.

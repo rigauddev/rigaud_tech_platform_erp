@@ -1,0 +1,834 @@
+from __future__ import annotations
+
+from collections.abc import Iterable
+from dataclasses import asdict, dataclass
+from uuid import UUID
+
+from sqlalchemy import delete, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.modules.auth.infrastructure.models import (
+    AuthSessionModel,
+    AuthUserModel,
+    MfaRecoveryCodeModel,
+    UserMfaMethodModel,
+)
+from app.modules.categories.domain.entities import CategoryStatus
+from app.modules.categories.infrastructure.models import CategoryModel
+from app.modules.companies.domain.entities import (
+    AccessScope,
+    BranchRole,
+    BranchStatus,
+    CompanyRole,
+    CompanyStatus,
+    MembershipStatus,
+)
+from app.modules.companies.infrastructure.models import (
+    BranchMembershipModel,
+    BranchModel,
+    CompanyMembershipModel,
+    CompanyModel,
+)
+from app.modules.inventory.domain.entities import (
+    WarehouseLocationStatus,
+    WarehouseStatus,
+    WarehouseZoneStatus,
+)
+from app.modules.inventory.infrastructure.models import (
+    InventoryAdjustmentModel,
+    InventoryBalanceModel,
+    InventoryMovementModel,
+    InventoryReservationModel,
+    ReceivingDocumentModel,
+    ReceivingItemModel,
+    WarehouseLocationModel,
+    WarehouseModel,
+    WarehouseZoneModel,
+)
+from app.modules.products.domain.entities import ProductStatus
+from app.modules.products.infrastructure.models import ProductModel
+from app.modules.users.domain.entities import UserStatus
+from app.security.passwords import hash_password
+from app.shared.demo.data import (
+    DEMO_PASSWORD,
+    DEMO_SCENARIOS,
+    PLATFORM_COMPANY,
+    PLATFORM_USERS,
+    RESETTABLE_TENANT_SLUGS,
+    RESTAURANT_BRANCHES,
+    RESTAURANT_CATEGORIES,
+    RESTAURANT_COMPANY,
+    RESTAURANT_RECEIVING_DOCUMENTS,
+    RESTAURANT_USERS,
+    RESTAURANT_WAREHOUSE_LOCATIONS,
+    RESTAURANT_WAREHOUSE_ZONES,
+    RESTAURANT_WAREHOUSES,
+    RETAIL_BRANCHES,
+    RETAIL_CATEGORIES,
+    RETAIL_COMPANY,
+    RETAIL_RECEIVING_DOCUMENTS,
+    RETAIL_USERS,
+    RETAIL_WAREHOUSE_LOCATIONS,
+    RETAIL_WAREHOUSE_ZONES,
+    RETAIL_WAREHOUSES,
+    DemoBranch,
+    DemoCategory,
+    DemoCompany,
+    DemoProduct,
+    DemoReceivingDocument,
+    DemoUser,
+    DemoWarehouse,
+    DemoWarehouseLocation,
+    DemoWarehouseZone,
+    restaurant_products,
+    retail_products,
+)
+
+
+@dataclass
+class DemoSeedSummary:
+    mode: str
+    companies: int = 0
+    branches: int = 0
+    users: int = 0
+    memberships: int = 0
+    branch_memberships: int = 0
+    warehouses: int = 0
+    warehouse_zones: int = 0
+    warehouse_locations: int = 0
+    receiving_documents: int = 0
+    receiving_items: int = 0
+    categories: int = 0
+    products: int = 0
+    deleted_rows: int = 0
+
+    def as_dict(self) -> dict[str, int | str]:
+        return asdict(self)
+
+
+class DemoSeeder:
+    def __init__(self, session: AsyncSession, password: str = DEMO_PASSWORD) -> None:
+        self.session = session
+        self.password_hash = hash_password(password)
+
+    async def status(self) -> dict[str, int | str | dict[str, int]]:
+        return {
+            "mode": "status",
+            "companies": await self._count(CompanyModel),
+            "branches": await self._count(BranchModel),
+            "users": await self._count(AuthUserModel),
+            "memberships": await self._count(CompanyMembershipModel),
+            "branch_memberships": await self._count(BranchMembershipModel),
+            "warehouses": await self._count(WarehouseModel),
+            "warehouse_zones": await self._count(WarehouseZoneModel),
+            "warehouse_locations": await self._count(WarehouseLocationModel),
+            "receiving_documents": await self._count(ReceivingDocumentModel),
+            "receiving_items": await self._count(ReceivingItemModel),
+            "categories": await self._count(CategoryModel),
+            "products": await self._count(ProductModel),
+            "scenarios": {key: len(value) for key, value in DEMO_SCENARIOS.items()},
+        }
+
+    async def scenarios(self) -> dict[str, object]:
+        return {
+            "mode": "scenarios",
+            "status": "planned",
+            "items": DEMO_SCENARIOS,
+            "message": "Cenarios operacionais serao materializados quando os modulos existirem.",
+        }
+
+    async def seed_all(self) -> DemoSeedSummary:
+        await self.seed_platform()
+        restaurant = await self.seed_restaurant()
+        retail = await self.seed_retail()
+        return DemoSeedSummary(
+            mode="all",
+            companies=1 + restaurant.companies + retail.companies,
+            branches=restaurant.branches + retail.branches,
+            users=len(PLATFORM_USERS) + restaurant.users + retail.users,
+            memberships=len(PLATFORM_USERS) + restaurant.memberships + retail.memberships,
+            branch_memberships=restaurant.branch_memberships + retail.branch_memberships,
+            warehouses=restaurant.warehouses + retail.warehouses,
+            warehouse_zones=restaurant.warehouse_zones + retail.warehouse_zones,
+            warehouse_locations=restaurant.warehouse_locations + retail.warehouse_locations,
+            receiving_documents=restaurant.receiving_documents + retail.receiving_documents,
+            receiving_items=restaurant.receiving_items + retail.receiving_items,
+            categories=restaurant.categories + retail.categories,
+            products=restaurant.products + retail.products,
+        )
+
+    async def seed_platform(self) -> DemoSeedSummary:
+        company = await self._ensure_company(PLATFORM_COMPANY)
+        users = await self._ensure_users(company, PLATFORM_USERS)
+        await self.session.commit()
+        return DemoSeedSummary(
+            mode="platform",
+            companies=1,
+            users=len(users),
+            memberships=len(users),
+        )
+
+    async def seed_restaurant(self) -> DemoSeedSummary:
+        company = await self._ensure_company(RESTAURANT_COMPANY)
+        branches = await self._ensure_branches(company, RESTAURANT_BRANCHES)
+        warehouses = await self._ensure_warehouses(company.id, branches, RESTAURANT_WAREHOUSES)
+        zones = await self._ensure_warehouse_zones(
+            company.id,
+            branches,
+            warehouses,
+            RESTAURANT_WAREHOUSE_ZONES,
+        )
+        locations = await self._ensure_warehouse_locations(
+            company.id,
+            branches,
+            warehouses,
+            zones,
+            RESTAURANT_WAREHOUSE_LOCATIONS,
+        )
+        users = await self._ensure_users(company, RESTAURANT_USERS)
+        branch_memberships = await self._ensure_branch_memberships(users, branches)
+        categories = await self._ensure_categories(company.id, RESTAURANT_CATEGORIES)
+        products = await self._ensure_products(company.id, restaurant_products())
+        receiving = await self._ensure_receiving_documents(
+            company.id,
+            branches,
+            warehouses,
+            products,
+            RESTAURANT_RECEIVING_DOCUMENTS,
+        )
+        await self.session.commit()
+        return DemoSeedSummary(
+            mode="restaurant",
+            companies=1,
+            branches=len(branches),
+            users=len(users),
+            memberships=len(users),
+            branch_memberships=branch_memberships,
+            warehouses=len(warehouses),
+            warehouse_zones=len(zones),
+            warehouse_locations=len(locations),
+            receiving_documents=len(receiving),
+            receiving_items=sum(len(document.items) for document in receiving),
+            categories=len(categories),
+            products=len(products),
+        )
+
+    async def seed_retail(self) -> DemoSeedSummary:
+        company = await self._ensure_company(RETAIL_COMPANY)
+        branches = await self._ensure_branches(company, RETAIL_BRANCHES)
+        warehouses = await self._ensure_warehouses(company.id, branches, RETAIL_WAREHOUSES)
+        zones = await self._ensure_warehouse_zones(
+            company.id,
+            branches,
+            warehouses,
+            RETAIL_WAREHOUSE_ZONES,
+        )
+        locations = await self._ensure_warehouse_locations(
+            company.id,
+            branches,
+            warehouses,
+            zones,
+            RETAIL_WAREHOUSE_LOCATIONS,
+        )
+        users = await self._ensure_users(company, RETAIL_USERS)
+        branch_memberships = await self._ensure_branch_memberships(users, branches)
+        categories = await self._ensure_categories(company.id, RETAIL_CATEGORIES)
+        products = await self._ensure_products(company.id, retail_products())
+        receiving = await self._ensure_receiving_documents(
+            company.id,
+            branches,
+            warehouses,
+            products,
+            RETAIL_RECEIVING_DOCUMENTS,
+        )
+        await self.session.commit()
+        return DemoSeedSummary(
+            mode="retail",
+            companies=1,
+            branches=len(branches),
+            users=len(users),
+            memberships=len(users),
+            branch_memberships=branch_memberships,
+            warehouses=len(warehouses),
+            warehouse_zones=len(zones),
+            warehouse_locations=len(locations),
+            receiving_documents=len(receiving),
+            receiving_items=sum(len(document.items) for document in receiving),
+            categories=len(categories),
+            products=len(products),
+        )
+
+    async def reset(self) -> DemoSeedSummary:
+        tenant_ids = (
+            (
+                await self.session.execute(
+                    select(CompanyModel.id).where(CompanyModel.slug.in_(RESETTABLE_TENANT_SLUGS))
+                )
+            )
+            .scalars()
+            .all()
+        )
+        if not tenant_ids:
+            return DemoSeedSummary(mode="reset")
+
+        user_ids = (
+            (
+                await self.session.execute(
+                    select(AuthUserModel.id).where(AuthUserModel.tenant_id.in_(tenant_ids))
+                )
+            )
+            .scalars()
+            .all()
+        )
+        membership_ids = (
+            (
+                await self.session.execute(
+                    select(CompanyMembershipModel.id).where(
+                        CompanyMembershipModel.tenant_id.in_(tenant_ids)
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+
+        deleted_rows = 0
+        deleted_rows += await self._delete_where(
+            AuthSessionModel, AuthSessionModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            UserMfaMethodModel, UserMfaMethodModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            MfaRecoveryCodeModel, MfaRecoveryCodeModel.tenant_id.in_(tenant_ids)
+        )
+        if membership_ids:
+            deleted_rows += await self._delete_where(
+                BranchMembershipModel,
+                BranchMembershipModel.company_membership_id.in_(membership_ids),
+            )
+        deleted_rows += await self._delete_where(
+            CompanyMembershipModel,
+            CompanyMembershipModel.tenant_id.in_(tenant_ids),
+        )
+        deleted_rows += await self._delete_where(
+            InventoryReservationModel, InventoryReservationModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            InventoryAdjustmentModel, InventoryAdjustmentModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            InventoryMovementModel, InventoryMovementModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            InventoryBalanceModel, InventoryBalanceModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            ReceivingDocumentModel, ReceivingDocumentModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            WarehouseLocationModel, WarehouseLocationModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            WarehouseZoneModel, WarehouseZoneModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            WarehouseModel, WarehouseModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            ProductModel, ProductModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            CategoryModel, CategoryModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(BranchModel, BranchModel.tenant_id.in_(tenant_ids))
+        if user_ids:
+            deleted_rows += await self._delete_where(AuthUserModel, AuthUserModel.id.in_(user_ids))
+        deleted_rows += await self._delete_where(CompanyModel, CompanyModel.id.in_(tenant_ids))
+        await self.session.commit()
+        return DemoSeedSummary(mode="reset", deleted_rows=deleted_rows)
+
+    async def _ensure_company(self, data: DemoCompany) -> CompanyModel:
+        company = (
+            await self.session.execute(select(CompanyModel).where(CompanyModel.slug == data.slug))
+        ).scalar_one_or_none()
+        if company is None:
+            company = CompanyModel()
+            self.session.add(company)
+
+        company.legal_name = data.legal_name
+        company.trade_name = data.trade_name
+        company.document = data.document
+        company.email = data.email
+        company.phone = data.phone
+        company.slug = data.slug
+        company.code = data.code
+        company.status = CompanyStatus.ACTIVE
+        company.timezone = "America/Sao_Paulo"
+        company.locale = "pt-BR"
+        company.currency = "BRL"
+        company.is_active = True
+        company.deleted_at = None
+        await self.session.flush()
+        return company
+
+    async def _ensure_branches(
+        self,
+        company: CompanyModel,
+        branches: Iterable[DemoBranch],
+    ) -> list[BranchModel]:
+        models: list[BranchModel] = []
+        for data in branches:
+            branch = (
+                await self.session.execute(
+                    select(BranchModel).where(
+                        BranchModel.tenant_id == company.id,
+                        BranchModel.code == data.code,
+                    )
+                )
+            ).scalar_one_or_none()
+            if branch is None:
+                branch = BranchModel(tenant_id=company.id, code=data.code)
+                self.session.add(branch)
+
+            branch.name = data.name
+            branch.legal_name = company.legal_name
+            branch.trade_name = data.name
+            branch.document = company.document if data.is_headquarters else None
+            branch.branch_type = data.branch_type
+            branch.status = BranchStatus.ACTIVE
+            branch.is_headquarters = data.is_headquarters
+            branch.timezone = "America/Sao_Paulo"
+            branch.email = data.email
+            branch.phone = data.phone
+            branch.address = data.address
+            branch.deleted_at = None
+            models.append(branch)
+        await self.session.flush()
+        return models
+
+    async def _ensure_users(
+        self,
+        company: CompanyModel,
+        users: Iterable[DemoUser],
+    ) -> list[AuthUserModel]:
+        models: list[AuthUserModel] = []
+        for data in users:
+            user = (
+                await self.session.execute(
+                    select(AuthUserModel).where(
+                        AuthUserModel.tenant_id == company.id,
+                        func.lower(AuthUserModel.email) == data.email.lower(),
+                    )
+                )
+            ).scalar_one_or_none()
+            if user is None:
+                user = AuthUserModel(
+                    tenant_id=company.id,
+                    tenant_slug=company.slug,
+                    email=data.email.lower(),
+                    password_hash=self.password_hash,
+                )
+                self.session.add(user)
+
+            user.tenant_slug = company.slug
+            user.first_name = data.first_name
+            user.last_name = data.last_name
+            user.display_name = data.display_name
+            user.phone = data.phone
+            user.status = UserStatus.ACTIVE
+            user.is_active = True
+            user.is_superuser = data.is_superuser
+            user.must_change_password = False
+            user.deleted_at = None
+            await self.session.flush()
+            await self._ensure_company_membership(company, user, data.company_role)
+            models.append(user)
+        return models
+
+    async def _ensure_company_membership(
+        self,
+        company: CompanyModel,
+        user: AuthUserModel,
+        role: CompanyRole,
+    ) -> CompanyMembershipModel:
+        membership = (
+            await self.session.execute(
+                select(CompanyMembershipModel).where(
+                    CompanyMembershipModel.user_id == user.id,
+                    CompanyMembershipModel.tenant_id == company.id,
+                )
+            )
+        ).scalar_one_or_none()
+        if membership is None:
+            membership = CompanyMembershipModel(user_id=user.id, tenant_id=company.id)
+            self.session.add(membership)
+        membership.role = role
+        membership.status = MembershipStatus.ACTIVE
+        membership.access_scope = AccessScope.ALL_BRANCHES
+        membership.is_default = True
+        await self.session.flush()
+        return membership
+
+    async def _ensure_branch_memberships(
+        self,
+        users: Iterable[AuthUserModel],
+        branches: Iterable[BranchModel],
+    ) -> int:
+        count = 0
+        branch_list = list(branches)
+        for user in users:
+            membership = (
+                await self.session.execute(
+                    select(CompanyMembershipModel).where(
+                        CompanyMembershipModel.user_id == user.id,
+                        CompanyMembershipModel.tenant_id == user.tenant_id,
+                    )
+                )
+            ).scalar_one()
+            for index, branch in enumerate(branch_list):
+                branch_membership = (
+                    await self.session.execute(
+                        select(BranchMembershipModel).where(
+                            BranchMembershipModel.company_membership_id == membership.id,
+                            BranchMembershipModel.branch_id == branch.id,
+                        )
+                    )
+                ).scalar_one_or_none()
+                if branch_membership is None:
+                    branch_membership = BranchMembershipModel(
+                        company_membership_id=membership.id,
+                        branch_id=branch.id,
+                    )
+                    self.session.add(branch_membership)
+                branch_membership.role = (
+                    BranchRole.BRANCH_MANAGER
+                    if membership.role == CompanyRole.COMPANY_ADMIN
+                    else BranchRole.BRANCH_OPERATOR
+                )
+                branch_membership.status = MembershipStatus.ACTIVE
+                branch_membership.is_default = index == 0
+                count += 1
+        await self.session.flush()
+        return count
+
+    async def _ensure_warehouses(
+        self,
+        tenant_id: UUID,
+        branches: Iterable[BranchModel],
+        warehouses: Iterable[DemoWarehouse],
+    ) -> list[WarehouseModel]:
+        branch_by_code = {branch.code: branch for branch in branches}
+        models: list[WarehouseModel] = []
+
+        for data in warehouses:
+            branch = branch_by_code[data.branch_code]
+            warehouse = (
+                await self.session.execute(
+                    select(WarehouseModel).where(
+                        WarehouseModel.tenant_id == tenant_id,
+                        WarehouseModel.branch_id == branch.id,
+                        WarehouseModel.code == data.code,
+                    )
+                )
+            ).scalar_one_or_none()
+            if warehouse is None:
+                warehouse = WarehouseModel(
+                    tenant_id=tenant_id,
+                    branch_id=branch.id,
+                    code=data.code,
+                )
+                self.session.add(warehouse)
+
+            if data.is_default:
+                await self._clear_default_warehouse(tenant_id, branch.id, exclude=warehouse)
+
+            warehouse.name = data.name
+            warehouse.description = data.description
+            warehouse.address = data.address
+            warehouse.status = WarehouseStatus.ACTIVE
+            warehouse.is_active = True
+            warehouse.is_default = data.is_default
+            warehouse.deleted_at = None
+            models.append(warehouse)
+        await self.session.flush()
+        return models
+
+    async def _clear_default_warehouse(
+        self,
+        tenant_id: UUID,
+        branch_id: UUID,
+        *,
+        exclude: WarehouseModel,
+    ) -> None:
+        defaults = (
+            (
+                await self.session.execute(
+                    select(WarehouseModel).where(
+                        WarehouseModel.tenant_id == tenant_id,
+                        WarehouseModel.branch_id == branch_id,
+                        WarehouseModel.is_default.is_(True),
+                        WarehouseModel.deleted_at.is_(None),
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        for default in defaults:
+            if default.id != exclude.id:
+                default.is_default = False
+
+    async def _ensure_warehouse_zones(
+        self,
+        tenant_id: UUID,
+        branches: Iterable[BranchModel],
+        warehouses: Iterable[WarehouseModel],
+        zones: Iterable[DemoWarehouseZone],
+    ) -> list[WarehouseZoneModel]:
+        branch_by_code = {branch.code: branch for branch in branches}
+        warehouse_by_scope = {
+            (warehouse.branch_id, warehouse.code): warehouse for warehouse in warehouses
+        }
+        models: list[WarehouseZoneModel] = []
+
+        for data in zones:
+            branch = branch_by_code[data.branch_code]
+            warehouse = warehouse_by_scope[(branch.id, data.warehouse_code)]
+            zone = (
+                await self.session.execute(
+                    select(WarehouseZoneModel).where(
+                        WarehouseZoneModel.tenant_id == tenant_id,
+                        WarehouseZoneModel.warehouse_id == warehouse.id,
+                        WarehouseZoneModel.code == data.code,
+                    )
+                )
+            ).scalar_one_or_none()
+            if zone is None:
+                zone = WarehouseZoneModel(
+                    tenant_id=tenant_id,
+                    branch_id=branch.id,
+                    warehouse_id=warehouse.id,
+                    code=data.code,
+                )
+                self.session.add(zone)
+
+            zone.name = data.name
+            zone.description = data.description
+            zone.type = data.type
+            zone.color = data.color
+            zone.icon = data.icon
+            zone.sort_order = data.sort_order
+            zone.is_receiving = data.is_receiving
+            zone.is_shipping = data.is_shipping
+            zone.is_storage = data.is_storage
+            zone.is_production = data.is_production
+            zone.is_quarantine = data.is_quarantine
+            zone.status = WarehouseZoneStatus.ACTIVE
+            zone.is_active = True
+            zone.deleted_at = None
+            models.append(zone)
+        await self.session.flush()
+        return models
+
+    async def _ensure_warehouse_locations(
+        self,
+        tenant_id: UUID,
+        branches: Iterable[BranchModel],
+        warehouses: Iterable[WarehouseModel],
+        zones: Iterable[WarehouseZoneModel],
+        locations: Iterable[DemoWarehouseLocation],
+    ) -> list[WarehouseLocationModel]:
+        branch_by_code = {branch.code: branch for branch in branches}
+        warehouse_by_scope = {
+            (warehouse.branch_id, warehouse.code): warehouse for warehouse in warehouses
+        }
+        zone_by_scope = {(zone.warehouse_id, zone.code): zone for zone in zones}
+        models: list[WarehouseLocationModel] = []
+
+        for data in locations:
+            branch = branch_by_code[data.branch_code]
+            warehouse = warehouse_by_scope[(branch.id, data.warehouse_code)]
+            zone = zone_by_scope[(warehouse.id, data.zone_code)]
+            location = (
+                await self.session.execute(
+                    select(WarehouseLocationModel).where(
+                        WarehouseLocationModel.tenant_id == tenant_id,
+                        WarehouseLocationModel.warehouse_id == warehouse.id,
+                        WarehouseLocationModel.code == data.code,
+                    )
+                )
+            ).scalar_one_or_none()
+            if location is None:
+                location = WarehouseLocationModel(
+                    tenant_id=tenant_id,
+                    branch_id=branch.id,
+                    warehouse_id=warehouse.id,
+                    zone_id=zone.id,
+                    code=data.code,
+                )
+                self.session.add(location)
+
+            location.zone_id = zone.id
+            location.name = data.name
+            location.alias = data.alias
+            location.barcode = data.barcode
+            location.qr_code = data.qr_code
+            location.aisle = data.aisle
+            location.rack = data.rack
+            location.shelf = data.shelf
+            location.level = data.level
+            location.position = data.position
+            location.capacity = data.capacity
+            location.capacity_unit = data.capacity_unit
+            location.allow_negative = data.allow_negative
+            location.allow_mixed_items = data.allow_mixed_items
+            location.allow_expired = data.allow_expired
+            location.is_pick_location = data.is_pick_location
+            location.is_receive_location = data.is_receive_location
+            location.is_shipping_location = data.is_shipping_location
+            location.is_default = data.is_default
+            location.sort_order = data.sort_order
+            location.status = WarehouseLocationStatus.ACTIVE
+            location.is_active = True
+            location.deleted_at = None
+            models.append(location)
+        await self.session.flush()
+        return models
+
+    async def _ensure_categories(
+        self,
+        tenant_id: UUID,
+        categories: Iterable[DemoCategory],
+    ) -> list[CategoryModel]:
+        models: list[CategoryModel] = []
+        for data in categories:
+            category = (
+                await self.session.execute(
+                    select(CategoryModel).where(
+                        CategoryModel.tenant_id == tenant_id,
+                        CategoryModel.internal_code == data.internal_code,
+                    )
+                )
+            ).scalar_one_or_none()
+            if category is None:
+                category = CategoryModel(tenant_id=tenant_id, internal_code=data.internal_code)
+                self.session.add(category)
+
+            category.parent_id = None
+            category.name = data.name
+            category.slug = data.slug
+            category.description = data.description
+            category.icon = data.icon
+            category.color = data.color
+            category.display_order = data.display_order
+            category.status = CategoryStatus.ACTIVE
+            category.is_active = True
+            category.deleted_at = None
+            models.append(category)
+        await self.session.flush()
+        return models
+
+    async def _ensure_products(
+        self,
+        tenant_id: UUID,
+        products: Iterable[DemoProduct],
+    ) -> list[ProductModel]:
+        models: list[ProductModel] = []
+        for data in products:
+            product = (
+                await self.session.execute(
+                    select(ProductModel).where(
+                        ProductModel.tenant_id == tenant_id,
+                        ProductModel.internal_code == data.internal_code,
+                    )
+                )
+            ).scalar_one_or_none()
+            if product is None:
+                product = ProductModel(tenant_id=tenant_id, internal_code=data.internal_code)
+                self.session.add(product)
+
+            product.name = data.name
+            product.description = data.description
+            product.barcode = None
+            product.product_type = data.product_type
+            product.unit_of_measure = data.unit_of_measure
+            product.status = ProductStatus.ACTIVE
+            product.sale_price = data.sale_price
+            product.cost_price = data.cost_price
+            product.main_image_url = None
+            product.is_active = True
+            product.is_available_for_sale = True
+            product.deleted_at = None
+            models.append(product)
+        await self.session.flush()
+        return models
+
+    async def _ensure_receiving_documents(
+        self,
+        tenant_id: UUID,
+        branches: Iterable[BranchModel],
+        warehouses: Iterable[WarehouseModel],
+        products: Iterable[ProductModel],
+        documents: Iterable[DemoReceivingDocument],
+    ) -> list[ReceivingDocumentModel]:
+        branch_by_code = {branch.code: branch for branch in branches}
+        warehouse_by_scope = {
+            (warehouse.branch_id, warehouse.code): warehouse for warehouse in warehouses
+        }
+        product_by_code = {product.internal_code: product for product in products}
+        models: list[ReceivingDocumentModel] = []
+
+        for data in documents:
+            branch = branch_by_code[data.branch_code]
+            warehouse = warehouse_by_scope[(branch.id, data.warehouse_code)]
+            document = (
+                await self.session.execute(
+                    select(ReceivingDocumentModel).where(
+                        ReceivingDocumentModel.tenant_id == tenant_id,
+                        ReceivingDocumentModel.branch_id == branch.id,
+                        ReceivingDocumentModel.document_number == data.document_number,
+                    )
+                )
+            ).scalar_one_or_none()
+            if document is None:
+                document = ReceivingDocumentModel(
+                    tenant_id=tenant_id,
+                    branch_id=branch.id,
+                    warehouse_id=warehouse.id,
+                    document_number=data.document_number,
+                )
+                self.session.add(document)
+
+            document.warehouse_id = warehouse.id
+            document.supplier_id = None
+            document.document_type = data.document_type
+            document.status = data.status
+            document.expected_date = None
+            document.received_date = None
+            document.notes = data.notes
+            document.deleted_at = None
+            document.items = [
+                ReceivingItemModel(
+                    tenant_id=tenant_id,
+                    product_id=product_by_code[item.product_internal_code].id,
+                    ordered_quantity=item.ordered_quantity,
+                    received_quantity=item.received_quantity,
+                    damaged_quantity=item.damaged_quantity,
+                    pending_quantity=(
+                        item.ordered_quantity - item.received_quantity - item.damaged_quantity
+                    ),
+                    unit_cost=item.unit_cost,
+                )
+                for item in data.items
+            ]
+            models.append(document)
+        await self.session.flush()
+        return models
+
+    async def _delete_where(self, model: type, *criteria: object) -> int:
+        result = await self.session.execute(delete(model).where(*criteria))
+        return result.rowcount or 0
+
+    async def _count(self, model: type) -> int:
+        return (await self.session.execute(select(func.count()).select_from(model))).scalar_one()

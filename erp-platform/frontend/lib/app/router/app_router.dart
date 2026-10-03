@@ -6,19 +6,36 @@ import '../../features/auth/mfa/presentation/mfa_settings_screen.dart';
 import '../../features/auth/mfa/presentation/mfa_verify_screen.dart';
 import '../../features/audit/presentation/audit_detail_screen.dart';
 import '../../features/audit/presentation/audit_list_screen.dart';
+import '../../features/categories/presentation/category_detail_screen.dart';
+import '../../features/categories/presentation/category_form_screen.dart';
+import '../../features/categories/presentation/category_list_screen.dart';
 import '../../features/companies/presentation/company_detail_screen.dart';
 import '../../features/companies/presentation/company_form_screen.dart';
 import '../../features/companies/presentation/company_list_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
+import '../../features/demo/presentation/demo_dashboard_screen.dart';
+import '../../features/inventory/presentation/inventory_screen.dart';
 import '../../features/not_found/presentation/not_found_screen.dart';
 import '../../features/products/presentation/product_detail_screen.dart';
 import '../../features/products/presentation/product_form_screen.dart';
 import '../../features/products/presentation/product_list_screen.dart';
+import '../../features/receiving_documents/presentation/receiving_document_detail_screen.dart';
+import '../../features/receiving_documents/presentation/receiving_document_form_screen.dart';
+import '../../features/receiving_documents/presentation/receiving_document_list_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/users/presentation/user_detail_screen.dart';
 import '../../features/users/presentation/user_form_screen.dart';
 import '../../features/users/presentation/user_list_screen.dart';
 import '../../features/users/presentation/user_password_screens.dart';
+import '../../features/warehouse_locations/presentation/warehouse_location_detail_screen.dart';
+import '../../features/warehouse_locations/presentation/warehouse_location_form_screen.dart';
+import '../../features/warehouse_locations/presentation/warehouse_location_list_screen.dart';
+import '../../features/warehouse_zones/presentation/warehouse_zone_detail_screen.dart';
+import '../../features/warehouse_zones/presentation/warehouse_zone_form_screen.dart';
+import '../../features/warehouse_zones/presentation/warehouse_zone_list_screen.dart';
+import '../../features/warehouses/presentation/warehouse_detail_screen.dart';
+import '../../features/warehouses/presentation/warehouse_form_screen.dart';
+import '../../features/warehouses/presentation/warehouse_list_screen.dart';
 import 'app_routes.dart';
 import 'route_guard.dart';
 
@@ -102,6 +119,108 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ProductFormScreen(),
       ),
       GoRoute(
+        path: AppRoutes.categories,
+        builder: (context, state) => const CategoryListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.inventory,
+        builder: (context, state) => const InventoryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.warehouses,
+        builder: (context, state) => const WarehouseListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.warehouseCreate,
+        builder: (context, state) => const WarehouseFormScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.warehouseZones,
+        builder: (context, state) => const WarehouseZoneListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.warehouseZoneCreate,
+        builder: (context, state) => const WarehouseZoneFormScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.warehouseLocations,
+        builder: (context, state) => const WarehouseLocationListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.warehouseLocationCreate,
+        builder: (context, state) => const WarehouseLocationFormScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.receivingDocuments,
+        builder: (context, state) => const ReceivingDocumentListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.receivingDocumentCreate,
+        builder: (context, state) => const ReceivingDocumentFormScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.receivingDocuments}/:documentId',
+        builder: (context, state) => ReceivingDocumentDetailScreen(
+          documentId: state.pathParameters['documentId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.receivingDocuments}/:documentId/edit',
+        builder: (context, state) => ReceivingDocumentFormScreen(
+          documentId: state.pathParameters['documentId'],
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.warehouseLocations}/:locationId',
+        builder: (context, state) => WarehouseLocationDetailScreen(
+          locationId: state.pathParameters['locationId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.warehouseLocations}/:locationId/edit',
+        builder: (context, state) => WarehouseLocationFormScreen(
+          locationId: state.pathParameters['locationId'],
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.warehouseZones}/:zoneId',
+        builder: (context, state) => WarehouseZoneDetailScreen(
+          zoneId: state.pathParameters['zoneId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.warehouseZones}/:zoneId/edit',
+        builder: (context, state) =>
+            WarehouseZoneFormScreen(zoneId: state.pathParameters['zoneId']),
+      ),
+      GoRoute(
+        path: '${AppRoutes.warehouses}/:warehouseId',
+        builder: (context, state) => WarehouseDetailScreen(
+          warehouseId: state.pathParameters['warehouseId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.warehouses}/:warehouseId/edit',
+        builder: (context, state) => WarehouseFormScreen(
+          warehouseId: state.pathParameters['warehouseId'],
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.categoryCreate,
+        builder: (context, state) => const CategoryFormScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.categories}/:categoryId',
+        builder: (context, state) => CategoryDetailScreen(
+          categoryId: state.pathParameters['categoryId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '${AppRoutes.categories}/:categoryId/edit',
+        builder: (context, state) =>
+            CategoryFormScreen(categoryId: state.pathParameters['categoryId']),
+      ),
+      GoRoute(
         path: '${AppRoutes.products}/:productId',
         builder: (context, state) => ProductDetailScreen(
           productId: state.pathParameters['productId'] ?? '',
@@ -131,6 +250,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.audit,
         builder: (context, state) => const AuditListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.demo,
+        builder: (context, state) => const DemoDashboardScreen(),
       ),
       GoRoute(
         path: '${AppRoutes.audit}/:eventId',

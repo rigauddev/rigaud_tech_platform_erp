@@ -10,15 +10,16 @@ A plataforma precisa autenticar usuários em ambiente multi-tenant sem depender 
 
 ## Decisão
 
-Usar login com `tenant`, `email` e `password`.
+Usar login com `email` e `password`.
 
-O backend resolve internamente o `tenant_id` a partir de uma representação técnica mínima (`tenant_slug`) na tabela `auth_users`.
+O backend resolve internamente `tenant_id`, filial ativa e papel a partir do usuário autenticado.
 
-Access tokens serão JWTs curtos com claims obrigatórias. Refresh tokens serão opacos, rotacionáveis e persistidos apenas como hash.
+Access tokens serão JWTs curtos com `sub`, `tenant_id`, `branch_id` e `role`. Refresh tokens serão opacos, rotacionáveis e persistidos apenas como hash.
 
 ## Consequências
 
 - O cliente não controla `tenant_id`.
+- O cliente não envia tenant no login.
 - O sistema já fica preparado para isolamento por tenant.
-- O módulo de empresas poderá substituir o resolver mínimo em task futura.
+- Email autenticável passa a ser único globalmente enquanto não houver suporte ativo a usuário multiempresa.
 - Reuso de refresh token revogado é detectado e auditado.

@@ -19,8 +19,9 @@ Payload de login:
 
 ```json
 {
-  "tenant": "rigaud-demo",
   "email": "admin@example.com",
   "password": "Senha123"
 }
 ```
+
+O backend resolve tenant, filial ativa e papel a partir do usuário autenticado.
