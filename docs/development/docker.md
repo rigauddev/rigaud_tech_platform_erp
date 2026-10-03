@@ -73,6 +73,8 @@ Todos os serviços possuem healthcheck configurado.
 make up
 make down
 make restart
+make restart-backend
+make restart-frontend
 make logs
 make backend
 make flutter
@@ -130,6 +132,16 @@ Após revisão da DEV-001:
 - O proxy Nginx passou a resolver serviços dinamicamente, evitando respostas `502` causadas por IPs antigos após reconstrução de backend ou frontend.
 
 ## Observações
+
+### Reinício direcionado
+
+Antes de cada alteração, confirme branch, upstream remoto, roadmap e escopo da task. Após a alteração, reinicie somente quando a mudança exigir recarga do processo em execução:
+
+- alteração no backend: `make restart-backend`;
+- alteração no Flutter servido pelo container: `make restart-frontend`;
+- alteração de Dockerfile, imagem, dependências ou `docker-compose.yml`: use `make backend`, `make flutter` ou `make up` apenas para o serviço que exige rebuild.
+
+Não crie uma segunda stack Compose nem recrie containers saudáveis para validar uma mudança que não os afeta.
 
 Esta documentação cobre apenas a infraestrutura Docker de desenvolvimento.
 

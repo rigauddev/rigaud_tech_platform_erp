@@ -21,6 +21,8 @@ Roadmap oficial da Rigaud Tech Platform ERP.
 
 Estado atual: concluído até DEV-012 em review.
 
+Refinamento transversal em review: UI-002 — Navigation & Application Shell, com entrada direta no Login, navegação por contexto, retorno nas subtelas e identidade visual ajustada.
+
 Próxima task prevista: DEV-011 — Assinaturas, Planos e Limites.
 
 ## Fase 2 — Core Inventory E Inbound Logistics

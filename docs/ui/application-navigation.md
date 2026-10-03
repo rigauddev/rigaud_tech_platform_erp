@@ -2,6 +2,8 @@
 
 UI-002 organiza a navegação compartilhada do ERP sem introduzir fluxos comerciais.
 
+Antes de alterações, a equipe confirma branch, upstream remoto, roadmap e backlog. Quando uma mudança requer recarga, apenas o container afetado é reiniciado; a stack Docker existente não deve ser duplicada.
+
 ## Entrada
 
 A Splash apenas apresenta a marca enquanto a aplicação inicializa. Ela redireciona automaticamente para Login ou Dashboard conforme a guarda de rota; não existe uma ação manual de continuar.
@@ -25,7 +27,7 @@ Cadastros, detalhes e edições apresentam uma ação de voltar para sua lista o
 
 ## Marca
 
-`assets/images/logo_rigaud_tech_trimmed.png` é uma variante PNG com transparência preservada e sem a margem excedente do arquivo original. A tela de Login usa essa variante para exibir a marca sem escala ou recorte artificial.
+`assets/images/Rigaud_Tech_profile.PNG` é o arquivo de marca oficial atual. A tela de Login usa `assets/images/Rigaud_Tech_profile_transparent.png`, uma variante transparente derivada do arquivo oficial, para exibir a marca sem o fundo branco.
 
 ## Limites
 
