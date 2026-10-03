@@ -637,7 +637,7 @@ class _BrandLogo extends StatelessWidget {
     return SizedBox(
       height: 104,
       child: Image.asset(
-        'assets/images/rigaud-tech-logo.png',
+        'assets/images/Rigaud_Tech_profile_transparent.png',
         fit: BoxFit.contain,
         alignment: Alignment.center,
         filterQuality: FilterQuality.high,
