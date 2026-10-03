@@ -22,7 +22,7 @@ DEV-012 — Authentication & Tenant Architecture Alignment
 Task atual:
 
 ```text
-UI-003 — Navigation Access & Login Brand Fix
+UI-004 — Localization & Login Flow
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.

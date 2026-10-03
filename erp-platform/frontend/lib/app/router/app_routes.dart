@@ -3,6 +3,7 @@ class AppRoutes {
 
   static const splash = '/';
   static const login = '/login';
+  static const forgotPassword = '/login/forgot-password';
   static const mfaVerify = '/login/mfa';
   static const dashboard = '/dashboard';
   static const companies = '/companies';

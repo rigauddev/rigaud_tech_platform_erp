@@ -25,6 +25,8 @@ Refinamento transversal em review: UI-002 — Navigation & Application Shell, co
 
 Correção transversal em review: UI-003 — Navigation Access & Login Brand Fix, com menu coerente com a guarda de rotas, acesso demo restrito à plataforma e marca de Login registrada no bundle Flutter.
 
+Refinamento transversal em review: UI-004 — Localization & Login Flow, com seletor Português/English, conteúdo consistente nas telas alteradas e recuperação de senha visual preparada para integração futura.
+
 Próxima task prevista: DEV-011 — Assinaturas, Planos e Limites.
 
 ## Fase 2 — Core Inventory E Inbound Logistics

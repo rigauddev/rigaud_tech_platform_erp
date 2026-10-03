@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_spacing.dart';
+import '../../../core/localization/app_strings.dart';
 
-final loginInfoItemsCount = _loginInfoItems.length;
+const loginInfoItemsCount = 3;
 
 class LoginCardShell extends StatelessWidget {
   const LoginCardShell({required this.child, super.key});
@@ -34,15 +35,18 @@ class LoginInfoCarousel extends StatelessWidget {
     required this.controller,
     required this.currentPage,
     required this.onPageChanged,
+    required this.strings,
     super.key,
   });
 
   final PageController controller;
   final int currentPage;
   final ValueChanged<int> onPageChanged;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
+    final items = _loginInfoItems(strings);
     return LoginCardShell(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -52,10 +56,10 @@ class LoginInfoCarousel extends StatelessWidget {
             Expanded(
               child: PageView.builder(
                 controller: controller,
-                itemCount: _loginInfoItems.length,
+                itemCount: items.length,
                 onPageChanged: onPageChanged,
                 itemBuilder: (context, index) {
-                  return _LoginInfoPage(item: _loginInfoItems[index]);
+                  return _LoginInfoPage(item: items[index]);
                 },
               ),
             ),
@@ -63,7 +67,7 @@ class LoginInfoCarousel extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                for (var index = 0; index < _loginInfoItems.length; index++)
+                for (var index = 0; index < items.length; index++)
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 220),
                     width: currentPage == index ? 26 : 8,
@@ -115,56 +119,57 @@ class _LoginMetric {
   final IconData icon;
 }
 
-const _loginInfoItems = [
+List<_LoginInfoItem> _loginInfoItems(AppStrings strings) => [
   _LoginInfoItem(
-    badge: 'Informativo do sistema',
-    title: 'Operação integrada em tempo real',
-    description:
-        'Acompanhe estoque, vendas, restaurante e financeiro em uma única plataforma preparada para Web, mobile e desktop.',
+    badge: strings.systemNotice,
+    title: strings.integratedOperation,
+    description: strings.integratedDescription,
     icon: Icons.dashboard_customize_outlined,
     metrics: [
-      _LoginMetric(label: 'Módulos', value: 'ERP', icon: Icons.hub_outlined),
       _LoginMetric(
-        label: 'Ambiente',
+        label: strings.modules,
+        value: 'ERP',
+        icon: Icons.hub_outlined,
+      ),
+      _LoginMetric(
+        label: strings.environment,
         value: 'Cloud',
         icon: Icons.cloud_outlined,
       ),
     ],
   ),
   _LoginInfoItem(
-    badge: 'Informativo da empresa',
-    title: 'Comunicados para a equipe',
-    description:
-        'Este espaço poderá exibir avisos operacionais, campanhas internas, treinamentos, escala e prioridades do dia.',
+    badge: strings.companyNotice,
+    title: strings.teamNotices,
+    description: strings.teamNoticesDescription,
     icon: Icons.campaign_outlined,
     metrics: [
       _LoginMetric(
-        label: 'Canal',
-        value: 'Equipe',
+        label: strings.channel,
+        value: strings.team,
         icon: Icons.groups_outlined,
       ),
       _LoginMetric(
-        label: 'Status',
-        value: 'Ativo',
+        label: strings.status,
+        value: strings.active,
         icon: Icons.verified_outlined,
       ),
     ],
   ),
   _LoginInfoItem(
-    badge: 'Informativo da empresa',
-    title: 'Imagem ou texto institucional',
-    description:
-        'Cada empresa poderá personalizar os próximos cards com conteúdo próprio, mantendo a identidade visual do ERP.',
+    badge: strings.companyNotice,
+    title: strings.institutionalContent,
+    description: strings.institutionalDescription,
     icon: Icons.image_outlined,
     metrics: [
       _LoginMetric(
-        label: 'Conteúdo',
-        value: 'Texto',
+        label: strings.content,
+        value: strings.text,
         icon: Icons.article_outlined,
       ),
       _LoginMetric(
-        label: 'Visual',
-        value: 'Imagem',
+        label: strings.visual,
+        value: strings.image,
         icon: Icons.photo_library_outlined,
       ),
     ],
@@ -181,25 +186,28 @@ class _LoginInfoPage extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm,
-            vertical: AppSpacing.xs,
-          ),
-          decoration: BoxDecoration(
-            color: const Color(0xFFEAF7FF),
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: const Color(0xFFB8EAFA)),
-          ),
-          child: Text(
-            item.badge,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: textTheme.labelMedium?.copyWith(
-              color: const Color(0xFF0E2A5A),
-              fontWeight: FontWeight.w700,
+        Align(
+          alignment: Alignment.center,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.xs,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFFEAF7FF),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: const Color(0xFFB8EAFA)),
+            ),
+            child: Text(
+              item.badge,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: textTheme.labelMedium?.copyWith(
+                color: const Color(0xFF0E2A5A),
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
@@ -224,6 +232,7 @@ class _LoginInfoPage extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
         Text(
           item.title,
+          textAlign: TextAlign.center,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: textTheme.headlineSmall?.copyWith(
@@ -234,6 +243,7 @@ class _LoginInfoPage extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         Text(
           item.description,
+          textAlign: TextAlign.center,
           maxLines: 3,
           overflow: TextOverflow.ellipsis,
           style: textTheme.bodyLarge?.copyWith(
@@ -277,11 +287,12 @@ class _LoginMetricTile extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   metric.label,
+                  textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
@@ -290,6 +301,7 @@ class _LoginMetricTile extends StatelessWidget {
                 ),
                 Text(
                   metric.value,
+                  textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
