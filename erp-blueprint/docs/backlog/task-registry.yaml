@@ -3,11 +3,11 @@ tasks:
     title: Restaurant Operations Core
     epic: MVP Restaurante
     module: restaurant
-    status: in_progress
+    status: review
     dependencies:
       - REST-013
     started_at: "2026-10-03"
-    completed_at: null
+    completed_at: "2026-10-03"
     documentation:
       - docs/restaurant/README.md
       - docs/restaurant/operations.md
@@ -34,14 +34,15 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/doc-011-restaurant-operations-core
-      commits: []
+      commits:
+        - 2aa9e3f
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
-    review_status: pending
+    commit: 2aa9e3f
+    review_status: ready
   - id: REST-013
     title: Inventory Transfers
     epic: EPIC-003 Inbound Logistics
