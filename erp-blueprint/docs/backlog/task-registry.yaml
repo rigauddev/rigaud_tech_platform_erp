@@ -28,13 +28,14 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/restaurant-003-waiters-team
-      commits: []
+      commits:
+        - 1be25e6
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
+    commit: 1be25e6
     review_status: ready
   - id: RESTAURANT-002
     title: Setores e Ambientes
