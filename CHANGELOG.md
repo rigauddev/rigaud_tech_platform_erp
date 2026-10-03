@@ -4,6 +4,8 @@
 
 ### Added
 
+- DOC-010: roadmap do Restaurante passa a incluir Menu do Dia, disponibilidade comercial diária, contexto da mesa, garçom responsável e roteamento para cozinha antes do cardápio online e KDS.
+
 - REST-011: Inventory Count adiciona documentos de inventario fisico, itens, ciclo draft/in_progress/finished/cancelled, auditoria e migration `0019_inventory_count`.
 - REST-011: divergencias de contagem passam a gerar `InventoryMovement` imutavel do tipo `count`, com origem `INVENTORY` e processo `COUNT`.
 

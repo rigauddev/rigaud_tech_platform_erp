@@ -42,11 +42,12 @@ RIGAUD TECH PLATFORM ERP
 │   ├── Mesas [Planejado]
 │   ├── Garçons [Planejado]
 │   ├── App operacional de garçom [Planejado]
+│   ├── Menu do Dia e Disponibilidade [Planejado]
 │   ├── Cardápio [Planejado]
 │   ├── QR Code [Planejado]
 │   ├── App/portal do cliente [Planejado]
-│   ├── Pedidos [Planejado]
-│   ├── Cozinha / KDS [Planejado]
+│   ├── Pedidos e Garçom Responsável [Planejado]
+│   ├── Cozinha, KDS e Impressão [Planejado]
 │   ├── PDV / Caixa [Planejado]
 │   ├── Entrada por NF-e/XML [Planejado]
 │   └── Produção [Futuro]
@@ -91,6 +92,7 @@ RIGAUD TECH PLATFORM ERP
 - Financial integrara Sales, Inventory, Restaurant e Production.
 - HR sera independente, mas integrado a Users, Company e Branch.
 - Quem realizou o pedido nao e necessariamente quem e responsavel pela mesa.
+- Disponibilidade diaria de cardapio e cota comercial, separada do saldo fisico e da producao.
 - AI/MCP consumira contexto e eventos respeitando tenant, filial, permissoes, auditoria e seguranca.
 
 ## Atualizacao

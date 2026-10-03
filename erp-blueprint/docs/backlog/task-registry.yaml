@@ -1,4 +1,40 @@
 tasks:
+  - id: DOC-010
+    title: Restaurant Menu Availability & Order Routing Architecture
+    epic: MVP Restaurante
+    module: restaurant
+    status: review
+    dependencies:
+      - DOC-009
+    started_at: "2026-10-03"
+    completed_at: null
+    documentation:
+      - docs/restaurant/menu-availability.md
+      - docs/architecture/product-map.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/architecture/product-vision.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/docs/academy/restaurant/001-menu-availability.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/restaurant/001-menu-availability.md
+    tests:
+      - mkdocs build
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: docs/restaurant-menu-availability-roadmap
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 2a7ea25
+    review_status: ready
   - id: REST-011
     title: Inventory Count
     epic: EPIC-003 Inbound Logistics
