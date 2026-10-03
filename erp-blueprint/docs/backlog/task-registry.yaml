@@ -26,13 +26,14 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/ui-002-navigation-shell
-      commits: []
+      commits:
+        - 590cb09
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: 470c678
+    commit: 590cb09
     review_status: ready
   - id: REST-010
     title: Inventory Transactions
