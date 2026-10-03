@@ -66,6 +66,10 @@ Regras já definidas:
 - Garçom deve receber notificação.
 - KDS recebe os pedidos da cozinha.
 - Emissão fiscal permanece isolada.
+- O Menu do Dia é publicado por filial, período e canal de venda.
+- A equipe pode limitar a quantidade vendável de cada prato no dia.
+- A cota comercial diária não é saldo de estoque; ela será integrada à produção futura sem duplicar `InventoryBalance`.
+- O pedido do cliente deve registrar a mesa e notificar o garçom responsável antes do roteamento para cozinha.
 
 ## Loja de Roupas
 
