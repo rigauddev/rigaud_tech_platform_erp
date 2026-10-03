@@ -67,11 +67,47 @@ void main() {
       hasLength(1),
     );
   });
+
+  test('InventoryTransfersController cria e despacha transferência', () async {
+    final repository = _FakeInventoryRepository();
+    final container = ProviderContainer(
+      overrides: [inventoryRepositoryProvider.overrideWithValue(repository)],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(inventoryTransfersControllerProvider.future);
+    final created = await container
+        .read(inventoryTransfersControllerProvider.notifier)
+        .create(
+          const InventoryTransferInput(
+            code: 'TRF-001',
+            productId: 'product-1',
+            sourceWarehouseId: 'warehouse-1',
+            targetBranchId: 'branch-2',
+            targetWarehouseId: 'warehouse-2',
+            quantity: '3.000',
+            reason: 'Reposição',
+          ),
+        );
+    final dispatched = await container
+        .read(inventoryTransfersControllerProvider.notifier)
+        .dispatch(created!.id);
+
+    expect(dispatched?.status, 'in_transit');
+    expect(container.read(inventoryTransfersControllerProvider).value, hasLength(1));
+  });
 }
 
 class _FakeInventoryRepository implements InventoryRepository {
   final List<InventoryBalance> _balances = [];
   final List<InventoryMovement> _movements = [];
+  final List<InventoryTransfer> _transfers = [];
+
+  @override
+  Future<List<InventoryTransfer>> listTransfers({
+    int page = 1,
+    int pageSize = 20,
+  }) async => _transfers;
 
   @override
   Future<List<InventoryCount>> listCounts({
@@ -182,6 +218,59 @@ class _FakeInventoryRepository implements InventoryRepository {
     );
     _movements.add(movement);
     return InventoryOperation(balance: balance, movement: movement);
+  }
+
+  @override
+  Future<InventoryTransfer> createTransfer(InventoryTransferInput input) async {
+    final transfer = InventoryTransfer(
+      id: 'transfer-1',
+      code: input.code,
+      productId: input.productId,
+      sourceWarehouseId: input.sourceWarehouseId,
+      targetWarehouseId: input.targetWarehouseId,
+      targetBranchId: input.targetBranchId,
+      quantity: input.quantity,
+      status: 'requested',
+      reason: input.reason,
+    );
+    _transfers.add(transfer);
+    return transfer;
+  }
+
+  @override
+  Future<InventoryTransfer> dispatchTransfer(String transferId) async {
+    final current = _transfers.firstWhere((item) => item.id == transferId);
+    final transfer = InventoryTransfer(
+      id: current.id,
+      code: current.code,
+      productId: current.productId,
+      sourceWarehouseId: current.sourceWarehouseId,
+      targetWarehouseId: current.targetWarehouseId,
+      targetBranchId: current.targetBranchId,
+      quantity: current.quantity,
+      status: 'in_transit',
+      reason: current.reason,
+    );
+    _transfers[_transfers.indexOf(current)] = transfer;
+    return transfer;
+  }
+
+  @override
+  Future<InventoryTransfer> receiveTransfer(String transferId) async {
+    final current = _transfers.firstWhere((item) => item.id == transferId);
+    final transfer = InventoryTransfer(
+      id: current.id,
+      code: current.code,
+      productId: current.productId,
+      sourceWarehouseId: current.sourceWarehouseId,
+      targetWarehouseId: current.targetWarehouseId,
+      targetBranchId: current.targetBranchId,
+      quantity: current.quantity,
+      status: 'received',
+      reason: current.reason,
+    );
+    _transfers[_transfers.indexOf(current)] = transfer;
+    return transfer;
   }
 
   @override

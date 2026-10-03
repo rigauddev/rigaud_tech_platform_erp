@@ -1,4 +1,43 @@
 tasks:
+  - id: REST-013
+    title: Inventory Transfers
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: in_progress
+    dependencies:
+      - REST-012
+    started_at: "2026-10-03"
+    completed_at: null
+    documentation:
+      - docs/inventory/transfers.md
+      - docs/inventory/endpoints.md
+      - docs/inventory/README.md
+      - ERP_DECISIONS.md
+      - erp-blueprint/docs/academy/inventory/009-inventory-transfers.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/009-inventory-transfers.md
+    tests:
+      - erp-platform/backend/tests/test_inventory_transfers.py
+      - erp-platform/frontend/test/inventory/inventory_controller_test.dart
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - git diff --check
+    migration: 0021_inventory_transfers
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-013-inventory-transfers
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: pending
   - id: UI-004
     title: Localization & Login Flow
     epic: EPIC-0001 Foundation

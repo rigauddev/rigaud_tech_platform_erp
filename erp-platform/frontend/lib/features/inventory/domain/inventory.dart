@@ -196,3 +196,41 @@ class InventoryCount {
     itemsCount: (json['items'] as List<dynamic>? ?? []).length,
   );
 }
+
+class InventoryTransfer {
+  const InventoryTransfer({
+    required this.id,
+    required this.code,
+    required this.productId,
+    required this.sourceWarehouseId,
+    required this.targetWarehouseId,
+    required this.targetBranchId,
+    required this.quantity,
+    required this.status,
+    required this.reason,
+  });
+
+  final String id;
+  final String code;
+  final String productId;
+  final String sourceWarehouseId;
+  final String targetWarehouseId;
+  final String targetBranchId;
+  final String quantity;
+  final String status;
+  final String reason;
+
+  factory InventoryTransfer.fromJson(Map<String, dynamic> json) {
+    return InventoryTransfer(
+      id: json['id'] as String? ?? '',
+      code: json['code'] as String? ?? '',
+      productId: json['product_id'] as String? ?? '',
+      sourceWarehouseId: json['source_warehouse_id'] as String? ?? '',
+      targetWarehouseId: json['target_warehouse_id'] as String? ?? '',
+      targetBranchId: json['target_branch_id'] as String? ?? '',
+      quantity: (json['quantity'] ?? '0.000').toString(),
+      status: json['status'] as String? ?? '',
+      reason: json['reason'] as String? ?? '',
+    );
+  }
+}

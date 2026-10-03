@@ -170,6 +170,18 @@ Na REST-009:
 
 ## Fluxo
 
+## Transfers
+
+```text
+GET  /api/v1/inventory/transfers
+POST /api/v1/inventory/transfers
+POST /api/v1/inventory/transfers/{transfer_id}/dispatch
+POST /api/v1/inventory/transfers/{transfer_id}/receive
+POST /api/v1/inventory/transfers/{transfer_id}/cancel
+```
+
+Solicitar não altera saldo. O despacho gera `transfer_out` na origem e o recebimento gera `transfer_in` no destino.
+
 ```mermaid
 sequenceDiagram
     actor User

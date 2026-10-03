@@ -4,6 +4,9 @@
 
 ### Added
 
+- REST-013: transferências internas de estoque com solicitação, despacho, recebimento, auditoria e movimentos imutáveis de saída e entrada.
+- REST-013: migration `0021_inventory_transfers` e correção idempotente da migration `0019_inventory_count`.
+
 - UI-004: seletor de idioma Português/English no Login, carrossel informativo, recuperação de senha visual e navegação compartilhada.
 - UI-004: rota `/login/forgot-password` criada sem simular o envio de recuperação enquanto o serviço backend não existir.
 

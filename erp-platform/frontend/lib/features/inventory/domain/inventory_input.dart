@@ -78,3 +78,33 @@ class PutAwayInput {
     };
   }
 }
+
+class InventoryTransferInput {
+  const InventoryTransferInput({
+    required this.code,
+    required this.productId,
+    required this.sourceWarehouseId,
+    required this.targetBranchId,
+    required this.targetWarehouseId,
+    required this.quantity,
+    required this.reason,
+  });
+
+  final String code;
+  final String productId;
+  final String sourceWarehouseId;
+  final String targetBranchId;
+  final String targetWarehouseId;
+  final String quantity;
+  final String reason;
+
+  Map<String, dynamic> toJson() => {
+    'code': code,
+    'product_id': productId,
+    'source_warehouse_id': sourceWarehouseId,
+    'target_branch_id': targetBranchId,
+    'target_warehouse_id': targetWarehouseId,
+    'quantity': quantity,
+    'reason': reason,
+  };
+}
