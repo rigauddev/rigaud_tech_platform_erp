@@ -29,6 +29,7 @@ class AppRoutes {
   static const receivingDocumentCreate = '/receiving-documents/new';
   static const restaurantTables = '/restaurant/tables';
   static const restaurantSectors = '/restaurant/sectors';
+  static const restaurantStaff = '/restaurant/staff';
   static const restaurantSectorCreate = '/restaurant/sectors/new';
   static String restaurantSectorEdit(String sectorId) =>
       '/restaurant/sectors/$sectorId/edit';

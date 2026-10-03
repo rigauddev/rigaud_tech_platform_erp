@@ -49,12 +49,15 @@ from app.modules.products.domain.entities import ProductStatus
 from app.modules.products.infrastructure.models import ProductModel
 from app.modules.restaurant.domain.entities import (
     RestaurantSectorType,
+    RestaurantStaffRole,
+    RestaurantStaffStatus,
     RestaurantTableShape,
     RestaurantTableStatus,
 )
 from app.modules.restaurant.infrastructure.models import (
     RestaurantFloorModel,
     RestaurantSectorModel,
+    RestaurantStaffModel,
     RestaurantTableModel,
 )
 from app.modules.users.domain.entities import UserStatus
@@ -208,6 +211,7 @@ class DemoSeeder:
         )
         await self._ensure_restaurant_tables(company.id, branches)
         await self._ensure_restaurant_sectors(company.id, branches)
+        await self._ensure_restaurant_staff(company.id, branches)
         await self.session.commit()
         return DemoSeedSummary(
             mode="restaurant",
@@ -346,6 +350,9 @@ class DemoSeeder:
         )
         deleted_rows += await self._delete_where(
             WarehouseModel, WarehouseModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            RestaurantStaffModel, RestaurantStaffModel.tenant_id.in_(tenant_ids)
         )
         deleted_rows += await self._delete_where(
             RestaurantTableModel, RestaurantTableModel.tenant_id.in_(tenant_ids)
@@ -854,6 +861,78 @@ class DemoSeeder:
             sector.floor_id = floor.id if floor and code == "SALAO" else None
             sector.name, sector.type, sector.color, sector.icon = name, sector_type, color, icon
             sector.sort_order, sector.is_active, sector.deleted_at = sort_order * 10, active, None
+        await self.session.flush()
+
+    async def _ensure_restaurant_staff(
+        self, tenant_id: UUID, branches: Iterable[BranchModel]
+    ) -> None:
+        branch = next(branch for branch in branches if branch.code == "MATRIZ")
+        sectors = {
+            item.code: item
+            for item in (
+                await self.session.execute(
+                    select(RestaurantSectorModel).where(
+                        RestaurantSectorModel.tenant_id == tenant_id,
+                        RestaurantSectorModel.branch_id == branch.id,
+                    )
+                )
+            ).scalars()
+        }
+        for code, name, role, status, sector_code in (
+            (
+                "JOAO",
+                "João Silva",
+                RestaurantStaffRole.WAITER,
+                RestaurantStaffStatus.SERVING,
+                "SALAO",
+            ),
+            (
+                "MARIA",
+                "Maria Santos",
+                RestaurantStaffRole.WAITER,
+                RestaurantStaffStatus.SERVING,
+                "VARANDA",
+            ),
+            (
+                "CARLOS",
+                "Carlos Lima",
+                RestaurantStaffRole.ATTENDANT,
+                RestaurantStaffStatus.PAUSED,
+                "BAR",
+            ),
+            ("ANA", "Ana Souza", RestaurantStaffRole.MANAGER, RestaurantStaffStatus.SERVING, "VIP"),
+            (
+                "PEDRO",
+                "Pedro Ferreira",
+                RestaurantStaffRole.WAITER,
+                RestaurantStaffStatus.SERVING,
+                "SALAO",
+            ),
+            (
+                "ROBERTA",
+                "Roberta Costa",
+                RestaurantStaffRole.ATTENDANT,
+                RestaurantStaffStatus.PAUSED,
+                "VARANDA",
+            ),
+        ):
+            staff = (
+                await self.session.execute(
+                    select(RestaurantStaffModel).where(
+                        RestaurantStaffModel.tenant_id == tenant_id,
+                        RestaurantStaffModel.branch_id == branch.id,
+                        RestaurantStaffModel.code == code,
+                    )
+                )
+            ).scalar_one_or_none()
+            if staff is None:
+                staff = RestaurantStaffModel(
+                    tenant_id=tenant_id, branch_id=branch.id, code=code, name=name, role=role
+                )
+                self.session.add(staff)
+            staff.name, staff.role, staff.status = name, role, status
+            staff.sector_id = sectors[sector_code].id
+            staff.is_active, staff.deleted_at = True, None
         await self.session.flush()
 
     async def _ensure_products(

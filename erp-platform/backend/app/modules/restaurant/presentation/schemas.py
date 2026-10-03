@@ -6,6 +6,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.modules.restaurant.domain.entities import (
     RestaurantSectorType,
+    RestaurantStaffRole,
+    RestaurantStaffStatus,
     RestaurantTableShape,
     RestaurantTableStatus,
 )
@@ -60,6 +62,33 @@ class RestaurantSectorResponse(RestaurantSchema):
     color: str | None
     icon: str | None
     sort_order: int
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+class RestaurantStaffRequest(RestaurantSchema):
+    code: str = Field(min_length=1, max_length=40)
+    name: str = Field(min_length=1, max_length=160)
+    role: RestaurantStaffRole = RestaurantStaffRole.WAITER
+    status: RestaurantStaffStatus = RestaurantStaffStatus.AVAILABLE
+    sector_id: UUID | None = None
+    user_id: UUID | None = None
+    can_receive_online_orders: bool = True
+    is_active: bool = True
+
+
+class RestaurantStaffResponse(RestaurantSchema):
+    id: UUID
+    tenant_id: UUID
+    branch_id: UUID
+    user_id: UUID | None
+    sector_id: UUID | None
+    code: str
+    name: str
+    role: RestaurantStaffRole
+    status: RestaurantStaffStatus
+    can_receive_online_orders: bool
     is_active: bool
     created_at: datetime
     updated_at: datetime

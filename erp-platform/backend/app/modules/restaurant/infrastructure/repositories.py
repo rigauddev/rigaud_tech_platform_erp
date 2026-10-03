@@ -6,13 +6,61 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.restaurant.domain.repositories import (
     RestaurantFloorRepository,
     RestaurantSectorRepository,
+    RestaurantStaffRepository,
     RestaurantTableRepository,
 )
 from app.modules.restaurant.infrastructure.models import (
     RestaurantFloorModel,
     RestaurantSectorModel,
+    RestaurantStaffModel,
     RestaurantTableModel,
 )
+
+
+class SQLAlchemyRestaurantStaffRepository(RestaurantStaffRepository):
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def add(self, item: RestaurantStaffModel) -> RestaurantStaffModel:
+        self.session.add(item)
+        await self.session.flush()
+        return item
+
+    async def get_by_id(self, item_id: UUID, *, tenant_id: UUID) -> RestaurantStaffModel | None:
+        result = await self.session.execute(
+            select(RestaurantStaffModel).where(
+                RestaurantStaffModel.id == item_id,
+                RestaurantStaffModel.tenant_id == tenant_id,
+                RestaurantStaffModel.deleted_at.is_(None),
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def list(
+        self, *, tenant_id: UUID, branch_id: UUID, search: str | None = None
+    ) -> list[RestaurantStaffModel]:
+        statement = select(RestaurantStaffModel).where(
+            RestaurantStaffModel.tenant_id == tenant_id,
+            RestaurantStaffModel.branch_id == branch_id,
+            RestaurantStaffModel.deleted_at.is_(None),
+        )
+        if search:
+            statement = statement.where(RestaurantStaffModel.name.ilike(f"%{search.strip()}%"))
+        result = await self.session.execute(statement.order_by(RestaurantStaffModel.name))
+        return list(result.scalars().all())
+
+    async def exists_by_code(
+        self, code: str, *, tenant_id: UUID, branch_id: UUID, exclude_id: UUID | None = None
+    ) -> bool:
+        statement = select(RestaurantStaffModel.id).where(
+            RestaurantStaffModel.tenant_id == tenant_id,
+            RestaurantStaffModel.branch_id == branch_id,
+            RestaurantStaffModel.code == code,
+            RestaurantStaffModel.deleted_at.is_(None),
+        )
+        if exclude_id is not None:
+            statement = statement.where(RestaurantStaffModel.id != exclude_id)
+        return (await self.session.execute(statement.limit(1))).scalar_one_or_none() is not None
 
 
 class SQLAlchemyRestaurantSectorRepository(RestaurantSectorRepository):

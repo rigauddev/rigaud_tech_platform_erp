@@ -20,7 +20,7 @@ Os cards seguem o mesmo design visual do login e podem evoluir futuramente para 
 
 ## Idioma
 
-A tela inicial possui seletor com Português e English. A seleção atualiza integralmente os textos do Login, do carrossel informativo, da recuperação de senha e do menu de navegação compartilhado.
+A tela inicial possui seletor visual por bandeira com `BR PT` e `US EN`. A seleção é salva no dispositivo e atualiza integralmente os textos do Login, do carrossel informativo, da recuperação de senha e do menu de navegação compartilhado.
 
 As próximas telas serão traduzidas no momento em que forem evoluídas; não devem misturar textos novos em inglês com textos existentes em português na mesma experiência.
 
@@ -39,7 +39,7 @@ O background usa gradiente claro, grade técnica, conexões e cartões discretos
 - cloud;
 - conectividade entre módulos.
 
-A logo usada no Login é `assets/images/rigaud-tech-logo.png`, declarada no `pubspec.yaml` e exibida sem recorte ou escala artificial. O card de acesso e o carrossel usam altura compacta, sem espaçadores flexíveis que criem área vertical vazia.
+A logo usada no Login é `assets/images/Rigaud_Tech_profile_transparent.png`, declarada no `pubspec.yaml` e exibida sem recorte ou escala artificial. O card de acesso e o carrossel usam altura compacta, sem espaçadores flexíveis que criem área vertical vazia.
 
 Os campos adotam a cor primária do tema no preenchimento leve, no rótulo flutuante e nos ícones de prefixo.
 

@@ -637,7 +637,7 @@ class _BrandLogo extends StatelessWidget {
     return SizedBox(
       height: 104,
       child: Image.asset(
-        'assets/images/rigaud-tech-logo.png',
+        'assets/images/Rigaud_Tech_profile_transparent.png',
         fit: BoxFit.contain,
         alignment: Alignment.center,
         filterQuality: FilterQuality.high,
@@ -708,17 +708,28 @@ class _LanguageSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<AppLanguage>(
-      tooltip: 'Language',
-      icon: const Icon(Icons.language_outlined),
+      tooltip: 'Selecionar idioma',
       onSelected: onSelected,
       itemBuilder: (context) => [
         for (final item in AppLanguage.values)
           CheckedPopupMenuItem<AppLanguage>(
             value: item,
             checked: item == language,
-            child: Text(item.label),
+            child: Text(
+              '${item == AppLanguage.portuguese ? '🇧🇷' : '🇺🇸'}  ${item.label}',
+            ),
           ),
       ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: .9),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          language == AppLanguage.portuguese ? '🇧🇷  PT' : '🇺🇸  EN',
+        ),
+      ),
     );
   }
 }
