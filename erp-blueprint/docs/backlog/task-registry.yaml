@@ -32,13 +32,13 @@ tasks:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/restaurant-002-sectors
       commits:
-        - 2f29cd9
+        - ba9ec60
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: 2f29cd9
+    commit: ba9ec60
     review_status: ready
   - id: RESTAURANT-001
     title: Mesas e Mapa do Salão
