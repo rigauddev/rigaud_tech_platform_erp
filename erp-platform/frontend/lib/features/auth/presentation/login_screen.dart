@@ -8,6 +8,8 @@ import '../../../app/config/app_config.dart';
 import '../../../app/router/app_routes.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../core/api/api_error.dart';
+import '../../../core/localization/app_language.dart';
+import '../../../core/localization/app_strings.dart';
 import '../../../shared/components/app_button.dart';
 import '../../../shared/components/app_text_field.dart';
 import '../domain/auth_state.dart';
@@ -81,6 +83,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final config = AppConfig.fromEnvironment();
     final rememberAccess = ref.watch(rememberAccessProvider);
     final authState = ref.watch(authControllerProvider);
+    final strings = ref.watch(appStringsProvider);
 
     ref.listen(authControllerProvider, (previous, next) {
       final isAuthenticated = next.value?.isAuthenticated ?? false;
@@ -100,7 +103,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const _LoginBackground(),
+          _LoginBackground(strings: strings),
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -133,6 +136,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       rememberAccess: rememberAccess,
                                       authState: authState,
                                       isSubmitting: _isSubmitting,
+                                      strings: strings,
                                       onRememberChanged: (value) {
                                         ref
                                             .read(
@@ -157,6 +161,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                               _currentInfoPage = page;
                                             });
                                           },
+                                          strings: strings,
                                         ),
                                       ),
                                       const SizedBox(width: AppSpacing.lg),
@@ -170,6 +175,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                           rememberAccess: rememberAccess,
                                           authState: authState,
                                           isSubmitting: _isSubmitting,
+                                          strings: strings,
                                           onRememberChanged: (value) {
                                             ref
                                                 .read(
@@ -191,10 +197,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         buildNumber: _buildNumber,
                         api: config.apiBaseUrl,
                         environment: config.environment.name,
+                        strings: strings,
                       ),
                     ],
                   ),
                 );
+              },
+            ),
+          ),
+          Positioned(
+            top: AppSpacing.md,
+            right: AppSpacing.md,
+            child: _LanguageSelector(
+              language: ref.watch(appLanguageProvider),
+              onSelected: (language) {
+                ref.read(appLanguageProvider.notifier).select(language);
               },
             ),
           ),
@@ -221,7 +238,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 }
 
 class _LoginBackground extends StatelessWidget {
-  const _LoginBackground();
+  const _LoginBackground({required this.strings});
+
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -251,30 +270,30 @@ class _LoginBackground extends StatelessWidget {
             child: _ModuleConstellation(size: isCompact ? 210 : 320),
           ),
           if (!isCompact) ...[
-            const Positioned(
+            Positioned(
               left: 84,
               bottom: 104,
               child: _InsightPanel(
                 icon: Icons.point_of_sale_outlined,
-                title: 'Vendas',
+                title: strings.isPortuguese ? 'Vendas' : 'Sales',
                 value: '+18%',
               ),
             ),
-            const Positioned(
+            Positioned(
               left: 164,
               top: 246,
               child: _InsightPanel(
                 icon: Icons.inventory_2_outlined,
-                title: 'Estoque',
+                title: strings.inventory,
                 value: 'Cloud',
               ),
             ),
-            const Positioned(
+            Positioned(
               right: 118,
               top: 118,
               child: _InsightPanel(
                 icon: Icons.restaurant_menu_outlined,
-                title: 'Restaurante',
+                title: strings.isPortuguese ? 'Restaurante' : 'Restaurant',
                 value: 'Online',
               ),
             ),
@@ -508,6 +527,7 @@ class _LoginForm extends StatelessWidget {
     required this.rememberAccess,
     required this.authState,
     required this.isSubmitting,
+    required this.strings,
     required this.onRememberChanged,
     required this.onSubmit,
   });
@@ -517,6 +537,7 @@ class _LoginForm extends StatelessWidget {
   final bool rememberAccess;
   final AsyncValue<AuthState> authState;
   final bool isSubmitting;
+  final AppStrings strings;
   final ValueChanged<bool?> onRememberChanged;
   final VoidCallback onSubmit;
 
@@ -526,20 +547,20 @@ class _LoginForm extends StatelessWidget {
     final error = authState.error;
     final errorMessage = switch (error) {
       ApiError(message: final message) => message,
-      Object() => 'Não foi possível autenticar.',
+      Object() => strings.authenticationFailed,
       null => null,
     };
 
     return LoginCardShell(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const _BrandLogo(),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Rigaud Tech Platform ERP',
+              strings.appName,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: const Color(0xFF0E2A5A),
@@ -547,7 +568,7 @@ class _LoginForm extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Gestão inteligente para pequenas e médias empresas',
+              strings.smartManagement,
               textAlign: TextAlign.center,
               style: Theme.of(
                 context,
@@ -556,14 +577,14 @@ class _LoginForm extends StatelessWidget {
             const SizedBox(height: AppSpacing.xl),
             AppTextField(
               controller: emailController,
-              label: 'Email',
+              label: strings.email,
               keyboardType: TextInputType.emailAddress,
               prefixIcon: Icons.email_outlined,
             ),
             const SizedBox(height: AppSpacing.md),
             AppTextField(
               controller: passwordController,
-              label: 'Senha',
+              label: strings.password,
               obscureText: true,
               prefixIcon: Icons.lock_outline,
             ),
@@ -575,18 +596,18 @@ class _LoginForm extends StatelessWidget {
             Row(
               children: [
                 Checkbox(value: rememberAccess, onChanged: onRememberChanged),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Lembrar acesso',
+                    strings.rememberAccess,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Flexible(
                   child: TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'Esqueci minha senha',
+                    onPressed: () => context.go(AppRoutes.forgotPassword),
+                    child: Text(
+                      strings.forgotPassword,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -596,7 +617,7 @@ class _LoginForm extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             AppButton(
-              label: 'Entrar',
+              label: strings.signIn,
               icon: Icons.login,
               isLoading: isSubmitting,
               onPressed: onSubmit,
@@ -614,7 +635,7 @@ class _BrandLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 88,
+      height: 104,
       child: Image.asset(
         'assets/images/rigaud-tech-logo.png',
         fit: BoxFit.contain,
@@ -639,12 +660,14 @@ class _LoginFooter extends StatelessWidget {
     required this.buildNumber,
     required this.api,
     required this.environment,
+    required this.strings,
   });
 
   final String version;
   final String buildNumber;
   final String api;
   final String environment;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -653,10 +676,10 @@ class _LoginFooter extends StatelessWidget {
       fontWeight: FontWeight.w600,
     );
     final items = [
-      'Versão $version',
+      '${strings.version} $version',
       'Build $buildNumber',
       'API $api',
-      'Ambiente $environment',
+      '${strings.environment} $environment',
     ];
 
     return Wrap(
@@ -670,6 +693,30 @@ class _LoginFooter extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: style,
+          ),
+      ],
+    );
+  }
+}
+
+class _LanguageSelector extends StatelessWidget {
+  const _LanguageSelector({required this.language, required this.onSelected});
+
+  final AppLanguage language;
+  final ValueChanged<AppLanguage> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<AppLanguage>(
+      tooltip: 'Language',
+      icon: const Icon(Icons.language_outlined),
+      onSelected: onSelected,
+      itemBuilder: (context) => [
+        for (final item in AppLanguage.values)
+          CheckedPopupMenuItem<AppLanguage>(
+            value: item,
+            checked: item == language,
+            child: Text(item.label),
           ),
       ],
     );

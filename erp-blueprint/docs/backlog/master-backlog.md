@@ -52,6 +52,8 @@ UI-002 — Navigation & Application Shell permanece como refinamento transversal
 
 UI-003 — Navigation Access & Login Brand Fix permanece como correção transversal em review. Ela não amplia a matriz de permissões de negócio e não altera a sequência comercial.
 
+UI-004 — Localization & Login Flow permanece como refinamento transversal em review. Traduções completas e recuperação de senha por email dependem de tasks dedicadas; cada tela alterada deve manter um único idioma por vez.
+
 ## Core Inventory E Inbound Logistics
 
 Tasks transversais de suporte:

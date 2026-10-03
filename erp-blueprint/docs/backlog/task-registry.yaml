@@ -1,4 +1,39 @@
 tasks:
+  - id: UI-004
+    title: Localization & Login Flow
+    epic: EPIC-0001 Foundation
+    module: frontend
+    status: review
+    dependencies:
+      - UI-003
+    started_at: "2026-10-03"
+    completed_at: null
+    documentation:
+      - docs/ui/login-screen.md
+      - docs/ui/application-navigation.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+    academy: []
+    tests:
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - make check-task TASK=UI-004
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/ui-004-localization-login-flow
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
   - id: UI-003
     title: Navigation Access & Login Brand Fix
     epic: EPIC-0001 Foundation
@@ -16,6 +51,25 @@ tasks:
       - erp-blueprint/docs/roadmap/master-roadmap.md
     academy: []
     tests:
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: fix/ui-003-navigation-access
+      commits:
+        - c035861
+        - 09e64a9
+        - 72557c2
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 72557c2
+    review_status: ready
   - id: REST-012
     title: Stock Adjustments
     epic: EPIC-003 Inbound Logistics
@@ -42,13 +96,6 @@ tasks:
       - flutter test
       - flutter build web
       - git diff --check
-    migration: null
-    git:
-      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
-      branch: fix/ui-003-navigation-access
-      commits:
-        - c035861
-        - 09e64a9
     migration: 0020_stock_adjustments
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
@@ -59,7 +106,6 @@ tasks:
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
     commit: 9ec2b75
     review_status: ready
   - id: DOC-010

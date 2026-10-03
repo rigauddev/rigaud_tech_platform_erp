@@ -23,6 +23,8 @@ O menu lateral agrupa as áreas pelo contexto de trabalho:
 
 O menu usa o contexto autenticado para não exibir Empresa, Usuários, Auditoria e Ambiente demo a perfis sem acesso de plataforma. O papel técnico ativo é mostrado abaixo da marca. A autorização da API continua sendo a fonte de segurança; esta filtragem evita links que a própria guarda de rota já bloquearia.
 
+A autenticação em dois fatores pertence a **Conta e segurança**, junto de Meu perfil. Ela não faz parte dos menus operacionais de estoque, restaurante ou varejo.
+
 ## Subtelas
 
 Cadastros, detalhes e edições apresentam uma ação de voltar para sua lista ou tela-pai. A rota-pai é explícita para evitar depender de histórico do navegador, pois os fluxos do app utilizam GoRouter com navegação declarativa.

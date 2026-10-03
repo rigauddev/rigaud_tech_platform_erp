@@ -4,6 +4,9 @@
 
 ### Added
 
+- UI-004: seletor de idioma Português/English no Login, carrossel informativo, recuperação de senha visual e navegação compartilhada.
+- UI-004: rota `/login/forgot-password` criada sem simular o envio de recuperação enquanto o serviço backend não existir.
+
 - UI-003: menu lateral passa a refletir o contexto de acesso, exibindo o papel técnico ativo e ocultando áreas de plataforma para usuários sem essa permissão; a rota de Ambiente demo também passa a exigir acesso de plataforma.
 - UI-003: a logo selecionada para Login é registrada no manifesto Flutter e exibida sem recorte ou escala artificial.
 
