@@ -4,6 +4,8 @@
 
 ### Added
 
+- RESTAURANT-003: equipe operacional por filial, CRUD auditado, migration `0024_restaurant_staff`, dados demo e tela de garçons alinhada à referência visual aprovada.
+
 - RESTAURANT-002: setores e ambientes por filial, CRUD auditado, migration `0023_restaurant_sectors`, dados demo e tela responsiva alinhada ao padrão visual aprovado.
 
 - RESTAURANT-001: fundação de salões e mesas, API multi-tenant auditada, migration `0022_restaurant_tables` e mapa operacional responsivo.
@@ -32,6 +34,11 @@
 - UI-002: adicionados `make restart-backend` e `make restart-frontend` para recarga direcionada dos serviços Docker.
 
 ### Changed
+
+- UI-004/RESTAURANT-003: seletor de idioma do Login passa a usar bandeiras BR/US e persiste a escolha localmente; shell e Garçons e equipe aderem ao catálogo PT/EN.
+- UI-004: Login passa a consumir a variante transparente correta da marca fornecida, corrigindo a ausência da logo no card de acesso.
+- UI-003: navegação lateral foi alinhada ao layout aprovado, com menu direto por contexto, Restaurante expandido durante a operação e perfil/MFA concentrados em Configurações.
+- RESTAURANT-003: rota de Garçons e equipe foi revisada para evitar restrições de layout no shell e manter abertura confiável pelo submenu contextual.
 
 - UI-002: Splash passa a encaminhar automaticamente para Login, removendo o botão manual de continuar.
 - UI-002: detalhes, edições e cadastros passam a apresentar ação de voltar para a rota-pai.

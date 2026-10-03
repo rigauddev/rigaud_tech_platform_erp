@@ -11,3 +11,4 @@ Esta documentação congela o contrato da DOC-011. Não implementa entidades, en
 - [Disponibilidade de menu](menu-availability.md)
 - [Mesas e mapa do salão](tables.md)
 - [Setores e ambientes](sectors.md)
+- [Garçons e equipe](staff.md)

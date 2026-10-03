@@ -16,14 +16,18 @@ Este repositório contém apenas a estrutura inicial de pastas e documentação 
 Fundação concluída até:
 
 ```text
-RESTAURANT-002 — Setores e Ambientes
+RESTAURANT-003 — Garçons e Equipe
 ```
 
 Task atual:
 
 ```text
-RESTAURANT-002 — Setores e Ambientes
+RESTAURANT-003 — Garçons e Equipe
 ```
+
+Refinamento concluído nesta branch: shell operacional alinhado ao layout
+aprovado e idioma Português/English persistido no Login, menu e tela de equipe.
+Cardápio, pedidos e delivery continuam planejados para as tasks posteriores.
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
 
@@ -121,6 +125,8 @@ Inventory Transactions está documentado em `docs/inventory/transactions.md`.
 Mesas e mapa operacional do restaurante estão documentados em `docs/restaurant/tables.md`.
 
 Setores e ambientes do restaurante estão documentados em `docs/restaurant/sectors.md`.
+
+Garçons e equipe do restaurante estão documentados em `docs/restaurant/staff.md`.
 
 Transferências internas entre depósitos estão documentadas em `docs/inventory/transfers.md`.
 

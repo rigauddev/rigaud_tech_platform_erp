@@ -51,6 +51,65 @@ class AppStrings {
       isPortuguese ? 'Operador da filial' : 'Branch operator';
   String get authenticatedUser =>
       isPortuguese ? 'Usuário autenticado' : 'Authenticated user';
+  String get home => isPortuguese ? 'Início' : 'Home';
+  String get sales => isPortuguese ? 'Vendas' : 'Sales';
+  String get restaurant => isPortuguese ? 'Restaurante' : 'Restaurant';
+  String get restaurantOverview => isPortuguese ? 'Visão geral' : 'Overview';
+  String get tables => isPortuguese ? 'Mesas' : 'Tables';
+  String get sectorsEnvironments =>
+      isPortuguese ? 'Setores e ambientes' : 'Sectors & environments';
+  String get staffTeam => isPortuguese ? 'Garçons e equipe' : 'Waiters & team';
+  String get menu => isPortuguese ? 'Cardápio' : 'Menu';
+  String get orders => isPortuguese ? 'Pedidos' : 'Orders';
+  String get delivery => 'Delivery';
+  String get finance => isPortuguese ? 'Financeiro' : 'Finance';
+  String get reports => isPortuguese ? 'Relatórios' : 'Reports';
+  String get settings => isPortuguese ? 'Configurações' : 'Settings';
+  String get searchSystem =>
+      isPortuguese ? 'Pesquisar no sistema...' : 'Search the system...';
+  String get notifications => isPortuguese ? 'Notificações' : 'Notifications';
+  String get help => isPortuguese ? 'Ajuda' : 'Help';
+  String get staffBreadcrumb => isPortuguese
+      ? 'Restaurante  >  Garçons e equipe'
+      : 'Restaurant  >  Waiters & team';
+  String get staffTitle => isPortuguese ? 'Garçons e equipe' : 'Waiters & team';
+  String get staffDescription => isPortuguese
+      ? 'Organize a equipe de atendimento e acompanhe a operação por setor.'
+      : 'Organize the service team and track operations by sector.';
+  String get newWaiter => isPortuguese ? 'Novo garçom' : 'New waiter';
+  String get professionals => isPortuguese ? 'Profissionais' : 'Professionals';
+  String get totalRegistered =>
+      isPortuguese ? 'Total cadastrados' : 'Total registered';
+  String get serving => isPortuguese ? 'Em atendimento' : 'Serving';
+  String get teamLabel => isPortuguese ? 'da equipe' : 'of the team';
+  String get sectorsCovered =>
+      isPortuguese ? 'Setores cobertos' : 'Covered sectors';
+  String get activeTeam =>
+      isPortuguese ? 'Com equipe ativa' : 'With active team';
+  String get paused => isPortuguese ? 'Em pausa' : 'Paused';
+  String get operationalTeam =>
+      isPortuguese ? 'Equipe operacional' : 'Operational team';
+  String get searchProfessional =>
+      isPortuguese ? 'Buscar profissional...' : 'Search professional...';
+  String get professional => isPortuguese ? 'Profissional' : 'Professional';
+  String get function => isPortuguese ? 'Função' : 'Role';
+  String get currentSector => isPortuguese ? 'Setor atual' : 'Current sector';
+  String get actions => isPortuguese ? 'Ações' : 'Actions';
+  String get noSector => isPortuguese ? 'Sem setor' : 'No sector';
+  String get available => isPortuguese ? 'Disponível' : 'Available';
+  String get waiter => isPortuguese ? 'Garçom' : 'Waiter';
+  String get attendant => isPortuguese ? 'Atendente' : 'Attendant';
+  String get manager => isPortuguese ? 'Gerente' : 'Manager';
+  String get name => isPortuguese ? 'Nome' : 'Name';
+  String get code => isPortuguese ? 'Código' : 'Code';
+  String get cancel => isPortuguese ? 'Cancelar' : 'Cancel';
+  String get save => isPortuguese ? 'Salvar' : 'Save';
+  String get unableToLoadStaff => isPortuguese
+      ? 'Não foi possível carregar a equipe.'
+      : 'Unable to load the team.';
+  String get unableToSaveStaff => isPortuguese
+      ? 'Não foi possível salvar o profissional.'
+      : 'Unable to save the professional.';
 
   String get smartManagement => isPortuguese
       ? 'Gestão inteligente para pequenas e médias empresas'

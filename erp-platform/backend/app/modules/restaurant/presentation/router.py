@@ -19,6 +19,14 @@ from app.modules.restaurant.application.sector_use_cases import (
     SectorInput,
     UpdateRestaurantSector,
 )
+from app.modules.restaurant.application.staff_use_cases import (
+    CreateRestaurantStaff,
+    DeleteRestaurantStaff,
+    GetRestaurantStaff,
+    ListRestaurantStaff,
+    StaffInput,
+    UpdateRestaurantStaff,
+)
 from app.modules.restaurant.application.table_use_cases import (
     CreateRestaurantFloor,
     CreateRestaurantTable,
@@ -41,17 +49,21 @@ from app.modules.restaurant.domain.exceptions import (
     RestaurantInvalidDataError,
     RestaurantSectorCodeAlreadyExistsError,
     RestaurantSectorNotFoundError,
+    RestaurantStaffCodeAlreadyExistsError,
+    RestaurantStaffNotFoundError,
     RestaurantTableNotFoundError,
     RestaurantTableNumberAlreadyExistsError,
 )
 from app.modules.restaurant.infrastructure.models import (
     RestaurantFloorModel,
     RestaurantSectorModel,
+    RestaurantStaffModel,
     RestaurantTableModel,
 )
 from app.modules.restaurant.infrastructure.repositories import (
     SQLAlchemyRestaurantFloorRepository,
     SQLAlchemyRestaurantSectorRepository,
+    SQLAlchemyRestaurantStaffRepository,
     SQLAlchemyRestaurantTableRepository,
 )
 from app.modules.restaurant.presentation.schemas import (
@@ -59,6 +71,8 @@ from app.modules.restaurant.presentation.schemas import (
     RestaurantFloorResponse,
     RestaurantSectorRequest,
     RestaurantSectorResponse,
+    RestaurantStaffRequest,
+    RestaurantStaffResponse,
     RestaurantTableRequest,
     RestaurantTableResponse,
 )
@@ -99,6 +113,24 @@ def _sector_response(item: RestaurantSectorModel) -> RestaurantSectorResponse:
         color=item.color,
         icon=item.icon,
         sort_order=item.sort_order,
+        is_active=item.is_active,
+        created_at=item.created_at,
+        updated_at=item.updated_at,
+    )
+
+
+def _staff_response(item: RestaurantStaffModel) -> RestaurantStaffResponse:
+    return RestaurantStaffResponse(
+        id=item.id,
+        tenant_id=item.tenant_id,
+        branch_id=item.branch_id,
+        user_id=item.user_id,
+        sector_id=item.sector_id,
+        code=item.code,
+        name=item.name,
+        role=item.role,
+        status=item.status,
+        can_receive_online_orders=item.can_receive_online_orders,
         is_active=item.is_active,
         created_at=item.created_at,
         updated_at=item.updated_at,
@@ -158,6 +190,22 @@ def _sector_input(payload: RestaurantSectorRequest, user: AuthenticatedUser) -> 
     )
 
 
+def _staff_input(payload: RestaurantStaffRequest, user: AuthenticatedUser) -> StaffInput:
+    return StaffInput(
+        tenant_id=user.tenant_id,
+        branch_id=user.branch_id,
+        code=payload.code,
+        name=payload.name,
+        role=payload.role,
+        status=payload.status,
+        sector_id=payload.sector_id,
+        user_id=payload.user_id,
+        can_receive_online_orders=payload.can_receive_online_orders,
+        is_active=payload.is_active,
+        actor_id=user.id,
+    )
+
+
 def _table_input(payload: RestaurantTableRequest, user: AuthenticatedUser) -> TableInput:
     return TableInput(
         tenant_id=user.tenant_id,
@@ -184,7 +232,10 @@ async def _audit(
     *,
     event_name: str,
     action: str,
-    item: RestaurantFloorModel | RestaurantSectorModel | RestaurantTableModel,
+    item: RestaurantFloorModel
+    | RestaurantSectorModel
+    | RestaurantStaffModel
+    | RestaurantTableModel,
     entity_type: str,
     user: AuthenticatedUser,
     request: Request,
@@ -331,6 +382,126 @@ async def delete_sector(
         await session.commit()
         return success_response(
             "RESTAURANT_SECTOR_DELETED", data=_sector_response(item).model_dump(mode="json")
+        )
+    except RestaurantError as exc:
+        await session.rollback()
+        return _error(exc)
+
+
+@router.get("/staff", response_model=list[RestaurantStaffResponse])
+async def list_staff(
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+    search: str | None = Query(default=None, max_length=120),
+) -> JSONResponse:
+    items = await ListRestaurantStaff(SQLAlchemyRestaurantStaffRepository(session)).execute(
+        tenant_id=user.tenant_id, branch_id=user.branch_id, search=search
+    )
+    return success_response(
+        "RESTAURANT_STAFF_LIST_RETRIEVED",
+        data=[_staff_response(item).model_dump(mode="json") for item in items],
+    )
+
+
+@router.get("/staff/{staff_id}", response_model=RestaurantStaffResponse)
+async def get_staff(
+    staff_id: UUID, session: AsyncSessionDependency, user: CurrentUserDependency
+) -> JSONResponse:
+    try:
+        item = await GetRestaurantStaff(SQLAlchemyRestaurantStaffRepository(session)).execute(
+            staff_id, tenant_id=user.tenant_id
+        )
+        return success_response(
+            "RESTAURANT_STAFF_RETRIEVED", data=_staff_response(item).model_dump(mode="json")
+        )
+    except RestaurantError as exc:
+        return _error(exc)
+
+
+@router.post("/staff", response_model=RestaurantStaffResponse)
+async def create_staff(
+    payload: RestaurantStaffRequest,
+    request: Request,
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        item = await CreateRestaurantStaff(
+            SQLAlchemyRestaurantStaffRepository(session),
+            SQLAlchemyRestaurantSectorRepository(session),
+        ).execute(_staff_input(payload, user))
+        await _audit(
+            session,
+            event_name="restaurant.staff.created",
+            action="created",
+            item=item,
+            entity_type="restaurant_staff",
+            user=user,
+            request=request,
+        )
+        await session.commit()
+        return success_response(
+            "RESTAURANT_STAFF_CREATED", data=_staff_response(item).model_dump(mode="json")
+        )
+    except RestaurantError as exc:
+        await session.rollback()
+        return _error(exc)
+
+
+@router.put("/staff/{staff_id}", response_model=RestaurantStaffResponse)
+async def update_staff(
+    staff_id: UUID,
+    payload: RestaurantStaffRequest,
+    request: Request,
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        item = await UpdateRestaurantStaff(
+            SQLAlchemyRestaurantStaffRepository(session),
+            SQLAlchemyRestaurantSectorRepository(session),
+        ).execute(staff_id, _staff_input(payload, user))
+        await _audit(
+            session,
+            event_name="restaurant.staff.updated",
+            action="updated",
+            item=item,
+            entity_type="restaurant_staff",
+            user=user,
+            request=request,
+        )
+        await session.commit()
+        return success_response(
+            "RESTAURANT_STAFF_UPDATED", data=_staff_response(item).model_dump(mode="json")
+        )
+    except RestaurantError as exc:
+        await session.rollback()
+        return _error(exc)
+
+
+@router.delete("/staff/{staff_id}", response_model=RestaurantStaffResponse)
+async def delete_staff(
+    staff_id: UUID,
+    request: Request,
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        item = await DeleteRestaurantStaff(SQLAlchemyRestaurantStaffRepository(session)).execute(
+            staff_id, tenant_id=user.tenant_id, actor_id=user.id
+        )
+        await _audit(
+            session,
+            event_name="restaurant.staff.deleted",
+            action="deleted",
+            item=item,
+            entity_type="restaurant_staff",
+            user=user,
+            request=request,
+        )
+        await session.commit()
+        return success_response(
+            "RESTAURANT_STAFF_DELETED", data=_staff_response(item).model_dump(mode="json")
         )
     except RestaurantError as exc:
         await session.rollback()
@@ -572,6 +743,8 @@ async def delete_table(
 
 
 def _error(exc: RestaurantError) -> JSONResponse:
+    if isinstance(exc, RestaurantStaffNotFoundError):
+        return error_response("RESTAURANT_STAFF_NOT_FOUND")
     if isinstance(exc, RestaurantSectorNotFoundError):
         return error_response("RESTAURANT_SECTOR_NOT_FOUND")
     if isinstance(exc, RestaurantFloorNotFoundError):
@@ -582,6 +755,8 @@ def _error(exc: RestaurantError) -> JSONResponse:
         return error_response("RESTAURANT_FLOOR_CODE_ALREADY_EXISTS")
     if isinstance(exc, RestaurantSectorCodeAlreadyExistsError):
         return error_response("RESTAURANT_SECTOR_CODE_ALREADY_EXISTS")
+    if isinstance(exc, RestaurantStaffCodeAlreadyExistsError):
+        return error_response("RESTAURANT_STAFF_CODE_ALREADY_EXISTS")
     if isinstance(exc, RestaurantTableNumberAlreadyExistsError):
         return error_response("RESTAURANT_TABLE_NUMBER_ALREADY_EXISTS")
     if isinstance(exc, RestaurantBranchRequiredError):
