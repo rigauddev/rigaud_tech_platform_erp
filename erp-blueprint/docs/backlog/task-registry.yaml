@@ -31,12 +31,13 @@ tasks:
       commits:
         - 1be25e6
         - e514a02
+        - 3cd8547
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: e514a02
+    commit: 3cd8547
     review_status: ready
   - id: RESTAURANT-002
     title: Setores e Ambientes
