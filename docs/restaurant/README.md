@@ -9,3 +9,4 @@ Esta documentação congela o contrato da DOC-011. Não implementa entidades, en
 - [Experiências da plataforma](apps.md)
 - [Fluxo de pedido](order-flow.md)
 - [Disponibilidade de menu](menu-availability.md)
+- [Mesas e mapa do salão](tables.md)

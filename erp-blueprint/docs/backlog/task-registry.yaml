@@ -1,4 +1,44 @@
 tasks:
+  - id: RESTAURANT-001
+    title: Mesas e Mapa do Salão
+    epic: MVP Restaurante
+    module: restaurant
+    status: in_progress
+    dependencies:
+      - DOC-011
+    started_at: "2026-10-03"
+    completed_at: null
+    documentation:
+      - docs/restaurant/tables.md
+      - docs/restaurant/README.md
+      - erp-blueprint/docs/academy/restaurant/003-mesas-mapa-operacional.md
+      - ERP_DECISIONS.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/mkdocs.yml
+      - README.md
+      - CHANGELOG.md
+    academy:
+      - erp-blueprint/docs/academy/restaurant/003-mesas-mapa-operacional.md
+    tests:
+      - erp-platform/backend/tests/test_restaurant_tables.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - make check-task TASK=RESTAURANT-001
+      - git diff --check
+    migration: 0022_restaurant_tables
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/restaurant-001-tables-floor-plan
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: in_progress
   - id: DOC-011
     title: Restaurant Operations Core
     epic: MVP Restaurante

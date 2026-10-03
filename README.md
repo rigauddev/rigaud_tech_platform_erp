@@ -16,13 +16,13 @@ Este repositório contém apenas a estrutura inicial de pastas e documentação 
 Fundação concluída até:
 
 ```text
-DOC-011 — Restaurant Operations Core
+RESTAURANT-001 — Mesas e Mapa do Salão
 ```
 
 Task atual:
 
 ```text
-DOC-011 — Restaurant Operations Core
+RESTAURANT-001 — Mesas e Mapa do Salão
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -117,6 +117,8 @@ Goods Receipt está documentado em `docs/inventory/goods-receipt.md`.
 Put Away está documentado em `docs/inventory/putaway.md` e `docs/warehouse/putaway.md`.
 
 Inventory Transactions está documentado em `docs/inventory/transactions.md`.
+
+Mesas e mapa operacional do restaurante estão documentados em `docs/restaurant/tables.md`.
 
 Transferências internas entre depósitos estão documentadas em `docs/inventory/transfers.md`.
 
