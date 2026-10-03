@@ -17,7 +17,62 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 from app.database.mixins import AuditMixin, SoftDeleteMixin, TenantMixin, TimestampMixin
 from app.database.types import UUIDType
-from app.modules.restaurant.domain.entities import RestaurantTableShape, RestaurantTableStatus
+from app.modules.restaurant.domain.entities import (
+    RestaurantSectorType,
+    RestaurantTableShape,
+    RestaurantTableStatus,
+)
+
+
+class RestaurantSectorModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
+    __tablename__ = "restaurant_sectors"
+    __table_args__ = (
+        Index(
+            "uq_restaurant_sectors_tenant_branch_code",
+            "tenant_id",
+            "branch_id",
+            "code",
+            unique=True,
+            postgresql_where=text("deleted_at IS NULL"),
+        ),
+        Index("ix_restaurant_sectors_tenant_branch", "tenant_id", "branch_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("companies.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    branch_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("branches.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    floor_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("restaurant_floors.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    code: Mapped[str] = mapped_column(String(40), nullable=False)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    type: Mapped[RestaurantSectorType] = mapped_column(
+        Enum(
+            RestaurantSectorType,
+            name="restaurant_sector_type",
+            values_callable=lambda enum: [item.value for item in enum],
+        ),
+        default=RestaurantSectorType.DINING_ROOM,
+        nullable=False,
+    )
+    color: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    icon: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    sort_order: Mapped[int] = mapped_column(default=0, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
 
 class RestaurantFloorModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):

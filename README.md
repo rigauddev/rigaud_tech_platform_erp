@@ -16,13 +16,13 @@ Este repositório contém apenas a estrutura inicial de pastas e documentação 
 Fundação concluída até:
 
 ```text
-RESTAURANT-001 — Mesas e Mapa do Salão
+RESTAURANT-002 — Setores e Ambientes
 ```
 
 Task atual:
 
 ```text
-RESTAURANT-001 — Mesas e Mapa do Salão
+RESTAURANT-002 — Setores e Ambientes
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -119,6 +119,8 @@ Put Away está documentado em `docs/inventory/putaway.md` e `docs/warehouse/puta
 Inventory Transactions está documentado em `docs/inventory/transactions.md`.
 
 Mesas e mapa operacional do restaurante estão documentados em `docs/restaurant/tables.md`.
+
+Setores e ambientes do restaurante estão documentados em `docs/restaurant/sectors.md`.
 
 Transferências internas entre depósitos estão documentadas em `docs/inventory/transfers.md`.
 

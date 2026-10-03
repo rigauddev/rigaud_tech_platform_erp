@@ -25,6 +25,12 @@ O menu usa o contexto autenticado para não exibir Empresa, Usuários, Auditoria
 
 A autenticação em dois fatores pertence a **Conta e segurança**, junto de Meu perfil. Ela não faz parte dos menus operacionais de estoque, restaurante ou varejo.
 
+## Padrão operacional do Restaurante
+
+As telas de Restaurante seguem o desenho aprovado para Setores e Ambientes: título e contexto da filial, indicadores pequenos para leitura rápida, cartões de operação e uma tabela em desktop que se transforma em cartões em telas menores. As entradas de menu permanecem agrupadas por contexto operacional, sem misturar conta, segurança ou ferramentas de desenvolvimento.
+
+Esse padrão será aplicado a cada tela nova ou revisada no próprio escopo da task correspondente; ele não exige uma reescrita ampla de telas já entregues.
+
 ## Subtelas
 
 Cadastros, detalhes e edições apresentam uma ação de voltar para sua lista ou tela-pai. A rota-pai é explícita para evitar depender de histórico do navegador, pois os fluxos do app utilizam GoRouter com navegação declarativa.

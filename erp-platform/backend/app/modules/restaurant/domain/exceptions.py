@@ -22,5 +22,13 @@ class RestaurantTableNumberAlreadyExistsError(RestaurantError):
     pass
 
 
+class RestaurantSectorNotFoundError(RestaurantError):
+    pass
+
+
+class RestaurantSectorCodeAlreadyExistsError(RestaurantError):
+    pass
+
+
 class RestaurantInvalidDataError(RestaurantError):
     pass
