@@ -22,7 +22,7 @@ DEV-012 — Authentication & Tenant Architecture Alignment
 Task atual:
 
 ```text
-REST-010 — Inventory Transactions
+UI-002 — Navigation & Application Shell
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -137,6 +137,8 @@ O domínio do Inventory Engine está documentado em `docs/inventory/overview.md`
 ## Frontend E UI
 
 A experiência visual da tela de login está documentada em `docs/ui/login-screen.md`.
+
+A navegação agrupada por contexto, a Splash automática e o retorno das subtelas estão documentados em `docs/ui/application-navigation.md`.
 
 Endpoints técnicos disponíveis:
 

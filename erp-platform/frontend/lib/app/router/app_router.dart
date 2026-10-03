@@ -47,7 +47,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   );
 
   return GoRouter(
-    initialLocation: AppRoutes.splash,
+    initialLocation: AppRoutes.login,
     redirect: (context, state) => guard.redirect(state.uri.path),
     errorBuilder: (context, state) => const NotFoundScreen(),
     routes: [
