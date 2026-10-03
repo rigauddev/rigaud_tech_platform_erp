@@ -29,7 +29,7 @@ O background usa gradiente claro, grade técnica, conexões e cartões discretos
 - cloud;
 - conectividade entre módulos.
 
-A logo usa o asset `assets/images/logo_rigaud_tech.png` declarado no `pubspec.yaml`. Como o arquivo possui margem grande, a UI aplica recorte visual central para preservar leitura da marca no card de login.
+A logo usa `assets/images/logo_rigaud_tech_trimmed.png`, variante transparente e recortada a partir do asset oficial. Ela remove a margem excedente sem adicionar fundo ao card de login.
 
 ## Rodapé
 

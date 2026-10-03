@@ -16,6 +16,7 @@ nav:
       - Product Documentation Help Center: academy/documentation/001-product-documentation-help-center.md
       - Flutter Multiplataforma: academy/flutter/001-flutter-multiplataforma.md
       - Login Experience: academy/ui/001-login-experience.md
+      - Navegação Por Contexto: academy/ui/002-application-navigation.md
       - Database Core: academy/backend/001-database-core.md
       - Fundamentos PostgreSQL: academy/postgresql/001-fundamentos-do-banco-do-erp.md
       - Autenticação Multi-Tenant JWT: academy/security/001-autenticacao-multitenant-jwt.md

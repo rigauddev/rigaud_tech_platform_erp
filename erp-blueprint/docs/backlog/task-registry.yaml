@@ -1,4 +1,39 @@
 tasks:
+  - id: UI-002
+    title: Navigation & Application Shell
+    epic: EPIC-0001 Foundation
+    module: frontend
+    status: in_progress
+    dependencies:
+      - UI-001
+    started_at: "2026-10-02"
+    completed_at: null
+    documentation:
+      - docs/ui/application-navigation.md
+      - docs/ui/login-screen.md
+      - erp-blueprint/docs/academy/ui/002-application-navigation.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/ui/002-application-navigation.md
+    tests:
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/ui-002-navigation-shell
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: pending
   - id: REST-010
     title: Inventory Transactions
     epic: EPIC-003 Inbound Logistics

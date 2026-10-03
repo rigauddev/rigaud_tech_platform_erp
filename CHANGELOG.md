@@ -4,6 +4,15 @@
 
 ### Added
 
+- UI-002: navegação lateral reorganizada por contexto de trabalho, com grupos de visão geral, cadastros, estoque, conta e segurança, administração e desenvolvimento.
+- UI-002: logo de Login passa a usar variante PNG transparente e recortada, sem margem excedente ou escala artificial.
+
+### Changed
+
+- UI-002: Splash passa a encaminhar automaticamente para Login, removendo o botão manual de continuar.
+- UI-002: detalhes, edições e cadastros passam a apresentar ação de voltar para a rota-pai.
+- UI-002: Ambiente demo é identificado como ferramenta de desenvolvimento e separado do menu operacional.
+
 - REST-010: Inventory Transactions expõe `InventoryMovement` como livro razão imutável com filtros por produto, depósito, localização, tipo, origem, processo e módulo de origem.
 - REST-010: endpoints `GET /api/v1/inventory/transactions` e `GET /api/v1/inventory/transactions/{transaction_id}` adicionados ao Inventory Engine.
 - REST-010: Flutter Inventory passa a consultar transações de estoque com filtros por processo operacional.
@@ -143,8 +152,6 @@
 - REVIEW DEV-010: refresh e `/auth/me` passam a revalidar contexto ativo contra memberships e filiais no banco.
 - REVIEW DEV-010: proteção explícita contra vínculo cruzado entre `CompanyMembership` e `Branch` de tenants diferentes.
 - REVIEW DEV-010: testes ampliados para multiempresa, `all_branches`, membership inativo, refresh com contexto inválido e branch membership cross-tenant.
-
-### Changed
 
 - REVIEW DEV-001: proxy Nginx resolve `backend` e `frontend` dinamicamente no DNS interno do Docker, evitando `502` após recriação dos containers.
 - UI-001 Review: login passa a exibir carrossel informativo lateral em desktop com o mesmo design e tamanho do card de acesso, mantendo a tela sem scroll.
