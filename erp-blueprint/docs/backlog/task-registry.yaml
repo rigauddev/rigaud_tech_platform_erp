@@ -1,4 +1,257 @@
 tasks:
+  - id: UI-002
+    title: Navigation & Application Shell
+    epic: EPIC-0001 Foundation
+    module: frontend
+    status: in_progress
+    dependencies:
+      - UI-001
+    started_at: "2026-10-02"
+    completed_at: null
+    documentation:
+      - docs/ui/application-navigation.md
+      - docs/ui/login-screen.md
+      - erp-blueprint/docs/academy/ui/002-application-navigation.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/ui/002-application-navigation.md
+    tests:
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/ui-002-navigation-shell
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: pending
+  - id: REST-010
+    title: Inventory Transactions
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-009
+    started_at: "2026-10-02"
+    completed_at: null
+    documentation:
+      - docs/inventory/transactions.md
+      - docs/inventory/README.md
+      - docs/inventory/endpoints.md
+      - docs/inventory/entities.md
+      - docs/inventory/events.md
+      - README.md
+      - CHANGELOG.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/inventory/README.md
+      - erp-blueprint/docs/academy/inventory/006-inventory-transactions.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/006-inventory-transactions.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_inventory_engine.py
+      - erp-platform/backend/tests/test_receiving_documents.py
+      - erp-platform/frontend/test/inventory/inventory_controller_test.dart
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-010
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-010-inventory-transactions
+      commits:
+        - 5653db3
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 5653db3
+    review_status: ready
+  - id: REST-009
+    title: Put Away
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-008
+    started_at: "2026-08-03"
+    completed_at: null
+    documentation:
+      - docs/inventory/putaway.md
+      - docs/warehouse/putaway.md
+      - docs/ai/overview.md
+      - README.md
+      - CHANGELOG.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/adr/0009-restaurant-production-separated-from-inventory.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-platform/backend/app/modules/inventory/README.md
+      - erp-platform/frontend/lib/features/inventory/README.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/005-putaway.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_receiving_documents.py
+      - erp-platform/frontend/test/inventory/inventory_controller_test.dart
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - flutter build apk --debug
+      - flutter build macos
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-009
+    migration: 0018_putaway
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-009-putaway
+      commits:
+        - 88c16cb
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 88c16cb
+    review_status: ready
+  - id: DOC-009
+    title: Product Documentation, Help Center & Knowledge Architecture
+    epic: Documentation
+    module: documentation
+    status: review
+    dependencies:
+      - DOC-008
+    started_at: "2026-10-02"
+    completed_at: null
+    documentation:
+      - docs/index.md
+      - docs/architecture/product-map.md
+      - docs/architecture/README.md
+      - docs/help/README.md
+      - docs/help/knowledge-architecture.md
+      - docs/help/feature-documentation-standard.md
+      - docs/help/partners-resellers.md
+      - docs/help/ai-marketing.md
+      - docs/deployment/README.md
+      - docs/governance/documentation-policy.md
+      - README.md
+      - CHANGELOG.md
+      - AGENTS.md
+      - AI_DEVELOPMENT_CHARTER.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/AGENTS.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-blueprint/docs/architecture/product-map.md
+      - erp-blueprint/docs/help/README.md
+      - erp-blueprint/docs/academy/documentation/001-product-documentation-help-center.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/documentation/001-product-documentation-help-center.md
+    tests:
+      - make format
+      - make lint
+      - make test
+      - make check-task TASK=DOC-009
+      - mkdocs build
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-009-product-documentation-help-center
+      commits:
+        - 4294faf
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 4294faf
+    review_status: ready
+  - id: DOC-008
+    title: Deployment & Distribution Architecture
+    epic: Architecture
+    module: architecture
+    status: review
+    dependencies:
+      - DEV-010
+      - DEV-011
+      - DEV-012
+      - REST-008
+    started_at: "2026-10-02"
+    completed_at: null
+    documentation:
+      - docs/architecture/README.md
+      - docs/architecture/deployment/README.md
+      - docs/architecture/deployment/cloud.md
+      - docs/architecture/deployment/on-premise.md
+      - docs/architecture/deployment/hybrid.md
+      - docs/architecture/deployment/tenancy.md
+      - docs/architecture/deployment/subscriptions.md
+      - docs/architecture/system-map.md
+      - docs/architecture/offline-strategy.md
+      - docs/architecture/cloud.md
+      - docs/architecture/on-premise.md
+      - docs/architecture/hybrid.md
+      - docs/architecture/resellers.md
+      - docs/ai/overview.md
+      - README.md
+      - CHANGELOG.md
+      - AGENTS.md
+      - erp-blueprint/AGENTS.md
+      - erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md
+      - erp-blueprint/docs/architecture/deployment-distribution-architecture.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/adr/0008-deployment-distribution-architecture.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/architecture/001-deployment-distribution-architecture.md
+    tests:
+      - make format
+      - make lint
+      - make test
+      - make check-task TASK=DOC-008
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-008-deployment-distribution-architecture
+      commits:
+        - fc99175
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: fc99175
+    review_status: ready
   - id: REST-008
     title: Goods Receipt
     epic: EPIC-003 Inbound Logistics

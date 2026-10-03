@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
+from app.modules.inventory.domain.entities import InventoryMovementType
 from app.modules.inventory.infrastructure.models import (
     InventoryAdjustmentModel,
     InventoryBalanceModel,
@@ -83,6 +84,12 @@ class InventoryRepository(ABC):
         tenant_id: UUID,
         branch_id: UUID | None,
         product_id: UUID | None,
+        warehouse_id: UUID | None,
+        location_id: UUID | None,
+        movement_type: InventoryMovementType | None,
+        origin_module: str | None,
+        business_process: str | None,
+        source_module: str | None,
         limit: int,
         offset: int,
     ) -> list[InventoryMovementModel]:
@@ -95,7 +102,22 @@ class InventoryRepository(ABC):
         tenant_id: UUID,
         branch_id: UUID | None,
         product_id: UUID | None,
+        warehouse_id: UUID | None,
+        location_id: UUID | None,
+        movement_type: InventoryMovementType | None,
+        origin_module: str | None,
+        business_process: str | None,
+        source_module: str | None,
     ) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_movement_by_id(
+        self,
+        movement_id: UUID,
+        *,
+        tenant_id: UUID,
+    ) -> InventoryMovementModel | None:
         raise NotImplementedError
 
     @abstractmethod

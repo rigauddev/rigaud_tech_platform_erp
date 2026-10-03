@@ -312,6 +312,16 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         200,
         "Movimentações de estoque consultadas com sucesso.",
     ),
+    "INVENTORY_TRANSACTION_LIST_RETRIEVED": MessageDefinition(
+        "INVENTORY_TRANSACTION_LIST_RETRIEVED",
+        200,
+        "Transações de estoque consultadas com sucesso.",
+    ),
+    "INVENTORY_TRANSACTION_RETRIEVED": MessageDefinition(
+        "INVENTORY_TRANSACTION_RETRIEVED",
+        200,
+        "Transação de estoque consultada com sucesso.",
+    ),
     "INVENTORY_ADJUSTMENT_CREATED": MessageDefinition(
         "INVENTORY_ADJUSTMENT_CREATED",
         200,
@@ -334,6 +344,12 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         "INVENTORY_BALANCE_NOT_FOUND",
         404,
         "Saldo de estoque não encontrado.",
+        "warning",
+    ),
+    "INVENTORY_TRANSACTION_NOT_FOUND": MessageDefinition(
+        "INVENTORY_TRANSACTION_NOT_FOUND",
+        404,
+        "Transação de estoque não encontrada.",
         "warning",
     ),
     "INVENTORY_RESERVATION_NOT_FOUND": MessageDefinition(
@@ -583,6 +599,18 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         "GOODS_RECEIPT_CANNOT_CONFIRM",
         409,
         "Recebimento não pode ser confirmado no status atual.",
+        "warning",
+    ),
+    "PUTAWAY_CONFIRMED": MessageDefinition(
+        "PUTAWAY_CONFIRMED",
+        200,
+        "Put Away confirmado com sucesso.",
+        audit_required=True,
+    ),
+    "PUTAWAY_CANNOT_CONFIRM": MessageDefinition(
+        "PUTAWAY_CANNOT_CONFIRM",
+        409,
+        "Put Away não pode ser confirmado no estado atual.",
         "warning",
     ),
     "AUDIT_EVENTS_RETRIEVED": MessageDefinition(

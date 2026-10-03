@@ -99,6 +99,7 @@ make test
 - `/api` encaminha para o backend.
 - `/` encaminha para o frontend Flutter Web.
 - `/nginx-health` valida a saúde interna do Nginx para o `docker compose --wait`.
+- Os nomes `backend` e `frontend` são resolvidos dinamicamente pelo DNS interno do Docker, mantendo o proxy disponível após recriação ou reinício desses containers.
 
 ## Banco
 
@@ -126,6 +127,7 @@ Após revisão da DEV-001:
 - A imagem Flutter foi fixada em `ghcr.io/cirruslabs/flutter:3.41.9` para evitar que a tag móvel `stable` quebre o ambiente.
 - O container Flutter corrige a permissão do cache Pub no startup e executa o processo Flutter como `ubuntu`.
 - O healthcheck do Nginx passou a usar `/nginx-health`, evitando falhas por dependência do proxy do frontend.
+- O proxy Nginx passou a resolver serviços dinamicamente, evitando respostas `502` causadas por IPs antigos após reconstrução de backend ou frontend.
 
 ## Observações
 

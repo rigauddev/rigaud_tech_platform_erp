@@ -32,6 +32,29 @@ Query:
 
 Retorna `InventoryMovement`.
 
+## GET /transactions
+
+Consulta o livro razao de transacoes de estoque.
+
+Query:
+
+- `page`;
+- `page_size`;
+- `branch_id` opcional;
+- `product_id` opcional;
+- `warehouse_id` opcional;
+- `location_id` opcional;
+- `movement_type` opcional;
+- `origin_module` opcional;
+- `business_process` opcional;
+- `source_module` opcional.
+
+Retorna `InventoryMovement` com `immutable=true`.
+
+## GET /transactions/{transaction_id}
+
+Consulta uma transacao de estoque por ID, limitada ao tenant e filial ativa.
+
 ## POST /adjustments
 
 Registra ajuste manual ou técnico.
@@ -110,6 +133,36 @@ Na REST-008:
 - aumenta `physical_quantity`;
 - aumenta `putaway_pending_quantity`;
 - mantém `available_quantity` bloqueada até Put Away.
+
+## Put Away
+
+```text
+POST /api/v1/inventory/putaway
+```
+
+Confirma armazenagem física em uma localização final.
+
+Payload:
+
+```json
+{
+  "document_id": "uuid",
+  "product_id": "uuid",
+  "location_id": "uuid",
+  "quantity": "10.000",
+  "reason": "Armazenagem na câmara fria"
+}
+```
+
+Na REST-009:
+
+- cria `InventoryMovement` do tipo `putaway`;
+- reduz `putaway_pending_quantity` no saldo de recebimento;
+- incrementa `physical_quantity` na localização final;
+- mantém `InventoryBalance` como projeção gerada por movimento;
+- grava `origin_module=PURCHASE`;
+- grava `business_process=PUTAWAY`;
+- altera o documento para `available` quando não houver pendência.
 
 ## Fluxo
 

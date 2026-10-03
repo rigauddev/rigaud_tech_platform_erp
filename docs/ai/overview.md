@@ -34,6 +34,31 @@ InventoryMovementCreated
   -> Insight
 ```
 
+Eventos de estoque como `inventory.receipt.confirmed` e `inventory.putaway.confirmed` já carregam origem funcional planejada por `origin_module` e processo operacional por `business_process`.
+
+## AI Gateway E MCP Futuro
+
+Arquitetura planejada:
+
+```text
+AI Gateway
+  ↓
+MCP
+  ↓
+Domain-specific tools
+```
+
+MCPs futuros:
+
+- Finance;
+- Inventory;
+- Restaurant;
+- Production;
+- HR;
+- Commercial.
+
+Cada MCP devera respeitar tenant, branch, role, permissions e audit.
+
 ## Limite Atual
 
 Não há providers, agentes, prompts, RAG, embeddings, memória, ferramentas MCP ou chamadas externas nesta task.

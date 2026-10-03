@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../shared/components/app_empty_state.dart';
 import '../../../shared/layouts/app_scaffold.dart';
+import '../../receiving_documents/domain/receiving_document.dart';
+import '../../receiving_documents/presentation/receiving_document_controller.dart';
 import '../domain/inventory.dart';
 import '../domain/inventory_input.dart';
 import 'inventory_controller.dart';
@@ -14,7 +16,7 @@ class InventoryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: AppScaffold(
         title: 'Estoque',
         body: Column(
@@ -22,7 +24,8 @@ class InventoryScreen extends ConsumerWidget {
             TabBar(
               tabs: [
                 Tab(text: 'Saldos'),
-                Tab(text: 'Movimentos'),
+                Tab(text: 'Transações'),
+                Tab(text: 'Put Away'),
                 Tab(text: 'Ajuste'),
                 Tab(text: 'Reserva'),
               ],
@@ -31,7 +34,8 @@ class InventoryScreen extends ConsumerWidget {
               child: TabBarView(
                 children: [
                   _BalancesView(),
-                  _MovementsView(),
+                  _TransactionsView(),
+                  _PutAwayView(),
                   _AdjustmentView(),
                   _ReservationView(),
                 ],
@@ -73,42 +77,391 @@ class _BalancesView extends ConsumerWidget {
   }
 }
 
-class _MovementsView extends ConsumerWidget {
-  const _MovementsView();
+class _TransactionsView extends ConsumerStatefulWidget {
+  const _TransactionsView();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final movements = ref.watch(inventoryMovementsControllerProvider);
+  ConsumerState<_TransactionsView> createState() => _TransactionsViewState();
+}
+
+class _TransactionsViewState extends ConsumerState<_TransactionsView> {
+  String? _businessProcess;
+
+  @override
+  Widget build(BuildContext context) {
+    final movements = ref.watch(inventoryTransactionsControllerProvider);
     return movements.when(
       data: (items) {
         if (items.isEmpty) {
           return const AppEmptyState(
-            title: 'Nenhuma movimentação encontrada',
-            message: 'Ajustes e reservas aparecerão neste histórico.',
+            title: 'Nenhuma transação encontrada',
+            message: 'O livro razão do estoque aparecerá neste histórico.',
           );
         }
-        return ListView.separated(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          itemCount: items.length,
-          separatorBuilder: (context, index) =>
-              const SizedBox(height: AppSpacing.sm),
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return Card(
-              child: ListTile(
-                leading: const Icon(Icons.swap_vert_circle_outlined),
-                title: Text(item.reason),
-                subtitle: Text(
-                  '${item.movementType} · Físico ${item.physicalQuantityDelta} · Reservado ${item.reservedQuantityDelta} · Put away ${item.putawayPendingQuantityDelta}',
-                ),
-                trailing: Text(item.eventName),
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+                0,
               ),
-            );
-          },
+              child: Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: [
+                  FilterChip(
+                    label: const Text('Todas'),
+                    selected: _businessProcess == null,
+                    onSelected: (_) => _applyProcess(null),
+                  ),
+                  for (final process in const [
+                    'RECEIVING',
+                    'PUTAWAY',
+                    'ADJUSTMENT',
+                    'RESERVATION',
+                    'RELEASE',
+                  ])
+                    FilterChip(
+                      label: Text(process),
+                      selected: _businessProcess == process,
+                      onSelected: (_) => _applyProcess(process),
+                    ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                itemCount: items.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: AppSpacing.sm),
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  return Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.receipt_long_outlined),
+                      title: Text(item.reason),
+                      subtitle: Text(
+                        '${item.movementType} · Físico ${item.physicalQuantityDelta} · Reservado ${item.reservedQuantityDelta} · Put away ${item.putawayPendingQuantityDelta}',
+                      ),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(item.businessProcess),
+                          Text(
+                            item.immutable ? 'Imutável' : 'Editável',
+                            style: Theme.of(context).textTheme.labelSmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         );
       },
       error: (error, stackTrace) => Center(child: Text(_message(error))),
       loading: () => const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Future<void> _applyProcess(String? process) async {
+    setState(() => _businessProcess = process);
+    await ref
+        .read(inventoryTransactionsControllerProvider.notifier)
+        .reload(businessProcess: process);
+  }
+}
+
+class _PutAwayView extends ConsumerStatefulWidget {
+  const _PutAwayView();
+
+  @override
+  ConsumerState<_PutAwayView> createState() => _PutAwayViewState();
+}
+
+class _PutAwayViewState extends ConsumerState<_PutAwayView> {
+  final _documentId = TextEditingController();
+  final _productId = TextEditingController();
+  final _locationId = TextEditingController();
+  final _quantity = TextEditingController();
+  final _reason = TextEditingController();
+
+  @override
+  void dispose() {
+    _documentId.dispose();
+    _productId.dispose();
+    _locationId.dispose();
+    _quantity.dispose();
+    _reason.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth >= 960;
+        final form = _PutAwayForm(
+          documentId: _documentId,
+          productId: _productId,
+          locationId: _locationId,
+          quantity: _quantity,
+          reason: _reason,
+          onSubmit: _submit,
+        );
+        final queue = _PutAwayQueue(onSelect: _fillFromQueue);
+        final history = const _PutAwayHistory();
+        if (wide) {
+          return Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: form),
+                const SizedBox(width: AppSpacing.lg),
+                Expanded(
+                  child: Column(
+                    children: [
+                      queue,
+                      const SizedBox(height: AppSpacing.lg),
+                      history,
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        return ListView(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          children: [
+            queue,
+            const SizedBox(height: AppSpacing.lg),
+            form,
+            const SizedBox(height: AppSpacing.lg),
+            history,
+          ],
+        );
+      },
+    );
+  }
+
+  void _fillFromQueue(ReceivingDocument document) {
+    final item = document.items.firstOrNull;
+    _documentId.text = document.id;
+    _productId.text = item?.productId ?? '';
+    _quantity.text = item?.receivedQuantity.toStringAsFixed(3) ?? '';
+  }
+
+  Future<void> _submit() async {
+    final result = await ref
+        .read(inventoryBalancesControllerProvider.notifier)
+        .confirmPutAway(
+          PutAwayInput(
+            documentId: _documentId.text.trim(),
+            productId: _productId.text.trim(),
+            locationId: _locationId.text.trim(),
+            quantity: _quantity.text.trim(),
+            reason: _reason.text.trim(),
+          ),
+        );
+    if (result != null && mounted) {
+      _showSuccess(context, 'Put Away confirmado.');
+    }
+  }
+}
+
+class _PutAwayQueue extends ConsumerWidget {
+  const _PutAwayQueue({required this.onSelect});
+
+  final ValueChanged<ReceivingDocument> onSelect;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final documents = ref.watch(receivingDocumentsControllerProvider);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Documentos pendentes',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            documents.when(
+              data: (items) {
+                final pending = items
+                    .where(
+                      (item) =>
+                          item.status == ReceivingDocumentStatus.putawayPending,
+                    )
+                    .toList();
+                if (pending.isEmpty) {
+                  return const AppEmptyState(
+                    title: 'Fila vazia',
+                    message:
+                        'Documentos recebidos e pendentes de armazenagem aparecerão aqui.',
+                  );
+                }
+                return Column(
+                  children: [
+                    for (final item in pending)
+                      ListTile(
+                        leading: const Icon(Icons.inventory_2_outlined),
+                        title: Text(item.documentNumber),
+                        subtitle: Text(
+                          'Warehouse ${item.warehouseId} · Itens ${item.items.length}',
+                        ),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => onSelect(item),
+                      ),
+                  ],
+                );
+              },
+              error: (error, stackTrace) => Text(_message(error)),
+              loading: () => const Center(child: CircularProgressIndicator()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PutAwayForm extends StatelessWidget {
+  const _PutAwayForm({
+    required this.documentId,
+    required this.productId,
+    required this.locationId,
+    required this.quantity,
+    required this.reason,
+    required this.onSubmit,
+  });
+
+  final TextEditingController documentId;
+  final TextEditingController productId;
+  final TextEditingController locationId;
+  final TextEditingController quantity;
+  final TextEditingController reason;
+  final VoidCallback onSubmit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Fila de Put Away',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              'Confirme a armazenagem física de itens recebidos em uma localização ativa.',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TextField(
+              controller: documentId,
+              decoration: const InputDecoration(
+                labelText: 'Documento de recebimento ID',
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            TextField(
+              controller: productId,
+              decoration: const InputDecoration(labelText: 'Produto ID'),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            TextField(
+              controller: locationId,
+              decoration: const InputDecoration(labelText: 'Localização ID'),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            TextField(
+              controller: quantity,
+              decoration: const InputDecoration(labelText: 'Quantidade'),
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            TextField(
+              controller: reason,
+              decoration: const InputDecoration(labelText: 'Observação'),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            FilledButton.icon(
+              onPressed: onSubmit,
+              icon: const Icon(Icons.move_down_outlined),
+              label: const Text('Confirmar Put Away'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PutAwayHistory extends ConsumerWidget {
+  const _PutAwayHistory();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final movements = ref.watch(inventoryTransactionsControllerProvider);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Histórico de armazenagens',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            movements.when(
+              data: (items) {
+                final putaways = items
+                    .where((item) => item.businessProcess == 'PUTAWAY')
+                    .toList();
+                if (putaways.isEmpty) {
+                  return const AppEmptyState(
+                    title: 'Nenhum Put Away confirmado',
+                    message: 'As armazenagens confirmadas aparecerão aqui.',
+                  );
+                }
+                return Column(
+                  children: [
+                    for (final item in putaways)
+                      ListTile(
+                        leading: const Icon(Icons.shelves),
+                        title: Text(item.reason),
+                        subtitle: Text(
+                          'Produto ${item.productId} · Quantidade ${item.putawayPendingQuantityDelta}',
+                        ),
+                        trailing: Text(item.originModule),
+                      ),
+                  ],
+                );
+              },
+              error: (error, stackTrace) => Text(_message(error)),
+              loading: () => const Center(child: CircularProgressIndicator()),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

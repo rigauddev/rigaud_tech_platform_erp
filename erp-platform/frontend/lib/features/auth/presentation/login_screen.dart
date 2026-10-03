@@ -603,24 +603,19 @@ class _BrandLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 92,
-      child: ClipRect(
-        child: Transform.scale(
-          scale: 1.85,
-          child: Image.asset(
-            'assets/images/logo_rigaud_tech.png',
-            fit: BoxFit.contain,
-            alignment: Alignment.center,
-            filterQuality: FilterQuality.high,
-            semanticLabel: 'Rigaud Tech',
-            errorBuilder: (context, error, stackTrace) {
-              return Icon(
-                Icons.business_outlined,
-                size: 64,
-                color: Theme.of(context).colorScheme.primary,
-              );
-            },
-          ),
-        ),
+      child: Image.asset(
+        'assets/images/logo_rigaud_tech_trimmed.png',
+        fit: BoxFit.contain,
+        alignment: Alignment.center,
+        filterQuality: FilterQuality.high,
+        semanticLabel: 'Rigaud Tech',
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(
+            Icons.business_outlined,
+            size: 64,
+            color: Theme.of(context).colorScheme.primary,
+          );
+        },
       ),
     );
   }

@@ -11,26 +11,35 @@ from app.modules.audit.application.service import AuditEventInput, AuditService
 from app.modules.audit.infrastructure.repositories import SQLAlchemyAuditEventRepository
 from app.modules.auth.domain.entities import AuthenticatedUser
 from app.modules.auth.presentation.dependencies import get_current_user
+from app.modules.inventory.application.putaway_service import PutAwayInput, PutAwayService
 from app.modules.inventory.application.use_cases import (
     CreateInventoryAdjustment,
     CreateInventoryReservation,
+    GetInventoryTransaction,
     InventoryAdjustmentInput,
     InventoryListInput,
     InventoryReservationInput,
     ListInventoryBalances,
     ListInventoryMovements,
+    ListInventoryTransactions,
     ReleaseInventoryReservation,
 )
+from app.modules.inventory.domain.entities import InventoryMovementType
 from app.modules.inventory.domain.exceptions import (
     InventoryBalanceNotFoundError,
     InventoryBranchRequiredError,
     InventoryError,
     InventoryInsufficientStockError,
     InventoryInvalidQuantityError,
+    InventoryMovementNotFoundError,
     InventoryProductNotFoundError,
     InventoryReservationInactiveError,
     InventoryReservationNotFoundError,
     InventoryWarehouseNotFoundError,
+    PutAwayCannotConfirmError,
+    ReceivingDocumentNotFoundError,
+    WarehouseLocationBranchRequiredError,
+    WarehouseLocationNotFoundError,
 )
 from app.modules.inventory.infrastructure.models import (
     InventoryAdjustmentModel,
@@ -38,7 +47,13 @@ from app.modules.inventory.infrastructure.models import (
     InventoryMovementModel,
     InventoryReservationModel,
 )
+from app.modules.inventory.infrastructure.receiving_repositories import (
+    SQLAlchemyReceivingDocumentRepository,
+)
 from app.modules.inventory.infrastructure.repositories import SQLAlchemyInventoryRepository
+from app.modules.inventory.infrastructure.warehouse_location_repositories import (
+    SQLAlchemyWarehouseLocationRepository,
+)
 from app.modules.inventory.infrastructure.warehouse_repositories import (
     SQLAlchemyWarehouseRepository,
 )
@@ -50,6 +65,7 @@ from app.modules.inventory.presentation.schemas import (
     InventoryOperationResponse,
     InventoryReservationRequest,
     InventoryReservationResponse,
+    PutAwayConfirmRequest,
 )
 from app.modules.products.infrastructure.repositories import SQLAlchemyProductRepository
 from app.shared.api.responses import PaginationMeta, error_response, success_response
@@ -98,8 +114,11 @@ def _movement_response(movement: InventoryMovementModel) -> InventoryMovementRes
         reason=movement.reason,
         source_module=movement.source_module,
         source_id=movement.source_id,
+        origin_module=movement.origin_module,
+        business_process=movement.business_process,
         event_name=movement.event_name,
         actor_id=movement.actor_id,
+        immutable=True,
         created_at=movement.created_at,
         updated_at=movement.updated_at,
     )
@@ -149,6 +168,16 @@ def _operation_response(result) -> InventoryOperationResponse:
         adjustment=_adjustment_response(result.adjustment) if result.adjustment else None,
         reservation=_reservation_response(result.reservation) if result.reservation else None,
     )
+
+
+def _putaway_response(result) -> dict[str, object]:
+    return {
+        "document_id": str(result.document.id),
+        "document_status": result.document.status.value,
+        "source_balance": _balance_response(result.source_balance).model_dump(mode="json"),
+        "target_balance": _balance_response(result.target_balance).model_dump(mode="json"),
+        "movement": _movement_response(result.movement).model_dump(mode="json"),
+    }
 
 
 def _snapshot(balance: InventoryBalanceModel) -> dict[str, str]:
@@ -262,6 +291,67 @@ async def list_inventory_movements(
             total=result.total,
         ),
     )
+
+
+@router.get("/transactions", response_model=list[InventoryMovementResponse])
+async def list_inventory_transactions(
+    session: AsyncSessionDependency,
+    current_user: CurrentUserDependency,
+    page: PageQuery = 1,
+    page_size: PageSizeQuery = 20,
+    branch_id: OptionalUUIDQuery = None,
+    product_id: OptionalUUIDQuery = None,
+    warehouse_id: OptionalUUIDQuery = None,
+    location_id: OptionalUUIDQuery = None,
+    movement_type: Annotated[InventoryMovementType | None, Query()] = None,
+    origin_module: Annotated[str | None, Query(max_length=80)] = None,
+    business_process: Annotated[str | None, Query(max_length=80)] = None,
+    source_module: Annotated[str | None, Query(max_length=80)] = None,
+) -> JSONResponse:
+    result = await ListInventoryTransactions(SQLAlchemyInventoryRepository(session)).execute(
+        InventoryListInput(
+            tenant_id=current_user.tenant_id,
+            branch_id=branch_id or current_user.branch_id,
+            product_id=product_id,
+            warehouse_id=warehouse_id,
+            location_id=location_id,
+            movement_type=movement_type,
+            origin_module=origin_module,
+            business_process=business_process,
+            source_module=source_module,
+            page=page,
+            page_size=page_size,
+        )
+    )
+    return success_response(
+        "INVENTORY_TRANSACTION_LIST_RETRIEVED",
+        data=[_movement_response(item).model_dump(mode="json") for item in result.items],
+        meta=PaginationMeta.from_total(
+            page=result.page,
+            page_size=result.page_size,
+            total=result.total,
+        ),
+    )
+
+
+@router.get("/transactions/{transaction_id}", response_model=InventoryMovementResponse)
+async def get_inventory_transaction(
+    transaction_id: UUID,
+    session: AsyncSessionDependency,
+    current_user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        movement = await GetInventoryTransaction(SQLAlchemyInventoryRepository(session)).execute(
+            transaction_id,
+            tenant_id=current_user.tenant_id,
+            branch_id=current_user.branch_id,
+        )
+        return success_response(
+            "INVENTORY_TRANSACTION_RETRIEVED",
+            data=_movement_response(movement).model_dump(mode="json"),
+        )
+    except InventoryError as exc:
+        return inventory_exception_to_response(exc)
 
 
 @router.post("/adjustments", response_model=InventoryOperationResponse)
@@ -441,6 +531,65 @@ async def release_inventory_reservation(
         return inventory_exception_to_response(exc)
 
 
+@router.post("/putaway")
+async def confirm_putaway(
+    payload: PutAwayConfirmRequest,
+    request: Request,
+    session: AsyncSessionDependency,
+    current_user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        service = PutAwayService(
+            SQLAlchemyReceivingDocumentRepository(session),
+            SQLAlchemyInventoryRepository(session),
+            SQLAlchemyWarehouseLocationRepository(session),
+        )
+        result = await service.confirm(
+            PutAwayInput(
+                tenant_id=current_user.tenant_id,
+                branch_id=current_user.branch_id,
+                document_id=payload.document_id,
+                product_id=payload.product_id,
+                location_id=payload.location_id,
+                quantity=payload.quantity,
+                reason=payload.reason,
+                actor_id=current_user.id,
+            )
+        )
+        await _record_inventory_event(
+            session,
+            event_name=result.movement.event_name,
+            action="putaway_confirmed",
+            entity_type="inventory_movement",
+            entity_id=result.movement.id,
+            tenant_id=current_user.tenant_id,
+            current_user=current_user,
+            after_data={
+                "source_balance": _snapshot(result.source_balance),
+                "target_balance": _snapshot(result.target_balance),
+            },
+        )
+        audit_logger.info(
+            result.movement.event_name,
+            extra={
+                "event": result.movement.event_name,
+                "tenant_id": str(current_user.tenant_id),
+                "branch_id": str(result.movement.branch_id),
+                "product_id": str(payload.product_id),
+                "location_id": str(payload.location_id),
+                "request_id": _request_id(request),
+            },
+        )
+        await session.commit()
+        return success_response(
+            "PUTAWAY_CONFIRMED",
+            data=_putaway_response(result),
+        )
+    except InventoryError as exc:
+        await session.rollback()
+        return inventory_exception_to_response(exc)
+
+
 def inventory_exception_to_response(exc: InventoryError) -> JSONResponse:
     if isinstance(exc, InventoryBranchRequiredError):
         return error_response("INVENTORY_BRANCH_REQUIRED")
@@ -450,6 +599,8 @@ def inventory_exception_to_response(exc: InventoryError) -> JSONResponse:
         return error_response("WAREHOUSE_NOT_FOUND")
     if isinstance(exc, InventoryBalanceNotFoundError):
         return error_response("INVENTORY_BALANCE_NOT_FOUND")
+    if isinstance(exc, InventoryMovementNotFoundError):
+        return error_response("INVENTORY_TRANSACTION_NOT_FOUND")
     if isinstance(exc, InventoryInsufficientStockError):
         return error_response("INVENTORY_INSUFFICIENT_STOCK")
     if isinstance(exc, InventoryInvalidQuantityError):
@@ -458,4 +609,12 @@ def inventory_exception_to_response(exc: InventoryError) -> JSONResponse:
         return error_response("INVENTORY_RESERVATION_NOT_FOUND")
     if isinstance(exc, InventoryReservationInactiveError):
         return error_response("INVENTORY_RESERVATION_INACTIVE")
+    if isinstance(exc, PutAwayCannotConfirmError):
+        return error_response("PUTAWAY_CANNOT_CONFIRM")
+    if isinstance(exc, ReceivingDocumentNotFoundError):
+        return error_response("RECEIVING_DOCUMENT_NOT_FOUND")
+    if isinstance(exc, WarehouseLocationNotFoundError):
+        return error_response("WAREHOUSE_LOCATION_NOT_FOUND")
+    if isinstance(exc, WarehouseLocationBranchRequiredError):
+        return error_response("WAREHOUSE_LOCATION_BRANCH_REQUIRED")
     return error_response("INTERNAL_SERVER_ERROR")

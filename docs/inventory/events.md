@@ -16,6 +16,17 @@ REST-008 adiciona:
 - `goods_receipt.confirmed`;
 - `inventory.receipt.confirmed`.
 
+REST-009 adiciona:
+
+- `inventory.putaway.confirmed`.
+
+REST-010 nao adiciona novos eventos transacionais. Ela expoe o livro razao filtravel das transacoes ja registradas.
+
+Movimentos de estoque passam a registrar:
+
+- `origin_module`: origem funcional da movimentação;
+- `business_process`: processo operacional que gerou a movimentação.
+
 Kafka é planejado para o futuro, mas a primeira implementação deve usar dispatcher interno desacoplado.
 
 ## Eventos Internos
@@ -24,6 +35,7 @@ Kafka é planejado para o futuro, mas a primeira implementação deve usar dispa
 - `inventory.adjusted.out`;
 - `inventory.reserved`;
 - `inventory.reservation.released`;
+- `inventory.putaway.confirmed`;
 - `inventory.transferred`;
 - `inventory.count.finished`;
 - `inventory.low.stock`;

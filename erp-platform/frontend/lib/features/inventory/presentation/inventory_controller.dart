@@ -17,6 +17,12 @@ final inventoryMovementsControllerProvider =
       List<InventoryMovement>
     >(InventoryMovementsController.new);
 
+final inventoryTransactionsControllerProvider =
+    AsyncNotifierProvider<
+      InventoryTransactionsController,
+      List<InventoryMovement>
+    >(InventoryTransactionsController.new);
+
 class InventoryBalancesController
     extends AsyncNotifier<List<InventoryBalance>> {
   InventoryRepository get _repository => ref.read(inventoryRepositoryProvider);
@@ -44,6 +50,7 @@ class InventoryBalancesController
     if (result.hasValue) {
       await reload();
       ref.invalidate(inventoryMovementsControllerProvider);
+      ref.invalidate(inventoryTransactionsControllerProvider);
       return result.value;
     }
     state = AsyncError(result.error!, result.stackTrace!);
@@ -59,10 +66,58 @@ class InventoryBalancesController
     if (result.hasValue) {
       await reload();
       ref.invalidate(inventoryMovementsControllerProvider);
+      ref.invalidate(inventoryTransactionsControllerProvider);
       return result.value;
     }
     state = AsyncError(result.error!, result.stackTrace!);
     return null;
+  }
+
+  Future<PutAwayOperation?> confirmPutAway(PutAwayInput input) async {
+    final result = await AsyncValue.guard(
+      () => ConfirmPutAwayUseCase(_repository).execute(input),
+    );
+    if (result.hasValue) {
+      await reload();
+      ref.invalidate(inventoryMovementsControllerProvider);
+      ref.invalidate(inventoryTransactionsControllerProvider);
+      return result.value;
+    }
+    state = AsyncError(result.error!, result.stackTrace!);
+    return null;
+  }
+}
+
+class InventoryTransactionsController
+    extends AsyncNotifier<List<InventoryMovement>> {
+  InventoryRepository get _repository => ref.read(inventoryRepositoryProvider);
+
+  @override
+  Future<List<InventoryMovement>> build() {
+    return ListInventoryTransactionsUseCase(_repository).execute();
+  }
+
+  Future<void> reload({
+    String? productId,
+    String? warehouseId,
+    String? locationId,
+    String? movementType,
+    String? originModule,
+    String? businessProcess,
+    String? sourceModule,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => ListInventoryTransactionsUseCase(_repository).execute(
+        productId: productId,
+        warehouseId: warehouseId,
+        locationId: locationId,
+        movementType: movementType,
+        originModule: originModule,
+        businessProcess: businessProcess,
+        sourceModule: sourceModule,
+      ),
+    );
   }
 }
 

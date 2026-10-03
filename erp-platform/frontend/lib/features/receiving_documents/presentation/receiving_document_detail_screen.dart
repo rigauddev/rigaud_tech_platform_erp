@@ -82,7 +82,8 @@ class _Detail extends ConsumerWidget {
                 (status) => OutlinedButton(
                   onPressed:
                       status == document.status ||
-                          status == ReceivingDocumentStatus.putawayPending
+                          status == ReceivingDocumentStatus.putawayPending ||
+                          status == ReceivingDocumentStatus.available
                       ? null
                       : () => ref
                             .read(receivingDocumentsControllerProvider.notifier)
@@ -116,6 +117,7 @@ bool _canConfirm(ReceivingDocument document) {
   return !{
         ReceivingDocumentStatus.received,
         ReceivingDocumentStatus.putawayPending,
+        ReceivingDocumentStatus.available,
         ReceivingDocumentStatus.cancelled,
       }.contains(document.status) &&
       document.items.any((item) => item.receivedQuantity > 0);

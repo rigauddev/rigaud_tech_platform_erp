@@ -4,6 +4,33 @@
 
 ### Added
 
+- UI-002: navegação lateral reorganizada por contexto de trabalho, com grupos de visão geral, cadastros, estoque, conta e segurança, administração e desenvolvimento.
+- UI-002: logo de Login passa a usar variante PNG transparente e recortada, sem margem excedente ou escala artificial.
+
+### Changed
+
+- UI-002: Splash passa a encaminhar automaticamente para Login, removendo o botão manual de continuar.
+- UI-002: detalhes, edições e cadastros passam a apresentar ação de voltar para a rota-pai.
+- UI-002: Ambiente demo é identificado como ferramenta de desenvolvimento e separado do menu operacional.
+
+- REST-010: Inventory Transactions expõe `InventoryMovement` como livro razão imutável com filtros por produto, depósito, localização, tipo, origem, processo e módulo de origem.
+- REST-010: endpoints `GET /api/v1/inventory/transactions` e `GET /api/v1/inventory/transactions/{transaction_id}` adicionados ao Inventory Engine.
+- REST-010: Flutter Inventory passa a consultar transações de estoque com filtros por processo operacional.
+- REST-010: documentação em `docs/inventory/transactions.md` e Academy de Inventory Transactions.
+- REST-009: Put Away com `PutAwayService`, endpoint `POST /api/v1/inventory/putaway`, movimento `putaway`, liberação de saldo por localização e status documental `available`.
+- REST-009: `InventoryMovement` passa a registrar `origin_module` e `business_process`, preparando auditoria, relatórios, Kafka, MCP e Restaurant Production futura.
+- REST-009: Flutter Inventory recebe aba Put Away para confirmação por documento, produto, localização e quantidade, além de histórico de armazenagens.
+- REST-009: documentação em `docs/inventory/putaway.md`, `docs/warehouse/putaway.md` e Academy de Put Away.
+- DOC-009: arquitetura de documentação do produto, Central de Ajuda e conhecimento criada em `docs/index.md` e `docs/help/*`.
+- DOC-009: mapa planejado do produto criado em `docs/architecture/product-map.md`, separando itens implementados, em desenvolvimento, planejados e futuros.
+- DOC-009: padrao oficial de documentação por funcionalidade definido em `docs/help/feature-documentation-standard.md`.
+- DOC-009: documentação futura de parceiros, revendedores, AI/MCP e Marketing AI registrada sem implementar funcionalidades.
+- DOC-009: Academy, MkDocs, README, backlog, roadmap, task registry, decisões e glossário atualizados para Docs-as-Product.
+- DOC-008: arquitetura oficial de distribuicao criada para Cloud, Cloud Dedicated, On-Premise e Hybrid.
+- DOC-008: separacao entre Tenant e Deployment congelada, preservando `tenant_id = companies.id`.
+- DOC-008: estrategia de operacao offline em tres niveis, Sync Gateway futuro e AI Gateway/MCP documentados.
+- DOC-008: mapa funcional oficial documentado com Commercial, Inventory, Restaurant, Production, Financial, HR, Reports e AI/MCP.
+- DOC-008: ADR `0008-deployment-distribution-architecture`, Academy e documentacao em `docs/architecture/*`.
 - REST-008: Goods Receipt com `GoodsReceiptService`, confirmação física de `ReceivingDocument`, movimento `receipt`, saldo físico e `putaway_pending_quantity`.
 - REST-008: endpoint `POST /api/v1/receiving-documents/{document_id}/confirm-receipt`, auditoria `goods_receipt.confirmed` e evento interno `inventory.receipt.confirmed`.
 - REST-008: Flutter Receiving Documents passa a confirmar recebimento físico, exibir diferenças e acompanhar status `putaway_pending`.
@@ -126,8 +153,7 @@
 - REVIEW DEV-010: proteção explícita contra vínculo cruzado entre `CompanyMembership` e `Branch` de tenants diferentes.
 - REVIEW DEV-010: testes ampliados para multiempresa, `all_branches`, membership inativo, refresh com contexto inválido e branch membership cross-tenant.
 
-### Changed
-
+- REVIEW DEV-001: proxy Nginx resolve `backend` e `frontend` dinamicamente no DNS interno do Docker, evitando `502` após recriação dos containers.
 - UI-001 Review: login passa a exibir carrossel informativo lateral em desktop com o mesmo design e tamanho do card de acesso, mantendo a tela sem scroll.
 - UI-001 Review: renderização da logo no card de login ajustada para exibir a área útil do asset `assets/images/logo_rigaud_tech.png`.
 - UI-001: tela de login remove scroll externo, centraliza card responsivo e ajusta renderização horizontal da logo.

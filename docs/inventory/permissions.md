@@ -16,6 +16,10 @@ REST-008 adiciona permissão planejada:
 
 - confirmar recebimento físico.
 
+REST-009 adiciona permissão planejada:
+
+- confirmar put away.
+
 ## Regras Atuais
 
 - usuário autenticado obrigatório;
@@ -54,3 +58,4 @@ Uma task futura deve conectar permissões explícitas ao RBAC:
 - `inventory.adjustment.create`;
 - `inventory.reservation.create`;
 - `inventory.reservation.release`.
+- `inventory.putaway.confirm`.
