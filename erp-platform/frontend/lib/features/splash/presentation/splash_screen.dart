@@ -5,11 +5,27 @@ import 'package:go_router/go_router.dart';
 import '../../../app/router/app_routes.dart';
 import 'splash_view_model.dart';
 
-class SplashScreen extends ConsumerWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends ConsumerState<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future<void>.delayed(const Duration(milliseconds: 450));
+      if (mounted) {
+        context.go(AppRoutes.login);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.watch(splashViewModelProvider);
 
     return Scaffold(
@@ -35,9 +51,10 @@ class SplashScreen extends ConsumerWidget {
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 32),
-                  FilledButton(
-                    onPressed: () => context.go(AppRoutes.login),
-                    child: const Text('Continuar'),
+                  const SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: Center(child: CircularProgressIndicator()),
                   ),
                 ],
               ),

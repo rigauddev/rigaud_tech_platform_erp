@@ -116,6 +116,10 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Waiter`: usuário ou papel operacional responsável por atendimento.
 
+`Menu do Dia`: publicação comercial temporária de pratos disponíveis por filial, período e canal.
+
+`Quantidade Vendável`: cota comercial diária de um item do cardápio; não é saldo físico de estoque.
+
 `Recipe Engine`: engine futura para ficha técnica de pratos e consumo planejado de insumos.
 
 `Daily Production`: produção diária futura de porções/pratos, separada do saldo bruto de insumos.

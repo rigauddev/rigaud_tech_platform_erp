@@ -76,6 +76,9 @@ flutter:
   assets:
     - assets/images/logo_rigaud_tech.png
     - assets/images/rigaud-tech-logo.png
+    - assets/images/logo_rigaud_tech_trimmed.png
+    - assets/images/Rigaud_Tech_profile.PNG
+    - assets/images/Rigaud_Tech_profile_transparent.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

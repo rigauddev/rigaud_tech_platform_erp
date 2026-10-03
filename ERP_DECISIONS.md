@@ -59,6 +59,8 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Consumo automático de insumos do Restaurante será implementado em task futura do módulo Restaurant.
 - Pratos não serão controlados diretamente pelo estoque. Restaurante usará EPIC futura `EPIC-RESTAURANT-PRODUCTION` com Recipe Engine, Production Planning, Daily Production, Kitchen Production, Consumption, Waste, Forecast e AI Insights.
 - Produção futura consumirá insumos por `InventoryMovement`, usando `origin_module=RESTAURANT_PRODUCTION` e `business_process=PRODUCTION`.
+- Menu do Dia é uma publicação comercial por filial, período e canal. A quantidade vendável diária não altera nem duplica `InventoryBalance`.
+- Pedido originado pelo cardápio online deve portar o contexto da mesa, direcionar notificação ao garçom responsável e ser roteado para a estação/impressora de cozinha configurada.
 - Movimento confirmado não é editado.
 - Correção de estoque deve gerar novo movimento ou ajuste.
 - Toda nova entidade operacional deve possuir UUID interno, código curto quando fizer sentido, e ser avaliada para QR Code, código de barras, auditoria completa, sincronização offline, eventos Kafka, operação multi-filial e compatibilidade SaaS/On-Premise, sem antecipar implementação fora da task vigente.

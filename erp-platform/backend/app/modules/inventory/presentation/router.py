@@ -12,6 +12,12 @@ from app.modules.audit.infrastructure.repositories import SQLAlchemyAuditEventRe
 from app.modules.auth.domain.entities import AuthenticatedUser
 from app.modules.auth.presentation.dependencies import get_current_user
 from app.modules.inventory.application.putaway_service import PutAwayInput, PutAwayService
+from app.modules.inventory.application.inventory_count_service import (
+    InventoryCountCreateInput,
+    InventoryCountError,
+    InventoryCountService,
+)
+from app.modules.inventory.domain.entities import InventoryCountStatus
 from app.modules.inventory.application.use_cases import (
     CreateInventoryAdjustment,
     CreateInventoryReservation,
@@ -46,11 +52,13 @@ from app.modules.inventory.infrastructure.models import (
     InventoryBalanceModel,
     InventoryMovementModel,
     InventoryReservationModel,
+    InventoryCountModel,
 )
 from app.modules.inventory.infrastructure.receiving_repositories import (
     SQLAlchemyReceivingDocumentRepository,
 )
 from app.modules.inventory.infrastructure.repositories import SQLAlchemyInventoryRepository
+from app.modules.inventory.infrastructure.count_repositories import SQLAlchemyInventoryCountRepository
 from app.modules.inventory.infrastructure.warehouse_location_repositories import (
     SQLAlchemyWarehouseLocationRepository,
 )
@@ -66,6 +74,10 @@ from app.modules.inventory.presentation.schemas import (
     InventoryReservationRequest,
     InventoryReservationResponse,
     PutAwayConfirmRequest,
+    InventoryCountCreateRequest,
+    InventoryCountItemQuantityRequest,
+    InventoryCountItemResponse,
+    InventoryCountResponse,
 )
 from app.modules.products.infrastructure.repositories import SQLAlchemyProductRepository
 from app.shared.api.responses import PaginationMeta, error_response, success_response
@@ -167,6 +179,29 @@ def _operation_response(result) -> InventoryOperationResponse:
         movement=_movement_response(result.movement),
         adjustment=_adjustment_response(result.adjustment) if result.adjustment else None,
         reservation=_reservation_response(result.reservation) if result.reservation else None,
+    )
+
+
+def _count_response(count: InventoryCountModel) -> InventoryCountResponse:
+    return InventoryCountResponse(
+        id=count.id, tenant_id=count.tenant_id, branch_id=count.branch_id,
+        warehouse_id=count.warehouse_id, location_id=count.location_id, code=count.code,
+        status=count.status, notes=count.notes, started_at=count.started_at,
+        finished_at=count.finished_at, created_at=count.created_at, updated_at=count.updated_at,
+        items=[InventoryCountItemResponse(
+            id=item.id, product_id=item.product_id, expected_quantity=item.expected_quantity,
+            counted_quantity=item.counted_quantity,
+            divergence_quantity=(item.counted_quantity - item.expected_quantity) if item.counted_quantity is not None else None,
+            adjustment_movement_id=item.adjustment_movement_id,
+        ) for item in count.items],
+    )
+
+
+def _count_service(session: AsyncSession) -> InventoryCountService:
+    return InventoryCountService(
+        SQLAlchemyInventoryCountRepository(session),
+        SQLAlchemyInventoryRepository(session),
+        SQLAlchemyProductRepository(session),
     )
 
 
@@ -531,6 +566,75 @@ async def release_inventory_reservation(
         return inventory_exception_to_response(exc)
 
 
+@router.get("/counts", response_model=list[InventoryCountResponse])
+async def list_inventory_counts(session: AsyncSessionDependency, current_user: CurrentUserDependency, page: PageQuery = 1, page_size: PageSizeQuery = 20, branch_id: OptionalUUIDQuery = None, status: Annotated[InventoryCountStatus | None, Query()] = None) -> JSONResponse:
+    repository = SQLAlchemyInventoryCountRepository(session)
+    active_branch = branch_id or current_user.branch_id
+    items = await repository.list(tenant_id=current_user.tenant_id, branch_id=active_branch, status=status, limit=page_size, offset=(page - 1) * page_size)
+    total = await repository.count(tenant_id=current_user.tenant_id, branch_id=active_branch, status=status)
+    return success_response("INVENTORY_COUNT_LIST_RETRIEVED", data=[_count_response(item).model_dump(mode="json") for item in items], meta=PaginationMeta.from_total(page=page, page_size=page_size, total=total))
+
+
+@router.post("/counts", response_model=InventoryCountResponse)
+async def create_inventory_count(payload: InventoryCountCreateRequest, request: Request, session: AsyncSessionDependency, current_user: CurrentUserDependency) -> JSONResponse:
+    try:
+        count = await _count_service(session).create(InventoryCountCreateInput(tenant_id=current_user.tenant_id, branch_id=current_user.branch_id, warehouse_id=payload.warehouse_id, location_id=payload.location_id, code=payload.code, product_ids=payload.product_ids, notes=payload.notes, actor_id=current_user.id))
+        await _record_inventory_event(session, event_name="inventory.count.created", action="created", entity_type="inventory_count", entity_id=count.id, tenant_id=current_user.tenant_id, current_user=current_user, after_data={"code": count.code, "status": count.status.value})
+        await session.commit()
+        return success_response("INVENTORY_COUNT_CREATED", data=_count_response(count).model_dump(mode="json"))
+    except (InventoryError, InventoryCountError) as exc:
+        await session.rollback()
+        return inventory_exception_to_response(exc)
+
+
+@router.post("/counts/{count_id}/start", response_model=InventoryCountResponse)
+async def start_inventory_count(count_id: UUID, request: Request, session: AsyncSessionDependency, current_user: CurrentUserDependency) -> JSONResponse:
+    try:
+        count = await _count_service(session).start(count_id, tenant_id=current_user.tenant_id, branch_id=current_user.branch_id, actor_id=current_user.id)
+        await _record_inventory_event(session, event_name="inventory.count.started", action="started", entity_type="inventory_count", entity_id=count.id, tenant_id=current_user.tenant_id, current_user=current_user)
+        await session.commit()
+        return success_response("INVENTORY_COUNT_STARTED", data=_count_response(count).model_dump(mode="json"))
+    except (InventoryError, InventoryCountError) as exc:
+        await session.rollback()
+        return inventory_exception_to_response(exc)
+
+
+@router.put("/counts/{count_id}/items/{item_id}", response_model=InventoryCountResponse)
+async def record_inventory_count_item(count_id: UUID, item_id: UUID, payload: InventoryCountItemQuantityRequest, request: Request, session: AsyncSessionDependency, current_user: CurrentUserDependency) -> JSONResponse:
+    try:
+        count = await _count_service(session).record_item(count_id, item_id, payload.counted_quantity, tenant_id=current_user.tenant_id, branch_id=current_user.branch_id, actor_id=current_user.id)
+        await _record_inventory_event(session, event_name="inventory.count.item_recorded", action="item_recorded", entity_type="inventory_count", entity_id=count.id, tenant_id=current_user.tenant_id, current_user=current_user)
+        await session.commit()
+        return success_response("INVENTORY_COUNT_ITEM_RECORDED", data=_count_response(count).model_dump(mode="json"))
+    except (InventoryError, InventoryCountError) as exc:
+        await session.rollback()
+        return inventory_exception_to_response(exc)
+
+
+@router.post("/counts/{count_id}/finish", response_model=InventoryCountResponse)
+async def finish_inventory_count(count_id: UUID, request: Request, session: AsyncSessionDependency, current_user: CurrentUserDependency) -> JSONResponse:
+    try:
+        count = await _count_service(session).finish(count_id, tenant_id=current_user.tenant_id, branch_id=current_user.branch_id, actor_id=current_user.id)
+        await _record_inventory_event(session, event_name="inventory.count.finished", action="finished", entity_type="inventory_count", entity_id=count.id, tenant_id=current_user.tenant_id, current_user=current_user)
+        await session.commit()
+        return success_response("INVENTORY_COUNT_FINISHED", data=_count_response(count).model_dump(mode="json"))
+    except (InventoryError, InventoryCountError) as exc:
+        await session.rollback()
+        return inventory_exception_to_response(exc)
+
+
+@router.post("/counts/{count_id}/cancel", response_model=InventoryCountResponse)
+async def cancel_inventory_count(count_id: UUID, request: Request, session: AsyncSessionDependency, current_user: CurrentUserDependency) -> JSONResponse:
+    try:
+        count = await _count_service(session).cancel(count_id, tenant_id=current_user.tenant_id, branch_id=current_user.branch_id, actor_id=current_user.id)
+        await _record_inventory_event(session, event_name="inventory.count.cancelled", action="cancelled", entity_type="inventory_count", entity_id=count.id, tenant_id=current_user.tenant_id, current_user=current_user)
+        await session.commit()
+        return success_response("INVENTORY_COUNT_CANCELLED", data=_count_response(count).model_dump(mode="json"))
+    except (InventoryError, InventoryCountError) as exc:
+        await session.rollback()
+        return inventory_exception_to_response(exc)
+
+
 @router.post("/putaway")
 async def confirm_putaway(
     payload: PutAwayConfirmRequest,
@@ -590,7 +694,9 @@ async def confirm_putaway(
         return inventory_exception_to_response(exc)
 
 
-def inventory_exception_to_response(exc: InventoryError) -> JSONResponse:
+def inventory_exception_to_response(exc: InventoryError | InventoryCountError) -> JSONResponse:
+    if isinstance(exc, InventoryCountError):
+        return error_response("INVENTORY_COUNT_INVALID_STATE")
     if isinstance(exc, InventoryBranchRequiredError):
         return error_response("INVENTORY_BRANCH_REQUIRED")
     if isinstance(exc, InventoryProductNotFoundError):

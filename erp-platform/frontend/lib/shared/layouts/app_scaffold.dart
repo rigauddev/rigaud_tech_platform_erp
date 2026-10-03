@@ -20,9 +20,22 @@ class AppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 1024;
+    final currentPath = GoRouterState.of(context).uri.path;
+    final parentRoute = _parentRouteFor(currentPath);
 
     return Scaffold(
-      appBar: AppBar(title: Text(title ?? 'Rigaud Tech ERP'), actions: actions),
+      appBar: AppBar(
+        title: Text(title ?? 'Rigaud Tech ERP'),
+        actions: actions,
+        automaticallyImplyLeading: parentRoute == null,
+        leading: parentRoute == null
+            ? null
+            : IconButton(
+                tooltip: 'Voltar',
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => context.go(parentRoute),
+              ),
+      ),
       drawer: isDesktop ? null : const Drawer(child: _NavigationItems()),
       body: Row(
         children: [
@@ -51,85 +64,230 @@ class _NavigationItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentPath = GoRouterState.of(context).uri.path;
     return ListView(
       padding: const EdgeInsets.all(12),
       children: [
-        ListTile(
-          leading: const Icon(Icons.dashboard_outlined),
-          title: const Text('Dashboard'),
-          onTap: () => context.go(AppRoutes.dashboard),
+        const _NavigationBrand(),
+        const SizedBox(height: 12),
+        _NavigationSection(
+          title: 'Visão geral',
+          currentPath: currentPath,
+          items: const [
+            _NavigationItem(
+              AppRoutes.dashboard,
+              'Dashboard',
+              Icons.dashboard_outlined,
+            ),
+          ],
         ),
-        ListTile(
-          leading: const Icon(Icons.business_outlined),
-          title: const Text('Empresas'),
-          onTap: () => context.go(AppRoutes.companies),
+        _NavigationSection(
+          title: 'Cadastros',
+          currentPath: currentPath,
+          items: const [
+            _NavigationItem(
+              AppRoutes.companies,
+              'Empresas',
+              Icons.business_outlined,
+            ),
+            _NavigationItem(
+              AppRoutes.users,
+              'Usuários',
+              Icons.people_alt_outlined,
+            ),
+            _NavigationItem(
+              AppRoutes.products,
+              'Produtos',
+              Icons.inventory_2_outlined,
+            ),
+            _NavigationItem(
+              AppRoutes.categories,
+              'Categorias',
+              Icons.account_tree_outlined,
+            ),
+          ],
         ),
-        ListTile(
-          leading: const Icon(Icons.people_alt_outlined),
-          title: const Text('Usuários'),
-          onTap: () => context.go(AppRoutes.users),
+        _NavigationSection(
+          title: 'Estoque',
+          currentPath: currentPath,
+          items: const [
+            _NavigationItem(
+              AppRoutes.inventory,
+              'Saldos e transações',
+              Icons.inventory_outlined,
+            ),
+            _NavigationItem(
+              AppRoutes.receivingDocuments,
+              'Recebimentos',
+              Icons.move_to_inbox_outlined,
+            ),
+            _NavigationItem(
+              AppRoutes.warehouses,
+              'Depósitos',
+              Icons.warehouse_outlined,
+            ),
+            _NavigationItem(
+              AppRoutes.warehouseZones,
+              'Zonas',
+              Icons.location_searching_outlined,
+            ),
+            _NavigationItem(
+              AppRoutes.warehouseLocations,
+              'Localizações',
+              Icons.place_outlined,
+            ),
+          ],
         ),
-        ListTile(
-          leading: const Icon(Icons.account_circle_outlined),
-          title: const Text('Meu perfil'),
-          onTap: () => context.go(AppRoutes.currentUser),
+        _NavigationSection(
+          title: 'Conta e segurança',
+          currentPath: currentPath,
+          items: const [
+            _NavigationItem(
+              AppRoutes.currentUser,
+              'Meu perfil',
+              Icons.account_circle_outlined,
+            ),
+            _NavigationItem(
+              AppRoutes.mfaSettings,
+              'Autenticação em dois fatores',
+              Icons.verified_user_outlined,
+            ),
+          ],
         ),
-        ListTile(
-          leading: const Icon(Icons.verified_user_outlined),
-          title: const Text('2FA'),
-          onTap: () => context.go(AppRoutes.mfaSettings),
-        ),
-        ListTile(
-          leading: const Icon(Icons.inventory_2_outlined),
-          title: const Text('Produtos'),
-          onTap: () => context.go(AppRoutes.products),
-        ),
-        ListTile(
-          leading: const Icon(Icons.account_tree_outlined),
-          title: const Text('Categorias'),
-          onTap: () => context.go(AppRoutes.categories),
-        ),
-        ListTile(
-          leading: const Icon(Icons.warehouse_outlined),
-          title: const Text('Estoque'),
-          onTap: () => context.go(AppRoutes.inventory),
-        ),
-        ListTile(
-          leading: const Icon(Icons.store_mall_directory_outlined),
-          title: const Text('Depósitos'),
-          onTap: () => context.go(AppRoutes.warehouses),
-        ),
-        ListTile(
-          leading: const Icon(Icons.location_searching_outlined),
-          title: const Text('Zonas'),
-          onTap: () => context.go(AppRoutes.warehouseZones),
-        ),
-        ListTile(
-          leading: const Icon(Icons.place_outlined),
-          title: const Text('Localizações'),
-          onTap: () => context.go(AppRoutes.warehouseLocations),
-        ),
-        ListTile(
-          leading: const Icon(Icons.inventory_outlined),
-          title: const Text('Recebimentos'),
-          onTap: () => context.go(AppRoutes.receivingDocuments),
-        ),
-        ListTile(
-          leading: const Icon(Icons.fact_check_outlined),
-          title: const Text('Auditoria'),
-          onTap: () => context.go(AppRoutes.audit),
+        _NavigationSection(
+          title: 'Administração',
+          currentPath: currentPath,
+          items: const [
+            _NavigationItem(
+              AppRoutes.audit,
+              'Auditoria',
+              Icons.fact_check_outlined,
+            ),
+          ],
         ),
         if (_environment != 'production')
-          ListTile(
-            leading: const Icon(Icons.tune_outlined),
-            title: const Text('Demo'),
-            onTap: () => context.go(AppRoutes.demo),
+          _NavigationSection(
+            title: 'Desenvolvimento',
+            currentPath: currentPath,
+            items: const [
+              _NavigationItem(
+                AppRoutes.demo,
+                'Ambiente demo',
+                Icons.science_outlined,
+              ),
+            ],
           ),
-        const ListTile(
-          leading: Icon(Icons.inventory_2_outlined),
-          title: Text('Operações'),
-        ),
       ],
     );
   }
+}
+
+class _NavigationBrand extends StatelessWidget {
+  const _NavigationBrand();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(12, 8, 12, 4),
+      child: Text(
+        'Rigaud Tech\nPlatform ERP',
+        style: TextStyle(fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+}
+
+class _NavigationSection extends StatelessWidget {
+  const _NavigationSection({
+    required this.title,
+    required this.currentPath,
+    required this.items,
+  });
+
+  final String title;
+  final String currentPath;
+  final List<_NavigationItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+            child: Text(title, style: Theme.of(context).textTheme.labelMedium),
+          ),
+          for (final item in items)
+            ListTile(
+              leading: Icon(item.icon),
+              title: Text(item.label),
+              selected:
+                  currentPath == item.route ||
+                  currentPath.startsWith('${item.route}/'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              onTap: () {
+                if (Scaffold.maybeOf(context)?.isDrawerOpen ?? false) {
+                  Navigator.of(context).pop();
+                }
+                context.go(item.route);
+              },
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavigationItem {
+  const _NavigationItem(this.route, this.label, this.icon);
+
+  final String route;
+  final String label;
+  final IconData icon;
+}
+
+String? _parentRouteFor(String path) {
+  if (path == AppRoutes.companyCreate ||
+      RegExp(r'^/companies/[^/]+(?:/edit)?$').hasMatch(path)) {
+    return AppRoutes.companies;
+  }
+  if (path == AppRoutes.userCreate ||
+      RegExp(r'^/users/[^/]+(?:/(?:edit|reset-password))?$').hasMatch(path)) {
+    return AppRoutes.users;
+  }
+  if (path == AppRoutes.changeMyPassword || path == AppRoutes.mfaSettings) {
+    return AppRoutes.currentUser;
+  }
+  if (path == AppRoutes.productCreate ||
+      RegExp(r'^/products/[^/]+(?:/edit)?$').hasMatch(path)) {
+    return AppRoutes.products;
+  }
+  if (path == AppRoutes.categoryCreate ||
+      RegExp(r'^/categories/[^/]+(?:/edit)?$').hasMatch(path)) {
+    return AppRoutes.categories;
+  }
+  if (path == AppRoutes.warehouseCreate ||
+      RegExp(r'^/warehouses/[^/]+(?:/edit)?$').hasMatch(path)) {
+    return AppRoutes.warehouses;
+  }
+  if (path == AppRoutes.warehouseZoneCreate ||
+      RegExp(r'^/warehouse-zones/[^/]+(?:/edit)?$').hasMatch(path)) {
+    return AppRoutes.warehouseZones;
+  }
+  if (path == AppRoutes.warehouseLocationCreate ||
+      RegExp(r'^/warehouse-locations/[^/]+(?:/edit)?$').hasMatch(path)) {
+    return AppRoutes.warehouseLocations;
+  }
+  if (path == AppRoutes.receivingDocumentCreate ||
+      RegExp(r'^/receiving-documents/[^/]+(?:/edit)?$').hasMatch(path)) {
+    return AppRoutes.receivingDocuments;
+  }
+  if (RegExp(r'^/audit/[^/]+$').hasMatch(path)) {
+    return AppRoutes.audit;
+  }
+  return null;
 }

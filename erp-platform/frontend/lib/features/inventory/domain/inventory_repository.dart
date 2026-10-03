@@ -2,6 +2,7 @@ import 'inventory.dart';
 import 'inventory_input.dart';
 
 abstract interface class InventoryRepository {
+  Future<List<InventoryCount>> listCounts({int page = 1, int pageSize = 20});
   Future<List<InventoryBalance>> listBalances({
     String? productId,
     int page = 1,

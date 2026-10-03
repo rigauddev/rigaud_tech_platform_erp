@@ -45,6 +45,7 @@ class InventoryMovementType(StrEnum):
     ADJUSTMENT_OUT = "adjustment_out"
     RESERVATION_CREATED = "reservation_created"
     RESERVATION_RELEASED = "reservation_released"
+    COUNT = "count"
 
 
 class InventoryMovementStatus(StrEnum):
@@ -63,4 +64,11 @@ class InventoryAdjustmentStatus(StrEnum):
 class InventoryReservationStatus(StrEnum):
     ACTIVE = "active"
     RELEASED = "released"
+    CANCELLED = "cancelled"
+
+
+class InventoryCountStatus(StrEnum):
+    DRAFT = "draft"
+    IN_PROGRESS = "in_progress"
+    FINISHED = "finished"
     CANCELLED = "cancelled"

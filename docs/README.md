@@ -12,4 +12,5 @@ Documentação geral do projeto, guias, referências e registros técnicos.
 - `companies`: módulo Empresas e raiz do tenant da DEV-006.
 - `demo`: ambiente oficial de demonstração e contas de teste.
 - `inventory`: domínio planejado do Inventory Engine.
+- `restaurant`: regras planejadas de disponibilidade do cardápio e roteamento operacional de pedidos.
 - `governance`: Git Flow, compliance, políticas e documentos permanentes de trabalho.
