@@ -3,11 +3,11 @@ tasks:
     title: Mesas e Mapa do Salão
     epic: MVP Restaurante
     module: restaurant
-    status: in_progress
+    status: review
     dependencies:
       - DOC-011
     started_at: "2026-10-03"
-    completed_at: null
+    completed_at: "2026-10-03"
     documentation:
       - docs/restaurant/tables.md
       - docs/restaurant/README.md
@@ -31,14 +31,15 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/restaurant-001-tables-floor-plan
-      commits: []
+      commits:
+        - 894811f
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
-    review_status: in_progress
+    commit: 894811f
+    review_status: ready
   - id: DOC-011
     title: Restaurant Operations Core
     epic: MVP Restaurante
