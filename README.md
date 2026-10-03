@@ -16,13 +16,13 @@ Este repositório contém apenas a estrutura inicial de pastas e documentação 
 Fundação concluída até:
 
 ```text
-REST-013 — Transfers
+DOC-011 — Restaurant Operations Core
 ```
 
 Task atual:
 
 ```text
-REST-013 — Transfers
+DOC-011 — Restaurant Operations Core
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -119,6 +119,8 @@ Put Away está documentado em `docs/inventory/putaway.md` e `docs/warehouse/puta
 Inventory Transactions está documentado em `docs/inventory/transactions.md`.
 
 Transferências internas entre depósitos estão documentadas em `docs/inventory/transfers.md`.
+
+O contrato do módulo Restaurante está documentado em `docs/restaurant/README.md`.
 
 IA futura e MCP estão documentados em `docs/ai/overview.md`.
 

@@ -97,6 +97,8 @@ Cada item é uma Task independente. A ordem não pode ser alterada.
 
 ## MVP Restaurante
 
+DOC-011 — Restaurant Operations Core é o gate documental do MVP Restaurante. Ela congela o domínio comum, papéis, experiências Flutter, fluxo de pedidos e limites de estoque/produção antes das tasks funcionais abaixo.
+
 Após concluir o núcleo de estoque e inbound logistics, iniciar o Restaurante nesta ordem:
 
 1. Restaurant-001 — Mesas

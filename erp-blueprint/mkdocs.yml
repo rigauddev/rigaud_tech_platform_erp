@@ -38,6 +38,7 @@ nav:
       - Stock Adjustments: academy/inventory/008-stock-adjustments.md
       - Inventory Transfers: academy/inventory/009-inventory-transfers.md
       - Menu do Dia e Disponibilidade: academy/restaurant/001-menu-availability.md
+      - Restaurant Operations Core: academy/restaurant/002-restaurant-operations-core.md
       - Logs Estruturados: academy/observability/001-logs-estruturados.md
       - Request ID: academy/observability/002-rastreabilidade-com-request-id.md
       - Auditoria de Sistemas: academy/security/002-auditoria-de-sistemas.md

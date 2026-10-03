@@ -1,5 +1,7 @@
 # Disponibilidade Diaria Do Cardapio
 
+> A DOC-011 mantém este contrato como parte do Restaurant Operations Core. Esta publicação comercial não cria saldo físico nem baixa insumos.
+
 O cardapio online mostra somente itens publicados e disponiveis para a filial e o periodo de servico atual. A equipe informa diariamente quais pratos podem ser vendidos e, quando aplicavel, a quantidade maxima comercializavel.
 
 ## Regra Operacional Do MVP
