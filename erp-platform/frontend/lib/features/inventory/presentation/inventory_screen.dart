@@ -513,6 +513,7 @@ class _AdjustmentViewState extends ConsumerState<_AdjustmentView> {
   final _quantity = TextEditingController();
   final _reason = TextEditingController();
   InventoryAdjustmentType _type = InventoryAdjustmentType.increase;
+  String _reasonCode = 'correction';
 
   @override
   void dispose() {
@@ -540,6 +541,23 @@ class _AdjustmentViewState extends ConsumerState<_AdjustmentView> {
             .toList(),
         onChanged: (value) => setState(() => _type = value ?? _type),
       ),
+      trailing: DropdownButtonFormField<String>(
+        initialValue: _reasonCode,
+        decoration: const InputDecoration(labelText: 'Motivo'),
+        items: const [
+          DropdownMenuItem(value: 'correction', child: Text('Correção')),
+          DropdownMenuItem(value: 'damage', child: Text('Avaria')),
+          DropdownMenuItem(value: 'loss', child: Text('Perda')),
+          DropdownMenuItem(value: 'expiry', child: Text('Validade expirada')),
+          DropdownMenuItem(
+            value: 'opening_balance',
+            child: Text('Saldo inicial'),
+          ),
+          DropdownMenuItem(value: 'return', child: Text('Devolução')),
+        ],
+        onChanged: (value) =>
+            setState(() => _reasonCode = value ?? _reasonCode),
+      ),
       onSubmit: () async {
         final result = await ref
             .read(inventoryBalancesControllerProvider.notifier)
@@ -549,6 +567,7 @@ class _AdjustmentViewState extends ConsumerState<_AdjustmentView> {
                 adjustmentType: _type,
                 quantity: _quantity.text.trim(),
                 reason: _reason.text.trim(),
+                reasonCode: _reasonCode,
               ),
             );
         if (result != null && context.mounted) {
@@ -615,6 +634,7 @@ class _OperationForm extends StatelessWidget {
     required this.reason,
     required this.onSubmit,
     this.leading,
+    this.trailing,
   });
 
   final String title;
@@ -624,6 +644,7 @@ class _OperationForm extends StatelessWidget {
   final TextEditingController reason;
   final VoidCallback onSubmit;
   final Widget? leading;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -640,6 +661,10 @@ class _OperationForm extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
               if (leading != null) ...[
                 leading!,
+                const SizedBox(height: AppSpacing.md),
+              ],
+              if (trailing != null) ...[
+                trailing!,
                 const SizedBox(height: AppSpacing.md),
               ],
               TextField(

@@ -76,6 +76,10 @@ Tipos:
 - `increase`;
 - `decrease`.
 
+## POST /adjustments/{adjustment_id}/reverse
+
+Gera um ajuste compensatório, mantendo o lançamento original imutável.
+
 ## POST /reservations
 
 Registra reserva lógica de estoque disponível.

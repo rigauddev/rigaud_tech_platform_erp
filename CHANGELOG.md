@@ -4,6 +4,8 @@
 
 ### Added
 
+- REST-012: Stock Adjustments recebe catálogo de motivos, vínculo de estorno, endpoint de reversão compensatória e migration `0020_stock_adjustments`.
+
 - REST-011: Inventory Count adiciona documentos de inventario fisico, itens, ciclo draft/in_progress/finished/cancelled, auditoria e migration `0019_inventory_count`.
 - REST-011: divergencias de contagem passam a gerar `InventoryMovement` imutavel do tipo `count`, com origem `INVENTORY` e processo `COUNT`.
 
