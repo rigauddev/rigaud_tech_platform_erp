@@ -14,6 +14,8 @@ REST-009 adiciona Put Away, movendo quantidade pendente para localização final
 
 REST-010 adiciona Inventory Transactions, expondo `InventoryMovement` como livro razao imutavel e filtravel.
 
+REST-011 adiciona Inventory Count, com documentos de contagem fisica e divergencias registradas como movimentos `count` imutaveis.
+
 Documentos principais:
 
 - `api.md`;
@@ -23,4 +25,5 @@ Documentos principais:
 - `permissions.md`;
 - `putaway.md`;
 - `transactions.md`;
+- `counts.md`;
 - `validation.md`.

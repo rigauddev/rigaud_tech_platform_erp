@@ -4,6 +4,9 @@
 
 ### Added
 
+- REST-011: Inventory Count adiciona documentos de inventario fisico, itens, ciclo draft/in_progress/finished/cancelled, auditoria e migration `0019_inventory_count`.
+- REST-011: divergencias de contagem passam a gerar `InventoryMovement` imutavel do tipo `count`, com origem `INVENTORY` e processo `COUNT`.
+
 - UI-002: navegação lateral reorganizada por contexto de trabalho, com grupos de visão geral, cadastros, estoque, conta e segurança, administração e desenvolvimento.
 - UI-002: Login passa a usar a marca oficial atual em variante PNG transparente, sem fundo branco, margem excedente ou escala artificial.
 - UI-002: logo oficial de Login atualizada para `Rigaud_Tech_profile.PNG`, com variante transparente para remover o fundo branco sem alterar a marca.

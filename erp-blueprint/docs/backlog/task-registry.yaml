@@ -1,4 +1,42 @@
 tasks:
+  - id: REST-011
+    title: Inventory Count
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-010
+    started_at: "2026-10-02"
+    completed_at: null
+    documentation:
+      - docs/inventory/counts.md
+      - docs/inventory/README.md
+      - erp-blueprint/docs/academy/inventory/007-inventory-count.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/007-inventory-count.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_inventory_count.py
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-011
+      - git diff --check
+    migration: 0019_inventory_count
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-011-inventory-count
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 1292746
+    review_status: ready
   - id: UI-002
     title: Navigation & Application Shell
     epic: EPIC-0001 Foundation

@@ -174,3 +174,25 @@ class InventoryOperation {
     );
   }
 }
+
+class InventoryCount {
+  const InventoryCount({
+    required this.id,
+    required this.code,
+    required this.status,
+    required this.warehouseId,
+    required this.itemsCount,
+  });
+  final String id;
+  final String code;
+  final String status;
+  final String warehouseId;
+  final int itemsCount;
+  factory InventoryCount.fromJson(Map<String, dynamic> json) => InventoryCount(
+    id: json['id'] as String? ?? '',
+    code: json['code'] as String? ?? '',
+    status: json['status'] as String? ?? '',
+    warehouseId: json['warehouse_id'] as String? ?? '',
+    itemsCount: (json['items'] as List<dynamic>? ?? []).length,
+  );
+}

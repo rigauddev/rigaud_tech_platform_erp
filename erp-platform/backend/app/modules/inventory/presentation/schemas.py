@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.modules.inventory.domain.entities import (
     InventoryAdjustmentStatus,
     InventoryAdjustmentType,
+    InventoryCountStatus,
     InventoryMovementStatus,
     InventoryMovementType,
     InventoryReservationStatus,
@@ -43,6 +44,18 @@ class PutAwayConfirmRequest(InventoryBaseSchema):
     location_id: UUID
     quantity: Decimal = Field(gt=0)
     reason: str | None = Field(default=None, max_length=240)
+
+
+class InventoryCountCreateRequest(InventoryBaseSchema):
+    warehouse_id: UUID
+    code: str = Field(min_length=2, max_length=40)
+    product_ids: list[UUID] = Field(min_length=1, max_length=500)
+    location_id: UUID | None = None
+    notes: str | None = Field(default=None, max_length=2000)
+
+
+class InventoryCountItemQuantityRequest(InventoryBaseSchema):
+    counted_quantity: Decimal = Field(ge=0)
 
 
 class InventoryBalanceResponse(InventoryBaseSchema):
@@ -122,3 +135,28 @@ class InventoryOperationResponse(InventoryBaseSchema):
     movement: InventoryMovementResponse
     adjustment: InventoryAdjustmentResponse | None = None
     reservation: InventoryReservationResponse | None = None
+
+
+class InventoryCountItemResponse(InventoryBaseSchema):
+    id: UUID
+    product_id: UUID
+    expected_quantity: Decimal
+    counted_quantity: Decimal | None
+    divergence_quantity: Decimal | None
+    adjustment_movement_id: UUID | None
+
+
+class InventoryCountResponse(InventoryBaseSchema):
+    id: UUID
+    tenant_id: UUID
+    branch_id: UUID
+    warehouse_id: UUID
+    location_id: UUID | None
+    code: str
+    status: InventoryCountStatus
+    notes: str | None
+    started_at: datetime | None
+    finished_at: datetime | None
+    items: list[InventoryCountItemResponse]
+    created_at: datetime
+    updated_at: datetime
