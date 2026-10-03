@@ -625,6 +625,9 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     "RESTAURANT_SECTOR_LIST_RETRIEVED": MessageDefinition(
         "RESTAURANT_SECTOR_LIST_RETRIEVED", 200, "Setores consultados com sucesso."
     ),
+    "RESTAURANT_SECTOR_RETRIEVED": MessageDefinition(
+        "RESTAURANT_SECTOR_RETRIEVED", 200, "Setor consultado com sucesso."
+    ),
     "RESTAURANT_SECTOR_NOT_FOUND": MessageDefinition(
         "RESTAURANT_SECTOR_NOT_FOUND", 404, "Setor não encontrado.", "warning"
     ),
