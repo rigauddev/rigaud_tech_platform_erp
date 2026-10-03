@@ -16,6 +16,8 @@ REST-010 adiciona Inventory Transactions, expondo `InventoryMovement` como livro
 
 REST-011 adiciona Inventory Count, com documentos de contagem fisica e divergencias registradas como movimentos `count` imutaveis.
 
+REST-012 adiciona motivos padronizados e estorno compensatório para ajustes de estoque.
+
 Documentos principais:
 
 - `api.md`;
@@ -26,4 +28,5 @@ Documentos principais:
 - `putaway.md`;
 - `transactions.md`;
 - `counts.md`;
+- `adjustments.md`;
 - `validation.md`.

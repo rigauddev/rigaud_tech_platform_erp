@@ -7,6 +7,7 @@
 - UI-003: menu lateral passa a refletir o contexto de acesso, exibindo o papel técnico ativo e ocultando áreas de plataforma para usuários sem essa permissão; a rota de Ambiente demo também passa a exigir acesso de plataforma.
 - UI-003: a logo selecionada para Login é registrada no manifesto Flutter e exibida sem recorte ou escala artificial.
 
+- REST-012: Stock Adjustments recebe catálogo de motivos, vínculo de estorno, endpoint de reversão compensatória e migration `0020_stock_adjustments`.
 - DOC-010: roadmap do Restaurante passa a incluir Menu do Dia, disponibilidade comercial diária, contexto da mesa, garçom responsável e roteamento para cozinha antes do cardápio online e KDS.
 
 - REST-011: Inventory Count adiciona documentos de inventario fisico, itens, ciclo draft/in_progress/finished/cancelled, auditoria e migration `0019_inventory_count`.

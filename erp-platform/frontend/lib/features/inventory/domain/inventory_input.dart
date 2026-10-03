@@ -7,6 +7,7 @@ class InventoryAdjustmentInput {
     required this.quantity,
     required this.reason,
     this.notes,
+    this.reasonCode = 'correction',
   });
 
   final String productId;
@@ -14,6 +15,7 @@ class InventoryAdjustmentInput {
   final String quantity;
   final String reason;
   final String? notes;
+  final String reasonCode;
 
   Map<String, dynamic> toJson() {
     return {
@@ -21,6 +23,7 @@ class InventoryAdjustmentInput {
       'adjustment_type': adjustmentType.apiValue,
       'quantity': quantity,
       'reason': reason,
+      'reason_code': reasonCode,
       if (notes != null && notes!.trim().isNotEmpty) 'notes': notes,
     };
   }

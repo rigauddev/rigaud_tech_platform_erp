@@ -21,6 +21,7 @@ from app.modules.inventory.domain.entities import InventoryCountStatus
 from app.modules.inventory.application.use_cases import (
     CreateInventoryAdjustment,
     CreateInventoryReservation,
+    ReverseInventoryAdjustment,
     GetInventoryTransaction,
     InventoryAdjustmentInput,
     InventoryListInput,
@@ -67,6 +68,7 @@ from app.modules.inventory.infrastructure.warehouse_repositories import (
 )
 from app.modules.inventory.presentation.schemas import (
     InventoryAdjustmentRequest,
+    InventoryAdjustmentReverseRequest,
     InventoryAdjustmentResponse,
     InventoryBalanceResponse,
     InventoryMovementResponse,
@@ -150,6 +152,8 @@ def _adjustment_response(adjustment: InventoryAdjustmentModel) -> InventoryAdjus
         quantity=adjustment.quantity,
         reason=adjustment.reason,
         notes=adjustment.notes,
+        reason_code=adjustment.reason_code,
+        reversal_of_id=adjustment.reversal_of_id,
         created_at=adjustment.created_at,
         updated_at=adjustment.updated_at,
     )
@@ -425,6 +429,7 @@ async def create_inventory_adjustment(
                 warehouse_id=payload.warehouse_id,
                 location_id=payload.location_id,
                 notes=payload.notes,
+                reason_code=payload.reason_code,
                 actor_id=current_user.id,
             )
         )
@@ -454,6 +459,43 @@ async def create_inventory_adjustment(
             "INVENTORY_ADJUSTMENT_CREATED",
             data=_operation_response(result).model_dump(mode="json"),
         )
+    except InventoryError as exc:
+        await session.rollback()
+        return inventory_exception_to_response(exc)
+
+
+@router.post("/adjustments/{adjustment_id}/reverse", response_model=InventoryOperationResponse)
+async def reverse_inventory_adjustment(
+    adjustment_id: UUID,
+    payload: InventoryAdjustmentReverseRequest,
+    request: Request,
+    session: AsyncSessionDependency,
+    current_user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        result = await ReverseInventoryAdjustment(
+            SQLAlchemyInventoryRepository(session),
+            SQLAlchemyProductRepository(session),
+            SQLAlchemyWarehouseRepository(session),
+        ).execute(
+            adjustment_id,
+            tenant_id=current_user.tenant_id,
+            branch_id=current_user.branch_id,
+            reason=payload.reason,
+            actor_id=current_user.id,
+        )
+        await _record_inventory_event(
+            session,
+            event_name="inventory.adjustment.reversed",
+            action="reversed",
+            entity_type="inventory_adjustment",
+            entity_id=result.adjustment.id if result.adjustment else adjustment_id,
+            tenant_id=current_user.tenant_id,
+            current_user=current_user,
+            after_data=_snapshot(result.balance),
+        )
+        await session.commit()
+        return success_response("INVENTORY_ADJUSTMENT_REVERSED", data=_operation_response(result).model_dump(mode="json"))
     except InventoryError as exc:
         await session.rollback()
         return inventory_exception_to_response(exc)

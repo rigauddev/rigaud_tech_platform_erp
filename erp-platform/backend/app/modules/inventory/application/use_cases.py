@@ -5,6 +5,7 @@ from uuid import UUID
 from app.modules.inventory.application.validators import normalize_quantity, normalize_reason
 from app.modules.inventory.domain.entities import (
     InventoryAdjustmentStatus,
+    InventoryAdjustmentReason,
     InventoryAdjustmentType,
     InventoryMovementStatus,
     InventoryMovementType,
@@ -65,6 +66,8 @@ class InventoryAdjustmentInput:
     warehouse_id: UUID | None = None
     location_id: UUID | None = None
     notes: str | None = None
+    reason_code: InventoryAdjustmentReason = InventoryAdjustmentReason.CORRECTION
+    reversal_of_id: UUID | None = None
     actor_id: UUID | None = None
 
 
@@ -250,12 +253,38 @@ class CreateInventoryAdjustment:
                 quantity=quantity,
                 reason=reason,
                 notes=input_data.notes,
+                reason_code=input_data.reason_code,
+                reversal_of_id=input_data.reversal_of_id,
                 created_by=input_data.actor_id,
                 updated_by=input_data.actor_id,
             )
         )
         await self.inventory.add_balance(balance)
         return InventoryOperationResult(balance=balance, movement=movement, adjustment=adjustment)
+
+
+class ReverseInventoryAdjustment:
+    def __init__(self, inventory: InventoryRepository, products: ProductRepository, warehouses: WarehouseRepository | None = None) -> None:
+        self.inventory = inventory
+        self.products = products
+        self.warehouses = warehouses
+
+    async def execute(self, adjustment_id: UUID, *, tenant_id: UUID, branch_id: UUID | None, reason: str, actor_id: UUID | None) -> InventoryOperationResult:
+        original = await self.inventory.get_adjustment_by_id(adjustment_id, tenant_id=tenant_id)
+        if original is None or (branch_id is not None and original.branch_id != branch_id):
+            raise InventoryMovementNotFoundError("Inventory adjustment not found.")
+        if await self.inventory.has_adjustment_reversal(adjustment_id, tenant_id=tenant_id):
+            raise InventoryInsufficientStockError("Inventory adjustment has already been reversed.")
+        adjustment_type = InventoryAdjustmentType.DECREASE if original.adjustment_type == InventoryAdjustmentType.INCREASE else InventoryAdjustmentType.INCREASE
+        return await CreateInventoryAdjustment(self.inventory, self.products, self.warehouses).execute(
+            InventoryAdjustmentInput(
+                tenant_id=tenant_id, branch_id=branch_id, product_id=original.product_id,
+                adjustment_type=adjustment_type, quantity=original.quantity, reason=reason,
+                warehouse_id=original.warehouse_id, location_id=original.location_id,
+                notes=f"Reversal of adjustment {original.id}", reason_code=InventoryAdjustmentReason.REVERSAL,
+                reversal_of_id=original.id, actor_id=actor_id,
+            )
+        )
 
 
 class CreateInventoryReservation:

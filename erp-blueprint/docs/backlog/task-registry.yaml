@@ -16,6 +16,28 @@ tasks:
       - erp-blueprint/docs/roadmap/master-roadmap.md
     academy: []
     tests:
+  - id: REST-012
+    title: Stock Adjustments
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-011
+    started_at: "2026-10-03"
+    completed_at: null
+    documentation:
+      - docs/inventory/adjustments.md
+      - docs/inventory/endpoints.md
+      - docs/inventory/README.md
+      - ERP_DECISIONS.md
+      - CHANGELOG.md
+      - erp-blueprint/docs/academy/inventory/008-stock-adjustments.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/008-stock-adjustments.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_inventory_engine.py
       - flutter analyze
       - flutter test
       - flutter build web
@@ -27,12 +49,18 @@ tasks:
       commits:
         - c035861
         - 09e64a9
+    migration: 0020_stock_adjustments
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-012-stock-adjustments
+      commits: []
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
     commit: null
+    commit: 9ec2b75
     review_status: ready
   - id: DOC-010
     title: Restaurant Menu Availability & Order Routing Architecture
