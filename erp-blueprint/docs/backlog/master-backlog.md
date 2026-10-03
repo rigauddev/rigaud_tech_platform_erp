@@ -48,6 +48,8 @@ DEV-009 deverá permitir autenticação em dois fatores habilitável e desabilit
 
 DEV-012 congela a regra oficial: usuário pertence a uma empresa e possui uma filial ativa.
 
+UI-002 — Navigation & Application Shell permanece como refinamento transversal em review. Ela não altera a ordem das tasks comerciais.
+
 ## Core Inventory E Inbound Logistics
 
 Tasks transversais de suporte:

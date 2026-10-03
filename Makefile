@@ -2,7 +2,7 @@ COMPOSE := docker compose --env-file .env.example
 MIN_FREE_MB ?= 20000
 WAIT_TIMEOUT ?= 240
 
-.PHONY: preflight up down restart logs backend flutter shell-backend shell-db lint format test db-upgrade db-downgrade db-current db-history db-revision create-company demo demo-all demo-platform demo-users demo-restaurant demo-retail demo-scenarios demo-status demo-reset restaurant retail scenarios reset-demo playground check-task
+.PHONY: preflight up down restart restart-backend restart-frontend logs backend flutter shell-backend shell-db lint format test db-upgrade db-downgrade db-current db-history db-revision create-company demo demo-all demo-platform demo-users demo-restaurant demo-retail demo-scenarios demo-status demo-reset restaurant retail scenarios reset-demo playground check-task
 
 preflight:
 	@echo "Checking Docker daemon..."
@@ -27,6 +27,12 @@ down:
 
 restart:
 	$(COMPOSE) restart
+
+restart-backend:
+	$(COMPOSE) restart backend
+
+restart-frontend:
+	$(COMPOSE) restart frontend
 
 logs:
 	$(COMPOSE) logs -f

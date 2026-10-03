@@ -105,8 +105,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final isCompact = constraints.maxWidth < 700;
-                final cardWidth = isCompact ? 392.0 : 440.0;
-                final cardHeight = isCompact ? 640.0 : 640.0;
+                final cardWidth = isCompact ? 360.0 : 400.0;
+                final cardHeight = isCompact ? 640.0 : 620.0;
                 return AnimatedPadding(
                   duration: const Duration(milliseconds: 220),
                   curve: Curves.easeOutCubic,
@@ -553,7 +553,7 @@ class _LoginForm extends StatelessWidget {
                 context,
               ).textTheme.bodyMedium?.copyWith(color: const Color(0xFF344054)),
             ),
-            const Spacer(),
+            const SizedBox(height: AppSpacing.xl),
             AppTextField(
               controller: emailController,
               label: 'Email',
@@ -575,10 +575,22 @@ class _LoginForm extends StatelessWidget {
             Row(
               children: [
                 Checkbox(value: rememberAccess, onChanged: onRememberChanged),
-                const Expanded(child: Text('Lembrar acesso')),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text('Esqueci minha senha'),
+                const Expanded(
+                  child: Text(
+                    'Lembrar acesso',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Flexible(
+                  child: TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      'Esqueci minha senha',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -602,9 +614,9 @@ class _BrandLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 92,
+      height: 104,
       child: Image.asset(
-        'assets/images/logo_rigaud_tech_trimmed.png',
+        'assets/images/Rigaud_Tech_profile_transparent.png',
         fit: BoxFit.contain,
         alignment: Alignment.center,
         filterQuality: FilterQuality.high,

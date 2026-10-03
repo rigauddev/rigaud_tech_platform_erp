@@ -35,6 +35,14 @@ Fluxo Git obrigatório:
 - abrir PR `develop` para `main`;
 - registrar branch, commits, PRs, merges e tag no task registry quando existirem.
 
+Operação Docker obrigatória:
+
+- antes de alterar, confirmar a branch, o upstream remoto, o roadmap e o backlog aplicáveis;
+- após uma alteração, identificar se algum serviço em execução realmente precisa ser recarregado;
+- quando necessário, reiniciar somente o serviço afetado com `docker compose restart <servico>` ou com os alvos específicos do Makefile;
+- não criar uma segunda stack, não trocar o nome do projeto Compose e não recriar containers saudáveis sem necessidade;
+- usar `docker compose up -d --build <servico>` somente quando Dockerfile, dependências ou configuração do Compose daquele serviço exigirem rebuild.
+
 A ausência de contexto não autoriza o agente a inventar uma nova arquitetura.
 
 A implementação existente tem prioridade sobre suposições, desde que não contradiga um ADR aprovado.

@@ -29,7 +29,7 @@ O background usa gradiente claro, grade técnica, conexões e cartões discretos
 - cloud;
 - conectividade entre módulos.
 
-A logo usa `assets/images/logo_rigaud_tech_trimmed.png`, variante transparente e recortada a partir do asset oficial. Ela remove a margem excedente sem adicionar fundo ao card de login.
+A logo oficial é `assets/images/Rigaud_Tech_profile.PNG`. A tela utiliza a variante transparente derivada `assets/images/Rigaud_Tech_profile_transparent.png`, preservando o desenho enviado e removendo somente o fundo branco. O card de acesso e o carrossel usam altura compacta, sem espaçadores flexíveis que criem área vertical vazia.
 
 ## Rodapé
 
