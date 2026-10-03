@@ -23,6 +23,23 @@ final inventoryTransactionsControllerProvider =
       List<InventoryMovement>
     >(InventoryTransactionsController.new);
 
+final inventoryCountsControllerProvider =
+    AsyncNotifierProvider<InventoryCountsController, List<InventoryCount>>(
+      InventoryCountsController.new,
+    );
+
+class InventoryCountsController extends AsyncNotifier<List<InventoryCount>> {
+  @override
+  Future<List<InventoryCount>> build() =>
+      ref.read(inventoryRepositoryProvider).listCounts();
+  Future<void> reload() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => ref.read(inventoryRepositoryProvider).listCounts(),
+    );
+  }
+}
+
 class InventoryBalancesController
     extends AsyncNotifier<List<InventoryBalance>> {
   InventoryRepository get _repository => ref.read(inventoryRepositoryProvider);

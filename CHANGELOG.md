@@ -4,6 +4,9 @@
 
 ### Added
 
+- REST-011: Inventory Count adiciona documentos de inventario fisico, itens, ciclo draft/in_progress/finished/cancelled, auditoria e migration `0019_inventory_count`.
+- REST-011: divergencias de contagem passam a gerar `InventoryMovement` imutavel do tipo `count`, com origem `INVENTORY` e processo `COUNT`.
+
 - UI-002: navegação lateral reorganizada por contexto de trabalho, com grupos de visão geral, cadastros, estoque, conta e segurança, administração e desenvolvimento.
 - UI-002: logo de Login passa a usar variante PNG transparente e recortada, sem margem excedente ou escala artificial.
 

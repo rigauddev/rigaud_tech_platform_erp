@@ -11,6 +11,19 @@ class InventoryRemoteDataSource {
 
   final Dio _dio;
 
+  Future<List<InventoryCount>> listCounts({
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/inventory/counts',
+      queryParameters: {'page': page, 'page_size': pageSize},
+    );
+    return apiDataList(response.data)
+        .map((item) => InventoryCount.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<List<InventoryBalance>> listBalances({
     String? productId,
     int page = 1,

@@ -16,7 +16,7 @@ class InventoryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return DefaultTabController(
-      length: 5,
+      length: 6,
       child: AppScaffold(
         title: 'Estoque',
         body: Column(
@@ -28,6 +28,7 @@ class InventoryScreen extends ConsumerWidget {
                 Tab(text: 'Put Away'),
                 Tab(text: 'Ajuste'),
                 Tab(text: 'Reserva'),
+                Tab(text: 'Inventário'),
               ],
             ),
             Expanded(
@@ -38,12 +39,46 @@ class InventoryScreen extends ConsumerWidget {
                   _PutAwayView(),
                   _AdjustmentView(),
                   _ReservationView(),
+                  _CountsView(),
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _CountsView extends ConsumerWidget {
+  const _CountsView();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final counts = ref.watch(inventoryCountsControllerProvider);
+    return counts.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(child: Text(_message(error))),
+      data: (items) => items.isEmpty
+          ? const AppEmptyState(
+              title: 'Nenhuma contagem encontrada',
+              message: 'As contagens físicas aparecerão aqui.',
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              itemCount: items.length,
+              separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.fact_check_outlined),
+                    title: Text(item.code),
+                    subtitle: Text('${item.itemsCount} itens · ${item.status}'),
+                    trailing: Text(item.warehouseId),
+                  ),
+                );
+              },
+            ),
     );
   }
 }

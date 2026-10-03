@@ -81,6 +81,8 @@ Sequência:
 - Caixa.
 - Cupom ou NFC-e.
 
+Experiencias ainda planejadas sobre essa base: gestao responsiva do restaurante, app operacional de garcom, KDS, app/portal do cliente por QR Code, PDV e entrada fiscal por NF-e/XML. Nenhuma delas esta implementada nesta fase de estoque.
+
 ## Fase 4 — MVP Loja de Roupas
 
 Objetivo: reutilizar o Core e especializar o domínio Fashion.

@@ -14,6 +14,10 @@ class InventoryRepositoryImpl implements InventoryRepository {
   final InventoryRemoteDataSource _remote;
 
   @override
+  Future<List<InventoryCount>> listCounts({int page = 1, int pageSize = 20}) =>
+      _guard(() => _remote.listCounts(page: page, pageSize: pageSize));
+
+  @override
   Future<List<InventoryBalance>> listBalances({
     String? productId,
     int page = 1,
