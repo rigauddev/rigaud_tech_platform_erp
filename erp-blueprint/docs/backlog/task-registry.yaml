@@ -3,11 +3,11 @@ tasks:
     title: Inventory Transfers
     epic: EPIC-003 Inbound Logistics
     module: inventory
-    status: in_progress
+    status: review
     dependencies:
       - REST-012
     started_at: "2026-10-03"
-    completed_at: null
+    completed_at: "2026-10-03"
     documentation:
       - docs/inventory/transfers.md
       - docs/inventory/endpoints.md
@@ -30,14 +30,15 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/rest-013-inventory-transfers
-      commits: []
+      commits:
+        - cb1d49a
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
-    review_status: pending
+    commit: cb1d49a
+    review_status: ready
   - id: UI-004
     title: Localization & Login Flow
     epic: EPIC-0001 Foundation
