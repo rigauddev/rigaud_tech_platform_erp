@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/router/app_routes.dart';
+import '../../app/theme/app_colors.dart';
 import '../../core/localization/app_strings.dart';
 import '../../features/auth/presentation/auth_controller.dart';
 
+/// Shared frame for authenticated ERP screens.
+/// The restaurant context remains expanded while its operational pages are used.
 class AppScaffold extends ConsumerWidget {
   const AppScaffold({
     required this.body,
@@ -26,75 +29,122 @@ class AppScaffold extends ConsumerWidget {
     final isDesktop = MediaQuery.sizeOf(context).width >= 1024;
     final currentPath = GoRouterState.of(context).uri.path;
     final parentRoute = _parentRouteFor(currentPath);
+    final user = ref.watch(authControllerProvider).value?.user;
+    final emailPrefix = user?.email.split('@').first.trim();
+    final profileName = emailPrefix?.isNotEmpty == true
+        ? emailPrefix!
+        : 'Conta';
 
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 64,
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/images/Rigaud_Tech_profile_transparent.png',
-              width: 30,
-              height: 30,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(width: 10),
-            const Text('Rigaud Tech Platform ERP'),
-            if (isDesktop) ...[
-              const Spacer(),
-              const SizedBox(
-                width: 420,
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Pesquisar no sistema...',
-                    prefixIcon: Icon(Icons.search),
-                    isDense: true,
-                  ),
-                ),
-              ),
-              const Spacer(),
-            ],
-          ],
-        ),
-        actions: [
-          const IconButton(
-            tooltip: 'Notificações',
-            onPressed: null,
-            icon: Icon(Icons.notifications_none_outlined),
-          ),
-          const IconButton(
-            tooltip: 'Ajuda',
-            onPressed: null,
-            icon: Icon(Icons.help_outline),
-          ),
-          if (isDesktop)
-            const Padding(
-              padding: EdgeInsets.only(right: 12),
-              child: CircleAvatar(radius: 17, child: Text('JS')),
-            ),
-          ...?actions,
-        ],
-        automaticallyImplyLeading: parentRoute == null,
         leading: parentRoute == null
-            ? null
+            ? (isDesktop
+                  ? null
+                  : Builder(
+                      builder: (context) => IconButton(
+                        tooltip: strings.menu,
+                        icon: const Icon(Icons.menu_outlined),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                      ),
+                    ))
             : IconButton(
                 tooltip: strings.back,
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () => context.go(parentRoute),
               ),
+        titleSpacing: isDesktop ? 24 : 0,
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/Rigaud_Tech_profile_transparent.png',
+              width: 32,
+              height: 32,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.hub_outlined),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Text(
+                strings.appName,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+            ),
+            if (isDesktop)
+              Expanded(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 580),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: strings.searchSystem,
+                        prefixIcon: const Icon(Icons.search_outlined),
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            tooltip: strings.notifications,
+            onPressed: () {},
+            icon: const Badge(
+              smallSize: 8,
+              child: Icon(Icons.notifications_none_outlined),
+            ),
+          ),
+          IconButton(
+            tooltip: strings.help,
+            onPressed: () {},
+            icon: const Icon(Icons.help_outline),
+          ),
+          if (isDesktop)
+            InkWell(
+              onTap: () => context.go(AppRoutes.currentUser),
+              borderRadius: BorderRadius.circular(24),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8, right: 20),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 18,
+                      backgroundColor: AppColors.brand,
+                      foregroundColor: Colors.white,
+                      child: Text(_initials(profileName)),
+                    ),
+                    const SizedBox(width: 10),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 116),
+                      child: Text(
+                        profileName,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    const Icon(Icons.keyboard_arrow_down_outlined),
+                  ],
+                ),
+              ),
+            ),
+          ...?actions,
+        ],
       ),
       drawer: isDesktop ? null : const Drawer(child: _NavigationItems()),
       body: Row(
         children: [
           if (isDesktop)
             const SizedBox(
-              width: 248,
-              child: Material(
-                elevation: 1,
-                child: SafeArea(child: _NavigationItems()),
-              ),
+              width: 242,
+              child: Material(color: Colors.white, child: _NavigationItems()),
             ),
-          Expanded(child: SafeArea(child: body)),
+          Expanded(child: SafeArea(top: false, child: body)),
         ],
       ),
     );
@@ -104,246 +154,263 @@ class AppScaffold extends ConsumerWidget {
 class _NavigationItems extends ConsumerWidget {
   const _NavigationItems();
 
-  static const _environment = String.fromEnvironment(
-    'APP_ENV',
-    defaultValue: 'development',
-  );
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentPath = GoRouterState.of(context).uri.path;
-    final user = ref.watch(authControllerProvider).value?.user;
-    final isPlatformAdmin = user?.isSuperuser ?? false;
     final strings = ref.watch(appStringsProvider);
-    return ListView(
-      padding: const EdgeInsets.all(12),
-      children: [
-        _NavigationBrand(
-          role: _roleLabel(user?.role, isPlatformAdmin, strings),
-          appName: strings.appName,
-        ),
-        const SizedBox(height: 12),
-        _NavigationSection(
-          title: strings.overview,
-          currentPath: currentPath,
-          items: [
-            _NavigationItem(
-              AppRoutes.dashboard,
-              strings.dashboard,
-              Icons.dashboard_outlined,
-            ),
-          ],
-        ),
-        _NavigationSection(
-          title: strings.records,
-          currentPath: currentPath,
-          items: [
-            if (isPlatformAdmin)
-              _NavigationItem(
-                AppRoutes.companies,
-                strings.companies,
-                Icons.business_outlined,
-              ),
-            if (isPlatformAdmin)
-              _NavigationItem(
-                AppRoutes.users,
-                strings.users,
-                Icons.people_alt_outlined,
-              ),
-            _NavigationItem(
-              AppRoutes.products,
-              strings.products,
-              Icons.inventory_2_outlined,
-            ),
-            _NavigationItem(
-              AppRoutes.categories,
-              strings.categories,
-              Icons.account_tree_outlined,
-            ),
-          ],
-        ),
-        _NavigationSection(
-          title: strings.inventory,
-          currentPath: currentPath,
-          items: [
-            _NavigationItem(
-              AppRoutes.inventory,
-              strings.balancesTransactions,
-              Icons.inventory_outlined,
-            ),
-            _NavigationItem(
-              AppRoutes.receivingDocuments,
-              strings.receiving,
-              Icons.move_to_inbox_outlined,
-            ),
-            _NavigationItem(
-              AppRoutes.warehouses,
-              strings.warehouses,
-              Icons.warehouse_outlined,
-            ),
-            _NavigationItem(
-              AppRoutes.warehouseZones,
-              strings.zones,
-              Icons.location_searching_outlined,
-            ),
-            _NavigationItem(
-              AppRoutes.warehouseLocations,
-              strings.locations,
-              Icons.place_outlined,
-            ),
-          ],
-        ),
-        _NavigationSection(
-          title: 'Restaurante',
-          currentPath: currentPath,
-          items: const [
-            _NavigationItem(
-              AppRoutes.restaurantTables,
-              'Mesas e mapa do salão',
-              Icons.table_restaurant_outlined,
-            ),
-            _NavigationItem(
-              AppRoutes.restaurantSectors,
-              'Setores e ambientes',
-              Icons.grid_view_outlined,
-            ),
-            _NavigationItem(
-              AppRoutes.restaurantStaff,
-              'Garçons e equipe',
-              Icons.groups_outlined,
-            ),
-          ],
-        ),
-        _NavigationSection(
-          title: strings.accountSecurity,
-          currentPath: currentPath,
-          items: [
-            _NavigationItem(
-              AppRoutes.currentUser,
-              strings.myProfile,
-              Icons.account_circle_outlined,
-            ),
-            _NavigationItem(
-              AppRoutes.mfaSettings,
-              strings.mfa,
-              Icons.verified_user_outlined,
-            ),
-          ],
-        ),
-        if (isPlatformAdmin)
-          _NavigationSection(
-            title: strings.administration,
+    final restaurantOpen = currentPath.startsWith('/restaurant');
+
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        border: Border(right: BorderSide(color: Color(0xFFE7ECF4))),
+      ),
+      child: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        children: [
+          _NavigationTile(
+            route: AppRoutes.dashboard,
+            label: strings.home,
+            icon: Icons.home_outlined,
             currentPath: currentPath,
-            items: [
-              _NavigationItem(
-                AppRoutes.audit,
-                strings.audit,
-                Icons.fact_check_outlined,
-              ),
-            ],
           ),
-        if (_environment != 'production' && isPlatformAdmin)
-          _NavigationSection(
-            title: strings.development,
+          _NavigationTile(
+            route: AppRoutes.products,
+            label: strings.sales,
+            icon: Icons.shopping_cart_outlined,
             currentPath: currentPath,
-            items: [
-              _NavigationItem(
-                AppRoutes.demo,
-                strings.demoEnvironment,
-                Icons.science_outlined,
-              ),
-            ],
+          ),
+          _RestaurantNavigation(
+            currentPath: currentPath,
+            expanded: restaurantOpen,
+            strings: strings,
+          ),
+          const SizedBox(height: 10),
+          _NavigationTile(
+            route: AppRoutes.inventory,
+            label: strings.inventory,
+            icon: Icons.inventory_2_outlined,
+            currentPath: currentPath,
+          ),
+          _NavigationTile(
+            route: AppRoutes.dashboard,
+            label: strings.finance,
+            icon: Icons.account_balance_wallet_outlined,
+            currentPath: currentPath,
+          ),
+          _NavigationTile(
+            route: AppRoutes.dashboard,
+            label: strings.reports,
+            icon: Icons.bar_chart_outlined,
+            currentPath: currentPath,
+          ),
+          _NavigationTile(
+            route: AppRoutes.currentUser,
+            label: strings.settings,
+            icon: Icons.settings_outlined,
+            currentPath: currentPath,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RestaurantNavigation extends StatelessWidget {
+  const _RestaurantNavigation({
+    required this.currentPath,
+    required this.expanded,
+    required this.strings,
+  });
+
+  final String currentPath;
+  final bool expanded;
+  final AppStrings strings;
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = currentPath.startsWith('/restaurant');
+    return Column(
+      children: [
+        _NavigationTile(
+          route: AppRoutes.restaurantTables,
+          label: strings.restaurant,
+          icon: Icons.restaurant_outlined,
+          currentPath: currentPath,
+          selected: selected,
+          trailing: Icon(
+            expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+            color: selected ? AppColors.brand : null,
+          ),
+        ),
+        if (expanded)
+          Padding(
+            padding: const EdgeInsets.only(left: 38, top: 4, bottom: 8),
+            child: Column(
+              children: [
+                _SubNavigationTile(
+                  route: AppRoutes.dashboard,
+                  label: strings.restaurantOverview,
+                  currentPath: currentPath,
+                ),
+                _SubNavigationTile(
+                  route: AppRoutes.restaurantTables,
+                  label: strings.tables,
+                  currentPath: currentPath,
+                ),
+                _SubNavigationTile(
+                  route: AppRoutes.restaurantSectors,
+                  label: strings.sectorsEnvironments,
+                  currentPath: currentPath,
+                ),
+                _SubNavigationTile(
+                  route: AppRoutes.restaurantStaff,
+                  label: strings.staffTeam,
+                  currentPath: currentPath,
+                ),
+                _SubNavigationTile(
+                  label: strings.menu,
+                  currentPath: currentPath,
+                ),
+                _SubNavigationTile(
+                  label: strings.orders,
+                  currentPath: currentPath,
+                ),
+                _SubNavigationTile(
+                  label: strings.delivery,
+                  currentPath: currentPath,
+                ),
+              ],
+            ),
           ),
       ],
     );
   }
 }
 
-class _NavigationBrand extends StatelessWidget {
-  const _NavigationBrand({required this.role, required this.appName});
-
-  final String role;
-  final String appName;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(appName, style: TextStyle(fontWeight: FontWeight.w700)),
-          const SizedBox(height: 4),
-          Text(role, style: Theme.of(context).textTheme.labelSmall),
-        ],
-      ),
-    );
-  }
-}
-
-String _roleLabel(String? role, bool isPlatformAdmin, AppStrings strings) {
-  if (isPlatformAdmin) {
-    return strings.platformAdministrator;
-  }
-  return switch (role) {
-    'company_admin' => strings.companyAdministrator,
-    'branch_manager' => strings.branchManager,
-    'branch_operator' => strings.branchOperator,
-    _ => strings.authenticatedUser,
-  };
-}
-
-class _NavigationSection extends StatelessWidget {
-  const _NavigationSection({
-    required this.title,
+class _NavigationTile extends StatelessWidget {
+  const _NavigationTile({
+    required this.route,
+    required this.label,
+    required this.icon,
     required this.currentPath,
-    required this.items,
+    this.selected,
+    this.trailing,
   });
-
-  final String title;
-  final String currentPath;
-  final List<_NavigationItem> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-            child: Text(title, style: Theme.of(context).textTheme.labelMedium),
-          ),
-          for (final item in items)
-            ListTile(
-              leading: Icon(item.icon),
-              title: Text(item.label),
-              selected:
-                  currentPath == item.route ||
-                  currentPath.startsWith('${item.route}/'),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              onTap: () {
-                if (Scaffold.maybeOf(context)?.isDrawerOpen ?? false) {
-                  Navigator.of(context).pop();
-                }
-                context.go(item.route);
-              },
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _NavigationItem {
-  const _NavigationItem(this.route, this.label, this.icon);
 
   final String route;
   final String label;
   final IconData icon;
+  final String currentPath;
+  final bool? selected;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    final isSelected = selected ?? currentPath == route;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+      child: Material(
+        color: isSelected ? const Color(0xFFEAF2FF) : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: () => _go(context, route),
+          child: Container(
+            height: 48,
+            decoration: BoxDecoration(
+              border: isSelected
+                  ? const Border(
+                      left: BorderSide(color: AppColors.brand, width: 4),
+                    )
+                  : null,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  color: isSelected ? AppColors.brand : const Color(0xFF53627A),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: isSelected
+                          ? AppColors.brand
+                          : const Color(0xFF3D4B63),
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w600,
+                    ),
+                  ),
+                ),
+                if (trailing case final Widget trailingWidget) trailingWidget,
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SubNavigationTile extends StatelessWidget {
+  const _SubNavigationTile({
+    this.route,
+    required this.label,
+    required this.currentPath,
+  });
+
+  final String? route;
+  final String label;
+  final String currentPath;
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = route != null && route == currentPath;
+    return Padding(
+      padding: const EdgeInsets.only(right: 8, bottom: 2),
+      child: Material(
+        color: selected ? const Color(0xFFEAF2FF) : Colors.transparent,
+        borderRadius: BorderRadius.circular(7),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(7),
+          onTap: route == null ? null : () => _go(context, route!),
+          child: SizedBox(
+            height: 40,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 24, right: 10),
+                child: Text(
+                  label,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: selected ? AppColors.brand : const Color(0xFF53627A),
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+void _go(BuildContext context, String route) {
+  if (Scaffold.maybeOf(context)?.isDrawerOpen ?? false) {
+    Navigator.of(context).pop();
+  }
+  context.go(route);
+}
+
+String _initials(String name) {
+  final parts = name.split(' ').where((part) => part.isNotEmpty).take(2);
+  final result = parts.map((part) => part[0]).join();
+  return result.isEmpty ? 'RT' : result.toUpperCase();
 }
 
 String? _parentRouteFor(String path) {
@@ -382,17 +449,6 @@ String? _parentRouteFor(String path) {
       RegExp(r'^/receiving-documents/[^/]+(?:/edit)?$').hasMatch(path)) {
     return AppRoutes.receivingDocuments;
   }
-  if (path == AppRoutes.restaurantTables) {
-    return AppRoutes.dashboard;
-  }
-  if (path == AppRoutes.restaurantSectors) {
-    return AppRoutes.dashboard;
-  }
-  if (path == AppRoutes.restaurantStaff) {
-    return AppRoutes.dashboard;
-  }
-  if (RegExp(r'^/audit/[^/]+$').hasMatch(path)) {
-    return AppRoutes.audit;
-  }
+  if (RegExp(r'^/audit/[^/]+$').hasMatch(path)) return AppRoutes.audit;
   return null;
 }

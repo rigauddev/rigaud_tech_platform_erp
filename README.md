@@ -25,6 +25,10 @@ Task atual:
 RESTAURANT-003 — Garçons e Equipe
 ```
 
+Refinamento concluído nesta branch: shell operacional alinhado ao layout
+aprovado e idioma Português/English persistido no Login, menu e tela de equipe.
+Cardápio, pedidos e delivery continuam planejados para as tasks posteriores.
+
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
 
 Fontes permanentes adicionais:

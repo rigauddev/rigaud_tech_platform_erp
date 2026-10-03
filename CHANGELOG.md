@@ -35,6 +35,10 @@
 
 ### Changed
 
+- UI-004/RESTAURANT-003: seletor de idioma do Login passa a usar bandeiras BR/US e persiste a escolha localmente; shell e Garçons e equipe aderem ao catálogo PT/EN.
+- UI-003: navegação lateral foi alinhada ao layout aprovado, com menu direto por contexto, Restaurante expandido durante a operação e perfil/MFA concentrados em Configurações.
+- RESTAURANT-003: rota de Garçons e equipe foi revisada para evitar restrições de layout no shell e manter abertura confiável pelo submenu contextual.
+
 - UI-002: Splash passa a encaminhar automaticamente para Login, removendo o botão manual de continuar.
 - UI-002: detalhes, edições e cadastros passam a apresentar ação de voltar para a rota-pai.
 - UI-002: Ambiente demo é identificado como ferramenta de desenvolvimento e separado do menu operacional.

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
+import '../../../core/localization/app_strings.dart';
 import '../../../shared/layouts/app_scaffold.dart';
 import '../data/restaurant_sector_remote_data_source.dart';
 import '../data/restaurant_staff_remote_data_source.dart';
@@ -14,12 +15,13 @@ class RestaurantStaffScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final staff = ref.watch(restaurantStaffProvider);
     final sectors = ref.watch(restaurantSectorsProvider).asData?.value ?? [];
+    final strings = ref.watch(appStringsProvider);
     return AppScaffold(
       title: 'Garçons e equipe',
       body: staff.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) =>
-            const Center(child: Text('Não foi possível carregar a equipe.')),
+            Center(child: Text(strings.unableToLoadStaff)),
         data: (items) {
           final serving = items
               .where((item) => item.status == 'serving')
@@ -31,37 +33,40 @@ class RestaurantStaffScreen extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             children: [
-              _Header(onCreate: () => _createStaff(context, ref)),
+              _Header(
+                strings: strings,
+                onCreate: () => _createStaff(context, ref, strings),
+              ),
               const SizedBox(height: AppSpacing.lg),
               Wrap(
                 spacing: AppSpacing.md,
                 runSpacing: AppSpacing.md,
                 children: [
                   _Metric(
-                    'Profissionais',
+                    strings.professionals,
                     '${items.length}',
-                    'Total cadastrados',
+                    strings.totalRegistered,
                     Icons.groups_outlined,
                     AppColors.brand,
                   ),
                   _Metric(
-                    'Em atendimento',
+                    strings.serving,
                     '$serving',
-                    '${_percentage(serving, items.length)}% da equipe',
+                    '${_percentage(serving, items.length)}% ${strings.teamLabel}',
                     Icons.person_outline,
                     AppColors.success,
                   ),
                   _Metric(
-                    'Setores cobertos',
+                    strings.sectorsCovered,
                     '${items.where((item) => item.sectorId != null).map((item) => item.sectorId).toSet().length}',
-                    'Com equipe ativa',
+                    strings.activeTeam,
                     Icons.storefront_outlined,
                     AppColors.brand,
                   ),
                   _Metric(
-                    'Em pausa',
+                    strings.paused,
                     '$paused',
-                    '${_percentage(paused, items.length)}% da equipe',
+                    '${_percentage(paused, items.length)}% ${strings.teamLabel}',
                     Icons.pause_circle_outline,
                     AppColors.warning,
                   ),
@@ -70,8 +75,16 @@ class RestaurantStaffScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.lg),
               LayoutBuilder(
                 builder: (context, constraints) => constraints.maxWidth >= 900
-                    ? _Desktop(items: items, sectorName: sectorName)
-                    : _Mobile(items: items, sectorName: sectorName),
+                    ? _Desktop(
+                        items: items,
+                        sectorName: sectorName,
+                        strings: strings,
+                      )
+                    : _Mobile(
+                        items: items,
+                        sectorName: sectorName,
+                        strings: strings,
+                      ),
               ),
             ],
           );
@@ -82,8 +95,9 @@ class RestaurantStaffScreen extends ConsumerWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onCreate});
+  const _Header({required this.onCreate, required this.strings});
   final VoidCallback onCreate;
+  final AppStrings strings;
   @override
   Widget build(BuildContext context) => Row(
     children: [
@@ -92,17 +106,17 @@ class _Header extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Restaurante  >  Garçons e equipe',
+              strings.staffBreadcrumb,
               style: TextStyle(color: AppColors.brand),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Garçons e equipe',
+              strings.staffTitle,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Organize a equipe de atendimento e acompanhe a operação por setor.',
+              strings.staffDescription,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],
@@ -111,7 +125,7 @@ class _Header extends StatelessWidget {
       OutlinedButton.icon(
         onPressed: onCreate,
         icon: const Icon(Icons.add_circle_outline),
-        label: const Text('Novo garçom'),
+        label: Text(strings.newWaiter),
       ),
     ],
   );
@@ -151,9 +165,14 @@ class _Metric extends StatelessWidget {
 }
 
 class _Desktop extends StatelessWidget {
-  const _Desktop({required this.items, required this.sectorName});
+  const _Desktop({
+    required this.items,
+    required this.sectorName,
+    required this.strings,
+  });
   final List<RestaurantStaff> items;
   final Map<String, String> sectorName;
+  final AppStrings strings;
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,7 +187,8 @@ class _Desktop extends StatelessWidget {
                 width: 260,
                 child: _StaffCard(
                   item: item,
-                  sectorName: sectorName[item.sectorId] ?? 'Sem setor',
+                  sectorName: sectorName[item.sectorId] ?? strings.noSector,
+                  strings: strings,
                 ),
               ),
             )
@@ -184,16 +204,16 @@ class _Desktop extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    'Equipe operacional',
+                    strings.operationalTeam,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const Spacer(),
-                  const SizedBox(
+                  SizedBox(
                     width: 250,
                     child: TextField(
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.search),
-                        hintText: 'Buscar profissional...',
+                        hintText: strings.searchProfessional,
                       ),
                     ),
                   ),
@@ -203,23 +223,23 @@ class _Desktop extends StatelessWidget {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
-                columns: const [
-                  DataColumn(label: Text('Profissional')),
-                  DataColumn(label: Text('Função')),
-                  DataColumn(label: Text('Setor atual')),
-                  DataColumn(label: Text('Status')),
-                  DataColumn(label: Text('Ações')),
+                columns: [
+                  DataColumn(label: Text(strings.professional)),
+                  DataColumn(label: Text(strings.function)),
+                  DataColumn(label: Text(strings.currentSector)),
+                  DataColumn(label: Text(strings.status)),
+                  DataColumn(label: Text(strings.actions)),
                 ],
                 rows: items
                     .map(
                       (item) => DataRow(
                         cells: [
                           DataCell(Text(item.name)),
-                          DataCell(Text(_role(item.role))),
+                          DataCell(Text(_role(item.role, strings))),
                           DataCell(
-                            Text(sectorName[item.sectorId] ?? 'Sem setor'),
+                            Text(sectorName[item.sectorId] ?? strings.noSector),
                           ),
-                          DataCell(_Status(item.status)),
+                          DataCell(_Status(item.status, strings)),
                           DataCell(const Icon(Icons.more_vert)),
                         ],
                       ),
@@ -235,9 +255,14 @@ class _Desktop extends StatelessWidget {
 }
 
 class _Mobile extends StatelessWidget {
-  const _Mobile({required this.items, required this.sectorName});
+  const _Mobile({
+    required this.items,
+    required this.sectorName,
+    required this.strings,
+  });
   final List<RestaurantStaff> items;
   final Map<String, String> sectorName;
+  final AppStrings strings;
   @override
   Widget build(BuildContext context) => Column(
     children: items
@@ -246,7 +271,8 @@ class _Mobile extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: _StaffCard(
               item: item,
-              sectorName: sectorName[item.sectorId] ?? 'Sem setor',
+              sectorName: sectorName[item.sectorId] ?? strings.noSector,
+              strings: strings,
             ),
           ),
         )
@@ -255,9 +281,14 @@ class _Mobile extends StatelessWidget {
 }
 
 class _StaffCard extends StatelessWidget {
-  const _StaffCard({required this.item, required this.sectorName});
+  const _StaffCard({
+    required this.item,
+    required this.sectorName,
+    required this.strings,
+  });
   final RestaurantStaff item;
   final String sectorName;
+  final AppStrings strings;
   @override
   Widget build(BuildContext context) => Card(
     child: Padding(
@@ -283,7 +314,7 @@ class _StaffCard extends StatelessWidget {
                       item.name,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
-                    Text(_role(item.role)),
+                    Text(_role(item.role, strings)),
                   ],
                 ),
               ),
@@ -292,9 +323,9 @@ class _StaffCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(sectorName, style: Theme.of(context).textTheme.titleSmall),
-          const Text('Setor atual'),
+          Text(strings.currentSector),
           const SizedBox(height: AppSpacing.md),
-          _Status(item.status),
+          _Status(item.status, strings),
         ],
       ),
     ),
@@ -302,8 +333,9 @@ class _StaffCard extends StatelessWidget {
 }
 
 class _Status extends StatelessWidget {
-  const _Status(this.status);
+  const _Status(this.status, this.strings);
   final String status;
+  final AppStrings strings;
   @override
   Widget build(BuildContext context) {
     final paused = status == 'paused';
@@ -315,54 +347,58 @@ class _Status extends StatelessWidget {
       ),
       label: Text(
         paused
-            ? 'Em pausa'
+            ? strings.paused
             : status == 'serving'
-            ? 'Em atendimento'
-            : 'Disponível',
+            ? strings.serving
+            : strings.available,
       ),
     );
   }
 }
 
-String _role(String value) => switch (value) {
-  'waiter' => 'Garçom',
-  'attendant' => 'Atendente',
-  'manager' => 'Gerente',
+String _role(String value, AppStrings strings) => switch (value) {
+  'waiter' => strings.waiter,
+  'attendant' => strings.attendant,
+  'manager' => strings.manager,
   _ => value,
 };
 String _initials(String name) =>
     name.split(' ').take(2).map((word) => word[0]).join();
 int _percentage(int value, int total) =>
     total == 0 ? 0 : (value * 100 / total).round();
-Future<void> _createStaff(BuildContext context, WidgetRef ref) async {
+Future<void> _createStaff(
+  BuildContext context,
+  WidgetRef ref,
+  AppStrings strings,
+) async {
   final name = TextEditingController();
   final code = TextEditingController();
   final save = await showDialog<bool>(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      title: const Text('Novo garçom'),
+      title: Text(strings.newWaiter),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: name,
-            decoration: const InputDecoration(labelText: 'Nome'),
+            decoration: InputDecoration(labelText: strings.name),
           ),
           const SizedBox(height: AppSpacing.md),
           TextField(
             controller: code,
-            decoration: const InputDecoration(labelText: 'Código'),
+            decoration: InputDecoration(labelText: strings.code),
           ),
         ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(dialogContext),
-          child: const Text('Cancelar'),
+          child: Text(strings.cancel),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(dialogContext, true),
-          child: const Text('Salvar'),
+          child: Text(strings.save),
         ),
       ],
     ),
@@ -377,11 +413,9 @@ Future<void> _createStaff(BuildContext context, WidgetRef ref) async {
     ref.invalidate(restaurantStaffProvider);
   } catch (_) {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Não foi possível salvar o profissional.'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(strings.unableToSaveStaff)));
     }
   } finally {
     name.dispose();

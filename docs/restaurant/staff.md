@@ -18,4 +18,7 @@ O status atual (`available`, `serving`, `paused` e `offline`) organiza a leitura
 
 ## Interface
 
-A tela segue a referência visual aprovada: navegação contextual, topo com busca, indicadores, cartões por profissional e tabela pesquisável. A mesma composição é responsiva, com cartões em telas menores.
+A tela segue a referência visual aprovada: navegação contextual, topo com busca,
+indicadores, cartões por profissional e tabela pesquisável. Todos os textos da
+tela usam o catálogo PT/EN. A mesma composição é responsiva, com cartões em
+telas menores.
