@@ -47,8 +47,16 @@ from app.modules.inventory.infrastructure.models import (
 )
 from app.modules.products.domain.entities import ProductStatus
 from app.modules.products.infrastructure.models import ProductModel
-from app.modules.restaurant.domain.entities import RestaurantTableShape, RestaurantTableStatus
-from app.modules.restaurant.infrastructure.models import RestaurantFloorModel, RestaurantTableModel
+from app.modules.restaurant.domain.entities import (
+    RestaurantSectorType,
+    RestaurantTableShape,
+    RestaurantTableStatus,
+)
+from app.modules.restaurant.infrastructure.models import (
+    RestaurantFloorModel,
+    RestaurantSectorModel,
+    RestaurantTableModel,
+)
 from app.modules.users.domain.entities import UserStatus
 from app.security.passwords import hash_password
 from app.shared.demo.data import (
@@ -199,6 +207,7 @@ class DemoSeeder:
             RESTAURANT_RECEIVING_DOCUMENTS,
         )
         await self._ensure_restaurant_tables(company.id, branches)
+        await self._ensure_restaurant_sectors(company.id, branches)
         await self.session.commit()
         return DemoSeedSummary(
             mode="restaurant",
@@ -340,6 +349,9 @@ class DemoSeeder:
         )
         deleted_rows += await self._delete_where(
             RestaurantTableModel, RestaurantTableModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            RestaurantSectorModel, RestaurantSectorModel.tenant_id.in_(tenant_ids)
         )
         deleted_rows += await self._delete_where(
             RestaurantFloorModel, RestaurantFloorModel.tenant_id.in_(tenant_ids)
@@ -787,6 +799,61 @@ class DemoSeeder:
             table.status = RestaurantTableStatus.AVAILABLE
             table.qr_code = f"rigaud://restaurant/table/sabor-da-serra/{index}"
             table.is_active, table.deleted_at = True, None
+        await self.session.flush()
+
+    async def _ensure_restaurant_sectors(
+        self, tenant_id: UUID, branches: Iterable[BranchModel]
+    ) -> None:
+        branch = next(branch for branch in branches if branch.code == "MATRIZ")
+        floor = (
+            await self.session.execute(
+                select(RestaurantFloorModel).where(
+                    RestaurantFloorModel.tenant_id == tenant_id,
+                    RestaurantFloorModel.branch_id == branch.id,
+                    RestaurantFloorModel.code == "SALAO",
+                )
+            )
+        ).scalar_one_or_none()
+        for sort_order, (code, name, sector_type, color, icon, active) in enumerate(
+            (
+                (
+                    "SALAO",
+                    "Salão Principal",
+                    RestaurantSectorType.DINING_ROOM,
+                    "#155EEF",
+                    "table_restaurant",
+                    True,
+                ),
+                ("VARANDA", "Varanda", RestaurantSectorType.OUTDOOR, "#16803C", "deck", True),
+                ("BAR", "Bar", RestaurantSectorType.BAR, "#B54708", "local_bar", True),
+                (
+                    "VIP",
+                    "Área VIP",
+                    RestaurantSectorType.VIP,
+                    "#6941C6",
+                    "workspace_premium",
+                    False,
+                ),
+            ),
+            start=1,
+        ):
+            sector = (
+                await self.session.execute(
+                    select(RestaurantSectorModel).where(
+                        RestaurantSectorModel.tenant_id == tenant_id,
+                        RestaurantSectorModel.branch_id == branch.id,
+                        RestaurantSectorModel.code == code,
+                    )
+                )
+            ).scalar_one_or_none()
+            if sector is None:
+                sector = RestaurantSectorModel(
+                    tenant_id=tenant_id, branch_id=branch.id, code=code, name=name, type=sector_type
+                )
+                self.session.add(sector)
+            sector.floor_id = floor.id if floor and code == "SALAO" else None
+            sector.name, sector.type, sector.color, sector.icon = name, sector_type, color, icon
+            sector.sort_order, sector.is_active, sector.deleted_at = sort_order * 10, active, None
         await self.session.flush()
 
     async def _ensure_products(

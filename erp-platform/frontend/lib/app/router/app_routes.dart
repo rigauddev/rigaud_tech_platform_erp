@@ -28,6 +28,10 @@ class AppRoutes {
   static const receivingDocuments = '/receiving-documents';
   static const receivingDocumentCreate = '/receiving-documents/new';
   static const restaurantTables = '/restaurant/tables';
+  static const restaurantSectors = '/restaurant/sectors';
+  static const restaurantSectorCreate = '/restaurant/sectors/new';
+  static String restaurantSectorEdit(String sectorId) =>
+      '/restaurant/sectors/$sectorId/edit';
   static const audit = '/audit';
   static const demo = '/demo';
   static const notFound = '/not-found';

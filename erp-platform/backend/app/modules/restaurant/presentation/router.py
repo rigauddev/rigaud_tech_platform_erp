@@ -11,6 +11,14 @@ from app.modules.audit.application.service import AuditEventInput, AuditService
 from app.modules.audit.infrastructure.repositories import SQLAlchemyAuditEventRepository
 from app.modules.auth.domain.entities import AuthenticatedUser
 from app.modules.auth.presentation.dependencies import get_current_user
+from app.modules.restaurant.application.sector_use_cases import (
+    CreateRestaurantSector,
+    DeleteRestaurantSector,
+    GetRestaurantSector,
+    ListRestaurantSectors,
+    SectorInput,
+    UpdateRestaurantSector,
+)
 from app.modules.restaurant.application.table_use_cases import (
     CreateRestaurantFloor,
     CreateRestaurantTable,
@@ -31,17 +39,26 @@ from app.modules.restaurant.domain.exceptions import (
     RestaurantFloorCodeAlreadyExistsError,
     RestaurantFloorNotFoundError,
     RestaurantInvalidDataError,
+    RestaurantSectorCodeAlreadyExistsError,
+    RestaurantSectorNotFoundError,
     RestaurantTableNotFoundError,
     RestaurantTableNumberAlreadyExistsError,
 )
-from app.modules.restaurant.infrastructure.models import RestaurantFloorModel, RestaurantTableModel
+from app.modules.restaurant.infrastructure.models import (
+    RestaurantFloorModel,
+    RestaurantSectorModel,
+    RestaurantTableModel,
+)
 from app.modules.restaurant.infrastructure.repositories import (
     SQLAlchemyRestaurantFloorRepository,
+    SQLAlchemyRestaurantSectorRepository,
     SQLAlchemyRestaurantTableRepository,
 )
 from app.modules.restaurant.presentation.schemas import (
     RestaurantFloorRequest,
     RestaurantFloorResponse,
+    RestaurantSectorRequest,
+    RestaurantSectorResponse,
     RestaurantTableRequest,
     RestaurantTableResponse,
 )
@@ -62,6 +79,25 @@ def _floor_response(item: RestaurantFloorModel) -> RestaurantFloorResponse:
         code=item.code,
         name=item.name,
         description=item.description,
+        sort_order=item.sort_order,
+        is_active=item.is_active,
+        created_at=item.created_at,
+        updated_at=item.updated_at,
+    )
+
+
+def _sector_response(item: RestaurantSectorModel) -> RestaurantSectorResponse:
+    return RestaurantSectorResponse(
+        id=item.id,
+        tenant_id=item.tenant_id,
+        branch_id=item.branch_id,
+        floor_id=item.floor_id,
+        code=item.code,
+        name=item.name,
+        description=item.description,
+        type=item.type,
+        color=item.color,
+        icon=item.icon,
         sort_order=item.sort_order,
         is_active=item.is_active,
         created_at=item.created_at,
@@ -105,6 +141,23 @@ def _floor_input(payload: RestaurantFloorRequest, user: AuthenticatedUser) -> Fl
     )
 
 
+def _sector_input(payload: RestaurantSectorRequest, user: AuthenticatedUser) -> SectorInput:
+    return SectorInput(
+        tenant_id=user.tenant_id,
+        branch_id=user.branch_id,
+        code=payload.code,
+        name=payload.name,
+        type=payload.type,
+        floor_id=payload.floor_id,
+        description=payload.description,
+        color=payload.color,
+        icon=payload.icon,
+        sort_order=payload.sort_order,
+        is_active=payload.is_active,
+        actor_id=user.id,
+    )
+
+
 def _table_input(payload: RestaurantTableRequest, user: AuthenticatedUser) -> TableInput:
     return TableInput(
         tenant_id=user.tenant_id,
@@ -131,7 +184,7 @@ async def _audit(
     *,
     event_name: str,
     action: str,
-    item: RestaurantFloorModel | RestaurantTableModel,
+    item: RestaurantFloorModel | RestaurantSectorModel | RestaurantTableModel,
     entity_type: str,
     user: AuthenticatedUser,
     request: Request,
@@ -160,6 +213,128 @@ async def _audit(
             "request_id": request.headers.get("x-request-id"),
         },
     )
+
+
+@router.get("/sectors", response_model=list[RestaurantSectorResponse])
+async def list_sectors(
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+    is_active: bool | None = Query(default=None),
+) -> JSONResponse:
+    items = await ListRestaurantSectors(SQLAlchemyRestaurantSectorRepository(session)).execute(
+        tenant_id=user.tenant_id, branch_id=user.branch_id, is_active=is_active
+    )
+    return success_response(
+        "RESTAURANT_SECTOR_LIST_RETRIEVED",
+        data=[_sector_response(item).model_dump(mode="json") for item in items],
+    )
+
+
+@router.get("/sectors/{sector_id}", response_model=RestaurantSectorResponse)
+async def get_sector(
+    sector_id: UUID,
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        item = await GetRestaurantSector(SQLAlchemyRestaurantSectorRepository(session)).execute(
+            sector_id, tenant_id=user.tenant_id
+        )
+        return success_response(
+            "RESTAURANT_SECTOR_RETRIEVED", data=_sector_response(item).model_dump(mode="json")
+        )
+    except RestaurantError as exc:
+        return _error(exc)
+
+
+@router.post("/sectors", response_model=RestaurantSectorResponse)
+async def create_sector(
+    payload: RestaurantSectorRequest,
+    request: Request,
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        item = await CreateRestaurantSector(
+            SQLAlchemyRestaurantSectorRepository(session),
+            SQLAlchemyRestaurantFloorRepository(session),
+        ).execute(_sector_input(payload, user))
+        await _audit(
+            session,
+            event_name="restaurant.sector.created",
+            action="created",
+            item=item,
+            entity_type="restaurant_sector",
+            user=user,
+            request=request,
+        )
+        await session.commit()
+        return success_response(
+            "RESTAURANT_SECTOR_CREATED", data=_sector_response(item).model_dump(mode="json")
+        )
+    except RestaurantError as exc:
+        await session.rollback()
+        return _error(exc)
+
+
+@router.put("/sectors/{sector_id}", response_model=RestaurantSectorResponse)
+async def update_sector(
+    sector_id: UUID,
+    payload: RestaurantSectorRequest,
+    request: Request,
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        item = await UpdateRestaurantSector(
+            SQLAlchemyRestaurantSectorRepository(session),
+            SQLAlchemyRestaurantFloorRepository(session),
+        ).execute(sector_id, _sector_input(payload, user))
+        await _audit(
+            session,
+            event_name="restaurant.sector.updated",
+            action="updated",
+            item=item,
+            entity_type="restaurant_sector",
+            user=user,
+            request=request,
+        )
+        await session.commit()
+        return success_response(
+            "RESTAURANT_SECTOR_UPDATED", data=_sector_response(item).model_dump(mode="json")
+        )
+    except RestaurantError as exc:
+        await session.rollback()
+        return _error(exc)
+
+
+@router.delete("/sectors/{sector_id}", response_model=RestaurantSectorResponse)
+async def delete_sector(
+    sector_id: UUID,
+    request: Request,
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        item = await DeleteRestaurantSector(SQLAlchemyRestaurantSectorRepository(session)).execute(
+            sector_id, tenant_id=user.tenant_id, actor_id=user.id
+        )
+        await _audit(
+            session,
+            event_name="restaurant.sector.deleted",
+            action="deleted",
+            item=item,
+            entity_type="restaurant_sector",
+            user=user,
+            request=request,
+        )
+        await session.commit()
+        return success_response(
+            "RESTAURANT_SECTOR_DELETED", data=_sector_response(item).model_dump(mode="json")
+        )
+    except RestaurantError as exc:
+        await session.rollback()
+        return _error(exc)
 
 
 @router.get("/floors", response_model=list[RestaurantFloorResponse])
@@ -397,12 +572,16 @@ async def delete_table(
 
 
 def _error(exc: RestaurantError) -> JSONResponse:
+    if isinstance(exc, RestaurantSectorNotFoundError):
+        return error_response("RESTAURANT_SECTOR_NOT_FOUND")
     if isinstance(exc, RestaurantFloorNotFoundError):
         return error_response("RESTAURANT_FLOOR_NOT_FOUND")
     if isinstance(exc, RestaurantTableNotFoundError):
         return error_response("RESTAURANT_TABLE_NOT_FOUND")
     if isinstance(exc, RestaurantFloorCodeAlreadyExistsError):
         return error_response("RESTAURANT_FLOOR_CODE_ALREADY_EXISTS")
+    if isinstance(exc, RestaurantSectorCodeAlreadyExistsError):
+        return error_response("RESTAURANT_SECTOR_CODE_ALREADY_EXISTS")
     if isinstance(exc, RestaurantTableNumberAlreadyExistsError):
         return error_response("RESTAURANT_TABLE_NUMBER_ALREADY_EXISTS")
     if isinstance(exc, RestaurantBranchRequiredError):
