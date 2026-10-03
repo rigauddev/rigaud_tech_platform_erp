@@ -4,7 +4,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.modules.restaurant.domain.entities import RestaurantTableShape, RestaurantTableStatus
+from app.modules.restaurant.domain.entities import (
+    RestaurantSectorType,
+    RestaurantTableShape,
+    RestaurantTableStatus,
+)
 
 
 class RestaurantSchema(BaseModel):
@@ -26,6 +30,35 @@ class RestaurantFloorResponse(RestaurantSchema):
     code: str
     name: str
     description: str | None
+    sort_order: int
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+class RestaurantSectorRequest(RestaurantSchema):
+    code: str = Field(min_length=1, max_length=40)
+    name: str = Field(min_length=1, max_length=120)
+    type: RestaurantSectorType = RestaurantSectorType.DINING_ROOM
+    floor_id: UUID | None = None
+    description: str | None = Field(default=None, max_length=2000)
+    color: str | None = Field(default=None, max_length=20)
+    icon: str | None = Field(default=None, max_length=80)
+    sort_order: int = 0
+    is_active: bool = True
+
+
+class RestaurantSectorResponse(RestaurantSchema):
+    id: UUID
+    tenant_id: UUID
+    branch_id: UUID
+    floor_id: UUID | None
+    code: str
+    name: str
+    description: str | None
+    type: RestaurantSectorType
+    color: str | None
+    icon: str | None
     sort_order: int
     is_active: bool
     created_at: datetime

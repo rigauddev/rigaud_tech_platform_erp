@@ -613,6 +613,27 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         "Código de salão já cadastrado nesta filial.",
         "warning",
     ),
+    "RESTAURANT_SECTOR_CREATED": MessageDefinition(
+        "RESTAURANT_SECTOR_CREATED", 201, "Setor criado com sucesso.", audit_required=True
+    ),
+    "RESTAURANT_SECTOR_UPDATED": MessageDefinition(
+        "RESTAURANT_SECTOR_UPDATED", 200, "Setor atualizado com sucesso.", audit_required=True
+    ),
+    "RESTAURANT_SECTOR_DELETED": MessageDefinition(
+        "RESTAURANT_SECTOR_DELETED", 200, "Setor removido com sucesso.", audit_required=True
+    ),
+    "RESTAURANT_SECTOR_LIST_RETRIEVED": MessageDefinition(
+        "RESTAURANT_SECTOR_LIST_RETRIEVED", 200, "Setores consultados com sucesso."
+    ),
+    "RESTAURANT_SECTOR_NOT_FOUND": MessageDefinition(
+        "RESTAURANT_SECTOR_NOT_FOUND", 404, "Setor não encontrado.", "warning"
+    ),
+    "RESTAURANT_SECTOR_CODE_ALREADY_EXISTS": MessageDefinition(
+        "RESTAURANT_SECTOR_CODE_ALREADY_EXISTS",
+        409,
+        "Código de setor já cadastrado nesta filial.",
+        "warning",
+    ),
     "RESTAURANT_TABLE_CREATED": MessageDefinition(
         "RESTAURANT_TABLE_CREATED", 201, "Mesa criada com sucesso.", audit_required=True
     ),

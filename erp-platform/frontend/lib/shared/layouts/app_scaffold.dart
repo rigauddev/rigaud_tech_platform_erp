@@ -159,6 +159,11 @@ class _NavigationItems extends ConsumerWidget {
               'Mesas e mapa do salão',
               Icons.table_restaurant_outlined,
             ),
+            _NavigationItem(
+              AppRoutes.restaurantSectors,
+              'Setores e ambientes',
+              Icons.grid_view_outlined,
+            ),
           ],
         ),
         _NavigationSection(
@@ -330,6 +335,9 @@ String? _parentRouteFor(String path) {
     return AppRoutes.receivingDocuments;
   }
   if (path == AppRoutes.restaurantTables) {
+    return AppRoutes.dashboard;
+  }
+  if (path == AppRoutes.restaurantSectors) {
     return AppRoutes.dashboard;
   }
   if (RegExp(r'^/audit/[^/]+$').hasMatch(path)) {

@@ -16,3 +16,12 @@ class RestaurantTableShape(StrEnum):
     SQUARE = "square"
     ROUND = "round"
     RECTANGLE = "rectangle"
+
+
+class RestaurantSectorType(StrEnum):
+    DINING_ROOM = "dining_room"
+    OUTDOOR = "outdoor"
+    BAR = "bar"
+    VIP = "vip"
+    COUNTER = "counter"
+    OTHER = "other"

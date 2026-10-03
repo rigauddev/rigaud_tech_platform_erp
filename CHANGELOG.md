@@ -4,6 +4,8 @@
 
 ### Added
 
+- RESTAURANT-002: setores e ambientes por filial, CRUD auditado, migration `0023_restaurant_sectors`, dados demo e tela responsiva alinhada ao padrão visual aprovado.
+
 - RESTAURANT-001: fundação de salões e mesas, API multi-tenant auditada, migration `0022_restaurant_tables` e mapa operacional responsivo.
 - RESTAURANT-001: evolução de app do garçom, handoff de pagamento, KDS, impressão e previsão de preparo registrada nas tasks responsáveis.
 

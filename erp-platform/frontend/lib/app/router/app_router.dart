@@ -24,6 +24,9 @@ import '../../features/receiving_documents/presentation/receiving_document_detai
 import '../../features/receiving_documents/presentation/receiving_document_form_screen.dart';
 import '../../features/receiving_documents/presentation/receiving_document_list_screen.dart';
 import '../../features/restaurant/presentation/restaurant_tables_screen.dart';
+import '../../features/restaurant/presentation/restaurant_sectors_screen.dart';
+import '../../features/restaurant/presentation/restaurant_sector_form_screen.dart';
+import '../../features/restaurant/data/restaurant_sector_remote_data_source.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/users/presentation/user_detail_screen.dart';
 import '../../features/users/presentation/user_form_screen.dart';
@@ -155,6 +158,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.warehouseLocationCreate,
         builder: (context, state) => const WarehouseLocationFormScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.restaurantSectorCreate,
+        builder: (context, state) => const RestaurantSectorFormScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.restaurantSectors}/:sectorId/edit',
+        builder: (context, state) => RestaurantSectorFormScreen(
+          sector: state.extra as RestaurantSector?,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.restaurantSectors,
+        builder: (context, state) => const RestaurantSectorsScreen(),
       ),
       GoRoute(
         path: AppRoutes.restaurantTables,
