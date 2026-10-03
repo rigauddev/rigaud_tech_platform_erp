@@ -124,6 +124,18 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Daily Production`: produção diária futura de porções/pratos, separada do saldo bruto de insumos.
 
+`Restaurant Operations Core`: domínio configurável por filial que reúne operação de restaurante, bar, lanchonete, café, pizzaria, food truck e delivery.
+
+`Restaurant Operation`: configuração operacional de um segmento de alimentação em uma filial, incluindo modalidades de atendimento, ambientes, estações e canais.
+
+`Order Entered By`: usuário que registrou um pedido.
+
+`Table Responsible Waiter`: garçom responsável pela mesa, que pode ser diferente de quem registrou o pedido.
+
+`Kitchen Station`: destino configurável de preparo, como cozinha, bar ou expedição.
+
+`Table Account`: consolidação futura de itens e valores associados a uma mesa antes do fechamento no PDV.
+
 ## Sales, Fiscal E Finance
 
 `POS`: ponto de venda.

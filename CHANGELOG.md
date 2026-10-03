@@ -4,6 +4,8 @@
 
 ### Added
 
+- DOC-011: Restaurant Operations Core documenta o núcleo configurável de alimentação, papéis, experiências Flutter, fluxo comum de pedidos e limites entre menu, estoque, produção, PDV e financeiro.
+
 - REST-013: transferências internas de estoque com solicitação, despacho, recebimento, auditoria e movimentos imutáveis de saída e entrada.
 - REST-013: migration `0021_inventory_transfers` e correção idempotente da migration `0019_inventory_count`.
 

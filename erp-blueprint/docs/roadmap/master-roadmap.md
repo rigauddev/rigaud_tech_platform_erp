@@ -74,6 +74,8 @@ Sequência:
 
 Objetivo: construir o fluxo operacional inicial de restaurante sobre o Core compartilhado.
 
+Gate concluído/em revisão: DOC-011 — Restaurant Operations Core. O domínio único será configurável para Restaurante, Bar, Lanchonete, Café, Pizzaria, Food Truck e Delivery; Gestão, Garçom, KDS, PDV e Cliente/Menu Online permanecem experiências sobre a mesma plataforma.
+
 Sequência:
 
 - Mesas.

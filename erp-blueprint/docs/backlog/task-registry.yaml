@@ -1,4 +1,48 @@
 tasks:
+  - id: DOC-011
+    title: Restaurant Operations Core
+    epic: MVP Restaurante
+    module: restaurant
+    status: review
+    dependencies:
+      - REST-013
+    started_at: "2026-10-03"
+    completed_at: "2026-10-03"
+    documentation:
+      - docs/restaurant/README.md
+      - docs/restaurant/operations.md
+      - docs/restaurant/roles.md
+      - docs/restaurant/apps.md
+      - docs/restaurant/order-flow.md
+      - docs/restaurant/menu-availability.md
+      - docs/architecture/product-map.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/academy/restaurant/002-restaurant-operations-core.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/mkdocs.yml
+      - README.md
+      - CHANGELOG.md
+    academy:
+      - erp-blueprint/docs/academy/restaurant/002-restaurant-operations-core.md
+    tests:
+      - ruby -e "require 'yaml'; YAML.load_file('erp-blueprint/docs/backlog/task-registry.yaml')"
+      - make check-task TASK=DOC-011
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-011-restaurant-operations-core
+      commits:
+        - 2aa9e3f
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 2aa9e3f
+    review_status: ready
   - id: REST-013
     title: Inventory Transfers
     epic: EPIC-003 Inbound Logistics

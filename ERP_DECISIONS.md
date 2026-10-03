@@ -67,6 +67,15 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Ajustes de estoque possuem motivo padronizado e texto descritivo obrigatório. Estornos são compensatórios e vinculados ao ajuste original; o lançamento original permanece imutável.
 - Toda nova entidade operacional deve possuir UUID interno, código curto quando fizer sentido, e ser avaliada para QR Code, código de barras, auditoria completa, sincronização offline, eventos Kafka, operação multi-filial e compatibilidade SaaS/On-Premise, sem antecipar implementação fora da task vigente.
 
+## Restaurant Operations
+
+- Restaurant, Bar, Lanchonete, Café, Pizzaria, Food Truck e Delivery compartilham um Restaurant Operations Core configurável por filial; não serão módulos paralelos.
+- Gestão, Garçom, KDS, PDV e Cliente/Menu Online são experiências sobre o mesmo backend, eventos e base Flutter.
+- Pedido deve separar `order_entered_by` de `table_responsible_waiter` e preservar ambos na auditoria.
+- KDS e impressão serão consumidores do mesmo roteamento por estação; não haverá fluxos concorrentes de preparo.
+- Disponibilidade comercial diária continua separada de `InventoryBalance` e de Restaurant Production.
+- Receita, produção, consumo, desperdício, custos e forecast continuam restritos à EPIC-RESTAURANT-PRODUCTION.
+
 ## Segurança E Acesso
 
 - Login usa email e senha. O tenant é resolvido pelo backend a partir do usuário.
