@@ -22,7 +22,7 @@ DEV-012 — Authentication & Tenant Architecture Alignment
 Task atual:
 
 ```text
-UI-002 — Navigation & Application Shell
+UI-004 — Localization & Login Flow
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -192,6 +192,12 @@ Endpoints técnicos disponíveis:
 - `GET /api/v1/inventory/movements`
 - `GET /api/v1/inventory/transactions`
 - `GET /api/v1/inventory/transactions/{transaction_id}`
+- `GET /api/v1/inventory/counts`
+- `POST /api/v1/inventory/counts`
+- `POST /api/v1/inventory/counts/{count_id}/start`
+- `PUT /api/v1/inventory/counts/{count_id}/items/{item_id}`
+- `POST /api/v1/inventory/counts/{count_id}/finish`
+- `POST /api/v1/inventory/counts/{count_id}/cancel`
 - `POST /api/v1/inventory/adjustments`
 - `POST /api/v1/inventory/reservations`
 - `POST /api/v1/inventory/reservations/{reservation_id}/release`

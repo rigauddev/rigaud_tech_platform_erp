@@ -18,6 +18,16 @@ O carrossel lateral possui um primeiro card fixo de informativo do sistema e dei
 
 Os cards seguem o mesmo design visual do login e podem evoluir futuramente para conteúdo administrável com texto ou imagem, sem alterar o fluxo de autenticação.
 
+## Idioma
+
+A tela inicial possui seletor com Português e English. A seleção atualiza integralmente os textos do Login, do carrossel informativo, da recuperação de senha e do menu de navegação compartilhado.
+
+As próximas telas serão traduzidas no momento em que forem evoluídas; não devem misturar textos novos em inglês com textos existentes em português na mesma experiência.
+
+## Recuperação de Senha
+
+`/login/forgot-password` oferece a tela de solicitação de recuperação e o retorno para Login. O envio de email ainda depende de uma task de autenticação própria; enquanto isso, a tela informa explicitamente que o serviço não está disponível, sem simular uma recuperação concluída.
+
 ## Identidade Visual
 
 O background usa gradiente claro, grade técnica, conexões e cartões discretos relacionados a ERP:
@@ -29,7 +39,9 @@ O background usa gradiente claro, grade técnica, conexões e cartões discretos
 - cloud;
 - conectividade entre módulos.
 
-A logo usa `assets/images/logo_rigaud_tech_trimmed.png`, variante transparente e recortada a partir do asset oficial. Ela remove a margem excedente sem adicionar fundo ao card de login.
+A logo usada no Login é `assets/images/rigaud-tech-logo.png`, declarada no `pubspec.yaml` e exibida sem recorte ou escala artificial. O card de acesso e o carrossel usam altura compacta, sem espaçadores flexíveis que criem área vertical vazia.
+
+Os campos adotam a cor primária do tema no preenchimento leve, no rótulo flutuante e nos ícones de prefixo.
 
 ## Rodapé
 

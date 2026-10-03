@@ -4,14 +4,29 @@
 
 ### Added
 
+- UI-004: seletor de idioma Português/English no Login, carrossel informativo, recuperação de senha visual e navegação compartilhada.
+- UI-004: rota `/login/forgot-password` criada sem simular o envio de recuperação enquanto o serviço backend não existir.
+
+- UI-003: menu lateral passa a refletir o contexto de acesso, exibindo o papel técnico ativo e ocultando áreas de plataforma para usuários sem essa permissão; a rota de Ambiente demo também passa a exigir acesso de plataforma.
+- UI-003: a logo selecionada para Login é registrada no manifesto Flutter e exibida sem recorte ou escala artificial.
+
+- REST-012: Stock Adjustments recebe catálogo de motivos, vínculo de estorno, endpoint de reversão compensatória e migration `0020_stock_adjustments`.
+- DOC-010: roadmap do Restaurante passa a incluir Menu do Dia, disponibilidade comercial diária, contexto da mesa, garçom responsável e roteamento para cozinha antes do cardápio online e KDS.
+
+- REST-011: Inventory Count adiciona documentos de inventario fisico, itens, ciclo draft/in_progress/finished/cancelled, auditoria e migration `0019_inventory_count`.
+- REST-011: divergencias de contagem passam a gerar `InventoryMovement` imutavel do tipo `count`, com origem `INVENTORY` e processo `COUNT`.
+
 - UI-002: navegação lateral reorganizada por contexto de trabalho, com grupos de visão geral, cadastros, estoque, conta e segurança, administração e desenvolvimento.
-- UI-002: logo de Login passa a usar variante PNG transparente e recortada, sem margem excedente ou escala artificial.
+- UI-002: Login passa a usar a marca oficial atual em variante PNG transparente, sem fundo branco, margem excedente ou escala artificial.
+- UI-002: logo oficial de Login atualizada para `Rigaud_Tech_profile.PNG`, com variante transparente para remover o fundo branco sem alterar a marca.
+- UI-002: adicionados `make restart-backend` e `make restart-frontend` para recarga direcionada dos serviços Docker.
 
 ### Changed
 
 - UI-002: Splash passa a encaminhar automaticamente para Login, removendo o botão manual de continuar.
 - UI-002: detalhes, edições e cadastros passam a apresentar ação de voltar para a rota-pai.
 - UI-002: Ambiente demo é identificado como ferramenta de desenvolvimento e separado do menu operacional.
+- UI-002: cards de Login reduzidos e formulário compactado para eliminar espaço vertical ocioso.
 
 - REST-010: Inventory Transactions expõe `InventoryMovement` como livro razão imutável com filtros por produto, depósito, localização, tipo, origem, processo e módulo de origem.
 - REST-010: endpoints `GET /api/v1/inventory/transactions` e `GET /api/v1/inventory/transactions/{transaction_id}` adicionados ao Inventory Engine.

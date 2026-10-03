@@ -21,6 +21,12 @@ Roadmap oficial da Rigaud Tech Platform ERP.
 
 Estado atual: concluído até DEV-012 em review.
 
+Refinamento transversal em review: UI-002 — Navigation & Application Shell, com entrada direta no Login, navegação por contexto, retorno nas subtelas e identidade visual ajustada.
+
+Correção transversal em review: UI-003 — Navigation Access & Login Brand Fix, com menu coerente com a guarda de rotas, acesso demo restrito à plataforma e marca de Login registrada no bundle Flutter.
+
+Refinamento transversal em review: UI-004 — Localization & Login Flow, com seletor Português/English, conteúdo consistente nas telas alteradas e recuperação de senha visual preparada para integração futura.
+
 Próxima task prevista: DEV-011 — Assinaturas, Planos e Limites.
 
 ## Fase 2 — Core Inventory E Inbound Logistics
@@ -73,13 +79,16 @@ Sequência:
 - Mesas.
 - Setores.
 - Garçons.
-- QR Code.
+- Menu do Dia e Disponibilidade Comercial.
+- QR Code da Mesa.
 - Cardápio Online.
-- Pedidos.
-- KDS.
+- Pedidos, notificação ao garçom e roteamento para cozinha.
+- KDS e impressão de produção.
 - Delivery.
 - Caixa.
 - Cupom ou NFC-e.
+
+Experiencias ainda planejadas sobre essa base: gestao responsiva do restaurante, app operacional de garcom, KDS, app/portal do cliente por QR Code, PDV e entrada fiscal por NF-e/XML. Nenhuma delas esta implementada nesta fase de estoque.
 
 ## Fase 4 — MVP Loja de Roupas
 
@@ -111,6 +120,8 @@ Sequência:
 - AI Insights.
 
 Produção permanece separada do estoque. Estoque registra consumo e perdas por eventos de `InventoryMovement`; receitas, planejamento e cozinha pertencem ao domínio Restaurant Production.
+
+No MVP, a equipe publica diariamente os pratos disponíveis e a quantidade comercial vendável. Esta cota não substitui saldo físico: a futura integração com Restaurant Production poderá sugeri-la ou limitá-la por produção, insumos e capacidade.
 
 - Financial MVP.
 - HR MVP com Employees, Departments, Shifts, Schedules, Vacation e Attendance.

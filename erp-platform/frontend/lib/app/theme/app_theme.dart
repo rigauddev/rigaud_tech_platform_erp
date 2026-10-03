@@ -39,6 +39,10 @@ class AppTheme {
       scaffoldBackgroundColor: colorScheme.surface,
       appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
       inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: colorScheme.primary.withValues(alpha: 0.055),
+        floatingLabelStyle: TextStyle(color: colorScheme.primary),
+        prefixIconColor: colorScheme.primary,
         border: OutlineInputBorder(borderRadius: borderRadius),
         enabledBorder: OutlineInputBorder(borderRadius: borderRadius),
         focusedBorder: OutlineInputBorder(

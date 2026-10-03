@@ -16,7 +16,7 @@ class InventoryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return DefaultTabController(
-      length: 5,
+      length: 6,
       child: AppScaffold(
         title: 'Estoque',
         body: Column(
@@ -28,6 +28,7 @@ class InventoryScreen extends ConsumerWidget {
                 Tab(text: 'Put Away'),
                 Tab(text: 'Ajuste'),
                 Tab(text: 'Reserva'),
+                Tab(text: 'Inventário'),
               ],
             ),
             Expanded(
@@ -38,12 +39,46 @@ class InventoryScreen extends ConsumerWidget {
                   _PutAwayView(),
                   _AdjustmentView(),
                   _ReservationView(),
+                  _CountsView(),
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _CountsView extends ConsumerWidget {
+  const _CountsView();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final counts = ref.watch(inventoryCountsControllerProvider);
+    return counts.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(child: Text(_message(error))),
+      data: (items) => items.isEmpty
+          ? const AppEmptyState(
+              title: 'Nenhuma contagem encontrada',
+              message: 'As contagens físicas aparecerão aqui.',
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              itemCount: items.length,
+              separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.fact_check_outlined),
+                    title: Text(item.code),
+                    subtitle: Text('${item.itemsCount} itens · ${item.status}'),
+                    trailing: Text(item.warehouseId),
+                  ),
+                );
+              },
+            ),
     );
   }
 }
@@ -478,6 +513,7 @@ class _AdjustmentViewState extends ConsumerState<_AdjustmentView> {
   final _quantity = TextEditingController();
   final _reason = TextEditingController();
   InventoryAdjustmentType _type = InventoryAdjustmentType.increase;
+  String _reasonCode = 'correction';
 
   @override
   void dispose() {
@@ -505,6 +541,23 @@ class _AdjustmentViewState extends ConsumerState<_AdjustmentView> {
             .toList(),
         onChanged: (value) => setState(() => _type = value ?? _type),
       ),
+      trailing: DropdownButtonFormField<String>(
+        initialValue: _reasonCode,
+        decoration: const InputDecoration(labelText: 'Motivo'),
+        items: const [
+          DropdownMenuItem(value: 'correction', child: Text('Correção')),
+          DropdownMenuItem(value: 'damage', child: Text('Avaria')),
+          DropdownMenuItem(value: 'loss', child: Text('Perda')),
+          DropdownMenuItem(value: 'expiry', child: Text('Validade expirada')),
+          DropdownMenuItem(
+            value: 'opening_balance',
+            child: Text('Saldo inicial'),
+          ),
+          DropdownMenuItem(value: 'return', child: Text('Devolução')),
+        ],
+        onChanged: (value) =>
+            setState(() => _reasonCode = value ?? _reasonCode),
+      ),
       onSubmit: () async {
         final result = await ref
             .read(inventoryBalancesControllerProvider.notifier)
@@ -514,6 +567,7 @@ class _AdjustmentViewState extends ConsumerState<_AdjustmentView> {
                 adjustmentType: _type,
                 quantity: _quantity.text.trim(),
                 reason: _reason.text.trim(),
+                reasonCode: _reasonCode,
               ),
             );
         if (result != null && context.mounted) {
@@ -580,6 +634,7 @@ class _OperationForm extends StatelessWidget {
     required this.reason,
     required this.onSubmit,
     this.leading,
+    this.trailing,
   });
 
   final String title;
@@ -589,6 +644,7 @@ class _OperationForm extends StatelessWidget {
   final TextEditingController reason;
   final VoidCallback onSubmit;
   final Widget? leading;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -605,6 +661,10 @@ class _OperationForm extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
               if (leading != null) ...[
                 leading!,
+                const SizedBox(height: AppSpacing.md),
+              ],
+              if (trailing != null) ...[
+                trailing!,
                 const SizedBox(height: AppSpacing.md),
               ],
               TextField(

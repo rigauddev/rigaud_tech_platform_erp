@@ -212,6 +212,14 @@ class SQLAlchemyInventoryRepository(InventoryRepository):
         )
         return result.scalar_one_or_none()
 
+    async def get_adjustment_by_id(self, adjustment_id: UUID, *, tenant_id: UUID) -> InventoryAdjustmentModel | None:
+        result = await self.session.execute(select(InventoryAdjustmentModel).where(InventoryAdjustmentModel.id == adjustment_id, InventoryAdjustmentModel.tenant_id == tenant_id))
+        return result.scalar_one_or_none()
+
+    async def has_adjustment_reversal(self, adjustment_id: UUID, *, tenant_id: UUID) -> bool:
+        result = await self.session.execute(select(InventoryAdjustmentModel.id).where(InventoryAdjustmentModel.reversal_of_id == adjustment_id, InventoryAdjustmentModel.tenant_id == tenant_id).limit(1))
+        return result.scalar_one_or_none() is not None
+
     def _balances_select(
         self,
         *,

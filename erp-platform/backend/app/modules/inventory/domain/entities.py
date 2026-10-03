@@ -45,6 +45,7 @@ class InventoryMovementType(StrEnum):
     ADJUSTMENT_OUT = "adjustment_out"
     RESERVATION_CREATED = "reservation_created"
     RESERVATION_RELEASED = "reservation_released"
+    COUNT = "count"
 
 
 class InventoryMovementStatus(StrEnum):
@@ -60,7 +61,24 @@ class InventoryAdjustmentStatus(StrEnum):
     CONFIRMED = "confirmed"
 
 
+class InventoryAdjustmentReason(StrEnum):
+    CORRECTION = "correction"
+    DAMAGE = "damage"
+    LOSS = "loss"
+    EXPIRY = "expiry"
+    OPENING_BALANCE = "opening_balance"
+    RETURN = "return"
+    REVERSAL = "reversal"
+
+
 class InventoryReservationStatus(StrEnum):
     ACTIVE = "active"
     RELEASED = "released"
+    CANCELLED = "cancelled"
+
+
+class InventoryCountStatus(StrEnum):
+    DRAFT = "draft"
+    IN_PROGRESS = "in_progress"
+    FINISHED = "finished"
     CANCELLED = "cancelled"

@@ -74,6 +74,12 @@ class _FakeInventoryRepository implements InventoryRepository {
   final List<InventoryMovement> _movements = [];
 
   @override
+  Future<List<InventoryCount>> listCounts({
+    int page = 1,
+    int pageSize = 20,
+  }) async => const [];
+
+  @override
   Future<List<InventoryBalance>> listBalances({
     String? productId,
     int page = 1,

@@ -1,13 +1,196 @@
 tasks:
+  - id: UI-004
+    title: Localization & Login Flow
+    epic: EPIC-0001 Foundation
+    module: frontend
+    status: review
+    dependencies:
+      - UI-003
+    started_at: "2026-10-03"
+    completed_at: null
+    documentation:
+      - docs/ui/login-screen.md
+      - docs/ui/application-navigation.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+    academy: []
+    tests:
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - make check-task TASK=UI-004
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/ui-004-localization-login-flow
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
+  - id: UI-003
+    title: Navigation Access & Login Brand Fix
+    epic: EPIC-0001 Foundation
+    module: frontend
+    status: review
+    dependencies:
+      - UI-002
+    started_at: "2026-10-03"
+    completed_at: null
+    documentation:
+      - docs/ui/application-navigation.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+    academy: []
+    tests:
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: fix/ui-003-navigation-access
+      commits:
+        - c035861
+        - 09e64a9
+        - 72557c2
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 72557c2
+    review_status: ready
+  - id: REST-012
+    title: Stock Adjustments
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-011
+    started_at: "2026-10-03"
+    completed_at: null
+    documentation:
+      - docs/inventory/adjustments.md
+      - docs/inventory/endpoints.md
+      - docs/inventory/README.md
+      - ERP_DECISIONS.md
+      - CHANGELOG.md
+      - erp-blueprint/docs/academy/inventory/008-stock-adjustments.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/008-stock-adjustments.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_inventory_engine.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - git diff --check
+    migration: 0020_stock_adjustments
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-012-stock-adjustments
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 9ec2b75
+    review_status: ready
+  - id: DOC-010
+    title: Restaurant Menu Availability & Order Routing Architecture
+    epic: MVP Restaurante
+    module: restaurant
+    status: review
+    dependencies:
+      - DOC-009
+    started_at: "2026-10-03"
+    completed_at: null
+    documentation:
+      - docs/restaurant/menu-availability.md
+      - docs/architecture/product-map.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/architecture/product-vision.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/docs/academy/restaurant/001-menu-availability.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/restaurant/001-menu-availability.md
+    tests:
+      - mkdocs build
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: docs/restaurant-menu-availability-roadmap
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 2a7ea25
+    review_status: ready
+  - id: REST-011
+    title: Inventory Count
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-010
+    started_at: "2026-10-02"
+    completed_at: null
+    documentation:
+      - docs/inventory/counts.md
+      - docs/inventory/README.md
+      - erp-blueprint/docs/academy/inventory/007-inventory-count.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/007-inventory-count.md
+    tests:
+      - python -m compileall app tests
+      - erp-platform/backend/tests/test_inventory_count.py
+      - make lint
+      - make format
+      - make test
+      - make check-task TASK=REST-011
+      - git diff --check
+    migration: 0019_inventory_count
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-011-inventory-count
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 1292746
+    review_status: ready
   - id: UI-002
     title: Navigation & Application Shell
     epic: EPIC-0001 Foundation
     module: frontend
-    status: in_progress
+    status: review
     dependencies:
       - UI-001
     started_at: "2026-10-02"
-    completed_at: null
+    completed_at: "2026-10-02"
     documentation:
       - docs/ui/application-navigation.md
       - docs/ui/login-screen.md
@@ -26,14 +209,15 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/ui-002-navigation-shell
-      commits: []
+      commits:
+        - 590cb09
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
-    review_status: pending
+    commit: 590cb09
+    review_status: ready
   - id: REST-010
     title: Inventory Transactions
     epic: EPIC-003 Inbound Logistics

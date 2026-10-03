@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/router/app_routes.dart';
+import '../../core/localization/app_strings.dart';
+import '../../features/auth/presentation/auth_controller.dart';
 
-class AppScaffold extends StatelessWidget {
+class AppScaffold extends ConsumerWidget {
   const AppScaffold({
     required this.body,
     this.title,
@@ -18,20 +21,21 @@ class AppScaffold extends StatelessWidget {
   final List<Widget>? actions;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = ref.watch(appStringsProvider);
     final isDesktop = MediaQuery.sizeOf(context).width >= 1024;
     final currentPath = GoRouterState.of(context).uri.path;
     final parentRoute = _parentRouteFor(currentPath);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(title ?? 'Rigaud Tech ERP'),
+        title: Text(title ?? strings.appName),
         actions: actions,
         automaticallyImplyLeading: parentRoute == null,
         leading: parentRoute == null
             ? null
             : IconButton(
-                tooltip: 'Voltar',
+                tooltip: strings.back,
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () => context.go(parentRoute),
               ),
@@ -54,7 +58,7 @@ class AppScaffold extends StatelessWidget {
   }
 }
 
-class _NavigationItems extends StatelessWidget {
+class _NavigationItems extends ConsumerWidget {
   const _NavigationItems();
 
   static const _environment = String.fromEnvironment(
@@ -63,116 +67,125 @@ class _NavigationItems extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final currentPath = GoRouterState.of(context).uri.path;
+    final user = ref.watch(authControllerProvider).value?.user;
+    final isPlatformAdmin = user?.isSuperuser ?? false;
+    final strings = ref.watch(appStringsProvider);
     return ListView(
       padding: const EdgeInsets.all(12),
       children: [
-        const _NavigationBrand(),
+        _NavigationBrand(
+          role: _roleLabel(user?.role, isPlatformAdmin, strings),
+          appName: strings.appName,
+        ),
         const SizedBox(height: 12),
         _NavigationSection(
-          title: 'Visão geral',
+          title: strings.overview,
           currentPath: currentPath,
-          items: const [
+          items: [
             _NavigationItem(
               AppRoutes.dashboard,
-              'Dashboard',
+              strings.dashboard,
               Icons.dashboard_outlined,
             ),
           ],
         ),
         _NavigationSection(
-          title: 'Cadastros',
+          title: strings.records,
           currentPath: currentPath,
-          items: const [
-            _NavigationItem(
-              AppRoutes.companies,
-              'Empresas',
-              Icons.business_outlined,
-            ),
-            _NavigationItem(
-              AppRoutes.users,
-              'Usuários',
-              Icons.people_alt_outlined,
-            ),
+          items: [
+            if (isPlatformAdmin)
+              _NavigationItem(
+                AppRoutes.companies,
+                strings.companies,
+                Icons.business_outlined,
+              ),
+            if (isPlatformAdmin)
+              _NavigationItem(
+                AppRoutes.users,
+                strings.users,
+                Icons.people_alt_outlined,
+              ),
             _NavigationItem(
               AppRoutes.products,
-              'Produtos',
+              strings.products,
               Icons.inventory_2_outlined,
             ),
             _NavigationItem(
               AppRoutes.categories,
-              'Categorias',
+              strings.categories,
               Icons.account_tree_outlined,
             ),
           ],
         ),
         _NavigationSection(
-          title: 'Estoque',
+          title: strings.inventory,
           currentPath: currentPath,
-          items: const [
+          items: [
             _NavigationItem(
               AppRoutes.inventory,
-              'Saldos e transações',
+              strings.balancesTransactions,
               Icons.inventory_outlined,
             ),
             _NavigationItem(
               AppRoutes.receivingDocuments,
-              'Recebimentos',
+              strings.receiving,
               Icons.move_to_inbox_outlined,
             ),
             _NavigationItem(
               AppRoutes.warehouses,
-              'Depósitos',
+              strings.warehouses,
               Icons.warehouse_outlined,
             ),
             _NavigationItem(
               AppRoutes.warehouseZones,
-              'Zonas',
+              strings.zones,
               Icons.location_searching_outlined,
             ),
             _NavigationItem(
               AppRoutes.warehouseLocations,
-              'Localizações',
+              strings.locations,
               Icons.place_outlined,
             ),
           ],
         ),
         _NavigationSection(
-          title: 'Conta e segurança',
+          title: strings.accountSecurity,
           currentPath: currentPath,
-          items: const [
+          items: [
             _NavigationItem(
               AppRoutes.currentUser,
-              'Meu perfil',
+              strings.myProfile,
               Icons.account_circle_outlined,
             ),
             _NavigationItem(
               AppRoutes.mfaSettings,
-              'Autenticação em dois fatores',
+              strings.mfa,
               Icons.verified_user_outlined,
             ),
           ],
         ),
-        _NavigationSection(
-          title: 'Administração',
-          currentPath: currentPath,
-          items: const [
-            _NavigationItem(
-              AppRoutes.audit,
-              'Auditoria',
-              Icons.fact_check_outlined,
-            ),
-          ],
-        ),
-        if (_environment != 'production')
+        if (isPlatformAdmin)
           _NavigationSection(
-            title: 'Desenvolvimento',
+            title: strings.administration,
             currentPath: currentPath,
-            items: const [
+            items: [
+              _NavigationItem(
+                AppRoutes.audit,
+                strings.audit,
+                Icons.fact_check_outlined,
+              ),
+            ],
+          ),
+        if (_environment != 'production' && isPlatformAdmin)
+          _NavigationSection(
+            title: strings.development,
+            currentPath: currentPath,
+            items: [
               _NavigationItem(
                 AppRoutes.demo,
-                'Ambiente demo',
+                strings.demoEnvironment,
                 Icons.science_outlined,
               ),
             ],
@@ -183,18 +196,37 @@ class _NavigationItems extends StatelessWidget {
 }
 
 class _NavigationBrand extends StatelessWidget {
-  const _NavigationBrand();
+  const _NavigationBrand({required this.role, required this.appName});
+
+  final String role;
+  final String appName;
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(12, 8, 12, 4),
-      child: Text(
-        'Rigaud Tech\nPlatform ERP',
-        style: TextStyle(fontWeight: FontWeight.w700),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(appName, style: TextStyle(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 4),
+          Text(role, style: Theme.of(context).textTheme.labelSmall),
+        ],
       ),
     );
   }
+}
+
+String _roleLabel(String? role, bool isPlatformAdmin, AppStrings strings) {
+  if (isPlatformAdmin) {
+    return strings.platformAdministrator;
+  }
+  return switch (role) {
+    'company_admin' => strings.companyAdministrator,
+    'branch_manager' => strings.branchManager,
+    'branch_operator' => strings.branchOperator,
+    _ => strings.authenticatedUser,
+  };
 }
 
 class _NavigationSection extends StatelessWidget {

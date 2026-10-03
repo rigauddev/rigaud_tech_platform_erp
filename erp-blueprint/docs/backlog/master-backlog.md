@@ -48,6 +48,12 @@ DEV-009 deverá permitir autenticação em dois fatores habilitável e desabilit
 
 DEV-012 congela a regra oficial: usuário pertence a uma empresa e possui uma filial ativa.
 
+UI-002 — Navigation & Application Shell permanece como refinamento transversal em review. Ela não altera a ordem das tasks comerciais.
+
+UI-003 — Navigation Access & Login Brand Fix permanece como correção transversal em review. Ela não amplia a matriz de permissões de negócio e não altera a sequência comercial.
+
+UI-004 — Localization & Login Flow permanece como refinamento transversal em review. Traduções completas e recuperação de senha por email dependem de tasks dedicadas; cada tela alterada deve manter um único idioma por vez.
+
 ## Core Inventory E Inbound Logistics
 
 Tasks transversais de suporte:
@@ -96,13 +102,16 @@ Após concluir o núcleo de estoque e inbound logistics, iniciar o Restaurante n
 1. Restaurant-001 — Mesas
 2. Restaurant-002 — Setores
 3. Restaurant-003 — Garçons
-4. Restaurant-004 — QR Code das Mesas
-5. Restaurant-005 — Cardápio Online
-6. Restaurant-006 — Pedidos
-7. Restaurant-007 — Kitchen Display — KDS
-8. Restaurant-008 — Delivery
-9. Restaurant-009 — Caixa
-10. Restaurant-010 — Cupom ou NFC-e
+4. Restaurant-004 — Menu do Dia e Disponibilidade Comercial
+5. Restaurant-005 — QR Code das Mesas
+6. Restaurant-006 — Cardápio Online
+7. Restaurant-007 — Pedidos, Garçom Responsável e Roteamento para Cozinha
+8. Restaurant-008 — Kitchen Display — KDS e Impressão
+9. Restaurant-009 — Delivery
+10. Restaurant-010 — Caixa
+11. Restaurant-011 — Cupom ou NFC-e
+
+O Menu do Dia é publicado por filial e período de serviço. A quantidade vendável é uma cota comercial diária e não altera `InventoryBalance`; a integração automática com produção e insumos fica para a EPIC-RESTAURANT-PRODUCTION.
 
 ## EPIC-RESTAURANT-PRODUCTION — Futura
 
