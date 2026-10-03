@@ -50,6 +50,8 @@ DEV-012 congela a regra oficial: usuário pertence a uma empresa e possui uma fi
 
 UI-002 — Navigation & Application Shell permanece como refinamento transversal em review. Ela não altera a ordem das tasks comerciais.
 
+UI-003 — Navigation Access & Login Brand Fix permanece como correção transversal em review. Ela não amplia a matriz de permissões de negócio e não altera a sequência comercial.
+
 ## Core Inventory E Inbound Logistics
 
 Tasks transversais de suporte:

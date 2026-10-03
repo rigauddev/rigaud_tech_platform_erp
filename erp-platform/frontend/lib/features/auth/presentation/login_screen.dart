@@ -614,9 +614,9 @@ class _BrandLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 104,
+      height: 88,
       child: Image.asset(
-        'assets/images/Rigaud_Tech_profile_transparent.png',
+        'assets/images/rigaud-tech-logo.png',
         fit: BoxFit.contain,
         alignment: Alignment.center,
         filterQuality: FilterQuality.high,

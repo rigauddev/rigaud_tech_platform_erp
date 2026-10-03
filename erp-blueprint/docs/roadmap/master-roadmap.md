@@ -23,6 +23,8 @@ Estado atual: concluído até DEV-012 em review.
 
 Refinamento transversal em review: UI-002 — Navigation & Application Shell, com entrada direta no Login, navegação por contexto, retorno nas subtelas e identidade visual ajustada.
 
+Correção transversal em review: UI-003 — Navigation Access & Login Brand Fix, com menu coerente com a guarda de rotas, acesso demo restrito à plataforma e marca de Login registrada no bundle Flutter.
+
 Próxima task prevista: DEV-011 — Assinaturas, Planos e Limites.
 
 ## Fase 2 — Core Inventory E Inbound Logistics

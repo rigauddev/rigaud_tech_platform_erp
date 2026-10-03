@@ -41,7 +41,8 @@ class RouteGuard {
         location.startsWith(AppRoutes.warehouseLocations) ||
         location.startsWith(AppRoutes.companies) ||
         location.startsWith(AppRoutes.users) ||
-        location.startsWith(AppRoutes.audit);
+        location.startsWith(AppRoutes.audit) ||
+        location.startsWith(AppRoutes.demo);
     if (!isAuthenticated && isProtectedRoute) {
       return AppRoutes.login;
     }
@@ -67,6 +68,11 @@ class RouteGuard {
         location.startsWith(AppRoutes.audit) &&
         !isSuperuser) {
       return AppRoutes.currentUser;
+    }
+    if (isAuthenticated &&
+        location.startsWith(AppRoutes.demo) &&
+        !isSuperuser) {
+      return AppRoutes.dashboard;
     }
     if (isAuthenticated && location == AppRoutes.login) {
       return AppRoutes.dashboard;

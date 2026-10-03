@@ -21,13 +21,15 @@ O menu lateral agrupa as áreas pelo contexto de trabalho:
 
 `Ambiente demo` instala, consulta e remove dados fictícios. Não é um módulo comercial e não deve ser disponibilizado a clientes em produção.
 
+O menu usa o contexto autenticado para não exibir Empresa, Usuários, Auditoria e Ambiente demo a perfis sem acesso de plataforma. O papel técnico ativo é mostrado abaixo da marca. A autorização da API continua sendo a fonte de segurança; esta filtragem evita links que a própria guarda de rota já bloquearia.
+
 ## Subtelas
 
 Cadastros, detalhes e edições apresentam uma ação de voltar para sua lista ou tela-pai. A rota-pai é explícita para evitar depender de histórico do navegador, pois os fluxos do app utilizam GoRouter com navegação declarativa.
 
 ## Marca
 
-`assets/images/Rigaud_Tech_profile.PNG` é o arquivo de marca oficial atual. A tela de Login usa `assets/images/Rigaud_Tech_profile_transparent.png`, uma variante transparente derivada do arquivo oficial, para exibir a marca sem o fundo branco.
+`assets/images/rigaud-tech-logo.png` é a marca selecionada para a tela de Login e está declarada no `pubspec.yaml`. A imagem é exibida sem recorte ou escala artificial.
 
 ## Limites
 

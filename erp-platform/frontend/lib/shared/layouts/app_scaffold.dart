@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/router/app_routes.dart';
+import '../../features/auth/presentation/auth_controller.dart';
 
 class AppScaffold extends StatelessWidget {
   const AppScaffold({
@@ -54,7 +56,7 @@ class AppScaffold extends StatelessWidget {
   }
 }
 
-class _NavigationItems extends StatelessWidget {
+class _NavigationItems extends ConsumerWidget {
   const _NavigationItems();
 
   static const _environment = String.fromEnvironment(
@@ -63,12 +65,14 @@ class _NavigationItems extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final currentPath = GoRouterState.of(context).uri.path;
+    final user = ref.watch(authControllerProvider).value?.user;
+    final isPlatformAdmin = user?.isSuperuser ?? false;
     return ListView(
       padding: const EdgeInsets.all(12),
       children: [
-        const _NavigationBrand(),
+        _NavigationBrand(role: _roleLabel(user?.role, isPlatformAdmin)),
         const SizedBox(height: 12),
         _NavigationSection(
           title: 'Visão geral',
@@ -84,17 +88,19 @@ class _NavigationItems extends StatelessWidget {
         _NavigationSection(
           title: 'Cadastros',
           currentPath: currentPath,
-          items: const [
-            _NavigationItem(
-              AppRoutes.companies,
-              'Empresas',
-              Icons.business_outlined,
-            ),
-            _NavigationItem(
-              AppRoutes.users,
-              'Usuários',
-              Icons.people_alt_outlined,
-            ),
+          items: [
+            if (isPlatformAdmin)
+              const _NavigationItem(
+                AppRoutes.companies,
+                'Empresas',
+                Icons.business_outlined,
+              ),
+            if (isPlatformAdmin)
+              const _NavigationItem(
+                AppRoutes.users,
+                'Usuários',
+                Icons.people_alt_outlined,
+              ),
             _NavigationItem(
               AppRoutes.products,
               'Produtos',
@@ -154,18 +160,19 @@ class _NavigationItems extends StatelessWidget {
             ),
           ],
         ),
-        _NavigationSection(
-          title: 'Administração',
-          currentPath: currentPath,
-          items: const [
-            _NavigationItem(
-              AppRoutes.audit,
-              'Auditoria',
-              Icons.fact_check_outlined,
-            ),
-          ],
-        ),
-        if (_environment != 'production')
+        if (isPlatformAdmin)
+          _NavigationSection(
+            title: 'Administração',
+            currentPath: currentPath,
+            items: const [
+              _NavigationItem(
+                AppRoutes.audit,
+                'Auditoria',
+                Icons.fact_check_outlined,
+              ),
+            ],
+          ),
+        if (_environment != 'production' && isPlatformAdmin)
           _NavigationSection(
             title: 'Desenvolvimento',
             currentPath: currentPath,
@@ -183,18 +190,39 @@ class _NavigationItems extends StatelessWidget {
 }
 
 class _NavigationBrand extends StatelessWidget {
-  const _NavigationBrand();
+  const _NavigationBrand({required this.role});
+
+  final String role;
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(12, 8, 12, 4),
-      child: Text(
-        'Rigaud Tech\nPlatform ERP',
-        style: TextStyle(fontWeight: FontWeight.w700),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Rigaud Tech\nPlatform ERP',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 4),
+          Text(role, style: Theme.of(context).textTheme.labelSmall),
+        ],
       ),
     );
   }
+}
+
+String _roleLabel(String? role, bool isPlatformAdmin) {
+  if (isPlatformAdmin) {
+    return 'Administrador da plataforma';
+  }
+  return switch (role) {
+    'company_admin' => 'Administrador da empresa',
+    'branch_manager' => 'Gerente da filial',
+    'branch_operator' => 'Operador da filial',
+    _ => 'Usuário autenticado',
+  };
 }
 
 class _NavigationSection extends StatelessWidget {
