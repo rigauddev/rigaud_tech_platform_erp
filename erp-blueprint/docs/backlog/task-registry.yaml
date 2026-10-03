@@ -33,7 +33,7 @@ tasks:
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: pending
+    commit: 2a7ea25
     review_status: ready
   - id: REST-011
     title: Inventory Count
