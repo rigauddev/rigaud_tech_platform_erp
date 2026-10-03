@@ -27,6 +27,7 @@ class AppRoutes {
   static const warehouseLocationCreate = '/warehouse-locations/new';
   static const receivingDocuments = '/receiving-documents';
   static const receivingDocumentCreate = '/receiving-documents/new';
+  static const restaurantTables = '/restaurant/tables';
   static const audit = '/audit';
   static const demo = '/demo';
   static const notFound = '/not-found';

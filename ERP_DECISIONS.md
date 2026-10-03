@@ -73,6 +73,8 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Gestão, Garçom, KDS, PDV e Cliente/Menu Online são experiências sobre o mesmo backend, eventos e base Flutter.
 - Pedido deve separar `order_entered_by` de `table_responsible_waiter` e preservar ambos na auditoria.
 - KDS e impressão serão consumidores do mesmo roteamento por estação; não haverá fluxos concorrentes de preparo.
+- A experiência de Garçom é uma superfície dedicada do mesmo aplicativo Flutter e backend; não é um projeto isolado. Ela poderá iniciar o fluxo de pagamento, mas captura e fechamento pertencem ao Caixa/PDV.
+- KDS e impressão compartilharão a mesma fila por estação. Estados de preparo, tempo médio configurável por item e estimativa baseada na carga da fila serão entregues na task de KDS, sem antecipar Restaurant Production.
 - Disponibilidade comercial diária continua separada de `InventoryBalance` e de Restaurant Production.
 - Receita, produção, consumo, desperdício, custos e forecast continuam restritos à EPIC-RESTAURANT-PRODUCTION.
 

@@ -113,6 +113,8 @@ Após concluir o núcleo de estoque e inbound logistics, iniciar o Restaurante n
 10. Restaurant-010 — Caixa
 11. Restaurant-011 — Cupom ou NFC-e
 
+Refinamentos congelados: o app de Garçom é uma experiência dedicada na mesma base Flutter e poderá solicitar o pagamento para o Caixa; KDS e impressão consumirão a mesma fila por estação, com início/fim de preparo e estimativa baseada no tempo médio do item e na carga da fila. Esses refinamentos não antecipam PDV, KDS, pedidos ou Production.
+
 O Menu do Dia é publicado por filial e período de serviço. A quantidade vendável é uma cota comercial diária e não altera `InventoryBalance`; a integração automática com produção e insumos fica para a EPIC-RESTAURANT-PRODUCTION.
 
 ## EPIC-RESTAURANT-PRODUCTION — Futura

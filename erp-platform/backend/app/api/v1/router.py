@@ -15,6 +15,7 @@ from app.modules.inventory.presentation.warehouse_zone_router import (
     router as warehouse_zones_router,
 )
 from app.modules.products.presentation.router import router as products_router
+from app.modules.restaurant.presentation.router import router as restaurant_router
 from app.modules.users.presentation.router import router as users_router
 from app.shared.demo.router import router as demo_router
 
@@ -29,6 +30,7 @@ api_router.include_router(warehouses_router)
 api_router.include_router(warehouse_zones_router)
 api_router.include_router(warehouse_locations_router)
 api_router.include_router(products_router)
+api_router.include_router(restaurant_router)
 api_router.include_router(users_router)
 api_router.include_router(demo_router)
 api_router.include_router(health.router, prefix="/health", tags=["Health"])

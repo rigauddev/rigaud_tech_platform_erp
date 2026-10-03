@@ -90,6 +90,8 @@ Sequência:
 - Caixa.
 - Cupom ou NFC-e.
 
+O app de Garçom será uma experiência focada no atendimento na mesma base Flutter e backend. Ele poderá encaminhar pagamento ao Caixa/PDV; impressão e KDS compartilharão roteamento por estação e, na task própria, controlarão fila, início, pronto/retirada e estimativa baseada em tempo médio e carga de preparo.
+
 Experiencias ainda planejadas sobre essa base: gestao responsiva do restaurante, app operacional de garcom, KDS, app/portal do cliente por QR Code, PDV e entrada fiscal por NF-e/XML. Nenhuma delas esta implementada nesta fase de estoque.
 
 ## Fase 4 — MVP Loja de Roupas
