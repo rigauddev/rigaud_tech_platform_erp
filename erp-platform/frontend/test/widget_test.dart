@@ -91,6 +91,16 @@ void main() {
     expect(guard.redirect('/audit'), '/users/me');
   });
 
+  test('bloqueia ambiente demo para usuario comum', () {
+    const guard = RouteGuard(
+      enabled: true,
+      isAuthenticated: true,
+      isSuperuser: false,
+    );
+
+    expect(guard.redirect('/demo'), '/dashboard');
+  });
+
   test('protege rota de categorias sem sessao autenticada', () {
     const guard = RouteGuard(
       enabled: true,

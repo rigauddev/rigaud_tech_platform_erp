@@ -1,4 +1,39 @@
 tasks:
+  - id: UI-003
+    title: Navigation Access & Login Brand Fix
+    epic: EPIC-0001 Foundation
+    module: frontend
+    status: review
+    dependencies:
+      - UI-002
+    started_at: "2026-10-03"
+    completed_at: null
+    documentation:
+      - docs/ui/application-navigation.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+    academy: []
+    tests:
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: fix/ui-003-navigation-access
+      commits:
+        - c035861
+        - 09e64a9
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
   - id: DOC-010
     title: Restaurant Menu Availability & Order Routing Architecture
     epic: MVP Restaurante
