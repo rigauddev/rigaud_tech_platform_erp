@@ -151,6 +151,17 @@ class _NavigationItems extends ConsumerWidget {
           ],
         ),
         _NavigationSection(
+          title: 'Restaurante',
+          currentPath: currentPath,
+          items: const [
+            _NavigationItem(
+              AppRoutes.restaurantTables,
+              'Mesas e mapa do salão',
+              Icons.table_restaurant_outlined,
+            ),
+          ],
+        ),
+        _NavigationSection(
           title: strings.accountSecurity,
           currentPath: currentPath,
           items: [
@@ -317,6 +328,9 @@ String? _parentRouteFor(String path) {
   if (path == AppRoutes.receivingDocumentCreate ||
       RegExp(r'^/receiving-documents/[^/]+(?:/edit)?$').hasMatch(path)) {
     return AppRoutes.receivingDocuments;
+  }
+  if (path == AppRoutes.restaurantTables) {
+    return AppRoutes.dashboard;
   }
   if (RegExp(r'^/audit/[^/]+$').hasMatch(path)) {
     return AppRoutes.audit;

@@ -164,3 +164,7 @@ class InventoryReservationNotFoundError(InventoryError):
 
 class InventoryReservationInactiveError(InventoryError):
     """Raised when a reservation cannot be released or changed."""
+
+
+class InventoryTransferError(InventoryError):
+    """Raised when an inventory transfer cannot change state."""

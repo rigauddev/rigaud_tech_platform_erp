@@ -28,6 +28,58 @@ final inventoryCountsControllerProvider =
       InventoryCountsController.new,
     );
 
+final inventoryTransfersControllerProvider =
+    AsyncNotifierProvider<
+      InventoryTransfersController,
+      List<InventoryTransfer>
+    >(InventoryTransfersController.new);
+
+class InventoryTransfersController
+    extends AsyncNotifier<List<InventoryTransfer>> {
+  InventoryRepository get _repository => ref.read(inventoryRepositoryProvider);
+
+  @override
+  Future<List<InventoryTransfer>> build() => _repository.listTransfers();
+
+  Future<void> reload() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(_repository.listTransfers);
+  }
+
+  Future<InventoryTransfer?> create(InventoryTransferInput input) async {
+    final result = await AsyncValue.guard(
+      () => _repository.createTransfer(input),
+    );
+    if (result.hasValue) {
+      await reload();
+      return result.value;
+    }
+    state = AsyncError(result.error!, result.stackTrace!);
+    return null;
+  }
+
+  Future<InventoryTransfer?> dispatch(String transferId) =>
+      _transition(() => _repository.dispatchTransfer(transferId));
+
+  Future<InventoryTransfer?> receive(String transferId) =>
+      _transition(() => _repository.receiveTransfer(transferId));
+
+  Future<InventoryTransfer?> _transition(
+    Future<InventoryTransfer> Function() action,
+  ) async {
+    final result = await AsyncValue.guard(action);
+    if (result.hasValue) {
+      await reload();
+      ref.invalidate(inventoryBalancesControllerProvider);
+      ref.invalidate(inventoryMovementsControllerProvider);
+      ref.invalidate(inventoryTransactionsControllerProvider);
+      return result.value;
+    }
+    state = AsyncError(result.error!, result.stackTrace!);
+    return null;
+  }
+}
+
 class InventoryCountsController extends AsyncNotifier<List<InventoryCount>> {
   @override
   Future<List<InventoryCount>> build() =>

@@ -37,7 +37,7 @@ RIGAUD TECH PLATFORM ERP
 │   ├── Put Away [Em desenvolvimento]
 │   └── Inventário [Em desenvolvimento]
 │
-├── Restaurante [Planejado]
+├── Restaurante [Em desenvolvimento]
 │   ├── Gestão no app principal [Planejado]
 │   ├── Mesas [Planejado]
 │   ├── Garçons [Planejado]
@@ -94,6 +94,7 @@ RIGAUD TECH PLATFORM ERP
 - Quem realizou o pedido nao e necessariamente quem e responsavel pela mesa.
 - Disponibilidade diaria de cardapio e cota comercial, separada do saldo fisico e da producao.
 - AI/MCP consumira contexto e eventos respeitando tenant, filial, permissoes, auditoria e seguranca.
+- Restaurant Operations é um núcleo configurável por filial e segmento; as experiências de gestão, garçom, KDS, PDV e cliente reutilizam o mesmo backend e base Flutter.
 
 ## Atualizacao
 

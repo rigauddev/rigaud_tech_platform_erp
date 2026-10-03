@@ -47,6 +47,8 @@ from app.modules.inventory.infrastructure.models import (
 )
 from app.modules.products.domain.entities import ProductStatus
 from app.modules.products.infrastructure.models import ProductModel
+from app.modules.restaurant.domain.entities import RestaurantTableShape, RestaurantTableStatus
+from app.modules.restaurant.infrastructure.models import RestaurantFloorModel, RestaurantTableModel
 from app.modules.users.domain.entities import UserStatus
 from app.security.passwords import hash_password
 from app.shared.demo.data import (
@@ -196,6 +198,7 @@ class DemoSeeder:
             products,
             RESTAURANT_RECEIVING_DOCUMENTS,
         )
+        await self._ensure_restaurant_tables(company.id, branches)
         await self.session.commit()
         return DemoSeedSummary(
             mode="restaurant",
@@ -334,6 +337,12 @@ class DemoSeeder:
         )
         deleted_rows += await self._delete_where(
             WarehouseModel, WarehouseModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            RestaurantTableModel, RestaurantTableModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            RestaurantFloorModel, RestaurantFloorModel.tenant_id.in_(tenant_ids)
         )
         deleted_rows += await self._delete_where(
             ProductModel, ProductModel.tenant_id.in_(tenant_ids)
@@ -728,6 +737,57 @@ class DemoSeeder:
             models.append(category)
         await self.session.flush()
         return models
+
+    async def _ensure_restaurant_tables(
+        self, tenant_id: UUID, branches: Iterable[BranchModel]
+    ) -> None:
+        branch = next(branch for branch in branches if branch.code == "MATRIZ")
+        floor = (
+            await self.session.execute(
+                select(RestaurantFloorModel).where(
+                    RestaurantFloorModel.tenant_id == tenant_id,
+                    RestaurantFloorModel.branch_id == branch.id,
+                    RestaurantFloorModel.code == "SALAO",
+                )
+            )
+        ).scalar_one_or_none()
+        if floor is None:
+            floor = RestaurantFloorModel(
+                tenant_id=tenant_id, branch_id=branch.id, code="SALAO", name="Salão Principal"
+            )
+            self.session.add(floor)
+            await self.session.flush()
+        floor.is_active, floor.deleted_at = True, None
+        for index in range(1, 11):
+            number = str(index)
+            table = (
+                await self.session.execute(
+                    select(RestaurantTableModel).where(
+                        RestaurantTableModel.tenant_id == tenant_id,
+                        RestaurantTableModel.floor_id == floor.id,
+                        RestaurantTableModel.number == number,
+                    )
+                )
+            ).scalar_one_or_none()
+            if table is None:
+                table = RestaurantTableModel(
+                    tenant_id=tenant_id,
+                    branch_id=branch.id,
+                    floor_id=floor.id,
+                    number=number,
+                    capacity=4,
+                )
+                self.session.add(table)
+            table.position_x = ((index - 1) % 5) * 190 + 40
+            table.position_y = ((index - 1) // 5) * 220 + 100
+            table.width, table.height = 112, 76
+            table.shape = (
+                RestaurantTableShape.ROUND if index % 2 == 0 else RestaurantTableShape.SQUARE
+            )
+            table.status = RestaurantTableStatus.AVAILABLE
+            table.qr_code = f"rigaud://restaurant/table/sabor-da-serra/{index}"
+            table.is_active, table.deleted_at = True, None
+        await self.session.flush()
 
     async def _ensure_products(
         self,

@@ -2,6 +2,10 @@ import 'inventory.dart';
 import 'inventory_input.dart';
 
 abstract interface class InventoryRepository {
+  Future<List<InventoryTransfer>> listTransfers({
+    int page = 1,
+    int pageSize = 20,
+  });
   Future<List<InventoryCount>> listCounts({int page = 1, int pageSize = 20});
   Future<List<InventoryBalance>> listBalances({
     String? productId,
@@ -32,4 +36,10 @@ abstract interface class InventoryRepository {
   Future<InventoryOperation> createReservation(InventoryReservationInput input);
 
   Future<PutAwayOperation> confirmPutAway(PutAwayInput input);
+
+  Future<InventoryTransfer> createTransfer(InventoryTransferInput input);
+
+  Future<InventoryTransfer> dispatchTransfer(String transferId);
+
+  Future<InventoryTransfer> receiveTransfer(String transferId);
 }

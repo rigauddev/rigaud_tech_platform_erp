@@ -74,6 +74,8 @@ Sequência:
 
 Objetivo: construir o fluxo operacional inicial de restaurante sobre o Core compartilhado.
 
+Gate concluído/em revisão: DOC-011 — Restaurant Operations Core. O domínio único será configurável para Restaurante, Bar, Lanchonete, Café, Pizzaria, Food Truck e Delivery; Gestão, Garçom, KDS, PDV e Cliente/Menu Online permanecem experiências sobre a mesma plataforma.
+
 Sequência:
 
 - Mesas.
@@ -87,6 +89,8 @@ Sequência:
 - Delivery.
 - Caixa.
 - Cupom ou NFC-e.
+
+O app de Garçom será uma experiência focada no atendimento na mesma base Flutter e backend. Ele poderá encaminhar pagamento ao Caixa/PDV; impressão e KDS compartilharão roteamento por estação e, na task própria, controlarão fila, início, pronto/retirada e estimativa baseada em tempo médio e carga de preparo.
 
 Experiencias ainda planejadas sobre essa base: gestao responsiva do restaurante, app operacional de garcom, KDS, app/portal do cliente por QR Code, PDV e entrada fiscal por NF-e/XML. Nenhuma delas esta implementada nesta fase de estoque.
 

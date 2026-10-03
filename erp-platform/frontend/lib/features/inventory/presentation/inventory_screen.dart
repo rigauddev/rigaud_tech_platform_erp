@@ -16,7 +16,7 @@ class InventoryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return DefaultTabController(
-      length: 6,
+      length: 7,
       child: AppScaffold(
         title: 'Estoque',
         body: Column(
@@ -29,6 +29,7 @@ class InventoryScreen extends ConsumerWidget {
                 Tab(text: 'Ajuste'),
                 Tab(text: 'Reserva'),
                 Tab(text: 'Inventário'),
+                Tab(text: 'Transferências'),
               ],
             ),
             Expanded(
@@ -40,6 +41,7 @@ class InventoryScreen extends ConsumerWidget {
                   _AdjustmentView(),
                   _ReservationView(),
                   _CountsView(),
+                  _TransfersView(),
                 ],
               ),
             ),
@@ -47,6 +49,211 @@ class InventoryScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+class _TransfersView extends ConsumerWidget {
+  const _TransfersView();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final transfers = ref.watch(inventoryTransfersControllerProvider);
+    return transfers.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(child: Text(_message(error))),
+      data: (items) => Column(
+        children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: FilledButton.icon(
+                onPressed: () => _openCreateTransfer(context),
+                icon: const Icon(Icons.swap_horiz_outlined),
+                label: const Text('Nova transferência'),
+              ),
+            ),
+          ),
+          Expanded(
+            child: items.isEmpty
+                ? const AppEmptyState(
+                    title: 'Nenhuma transferência encontrada',
+                    message: 'Transferências entre depósitos aparecerão aqui.',
+                  )
+                : ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.lg,
+                      0,
+                      AppSpacing.lg,
+                      AppSpacing.lg,
+                    ),
+                    itemCount: items.length,
+                    separatorBuilder: (_, _) =>
+                        const SizedBox(height: AppSpacing.sm),
+                    itemBuilder: (context, index) =>
+                        _TransferTile(transfer: items[index]),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openCreateTransfer(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder: (_) => const _CreateTransferDialog(),
+    );
+  }
+}
+
+class _TransferTile extends ConsumerWidget {
+  const _TransferTile({required this.transfer});
+
+  final InventoryTransfer transfer;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final action = switch (transfer.status) {
+      'requested' => TextButton(
+        onPressed: () => _dispatch(context, ref),
+        child: const Text('Despachar'),
+      ),
+      'in_transit' => TextButton(
+        onPressed: () => _receive(context, ref),
+        child: const Text('Receber'),
+      ),
+      _ => null,
+    };
+    return Card(
+      child: ListTile(
+        leading: const Icon(Icons.swap_horiz_outlined),
+        title: Text(transfer.code),
+        subtitle: Text(
+          '${transfer.quantity} unidades · ${transfer.reason}\nProduto ${transfer.productId}',
+        ),
+        isThreeLine: true,
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [Text(transfer.status), ?action],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _dispatch(BuildContext context, WidgetRef ref) async {
+    final result = await ref
+        .read(inventoryTransfersControllerProvider.notifier)
+        .dispatch(transfer.id);
+    if (result != null && context.mounted) {
+      _showSuccess(context, 'Transferência despachada.');
+    }
+  }
+
+  Future<void> _receive(BuildContext context, WidgetRef ref) async {
+    final result = await ref
+        .read(inventoryTransfersControllerProvider.notifier)
+        .receive(transfer.id);
+    if (result != null && context.mounted) {
+      _showSuccess(context, 'Transferência recebida.');
+    }
+  }
+}
+
+class _CreateTransferDialog extends ConsumerStatefulWidget {
+  const _CreateTransferDialog();
+
+  @override
+  ConsumerState<_CreateTransferDialog> createState() =>
+      _CreateTransferDialogState();
+}
+
+class _CreateTransferDialogState extends ConsumerState<_CreateTransferDialog> {
+  final _code = TextEditingController();
+  final _productId = TextEditingController();
+  final _sourceWarehouseId = TextEditingController();
+  final _targetBranchId = TextEditingController();
+  final _targetWarehouseId = TextEditingController();
+  final _quantity = TextEditingController();
+  final _reason = TextEditingController();
+
+  @override
+  void dispose() {
+    _code.dispose();
+    _productId.dispose();
+    _sourceWarehouseId.dispose();
+    _targetBranchId.dispose();
+    _targetWarehouseId.dispose();
+    _quantity.dispose();
+    _reason.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Nova transferência'),
+      content: SizedBox(
+        width: 480,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _field(_code, 'Código'),
+              _field(_productId, 'Produto ID'),
+              _field(_sourceWarehouseId, 'Depósito de origem ID'),
+              _field(_targetBranchId, 'Filial de destino ID'),
+              _field(_targetWarehouseId, 'Depósito de destino ID'),
+              _field(_quantity, 'Quantidade', numeric: true),
+              _field(_reason, 'Motivo'),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(onPressed: _submit, child: const Text('Solicitar')),
+      ],
+    );
+  }
+
+  Widget _field(
+    TextEditingController controller,
+    String label, {
+    bool numeric = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      child: TextField(
+        controller: controller,
+        keyboardType: numeric ? TextInputType.number : TextInputType.text,
+        decoration: InputDecoration(labelText: label),
+      ),
+    );
+  }
+
+  Future<void> _submit() async {
+    final result = await ref
+        .read(inventoryTransfersControllerProvider.notifier)
+        .create(
+          InventoryTransferInput(
+            code: _code.text.trim(),
+            productId: _productId.text.trim(),
+            sourceWarehouseId: _sourceWarehouseId.text.trim(),
+            targetBranchId: _targetBranchId.text.trim(),
+            targetWarehouseId: _targetWarehouseId.text.trim(),
+            quantity: _quantity.text.trim(),
+            reason: _reason.text.trim(),
+          ),
+        );
+    if (result != null && mounted) {
+      Navigator.of(context).pop();
+      _showSuccess(context, 'Transferência solicitada.');
+    }
   }
 }
 

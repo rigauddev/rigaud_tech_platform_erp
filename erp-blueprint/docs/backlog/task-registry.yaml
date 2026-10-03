@@ -1,4 +1,129 @@
 tasks:
+  - id: RESTAURANT-001
+    title: Mesas e Mapa do Salão
+    epic: MVP Restaurante
+    module: restaurant
+    status: review
+    dependencies:
+      - DOC-011
+    started_at: "2026-10-03"
+    completed_at: "2026-10-03"
+    documentation:
+      - docs/restaurant/tables.md
+      - docs/restaurant/README.md
+      - erp-blueprint/docs/academy/restaurant/003-mesas-mapa-operacional.md
+      - ERP_DECISIONS.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/mkdocs.yml
+      - README.md
+      - CHANGELOG.md
+    academy:
+      - erp-blueprint/docs/academy/restaurant/003-mesas-mapa-operacional.md
+    tests:
+      - erp-platform/backend/tests/test_restaurant_tables.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - make check-task TASK=RESTAURANT-001
+      - git diff --check
+    migration: 0022_restaurant_tables
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/restaurant-001-tables-floor-plan
+      commits:
+        - 894811f
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 894811f
+    review_status: ready
+  - id: DOC-011
+    title: Restaurant Operations Core
+    epic: MVP Restaurante
+    module: restaurant
+    status: review
+    dependencies:
+      - REST-013
+    started_at: "2026-10-03"
+    completed_at: "2026-10-03"
+    documentation:
+      - docs/restaurant/README.md
+      - docs/restaurant/operations.md
+      - docs/restaurant/roles.md
+      - docs/restaurant/apps.md
+      - docs/restaurant/order-flow.md
+      - docs/restaurant/menu-availability.md
+      - docs/architecture/product-map.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/academy/restaurant/002-restaurant-operations-core.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/mkdocs.yml
+      - README.md
+      - CHANGELOG.md
+    academy:
+      - erp-blueprint/docs/academy/restaurant/002-restaurant-operations-core.md
+    tests:
+      - ruby -e "require 'yaml'; YAML.load_file('erp-blueprint/docs/backlog/task-registry.yaml')"
+      - make check-task TASK=DOC-011
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/doc-011-restaurant-operations-core
+      commits:
+        - 2aa9e3f
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: 2aa9e3f
+    review_status: ready
+  - id: REST-013
+    title: Inventory Transfers
+    epic: EPIC-003 Inbound Logistics
+    module: inventory
+    status: review
+    dependencies:
+      - REST-012
+    started_at: "2026-10-03"
+    completed_at: "2026-10-03"
+    documentation:
+      - docs/inventory/transfers.md
+      - docs/inventory/endpoints.md
+      - docs/inventory/README.md
+      - ERP_DECISIONS.md
+      - erp-blueprint/docs/academy/inventory/009-inventory-transfers.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/inventory/009-inventory-transfers.md
+    tests:
+      - erp-platform/backend/tests/test_inventory_transfers.py
+      - erp-platform/frontend/test/inventory/inventory_controller_test.dart
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - git diff --check
+    migration: 0021_inventory_transfers
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/rest-013-inventory-transfers
+      commits:
+        - cb1d49a
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: cb1d49a
+    review_status: ready
   - id: UI-004
     title: Localization & Login Flow
     epic: EPIC-0001 Foundation

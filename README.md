@@ -16,13 +16,13 @@ Este repositório contém apenas a estrutura inicial de pastas e documentação 
 Fundação concluída até:
 
 ```text
-DEV-012 — Authentication & Tenant Architecture Alignment
+RESTAURANT-001 — Mesas e Mapa do Salão
 ```
 
 Task atual:
 
 ```text
-UI-004 — Localization & Login Flow
+RESTAURANT-001 — Mesas e Mapa do Salão
 ```
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
@@ -118,6 +118,12 @@ Put Away está documentado em `docs/inventory/putaway.md` e `docs/warehouse/puta
 
 Inventory Transactions está documentado em `docs/inventory/transactions.md`.
 
+Mesas e mapa operacional do restaurante estão documentados em `docs/restaurant/tables.md`.
+
+Transferências internas entre depósitos estão documentadas em `docs/inventory/transfers.md`.
+
+O contrato do módulo Restaurante está documentado em `docs/restaurant/README.md`.
+
 IA futura e MCP estão documentados em `docs/ai/overview.md`.
 
 Arquitetura de distribuicao, Cloud, On-Premise, Hybrid, Offline Strategy e Resellers esta documentada em `docs/architecture/deployment/README.md`.
@@ -178,6 +184,11 @@ Endpoints técnicos disponíveis:
 - `PATCH /api/v1/products/{product_id}`
 - `POST /api/v1/products/{product_id}/activate`
 - `POST /api/v1/products/{product_id}/deactivate`
+- `GET /api/v1/inventory/transfers`
+- `POST /api/v1/inventory/transfers`
+- `POST /api/v1/inventory/transfers/{transfer_id}/dispatch`
+- `POST /api/v1/inventory/transfers/{transfer_id}/receive`
+- `POST /api/v1/inventory/transfers/{transfer_id}/cancel`
 - `POST /api/v1/products/{product_id}/availability`
 - `DELETE /api/v1/products/{product_id}`
 - `POST /api/v1/categories`

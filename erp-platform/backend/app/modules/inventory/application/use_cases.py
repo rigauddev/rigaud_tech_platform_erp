@@ -4,8 +4,8 @@ from uuid import UUID
 
 from app.modules.inventory.application.validators import normalize_quantity, normalize_reason
 from app.modules.inventory.domain.entities import (
-    InventoryAdjustmentStatus,
     InventoryAdjustmentReason,
+    InventoryAdjustmentStatus,
     InventoryAdjustmentType,
     InventoryMovementStatus,
     InventoryMovementType,

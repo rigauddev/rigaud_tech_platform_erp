@@ -376,20 +376,66 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         "Quantidade de estoque inválida.",
         "warning",
     ),
-    "INVENTORY_ADJUSTMENT_REVERSED": MessageDefinition("INVENTORY_ADJUSTMENT_REVERSED", 200, "Ajuste de estoque estornado com sucesso.", audit_required=True),
+    "INVENTORY_ADJUSTMENT_REVERSED": MessageDefinition(
+        "INVENTORY_ADJUSTMENT_REVERSED",
+        200,
+        "Ajuste de estoque estornado com sucesso.",
+        audit_required=True,
+    ),
     "INVENTORY_BRANCH_REQUIRED": MessageDefinition(
         "INVENTORY_BRANCH_REQUIRED",
         409,
         "Filial ativa obrigatória para movimentar estoque.",
         "warning",
     ),
-    "INVENTORY_COUNT_LIST_RETRIEVED": MessageDefinition("INVENTORY_COUNT_LIST_RETRIEVED", 200, "Contagens de estoque consultadas."),
-    "INVENTORY_COUNT_CREATED": MessageDefinition("INVENTORY_COUNT_CREATED", 201, "Contagem de estoque criada.", audit_required=True),
-    "INVENTORY_COUNT_STARTED": MessageDefinition("INVENTORY_COUNT_STARTED", 200, "Contagem de estoque iniciada.", audit_required=True),
-    "INVENTORY_COUNT_ITEM_RECORDED": MessageDefinition("INVENTORY_COUNT_ITEM_RECORDED", 200, "Quantidade contada registrada.", audit_required=True),
-    "INVENTORY_COUNT_FINISHED": MessageDefinition("INVENTORY_COUNT_FINISHED", 200, "Contagem de estoque concluída.", audit_required=True),
-    "INVENTORY_COUNT_CANCELLED": MessageDefinition("INVENTORY_COUNT_CANCELLED", 200, "Contagem de estoque cancelada.", audit_required=True),
-    "INVENTORY_COUNT_INVALID_STATE": MessageDefinition("INVENTORY_COUNT_INVALID_STATE", 409, "A operação não é permitida no estado atual da contagem.", "warning"),
+    "INVENTORY_COUNT_LIST_RETRIEVED": MessageDefinition(
+        "INVENTORY_COUNT_LIST_RETRIEVED", 200, "Contagens de estoque consultadas."
+    ),
+    "INVENTORY_COUNT_CREATED": MessageDefinition(
+        "INVENTORY_COUNT_CREATED", 201, "Contagem de estoque criada.", audit_required=True
+    ),
+    "INVENTORY_COUNT_STARTED": MessageDefinition(
+        "INVENTORY_COUNT_STARTED", 200, "Contagem de estoque iniciada.", audit_required=True
+    ),
+    "INVENTORY_COUNT_ITEM_RECORDED": MessageDefinition(
+        "INVENTORY_COUNT_ITEM_RECORDED", 200, "Quantidade contada registrada.", audit_required=True
+    ),
+    "INVENTORY_COUNT_FINISHED": MessageDefinition(
+        "INVENTORY_COUNT_FINISHED", 200, "Contagem de estoque concluída.", audit_required=True
+    ),
+    "INVENTORY_COUNT_CANCELLED": MessageDefinition(
+        "INVENTORY_COUNT_CANCELLED", 200, "Contagem de estoque cancelada.", audit_required=True
+    ),
+    "INVENTORY_COUNT_INVALID_STATE": MessageDefinition(
+        "INVENTORY_COUNT_INVALID_STATE",
+        409,
+        "A operação não é permitida no estado atual da contagem.",
+        "warning",
+    ),
+    "INVENTORY_TRANSFER_LIST_RETRIEVED": MessageDefinition(
+        "INVENTORY_TRANSFER_LIST_RETRIEVED", 200, "Transferências de estoque consultadas."
+    ),
+    "INVENTORY_TRANSFER_CREATED": MessageDefinition(
+        "INVENTORY_TRANSFER_CREATED",
+        201,
+        "Transferência de estoque solicitada.",
+        audit_required=True,
+    ),
+    "INVENTORY_TRANSFER_DISPATCHED": MessageDefinition(
+        "INVENTORY_TRANSFER_DISPATCHED", 200, "Transferência despachada.", audit_required=True
+    ),
+    "INVENTORY_TRANSFER_RECEIVED": MessageDefinition(
+        "INVENTORY_TRANSFER_RECEIVED", 200, "Transferência recebida.", audit_required=True
+    ),
+    "INVENTORY_TRANSFER_CANCELLED": MessageDefinition(
+        "INVENTORY_TRANSFER_CANCELLED", 200, "Transferência cancelada.", audit_required=True
+    ),
+    "INVENTORY_TRANSFER_INVALID_STATE": MessageDefinition(
+        "INVENTORY_TRANSFER_INVALID_STATE",
+        409,
+        "A operação não é permitida no estado atual da transferência.",
+        "warning",
+    ),
     "WAREHOUSE_CREATED": MessageDefinition(
         "WAREHOUSE_CREATED", 201, "Depósito criado com sucesso.", audit_required=True
     ),
@@ -542,6 +588,63 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     ),
     "WAREHOUSE_LOCATION_INVALID_DATA": MessageDefinition(
         "WAREHOUSE_LOCATION_INVALID_DATA", 400, "Dados da localização inválidos.", "warning"
+    ),
+    "RESTAURANT_FLOOR_CREATED": MessageDefinition(
+        "RESTAURANT_FLOOR_CREATED", 201, "Salão criado com sucesso.", audit_required=True
+    ),
+    "RESTAURANT_FLOOR_UPDATED": MessageDefinition(
+        "RESTAURANT_FLOOR_UPDATED", 200, "Salão atualizado com sucesso.", audit_required=True
+    ),
+    "RESTAURANT_FLOOR_DELETED": MessageDefinition(
+        "RESTAURANT_FLOOR_DELETED", 200, "Salão removido com sucesso.", audit_required=True
+    ),
+    "RESTAURANT_FLOOR_RETRIEVED": MessageDefinition(
+        "RESTAURANT_FLOOR_RETRIEVED", 200, "Salão consultado com sucesso."
+    ),
+    "RESTAURANT_FLOOR_LIST_RETRIEVED": MessageDefinition(
+        "RESTAURANT_FLOOR_LIST_RETRIEVED", 200, "Salões consultados com sucesso."
+    ),
+    "RESTAURANT_FLOOR_NOT_FOUND": MessageDefinition(
+        "RESTAURANT_FLOOR_NOT_FOUND", 404, "Salão não encontrado.", "warning"
+    ),
+    "RESTAURANT_FLOOR_CODE_ALREADY_EXISTS": MessageDefinition(
+        "RESTAURANT_FLOOR_CODE_ALREADY_EXISTS",
+        409,
+        "Código de salão já cadastrado nesta filial.",
+        "warning",
+    ),
+    "RESTAURANT_TABLE_CREATED": MessageDefinition(
+        "RESTAURANT_TABLE_CREATED", 201, "Mesa criada com sucesso.", audit_required=True
+    ),
+    "RESTAURANT_TABLE_UPDATED": MessageDefinition(
+        "RESTAURANT_TABLE_UPDATED", 200, "Mesa atualizada com sucesso.", audit_required=True
+    ),
+    "RESTAURANT_TABLE_DELETED": MessageDefinition(
+        "RESTAURANT_TABLE_DELETED", 200, "Mesa removida com sucesso.", audit_required=True
+    ),
+    "RESTAURANT_TABLE_RETRIEVED": MessageDefinition(
+        "RESTAURANT_TABLE_RETRIEVED", 200, "Mesa consultada com sucesso."
+    ),
+    "RESTAURANT_TABLE_LIST_RETRIEVED": MessageDefinition(
+        "RESTAURANT_TABLE_LIST_RETRIEVED", 200, "Mesas consultadas com sucesso."
+    ),
+    "RESTAURANT_TABLE_NOT_FOUND": MessageDefinition(
+        "RESTAURANT_TABLE_NOT_FOUND", 404, "Mesa não encontrada.", "warning"
+    ),
+    "RESTAURANT_TABLE_NUMBER_ALREADY_EXISTS": MessageDefinition(
+        "RESTAURANT_TABLE_NUMBER_ALREADY_EXISTS",
+        409,
+        "Número de mesa já cadastrado neste salão.",
+        "warning",
+    ),
+    "RESTAURANT_BRANCH_REQUIRED": MessageDefinition(
+        "RESTAURANT_BRANCH_REQUIRED",
+        409,
+        "Filial ativa obrigatória para operação de restaurante.",
+        "warning",
+    ),
+    "RESTAURANT_INVALID_DATA": MessageDefinition(
+        "RESTAURANT_INVALID_DATA", 400, "Dados da operação de restaurante inválidos.", "warning"
     ),
     "RECEIVING_DOCUMENT_CREATED": MessageDefinition(
         "RECEIVING_DOCUMENT_CREATED",

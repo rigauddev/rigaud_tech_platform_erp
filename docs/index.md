@@ -39,6 +39,8 @@ AI
 
 Alguns modulos estao implementados, outros estao em desenvolvimento ou planejados. O mapa oficial esta em `docs/architecture/product-map.md`.
 
+O contrato documental do Restaurant Operations Core está em `docs/restaurant/README.md`.
+
 ## Arquitetura
 
 - Multi-tenant;

@@ -4,4 +4,4 @@ Feature reservada para restaurante.
 
 Estrutura preparada em `data`, `domain` e `presentation`.
 
-Nenhuma regra de negócio foi implementada nesta task.
+`RESTAURANT-001` inclui o mapa responsivo de mesas. Pedidos, KDS, impressão e PDV serão entregues nas tasks próprias.

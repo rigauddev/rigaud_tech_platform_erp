@@ -4,6 +4,14 @@
 
 ### Added
 
+- RESTAURANT-001: fundação de salões e mesas, API multi-tenant auditada, migration `0022_restaurant_tables` e mapa operacional responsivo.
+- RESTAURANT-001: evolução de app do garçom, handoff de pagamento, KDS, impressão e previsão de preparo registrada nas tasks responsáveis.
+
+- DOC-011: Restaurant Operations Core documenta o núcleo configurável de alimentação, papéis, experiências Flutter, fluxo comum de pedidos e limites entre menu, estoque, produção, PDV e financeiro.
+
+- REST-013: transferências internas de estoque com solicitação, despacho, recebimento, auditoria e movimentos imutáveis de saída e entrada.
+- REST-013: migration `0021_inventory_transfers` e correção idempotente da migration `0019_inventory_count`.
+
 - UI-004: seletor de idioma Português/English no Login, carrossel informativo, recuperação de senha visual e navegação compartilhada.
 - UI-004: rota `/login/forgot-password` criada sem simular o envio de recuperação enquanto o serviço backend não existir.
 

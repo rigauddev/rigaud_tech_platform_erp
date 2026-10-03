@@ -55,6 +55,7 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - `InventoryBalance` nunca deve ser alterado diretamente por funcionalidades de negócio.
 - Toda alteração de saldo deve ocorrer por `InventoryMovement`, mantendo `InventoryBalance` como projeção auditável.
 - `Inventory Transaction` é a visão de consulta imutável de um `InventoryMovement`, usada como livro-razão operacional; não cria uma segunda fonte de verdade.
+- Transferências internas usam documento no mesmo tenant: `transfer_out` só ocorre no despacho e `transfer_in` só ocorre no recebimento. Solicitar não altera saldo; recebimento parcial e divergências seguem como evolução explícita do WMS.
 - Tipos planejados de movimento: `RECEIPT`, `SALE`, `TRANSFER`, `ADJUSTMENT`, `RESERVATION`, `RELEASE`, `RETURN`, `LOSS` e `CONSUMPTION`.
 - Consumo automático de insumos do Restaurante será implementado em task futura do módulo Restaurant.
 - Pratos não serão controlados diretamente pelo estoque. Restaurante usará EPIC futura `EPIC-RESTAURANT-PRODUCTION` com Recipe Engine, Production Planning, Daily Production, Kitchen Production, Consumption, Waste, Forecast e AI Insights.
@@ -65,6 +66,17 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Correção de estoque deve gerar novo movimento ou ajuste.
 - Ajustes de estoque possuem motivo padronizado e texto descritivo obrigatório. Estornos são compensatórios e vinculados ao ajuste original; o lançamento original permanece imutável.
 - Toda nova entidade operacional deve possuir UUID interno, código curto quando fizer sentido, e ser avaliada para QR Code, código de barras, auditoria completa, sincronização offline, eventos Kafka, operação multi-filial e compatibilidade SaaS/On-Premise, sem antecipar implementação fora da task vigente.
+
+## Restaurant Operations
+
+- Restaurant, Bar, Lanchonete, Café, Pizzaria, Food Truck e Delivery compartilham um Restaurant Operations Core configurável por filial; não serão módulos paralelos.
+- Gestão, Garçom, KDS, PDV e Cliente/Menu Online são experiências sobre o mesmo backend, eventos e base Flutter.
+- Pedido deve separar `order_entered_by` de `table_responsible_waiter` e preservar ambos na auditoria.
+- KDS e impressão serão consumidores do mesmo roteamento por estação; não haverá fluxos concorrentes de preparo.
+- A experiência de Garçom é uma superfície dedicada do mesmo aplicativo Flutter e backend; não é um projeto isolado. Ela poderá iniciar o fluxo de pagamento, mas captura e fechamento pertencem ao Caixa/PDV.
+- KDS e impressão compartilharão a mesma fila por estação. Estados de preparo, tempo médio configurável por item e estimativa baseada na carga da fila serão entregues na task de KDS, sem antecipar Restaurant Production.
+- Disponibilidade comercial diária continua separada de `InventoryBalance` e de Restaurant Production.
+- Receita, produção, consumo, desperdício, custos e forecast continuam restritos à EPIC-RESTAURANT-PRODUCTION.
 
 ## Segurança E Acesso
 

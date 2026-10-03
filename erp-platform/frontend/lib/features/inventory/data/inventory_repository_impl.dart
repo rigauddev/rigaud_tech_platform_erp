@@ -14,6 +14,12 @@ class InventoryRepositoryImpl implements InventoryRepository {
   final InventoryRemoteDataSource _remote;
 
   @override
+  Future<List<InventoryTransfer>> listTransfers({
+    int page = 1,
+    int pageSize = 20,
+  }) => _guard(() => _remote.listTransfers(page: page, pageSize: pageSize));
+
+  @override
   Future<List<InventoryCount>> listCounts({int page = 1, int pageSize = 20}) =>
       _guard(() => _remote.listCounts(page: page, pageSize: pageSize));
 
@@ -89,6 +95,21 @@ class InventoryRepositoryImpl implements InventoryRepository {
   @override
   Future<PutAwayOperation> confirmPutAway(PutAwayInput input) {
     return _guard(() => _remote.confirmPutAway(input));
+  }
+
+  @override
+  Future<InventoryTransfer> createTransfer(InventoryTransferInput input) {
+    return _guard(() => _remote.createTransfer(input));
+  }
+
+  @override
+  Future<InventoryTransfer> dispatchTransfer(String transferId) {
+    return _guard(() => _remote.dispatchTransfer(transferId));
+  }
+
+  @override
+  Future<InventoryTransfer> receiveTransfer(String transferId) {
+    return _guard(() => _remote.receiveTransfer(transferId));
   }
 
   Future<T> _guard<T>(Future<T> Function() action) async {
