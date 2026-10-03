@@ -268,6 +268,7 @@ class _RestaurantNavigation extends StatelessWidget {
                   currentPath: currentPath,
                 ),
                 _SubNavigationTile(
+                  route: AppRoutes.restaurantMenuAvailability,
                   label: strings.menu,
                   currentPath: currentPath,
                 ),

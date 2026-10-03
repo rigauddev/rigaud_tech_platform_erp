@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.modules.restaurant.domain.entities import (
+    RestaurantMenuAvailabilityStatus,
     RestaurantSectorType,
     RestaurantStaffRole,
     RestaurantStaffStatus,
@@ -89,6 +90,32 @@ class RestaurantStaffResponse(RestaurantSchema):
     role: RestaurantStaffRole
     status: RestaurantStaffStatus
     can_receive_online_orders: bool
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+class RestaurantMenuAvailabilityRequest(RestaurantSchema):
+    product_id: UUID
+    service_date: date
+    service_period: str = Field(default="all_day", min_length=1, max_length=40)
+    channels: list[str] = Field(min_length=1, max_length=8)
+    available_quantity: int | None = Field(default=None, ge=0)
+    status: RestaurantMenuAvailabilityStatus = RestaurantMenuAvailabilityStatus.PUBLISHED
+    is_active: bool = True
+
+
+class RestaurantMenuAvailabilityResponse(RestaurantSchema):
+    id: UUID
+    tenant_id: UUID
+    branch_id: UUID
+    product_id: UUID
+    service_date: date
+    service_period: str
+    channels: list[str]
+    available_quantity: int | None
+    sold_quantity: int
+    status: RestaurantMenuAvailabilityStatus
     is_active: bool
     created_at: datetime
     updated_at: datetime

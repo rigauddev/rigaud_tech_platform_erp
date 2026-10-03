@@ -16,18 +16,18 @@ Este repositório contém apenas a estrutura inicial de pastas e documentação 
 Fundação concluída até:
 
 ```text
-RESTAURANT-003 — Garçons e Equipe
+RESTAURANT-004 — Menu do Dia e Disponibilidade Comercial
 ```
 
 Task atual:
 
 ```text
-RESTAURANT-003 — Garçons e Equipe
+RESTAURANT-004 — Menu do Dia e Disponibilidade Comercial
 ```
 
-Refinamento concluído nesta branch: shell operacional alinhado ao layout
-aprovado e idioma Português/English persistido no Login, menu e tela de equipe.
-Cardápio, pedidos e delivery continuam planejados para as tasks posteriores.
+O Menu do Dia publica cotas comerciais por filial, data, período e canal, sem
+alterar o saldo de estoque. Pedidos, KDS e delivery continuam planejados para
+as tasks posteriores.
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
 

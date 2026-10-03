@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import delete, func, select
@@ -48,6 +49,7 @@ from app.modules.inventory.infrastructure.models import (
 from app.modules.products.domain.entities import ProductStatus
 from app.modules.products.infrastructure.models import ProductModel
 from app.modules.restaurant.domain.entities import (
+    RestaurantMenuAvailabilityStatus,
     RestaurantSectorType,
     RestaurantStaffRole,
     RestaurantStaffStatus,
@@ -56,6 +58,7 @@ from app.modules.restaurant.domain.entities import (
 )
 from app.modules.restaurant.infrastructure.models import (
     RestaurantFloorModel,
+    RestaurantMenuAvailabilityModel,
     RestaurantSectorModel,
     RestaurantStaffModel,
     RestaurantTableModel,
@@ -212,6 +215,7 @@ class DemoSeeder:
         await self._ensure_restaurant_tables(company.id, branches)
         await self._ensure_restaurant_sectors(company.id, branches)
         await self._ensure_restaurant_staff(company.id, branches)
+        await self._ensure_restaurant_menu_availability(company.id, branches, products)
         await self.session.commit()
         return DemoSeedSummary(
             mode="restaurant",
@@ -350,6 +354,10 @@ class DemoSeeder:
         )
         deleted_rows += await self._delete_where(
             WarehouseModel, WarehouseModel.tenant_id.in_(tenant_ids)
+        )
+        deleted_rows += await self._delete_where(
+            RestaurantMenuAvailabilityModel,
+            RestaurantMenuAvailabilityModel.tenant_id.in_(tenant_ids),
         )
         deleted_rows += await self._delete_where(
             RestaurantStaffModel, RestaurantStaffModel.tenant_id.in_(tenant_ids)
@@ -933,6 +941,48 @@ class DemoSeeder:
             staff.name, staff.role, staff.status = name, role, status
             staff.sector_id = sectors[sector_code].id
             staff.is_active, staff.deleted_at = True, None
+        await self.session.flush()
+
+    async def _ensure_restaurant_menu_availability(
+        self, tenant_id: UUID, branches: Iterable[BranchModel], products: Iterable[ProductModel]
+    ) -> None:
+        branch = next(branch for branch in branches if branch.code == "MATRIZ")
+        service_date = datetime.now(UTC).date()
+        product_by_code = {product.internal_code: product for product in products}
+        for product_code, quantity, channels in (
+            ("REST-PRD-001", 40, ["dining_room", "qr"]),
+            ("REST-PRD-003", 28, ["dining_room", "qr", "delivery"]),
+            ("REST-PRD-004", None, ["dining_room", "qr", "delivery"]),
+            ("REST-PRD-006", 50, ["dining_room", "qr", "delivery"]),
+        ):
+            product = product_by_code.get(product_code)
+            if product is None:
+                continue
+            item = (
+                await self.session.execute(
+                    select(RestaurantMenuAvailabilityModel).where(
+                        RestaurantMenuAvailabilityModel.tenant_id == tenant_id,
+                        RestaurantMenuAvailabilityModel.branch_id == branch.id,
+                        RestaurantMenuAvailabilityModel.product_id == product.id,
+                        RestaurantMenuAvailabilityModel.service_date == service_date,
+                        RestaurantMenuAvailabilityModel.service_period == "lunch",
+                    )
+                )
+            ).scalar_one_or_none()
+            if item is None:
+                item = RestaurantMenuAvailabilityModel(
+                    tenant_id=tenant_id,
+                    branch_id=branch.id,
+                    product_id=product.id,
+                    service_date=service_date,
+                    service_period="lunch",
+                )
+                self.session.add(item)
+            item.channels = channels
+            item.available_quantity = quantity
+            item.sold_quantity = 0
+            item.status = RestaurantMenuAvailabilityStatus.PUBLISHED
+            item.is_active, item.deleted_at = True, None
         await self.session.flush()
 
     async def _ensure_products(

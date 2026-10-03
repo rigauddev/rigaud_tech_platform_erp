@@ -1,4 +1,5 @@
 import logging
+from datetime import date
 from typing import Annotated
 from uuid import UUID
 
@@ -11,6 +12,14 @@ from app.modules.audit.application.service import AuditEventInput, AuditService
 from app.modules.audit.infrastructure.repositories import SQLAlchemyAuditEventRepository
 from app.modules.auth.domain.entities import AuthenticatedUser
 from app.modules.auth.presentation.dependencies import get_current_user
+from app.modules.restaurant.application.menu_availability_use_cases import (
+    CreateRestaurantMenuAvailability,
+    DeleteRestaurantMenuAvailability,
+    GetRestaurantMenuAvailability,
+    ListRestaurantMenuAvailabilities,
+    MenuAvailabilityInput,
+    UpdateRestaurantMenuAvailability,
+)
 from app.modules.restaurant.application.sector_use_cases import (
     CreateRestaurantSector,
     DeleteRestaurantSector,
@@ -47,6 +56,8 @@ from app.modules.restaurant.domain.exceptions import (
     RestaurantFloorCodeAlreadyExistsError,
     RestaurantFloorNotFoundError,
     RestaurantInvalidDataError,
+    RestaurantMenuAvailabilityAlreadyExistsError,
+    RestaurantMenuAvailabilityNotFoundError,
     RestaurantSectorCodeAlreadyExistsError,
     RestaurantSectorNotFoundError,
     RestaurantStaffCodeAlreadyExistsError,
@@ -56,12 +67,14 @@ from app.modules.restaurant.domain.exceptions import (
 )
 from app.modules.restaurant.infrastructure.models import (
     RestaurantFloorModel,
+    RestaurantMenuAvailabilityModel,
     RestaurantSectorModel,
     RestaurantStaffModel,
     RestaurantTableModel,
 )
 from app.modules.restaurant.infrastructure.repositories import (
     SQLAlchemyRestaurantFloorRepository,
+    SQLAlchemyRestaurantMenuAvailabilityRepository,
     SQLAlchemyRestaurantSectorRepository,
     SQLAlchemyRestaurantStaffRepository,
     SQLAlchemyRestaurantTableRepository,
@@ -69,6 +82,8 @@ from app.modules.restaurant.infrastructure.repositories import (
 from app.modules.restaurant.presentation.schemas import (
     RestaurantFloorRequest,
     RestaurantFloorResponse,
+    RestaurantMenuAvailabilityRequest,
+    RestaurantMenuAvailabilityResponse,
     RestaurantSectorRequest,
     RestaurantSectorResponse,
     RestaurantStaffRequest,
@@ -131,6 +146,26 @@ def _staff_response(item: RestaurantStaffModel) -> RestaurantStaffResponse:
         role=item.role,
         status=item.status,
         can_receive_online_orders=item.can_receive_online_orders,
+        is_active=item.is_active,
+        created_at=item.created_at,
+        updated_at=item.updated_at,
+    )
+
+
+def _menu_availability_response(
+    item: RestaurantMenuAvailabilityModel,
+) -> RestaurantMenuAvailabilityResponse:
+    return RestaurantMenuAvailabilityResponse(
+        id=item.id,
+        tenant_id=item.tenant_id,
+        branch_id=item.branch_id,
+        product_id=item.product_id,
+        service_date=item.service_date,
+        service_period=item.service_period,
+        channels=item.channels,
+        available_quantity=item.available_quantity,
+        sold_quantity=item.sold_quantity,
+        status=item.status,
         is_active=item.is_active,
         created_at=item.created_at,
         updated_at=item.updated_at,
@@ -206,6 +241,23 @@ def _staff_input(payload: RestaurantStaffRequest, user: AuthenticatedUser) -> St
     )
 
 
+def _menu_availability_input(
+    payload: RestaurantMenuAvailabilityRequest, user: AuthenticatedUser
+) -> MenuAvailabilityInput:
+    return MenuAvailabilityInput(
+        tenant_id=user.tenant_id,
+        branch_id=user.branch_id,
+        product_id=payload.product_id,
+        service_date=payload.service_date,
+        service_period=payload.service_period,
+        channels=payload.channels,
+        available_quantity=payload.available_quantity,
+        status=payload.status,
+        is_active=payload.is_active,
+        actor_id=user.id,
+    )
+
+
 def _table_input(payload: RestaurantTableRequest, user: AuthenticatedUser) -> TableInput:
     return TableInput(
         tenant_id=user.tenant_id,
@@ -235,6 +287,7 @@ async def _audit(
     item: RestaurantFloorModel
     | RestaurantSectorModel
     | RestaurantStaffModel
+    | RestaurantMenuAvailabilityModel
     | RestaurantTableModel,
     entity_type: str,
     user: AuthenticatedUser,
@@ -382,6 +435,140 @@ async def delete_sector(
         await session.commit()
         return success_response(
             "RESTAURANT_SECTOR_DELETED", data=_sector_response(item).model_dump(mode="json")
+        )
+    except RestaurantError as exc:
+        await session.rollback()
+        return _error(exc)
+
+
+@router.get("/menu-availabilities", response_model=list[RestaurantMenuAvailabilityResponse])
+async def list_menu_availabilities(
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+    service_date: Annotated[date | None, Query()] = None,
+    service_period: Annotated[str | None, Query(max_length=40)] = None,
+) -> JSONResponse:
+    items = await ListRestaurantMenuAvailabilities(
+        SQLAlchemyRestaurantMenuAvailabilityRepository(session)
+    ).execute(
+        tenant_id=user.tenant_id,
+        branch_id=user.branch_id,
+        service_date=service_date,
+        service_period=service_period,
+    )
+    return success_response(
+        "RESTAURANT_MENU_AVAILABILITY_LIST_RETRIEVED",
+        data=[_menu_availability_response(item).model_dump(mode="json") for item in items],
+    )
+
+
+@router.get(
+    "/menu-availabilities/{availability_id}", response_model=RestaurantMenuAvailabilityResponse
+)
+async def get_menu_availability(
+    availability_id: UUID, session: AsyncSessionDependency, user: CurrentUserDependency
+) -> JSONResponse:
+    try:
+        item = await GetRestaurantMenuAvailability(
+            SQLAlchemyRestaurantMenuAvailabilityRepository(session)
+        ).execute(availability_id, tenant_id=user.tenant_id)
+        return success_response(
+            "RESTAURANT_MENU_AVAILABILITY_RETRIEVED",
+            data=_menu_availability_response(item).model_dump(mode="json"),
+        )
+    except RestaurantError as exc:
+        return _error(exc)
+
+
+@router.post("/menu-availabilities", response_model=RestaurantMenuAvailabilityResponse)
+async def create_menu_availability(
+    payload: RestaurantMenuAvailabilityRequest,
+    request: Request,
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        item = await CreateRestaurantMenuAvailability(
+            SQLAlchemyRestaurantMenuAvailabilityRepository(session)
+        ).execute(_menu_availability_input(payload, user))
+        await _audit(
+            session,
+            event_name="restaurant.menu_availability.created",
+            action="created",
+            item=item,
+            entity_type="restaurant_menu_availability",
+            user=user,
+            request=request,
+        )
+        await session.commit()
+        return success_response(
+            "RESTAURANT_MENU_AVAILABILITY_CREATED",
+            data=_menu_availability_response(item).model_dump(mode="json"),
+        )
+    except RestaurantError as exc:
+        await session.rollback()
+        return _error(exc)
+
+
+@router.put(
+    "/menu-availabilities/{availability_id}", response_model=RestaurantMenuAvailabilityResponse
+)
+async def update_menu_availability(
+    availability_id: UUID,
+    payload: RestaurantMenuAvailabilityRequest,
+    request: Request,
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        item = await UpdateRestaurantMenuAvailability(
+            SQLAlchemyRestaurantMenuAvailabilityRepository(session)
+        ).execute(availability_id, _menu_availability_input(payload, user))
+        await _audit(
+            session,
+            event_name="restaurant.menu_availability.updated",
+            action="updated",
+            item=item,
+            entity_type="restaurant_menu_availability",
+            user=user,
+            request=request,
+        )
+        await session.commit()
+        return success_response(
+            "RESTAURANT_MENU_AVAILABILITY_UPDATED",
+            data=_menu_availability_response(item).model_dump(mode="json"),
+        )
+    except RestaurantError as exc:
+        await session.rollback()
+        return _error(exc)
+
+
+@router.delete(
+    "/menu-availabilities/{availability_id}", response_model=RestaurantMenuAvailabilityResponse
+)
+async def delete_menu_availability(
+    availability_id: UUID,
+    request: Request,
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        item = await DeleteRestaurantMenuAvailability(
+            SQLAlchemyRestaurantMenuAvailabilityRepository(session)
+        ).execute(availability_id, tenant_id=user.tenant_id, actor_id=user.id)
+        await _audit(
+            session,
+            event_name="restaurant.menu_availability.deleted",
+            action="deleted",
+            item=item,
+            entity_type="restaurant_menu_availability",
+            user=user,
+            request=request,
+        )
+        await session.commit()
+        return success_response(
+            "RESTAURANT_MENU_AVAILABILITY_DELETED",
+            data=_menu_availability_response(item).model_dump(mode="json"),
         )
     except RestaurantError as exc:
         await session.rollback()
@@ -743,6 +930,10 @@ async def delete_table(
 
 
 def _error(exc: RestaurantError) -> JSONResponse:
+    if isinstance(exc, RestaurantMenuAvailabilityNotFoundError):
+        return error_response("RESTAURANT_MENU_AVAILABILITY_NOT_FOUND")
+    if isinstance(exc, RestaurantMenuAvailabilityAlreadyExistsError):
+        return error_response("RESTAURANT_MENU_AVAILABILITY_ALREADY_EXISTS")
     if isinstance(exc, RestaurantStaffNotFoundError):
         return error_response("RESTAURANT_STAFF_NOT_FOUND")
     if isinstance(exc, RestaurantSectorNotFoundError):

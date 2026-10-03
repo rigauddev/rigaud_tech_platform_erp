@@ -4,6 +4,8 @@
 
 ### Added
 
+- RESTAURANT-004: Menu do Dia e disponibilidade comercial por produto, filial, data, período e canal, com migration `0025_menu_availability`, auditoria, dados demo e tela operacional baseada no canvas aprovado.
+
 - RESTAURANT-003: equipe operacional por filial, CRUD auditado, migration `0024_restaurant_staff`, dados demo e tela de garçons alinhada à referência visual aprovada.
 
 - RESTAURANT-002: setores e ambientes por filial, CRUD auditado, migration `0023_restaurant_sectors`, dados demo e tela responsiva alinhada ao padrão visual aprovado.

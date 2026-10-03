@@ -647,7 +647,34 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         "RESTAURANT_STAFF_NOT_FOUND", 404, "Profissional não encontrado.", "warning"
     ),
     "RESTAURANT_STAFF_CODE_ALREADY_EXISTS": MessageDefinition(
-        "RESTAURANT_STAFF_CODE_ALREADY_EXISTS", 409, "Código de profissional já cadastrado nesta filial.", "warning"
+        "RESTAURANT_STAFF_CODE_ALREADY_EXISTS",
+        409,
+        "Código de profissional já cadastrado nesta filial.",
+        "warning",
+    ),
+    "RESTAURANT_MENU_AVAILABILITY_NOT_FOUND": MessageDefinition(
+        "RESTAURANT_MENU_AVAILABILITY_NOT_FOUND", 404, "Item do menu não encontrado.", "warning"
+    ),
+    "RESTAURANT_MENU_AVAILABILITY_ALREADY_EXISTS": MessageDefinition(
+        "RESTAURANT_MENU_AVAILABILITY_ALREADY_EXISTS",
+        409,
+        "Este produto já está publicado para a data e período selecionados.",
+        "warning",
+    ),
+    "RESTAURANT_MENU_AVAILABILITY_CREATED": MessageDefinition(
+        "RESTAURANT_MENU_AVAILABILITY_CREATED", 201, "Item publicado no menu.", audit_required=True
+    ),
+    "RESTAURANT_MENU_AVAILABILITY_UPDATED": MessageDefinition(
+        "RESTAURANT_MENU_AVAILABILITY_UPDATED", 200, "Item do menu atualizado.", audit_required=True
+    ),
+    "RESTAURANT_MENU_AVAILABILITY_DELETED": MessageDefinition(
+        "RESTAURANT_MENU_AVAILABILITY_DELETED", 200, "Item removido do menu.", audit_required=True
+    ),
+    "RESTAURANT_MENU_AVAILABILITY_RETRIEVED": MessageDefinition(
+        "RESTAURANT_MENU_AVAILABILITY_RETRIEVED", 200, "Item do menu consultado."
+    ),
+    "RESTAURANT_MENU_AVAILABILITY_LIST_RETRIEVED": MessageDefinition(
+        "RESTAURANT_MENU_AVAILABILITY_LIST_RETRIEVED", 200, "Menu do dia consultado."
     ),
     "RESTAURANT_SECTOR_NOT_FOUND": MessageDefinition(
         "RESTAURANT_SECTOR_NOT_FOUND", 404, "Setor não encontrado.", "warning"

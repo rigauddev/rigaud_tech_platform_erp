@@ -101,7 +101,7 @@ async def test_transfer_dispatch_and_receipt_create_separate_immutable_movements
     transfer = await service.create(InventoryTransferCreateInput(
         tenant_id=tenant_id, source_branch_id=source_branch_id, source_warehouse_id=source_warehouse_id,
         target_branch_id=target_branch_id, target_warehouse_id=target_warehouse_id, product_id=product_id,
-        quantity=Decimal("3"), code="TRF-001", reason="Reposição da filial",
+        quantity=Decimal(3), code="TRF-001", reason="Reposição da filial",
     ))
 
     assert transfer.status == InventoryTransferStatus.REQUESTED
@@ -128,7 +128,7 @@ async def test_transfer_cannot_dispatch_reserved_or_missing_stock() -> None:
     transfer = await service.create(InventoryTransferCreateInput(
         tenant_id=tenant_id, source_branch_id=source_branch_id, source_warehouse_id=source_warehouse_id,
         target_branch_id=target_branch_id, target_warehouse_id=target_warehouse_id, product_id=product_id,
-        quantity=Decimal("11"), code="TRF-002", reason="Reposição da filial",
+        quantity=Decimal(11), code="TRF-002", reason="Reposição da filial",
     ))
 
     with pytest.raises(InventoryInsufficientStockError):
