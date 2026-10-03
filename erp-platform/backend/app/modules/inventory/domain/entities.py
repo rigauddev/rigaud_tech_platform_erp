@@ -46,6 +46,8 @@ class InventoryMovementType(StrEnum):
     RESERVATION_CREATED = "reservation_created"
     RESERVATION_RELEASED = "reservation_released"
     COUNT = "count"
+    TRANSFER_OUT = "transfer_out"
+    TRANSFER_IN = "transfer_in"
 
 
 class InventoryMovementStatus(StrEnum):
@@ -81,4 +83,12 @@ class InventoryCountStatus(StrEnum):
     DRAFT = "draft"
     IN_PROGRESS = "in_progress"
     FINISHED = "finished"
+    CANCELLED = "cancelled"
+
+
+class InventoryTransferStatus(StrEnum):
+    DRAFT = "draft"
+    REQUESTED = "requested"
+    IN_TRANSIT = "in_transit"
+    RECEIVED = "received"
     CANCELLED = "cancelled"

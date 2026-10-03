@@ -20,13 +20,14 @@ from app.database import Base
 from app.database.mixins import AuditMixin, SoftDeleteMixin, TenantMixin, TimestampMixin
 from app.database.types import UUIDType
 from app.modules.inventory.domain.entities import (
-    InventoryAdjustmentStatus,
     InventoryAdjustmentReason,
+    InventoryAdjustmentStatus,
     InventoryAdjustmentType,
     InventoryCountStatus,
     InventoryMovementStatus,
     InventoryMovementType,
     InventoryReservationStatus,
+    InventoryTransferStatus,
     ReceivingDocumentStatus,
     WarehouseLocationStatus,
     WarehouseStatus,
@@ -315,14 +316,6 @@ class ReceivingDocumentModel(TenantMixin, TimestampMixin, SoftDeleteMixin, Audit
     expected_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     received_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
-    reason_code: Mapped[InventoryAdjustmentReason] = mapped_column(
-        Enum(InventoryAdjustmentReason, name="inventory_adjustment_reason", values_callable=lambda enum: [item.value for item in enum]),
-        default=InventoryAdjustmentReason.CORRECTION,
-        nullable=False,
-    )
-    reversal_of_id: Mapped[UUID | None] = mapped_column(
-        UUIDType(as_uuid=True), ForeignKey("inventory_adjustments.id", ondelete="RESTRICT"), nullable=True
-    )
     items: Mapped[list["ReceivingItemModel"]] = relationship(
         back_populates="document",
         cascade="all, delete-orphan",
@@ -590,6 +583,20 @@ class InventoryAdjustmentModel(TenantMixin, TimestampMixin, AuditMixin, Base):
     quantity: Mapped[Decimal] = mapped_column(Numeric(14, 3), nullable=False)
     reason: Mapped[str] = mapped_column(String(240), nullable=False)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    reason_code: Mapped[InventoryAdjustmentReason] = mapped_column(
+        Enum(
+            InventoryAdjustmentReason,
+            name="inventory_adjustment_reason",
+            values_callable=lambda enum: [item.value for item in enum],
+        ),
+        default=InventoryAdjustmentReason.CORRECTION,
+        nullable=False,
+    )
+    reversal_of_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("inventory_adjustments.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
 
 
 class InventoryReservationModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
@@ -649,36 +656,137 @@ class InventoryReservationModel(TenantMixin, TimestampMixin, SoftDeleteMixin, Au
 class InventoryCountModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
     __tablename__ = "inventory_counts"
     __table_args__ = (
-        Index("uq_inventory_counts_tenant_branch_code", "tenant_id", "branch_id", "code", unique=True),
+        Index(
+            "uq_inventory_counts_tenant_branch_code", "tenant_id", "branch_id", "code", unique=True
+        ),
         Index("ix_inventory_counts_tenant_branch_status", "tenant_id", "branch_id", "status"),
     )
 
     id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
-    tenant_id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), ForeignKey("companies.id", ondelete="RESTRICT"), nullable=False)
-    branch_id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), ForeignKey("branches.id", ondelete="RESTRICT"), nullable=False)
-    warehouse_id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), ForeignKey("warehouses.id", ondelete="RESTRICT"), nullable=False)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True), ForeignKey("companies.id", ondelete="RESTRICT"), nullable=False
+    )
+    branch_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True), ForeignKey("branches.id", ondelete="RESTRICT"), nullable=False
+    )
+    warehouse_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True), ForeignKey("warehouses.id", ondelete="RESTRICT"), nullable=False
+    )
     location_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
     code: Mapped[str] = mapped_column(String(40), nullable=False)
-    status: Mapped[InventoryCountStatus] = mapped_column(Enum(InventoryCountStatus, name="inventory_count_status", values_callable=lambda enum: [item.value for item in enum]), default=InventoryCountStatus.DRAFT, nullable=False)
+    status: Mapped[InventoryCountStatus] = mapped_column(
+        Enum(
+            InventoryCountStatus,
+            name="inventory_count_status",
+            values_callable=lambda enum: [item.value for item in enum],
+        ),
+        default=InventoryCountStatus.DRAFT,
+        nullable=False,
+    )
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    items: Mapped[list["InventoryCountItemModel"]] = relationship(back_populates="count", cascade="all, delete-orphan")
+    items: Mapped[list["InventoryCountItemModel"]] = relationship(
+        back_populates="count", cascade="all, delete-orphan"
+    )
 
 
 class InventoryCountItemModel(TenantMixin, TimestampMixin, Base):
     __tablename__ = "inventory_count_items"
     __table_args__ = (
         Index("uq_inventory_count_items_count_product", "count_id", "product_id", unique=True),
-        CheckConstraint("expected_quantity >= 0", name="ck_inventory_count_item_expected_non_negative"),
-        CheckConstraint("counted_quantity IS NULL OR counted_quantity >= 0", name="ck_inventory_count_item_counted_non_negative"),
+        CheckConstraint(
+            "expected_quantity >= 0", name="ck_inventory_count_item_expected_non_negative"
+        ),
+        CheckConstraint(
+            "counted_quantity IS NULL OR counted_quantity >= 0",
+            name="ck_inventory_count_item_counted_non_negative",
+        ),
     )
 
     id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
-    tenant_id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), ForeignKey("companies.id", ondelete="RESTRICT"), nullable=False)
-    count_id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), ForeignKey("inventory_counts.id", ondelete="CASCADE"), nullable=False)
-    product_id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), ForeignKey("products.id", ondelete="RESTRICT"), nullable=False)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True), ForeignKey("companies.id", ondelete="RESTRICT"), nullable=False
+    )
+    count_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("inventory_counts.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    product_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True), ForeignKey("products.id", ondelete="RESTRICT"), nullable=False
+    )
     expected_quantity: Mapped[Decimal] = mapped_column(Numeric(14, 3), nullable=False)
     counted_quantity: Mapped[Decimal | None] = mapped_column(Numeric(14, 3), nullable=True)
-    adjustment_movement_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), ForeignKey("inventory_movements.id", ondelete="RESTRICT"), nullable=True)
+    adjustment_movement_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("inventory_movements.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
     count: Mapped[InventoryCountModel] = relationship(back_populates="items")
+
+
+class InventoryTransferModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
+    __tablename__ = "inventory_transfers"
+    __table_args__ = (
+        Index("uq_inventory_transfers_tenant_code", "tenant_id", "code", unique=True),
+        Index(
+            "ix_inventory_transfers_tenant_source_status", "tenant_id", "source_branch_id", "status"
+        ),
+        Index(
+            "ix_inventory_transfers_tenant_target_status", "tenant_id", "target_branch_id", "status"
+        ),
+        CheckConstraint("quantity > 0", name="ck_inventory_transfer_quantity_positive"),
+        CheckConstraint(
+            "source_warehouse_id <> target_warehouse_id",
+            name="ck_inventory_transfer_distinct_warehouses",
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True), ForeignKey("companies.id", ondelete="RESTRICT"), nullable=False
+    )
+    code: Mapped[str] = mapped_column(String(40), nullable=False)
+    product_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True), ForeignKey("products.id", ondelete="RESTRICT"), nullable=False
+    )
+    source_branch_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True), ForeignKey("branches.id", ondelete="RESTRICT"), nullable=False
+    )
+    source_warehouse_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True), ForeignKey("warehouses.id", ondelete="RESTRICT"), nullable=False
+    )
+    source_location_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
+    target_branch_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True), ForeignKey("branches.id", ondelete="RESTRICT"), nullable=False
+    )
+    target_warehouse_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True), ForeignKey("warehouses.id", ondelete="RESTRICT"), nullable=False
+    )
+    target_location_id: Mapped[UUID | None] = mapped_column(UUIDType(as_uuid=True), nullable=True)
+    quantity: Mapped[Decimal] = mapped_column(Numeric(14, 3), nullable=False)
+    status: Mapped[InventoryTransferStatus] = mapped_column(
+        Enum(
+            InventoryTransferStatus,
+            name="inventory_transfer_status",
+            values_callable=lambda enum: [item.value for item in enum],
+        ),
+        default=InventoryTransferStatus.REQUESTED,
+        nullable=False,
+    )
+    reason: Mapped[str] = mapped_column(String(240), nullable=False)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    outbound_movement_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("inventory_movements.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
+    inbound_movement_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("inventory_movements.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
+    dispatched_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    received_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

@@ -18,6 +18,8 @@ REST-011 adiciona Inventory Count, com documentos de contagem fisica e divergenc
 
 REST-012 adiciona motivos padronizados e estorno compensatório para ajustes de estoque.
 
+REST-013 adiciona Transferências: a solicitação não altera saldo; despacho e recebimento criam movimentos distintos e auditáveis. Consulte `transfers.md`.
+
 Documentos principais:
 
 - `api.md`;

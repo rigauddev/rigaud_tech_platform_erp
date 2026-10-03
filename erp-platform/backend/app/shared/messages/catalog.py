@@ -376,20 +376,66 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
         "Quantidade de estoque inválida.",
         "warning",
     ),
-    "INVENTORY_ADJUSTMENT_REVERSED": MessageDefinition("INVENTORY_ADJUSTMENT_REVERSED", 200, "Ajuste de estoque estornado com sucesso.", audit_required=True),
+    "INVENTORY_ADJUSTMENT_REVERSED": MessageDefinition(
+        "INVENTORY_ADJUSTMENT_REVERSED",
+        200,
+        "Ajuste de estoque estornado com sucesso.",
+        audit_required=True,
+    ),
     "INVENTORY_BRANCH_REQUIRED": MessageDefinition(
         "INVENTORY_BRANCH_REQUIRED",
         409,
         "Filial ativa obrigatória para movimentar estoque.",
         "warning",
     ),
-    "INVENTORY_COUNT_LIST_RETRIEVED": MessageDefinition("INVENTORY_COUNT_LIST_RETRIEVED", 200, "Contagens de estoque consultadas."),
-    "INVENTORY_COUNT_CREATED": MessageDefinition("INVENTORY_COUNT_CREATED", 201, "Contagem de estoque criada.", audit_required=True),
-    "INVENTORY_COUNT_STARTED": MessageDefinition("INVENTORY_COUNT_STARTED", 200, "Contagem de estoque iniciada.", audit_required=True),
-    "INVENTORY_COUNT_ITEM_RECORDED": MessageDefinition("INVENTORY_COUNT_ITEM_RECORDED", 200, "Quantidade contada registrada.", audit_required=True),
-    "INVENTORY_COUNT_FINISHED": MessageDefinition("INVENTORY_COUNT_FINISHED", 200, "Contagem de estoque concluída.", audit_required=True),
-    "INVENTORY_COUNT_CANCELLED": MessageDefinition("INVENTORY_COUNT_CANCELLED", 200, "Contagem de estoque cancelada.", audit_required=True),
-    "INVENTORY_COUNT_INVALID_STATE": MessageDefinition("INVENTORY_COUNT_INVALID_STATE", 409, "A operação não é permitida no estado atual da contagem.", "warning"),
+    "INVENTORY_COUNT_LIST_RETRIEVED": MessageDefinition(
+        "INVENTORY_COUNT_LIST_RETRIEVED", 200, "Contagens de estoque consultadas."
+    ),
+    "INVENTORY_COUNT_CREATED": MessageDefinition(
+        "INVENTORY_COUNT_CREATED", 201, "Contagem de estoque criada.", audit_required=True
+    ),
+    "INVENTORY_COUNT_STARTED": MessageDefinition(
+        "INVENTORY_COUNT_STARTED", 200, "Contagem de estoque iniciada.", audit_required=True
+    ),
+    "INVENTORY_COUNT_ITEM_RECORDED": MessageDefinition(
+        "INVENTORY_COUNT_ITEM_RECORDED", 200, "Quantidade contada registrada.", audit_required=True
+    ),
+    "INVENTORY_COUNT_FINISHED": MessageDefinition(
+        "INVENTORY_COUNT_FINISHED", 200, "Contagem de estoque concluída.", audit_required=True
+    ),
+    "INVENTORY_COUNT_CANCELLED": MessageDefinition(
+        "INVENTORY_COUNT_CANCELLED", 200, "Contagem de estoque cancelada.", audit_required=True
+    ),
+    "INVENTORY_COUNT_INVALID_STATE": MessageDefinition(
+        "INVENTORY_COUNT_INVALID_STATE",
+        409,
+        "A operação não é permitida no estado atual da contagem.",
+        "warning",
+    ),
+    "INVENTORY_TRANSFER_LIST_RETRIEVED": MessageDefinition(
+        "INVENTORY_TRANSFER_LIST_RETRIEVED", 200, "Transferências de estoque consultadas."
+    ),
+    "INVENTORY_TRANSFER_CREATED": MessageDefinition(
+        "INVENTORY_TRANSFER_CREATED",
+        201,
+        "Transferência de estoque solicitada.",
+        audit_required=True,
+    ),
+    "INVENTORY_TRANSFER_DISPATCHED": MessageDefinition(
+        "INVENTORY_TRANSFER_DISPATCHED", 200, "Transferência despachada.", audit_required=True
+    ),
+    "INVENTORY_TRANSFER_RECEIVED": MessageDefinition(
+        "INVENTORY_TRANSFER_RECEIVED", 200, "Transferência recebida.", audit_required=True
+    ),
+    "INVENTORY_TRANSFER_CANCELLED": MessageDefinition(
+        "INVENTORY_TRANSFER_CANCELLED", 200, "Transferência cancelada.", audit_required=True
+    ),
+    "INVENTORY_TRANSFER_INVALID_STATE": MessageDefinition(
+        "INVENTORY_TRANSFER_INVALID_STATE",
+        409,
+        "A operação não é permitida no estado atual da transferência.",
+        "warning",
+    ),
     "WAREHOUSE_CREATED": MessageDefinition(
         "WAREHOUSE_CREATED", 201, "Depósito criado com sucesso.", audit_required=True
     ),

@@ -11,6 +11,19 @@ class InventoryRemoteDataSource {
 
   final Dio _dio;
 
+  Future<List<InventoryTransfer>> listTransfers({
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/inventory/transfers',
+      queryParameters: {'page': page, 'page_size': pageSize},
+    );
+    return apiDataList(response.data)
+        .map((item) => InventoryTransfer.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<List<InventoryCount>> listCounts({
     int page = 1,
     int pageSize = 20,
@@ -125,6 +138,28 @@ class InventoryRemoteDataSource {
       data: input.toJson(),
     );
     return PutAwayOperation.fromJson(apiDataObject(response.data));
+  }
+
+  Future<InventoryTransfer> createTransfer(InventoryTransferInput input) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/inventory/transfers',
+      data: input.toJson(),
+    );
+    return InventoryTransfer.fromJson(apiDataObject(response.data));
+  }
+
+  Future<InventoryTransfer> dispatchTransfer(String transferId) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/inventory/transfers/$transferId/dispatch',
+    );
+    return InventoryTransfer.fromJson(apiDataObject(response.data));
+  }
+
+  Future<InventoryTransfer> receiveTransfer(String transferId) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/inventory/transfers/$transferId/receive',
+    );
+    return InventoryTransfer.fromJson(apiDataObject(response.data));
   }
 }
 
