@@ -607,7 +607,7 @@ class _BrandLogo extends StatelessWidget {
         child: Transform.scale(
           scale: 1.85,
           child: Image.asset(
-            'assets/images/Rigaud_Tech_profile.PNG',
+            'assets/images/rigaud-tech-logo.png',
             fit: BoxFit.contain,
             alignment: Alignment.center,
             filterQuality: FilterQuality.high,
