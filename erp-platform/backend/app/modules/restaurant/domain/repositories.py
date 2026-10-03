@@ -4,8 +4,27 @@ from uuid import UUID
 from app.modules.restaurant.infrastructure.models import (
     RestaurantFloorModel,
     RestaurantSectorModel,
+    RestaurantStaffModel,
     RestaurantTableModel,
 )
+
+
+class RestaurantStaffRepository(ABC):
+    @abstractmethod
+    async def add(self, item: RestaurantStaffModel) -> RestaurantStaffModel: ...
+
+    @abstractmethod
+    async def get_by_id(self, item_id: UUID, *, tenant_id: UUID) -> RestaurantStaffModel | None: ...
+
+    @abstractmethod
+    async def list(
+        self, *, tenant_id: UUID, branch_id: UUID, search: str | None = None
+    ) -> list[RestaurantStaffModel]: ...
+
+    @abstractmethod
+    async def exists_by_code(
+        self, code: str, *, tenant_id: UUID, branch_id: UUID, exclude_id: UUID | None = None
+    ) -> bool: ...
 
 
 class RestaurantSectorRepository(ABC):

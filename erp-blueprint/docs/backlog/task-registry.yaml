@@ -1,4 +1,41 @@
 tasks:
+  - id: RESTAURANT-003
+    title: Garçons e Equipe Operacional
+    epic: MVP Restaurante
+    module: restaurant
+    status: review
+    dependencies:
+      - RESTAURANT-002
+    started_at: "2026-10-03"
+    completed_at: "2026-10-03"
+    documentation:
+      - docs/restaurant/staff.md
+      - docs/restaurant/README.md
+      - erp-blueprint/docs/academy/restaurant/005-garcons-equipe.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/restaurant/005-garcons-equipe.md
+    tests:
+      - erp-platform/backend/tests/test_restaurant_staff.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - make check-task TASK=RESTAURANT-003
+      - git diff --check
+    migration: 0024_restaurant_staff
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/restaurant-003-waiters-team
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
   - id: RESTAURANT-002
     title: Setores e Ambientes
     epic: MVP Restaurante

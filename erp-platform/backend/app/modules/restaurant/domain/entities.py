@@ -25,3 +25,16 @@ class RestaurantSectorType(StrEnum):
     VIP = "vip"
     COUNTER = "counter"
     OTHER = "other"
+
+
+class RestaurantStaffRole(StrEnum):
+    WAITER = "waiter"
+    ATTENDANT = "attendant"
+    MANAGER = "manager"
+
+
+class RestaurantStaffStatus(StrEnum):
+    AVAILABLE = "available"
+    SERVING = "serving"
+    PAUSED = "paused"
+    OFFLINE = "offline"

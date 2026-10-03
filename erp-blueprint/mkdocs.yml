@@ -41,6 +41,7 @@ nav:
       - Restaurant Operations Core: academy/restaurant/002-restaurant-operations-core.md
       - Mesas e mapa operacional: academy/restaurant/003-mesas-mapa-operacional.md
       - Setores e ambientes: academy/restaurant/004-setores-ambientes.md
+      - Garçons e equipe: academy/restaurant/005-garcons-equipe.md
       - Logs Estruturados: academy/observability/001-logs-estruturados.md
       - Request ID: academy/observability/002-rastreabilidade-com-request-id.md
       - Auditoria de Sistemas: academy/security/002-auditoria-de-sistemas.md

@@ -4,6 +4,8 @@
 
 ### Added
 
+- RESTAURANT-003: equipe operacional por filial, CRUD auditado, migration `0024_restaurant_staff`, dados demo e tela de garçons alinhada à referência visual aprovada.
+
 - RESTAURANT-002: setores e ambientes por filial, CRUD auditado, migration `0023_restaurant_sectors`, dados demo e tela responsiva alinhada ao padrão visual aprovado.
 
 - RESTAURANT-001: fundação de salões e mesas, API multi-tenant auditada, migration `0022_restaurant_tables` e mapa operacional responsivo.

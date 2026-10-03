@@ -19,9 +19,74 @@ from app.database.mixins import AuditMixin, SoftDeleteMixin, TenantMixin, Timest
 from app.database.types import UUIDType
 from app.modules.restaurant.domain.entities import (
     RestaurantSectorType,
+    RestaurantStaffRole,
+    RestaurantStaffStatus,
     RestaurantTableShape,
     RestaurantTableStatus,
 )
+
+
+class RestaurantStaffModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):
+    __tablename__ = "restaurant_staff"
+    __table_args__ = (
+        Index(
+            "uq_restaurant_staff_tenant_branch_code",
+            "tenant_id",
+            "branch_id",
+            "code",
+            unique=True,
+            postgresql_where=text("deleted_at IS NULL"),
+        ),
+        Index("ix_restaurant_staff_tenant_branch", "tenant_id", "branch_id"),
+    )
+
+    id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("companies.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    branch_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("branches.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    user_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("auth_users.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    sector_id: Mapped[UUID | None] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("restaurant_sectors.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    code: Mapped[str] = mapped_column(String(40), nullable=False)
+    name: Mapped[str] = mapped_column(String(160), nullable=False)
+    role: Mapped[RestaurantStaffRole] = mapped_column(
+        Enum(
+            RestaurantStaffRole,
+            name="restaurant_staff_role",
+            values_callable=lambda values: [item.value for item in values],
+        ),
+        default=RestaurantStaffRole.WAITER,
+        nullable=False,
+    )
+    status: Mapped[RestaurantStaffStatus] = mapped_column(
+        Enum(
+            RestaurantStaffStatus,
+            name="restaurant_staff_status",
+            values_callable=lambda values: [item.value for item in values],
+        ),
+        default=RestaurantStaffStatus.AVAILABLE,
+        nullable=False,
+    )
+    can_receive_online_orders: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
 
 class RestaurantSectorModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):

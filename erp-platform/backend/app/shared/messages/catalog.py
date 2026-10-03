@@ -628,6 +628,27 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     "RESTAURANT_SECTOR_RETRIEVED": MessageDefinition(
         "RESTAURANT_SECTOR_RETRIEVED", 200, "Setor consultado com sucesso."
     ),
+    "RESTAURANT_STAFF_CREATED": MessageDefinition(
+        "RESTAURANT_STAFF_CREATED", 201, "Profissional criado com sucesso.", audit_required=True
+    ),
+    "RESTAURANT_STAFF_UPDATED": MessageDefinition(
+        "RESTAURANT_STAFF_UPDATED", 200, "Profissional atualizado com sucesso.", audit_required=True
+    ),
+    "RESTAURANT_STAFF_DELETED": MessageDefinition(
+        "RESTAURANT_STAFF_DELETED", 200, "Profissional removido com sucesso.", audit_required=True
+    ),
+    "RESTAURANT_STAFF_LIST_RETRIEVED": MessageDefinition(
+        "RESTAURANT_STAFF_LIST_RETRIEVED", 200, "Equipe consultada com sucesso."
+    ),
+    "RESTAURANT_STAFF_RETRIEVED": MessageDefinition(
+        "RESTAURANT_STAFF_RETRIEVED", 200, "Profissional consultado com sucesso."
+    ),
+    "RESTAURANT_STAFF_NOT_FOUND": MessageDefinition(
+        "RESTAURANT_STAFF_NOT_FOUND", 404, "Profissional não encontrado.", "warning"
+    ),
+    "RESTAURANT_STAFF_CODE_ALREADY_EXISTS": MessageDefinition(
+        "RESTAURANT_STAFF_CODE_ALREADY_EXISTS", 409, "Código de profissional já cadastrado nesta filial.", "warning"
+    ),
     "RESTAURANT_SECTOR_NOT_FOUND": MessageDefinition(
         "RESTAURANT_SECTOR_NOT_FOUND", 404, "Setor não encontrado.", "warning"
     ),

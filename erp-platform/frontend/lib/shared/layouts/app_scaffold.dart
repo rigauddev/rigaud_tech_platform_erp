@@ -29,8 +29,51 @@ class AppScaffold extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(title ?? strings.appName),
-        actions: actions,
+        toolbarHeight: 64,
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/Rigaud_Tech_profile_transparent.png',
+              width: 30,
+              height: 30,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(width: 10),
+            const Text('Rigaud Tech Platform ERP'),
+            if (isDesktop) ...[
+              const Spacer(),
+              const SizedBox(
+                width: 420,
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Pesquisar no sistema...',
+                    prefixIcon: Icon(Icons.search),
+                    isDense: true,
+                  ),
+                ),
+              ),
+              const Spacer(),
+            ],
+          ],
+        ),
+        actions: [
+          const IconButton(
+            tooltip: 'Notificações',
+            onPressed: null,
+            icon: Icon(Icons.notifications_none_outlined),
+          ),
+          const IconButton(
+            tooltip: 'Ajuda',
+            onPressed: null,
+            icon: Icon(Icons.help_outline),
+          ),
+          if (isDesktop)
+            const Padding(
+              padding: EdgeInsets.only(right: 12),
+              child: CircleAvatar(radius: 17, child: Text('JS')),
+            ),
+          ...?actions,
+        ],
         automaticallyImplyLeading: parentRoute == null,
         leading: parentRoute == null
             ? null
@@ -163,6 +206,11 @@ class _NavigationItems extends ConsumerWidget {
               AppRoutes.restaurantSectors,
               'Setores e ambientes',
               Icons.grid_view_outlined,
+            ),
+            _NavigationItem(
+              AppRoutes.restaurantStaff,
+              'Garçons e equipe',
+              Icons.groups_outlined,
             ),
           ],
         ),
@@ -338,6 +386,9 @@ String? _parentRouteFor(String path) {
     return AppRoutes.dashboard;
   }
   if (path == AppRoutes.restaurantSectors) {
+    return AppRoutes.dashboard;
+  }
+  if (path == AppRoutes.restaurantStaff) {
     return AppRoutes.dashboard;
   }
   if (RegExp(r'^/audit/[^/]+$').hasMatch(path)) {
