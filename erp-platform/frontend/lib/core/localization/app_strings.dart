@@ -110,6 +110,7 @@ class AppStrings {
   String get unableToSaveStaff => isPortuguese
       ? 'Não foi possível salvar o profissional.'
       : 'Unable to save the professional.';
+  String get tryAgain => isPortuguese ? 'Tentar novamente' : 'Try again';
   String get dailyMenu => isPortuguese ? 'Menu do dia' : 'Daily menu';
   String get menuAvailabilityDescription => isPortuguese
       ? 'Publique os itens disponíveis para venda e acompanhe as cotas comerciais da operação.'
