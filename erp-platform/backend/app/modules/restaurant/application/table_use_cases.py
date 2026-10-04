@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from decimal import Decimal
+from secrets import token_urlsafe
 from uuid import UUID
 
 from app.modules.restaurant.domain.entities import RestaurantTableShape, RestaurantTableStatus
@@ -236,6 +237,17 @@ class GetRestaurantTable:
         return table
 
 
+class GetRestaurantTableByQrCode:
+    def __init__(self, tables: RestaurantTableRepository) -> None:
+        self.tables = tables
+
+    async def execute(self, qr_code: str) -> RestaurantTableModel:
+        table = await self.tables.get_by_qr_code(qr_code)
+        if table is None:
+            raise RestaurantTableNotFoundError("Restaurant table not found.")
+        return table
+
+
 class UpdateRestaurantTable:
     def __init__(
         self, floors: RestaurantFloorRepository, tables: RestaurantTableRepository
@@ -289,5 +301,20 @@ class DeleteRestaurantTable:
         table.deactivate()
         table.mark_as_deleted()
         table.deleted_by = actor_id
+        table.updated_by = actor_id
+        return await self.tables.add(table)
+
+
+class GenerateRestaurantTableQr:
+    def __init__(self, tables: RestaurantTableRepository) -> None:
+        self.tables = tables
+
+    async def execute(
+        self, table_id: UUID, *, tenant_id: UUID, actor_id: UUID | None
+    ) -> RestaurantTableModel:
+        table = await GetRestaurantTable(self.tables).execute(table_id, tenant_id=tenant_id)
+        if not table.is_active:
+            raise RestaurantInvalidDataError("An inactive table cannot receive a QR code.")
+        table.qr_code = token_urlsafe(32)
         table.updated_by = actor_id
         return await self.tables.add(table)

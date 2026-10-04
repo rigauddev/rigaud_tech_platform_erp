@@ -31,6 +31,7 @@ class AppRoutes {
   static const restaurantSectors = '/restaurant/sectors';
   static const restaurantStaff = '/restaurant/staff';
   static const restaurantMenuAvailability = '/restaurant/menu-availability';
+  static const restaurantTableQrCodes = '/restaurant/table-qr-codes';
   static const restaurantSectorCreate = '/restaurant/sectors/new';
   static String restaurantSectorEdit(String sectorId) =>
       '/restaurant/sectors/$sectorId/edit';

@@ -12,3 +12,4 @@ Esta documentação congela o contrato da DOC-011. Não implementa entidades, en
 - [Mesas e mapa do salão](tables.md)
 - [Setores e ambientes](sectors.md)
 - [Garçons e equipe](staff.md)
+- [QR Codes das mesas](table-qr-codes.md)

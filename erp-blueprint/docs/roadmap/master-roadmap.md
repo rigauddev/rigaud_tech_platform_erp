@@ -82,7 +82,7 @@ Sequência:
 - Setores.
 - Garçons.
 - Menu do Dia e Disponibilidade Comercial. ✅ RESTAURANT-004 em review.
-- QR Code da Mesa.
+- QR Code da Mesa. 🔄 RESTAURANT-005 em review.
 - Cardápio Online.
 - Pedidos, notificação ao garçom e roteamento para cozinha.
 - KDS e impressão de produção.

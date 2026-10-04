@@ -700,6 +700,15 @@ MESSAGE_CATALOG: Final[dict[str, MessageDefinition]] = {
     "RESTAURANT_TABLE_LIST_RETRIEVED": MessageDefinition(
         "RESTAURANT_TABLE_LIST_RETRIEVED", 200, "Mesas consultadas com sucesso."
     ),
+    "RESTAURANT_TABLE_QR_CODE_GENERATED": MessageDefinition(
+        "RESTAURANT_TABLE_QR_CODE_GENERATED",
+        200,
+        "QR Code da mesa gerado com sucesso.",
+        audit_required=True,
+    ),
+    "RESTAURANT_TABLE_PUBLIC_ACCESS_RETRIEVED": MessageDefinition(
+        "RESTAURANT_TABLE_PUBLIC_ACCESS_RETRIEVED", 200, "Mesa identificada com sucesso."
+    ),
     "RESTAURANT_TABLE_NOT_FOUND": MessageDefinition(
         "RESTAURANT_TABLE_NOT_FOUND", 404, "Mesa não encontrada.", "warning"
     ),

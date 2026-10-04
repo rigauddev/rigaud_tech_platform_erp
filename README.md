@@ -16,18 +16,18 @@ Este repositório contém apenas a estrutura inicial de pastas e documentação 
 Fundação concluída até:
 
 ```text
-RESTAURANT-004 — Menu do Dia e Disponibilidade Comercial
+RESTAURANT-005 — QR Codes das Mesas
 ```
 
 Task atual:
 
 ```text
-RESTAURANT-004 — Menu do Dia e Disponibilidade Comercial
+RESTAURANT-005 — QR Codes das Mesas
 ```
 
-O Menu do Dia publica cotas comerciais por filial, data, período e canal, sem
-alterar o saldo de estoque. Pedidos, KDS e delivery continuam planejados para
-as tasks posteriores.
+QR Codes rotacionáveis por mesa, com auditoria e acesso público mínimo, estão
+em desenvolvimento. O Cardápio Online, pedidos, KDS e delivery continuam nas
+tasks posteriores.
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
 
@@ -82,7 +82,7 @@ make demo
 
 Contas disponíveis em `docs/demo/accounts.md`.
 
-Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. A REST-004 adiciona depósitos demo por filial, a REST-005 adiciona zonas demo, a REST-006 adiciona localizações físicas, a REST-007 adiciona documentos de recebimento demo, a REST-008 confirma recebimento físico mantendo quantidade pendente de put away e a REST-009 libera mercadoria para localização final. A API `/api/v1/demo/*` e o Dashboard Demo do Flutter existem apenas para desenvolvimento. Cenários completos de mesas, pedidos, clientes, QR Code e vendas permanecem documentados para evolução nas tasks comerciais futuras.
+Na DOC-003, o seed cria dados para empresas, filiais, usuários, categorias e produtos. A REST-004 adiciona depósitos demo por filial, a REST-005 adiciona zonas demo, a REST-006 adiciona localizações físicas, a REST-007 adiciona documentos de recebimento demo, a REST-008 confirma recebimento físico mantendo quantidade pendente de put away e a REST-009 libera mercadoria para localização final. A API `/api/v1/demo/*` e o Dashboard Demo do Flutter existem apenas para desenvolvimento. O seed de restaurante inclui mesas e QR Codes de demonstração; pedidos, clientes e vendas continuam nas tasks comerciais futuras.
 
 ## Backend
 
@@ -127,6 +127,8 @@ Mesas e mapa operacional do restaurante estão documentados em `docs/restaurant/
 Setores e ambientes do restaurante estão documentados em `docs/restaurant/sectors.md`.
 
 Garçons e equipe do restaurante estão documentados em `docs/restaurant/staff.md`.
+
+QR Codes das mesas estão documentados em `docs/restaurant/table-qr-codes.md`.
 
 Transferências internas entre depósitos estão documentadas em `docs/inventory/transfers.md`.
 

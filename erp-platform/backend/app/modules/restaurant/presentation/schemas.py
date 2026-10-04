@@ -156,3 +156,9 @@ class RestaurantTableResponse(RestaurantSchema):
     is_active: bool
     created_at: datetime
     updated_at: datetime
+
+
+class RestaurantTablePublicAccessResponse(RestaurantSchema):
+    number: str
+    name: str | None
+    is_active: bool

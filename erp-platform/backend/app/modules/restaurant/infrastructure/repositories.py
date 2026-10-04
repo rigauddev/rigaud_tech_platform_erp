@@ -272,6 +272,16 @@ class SQLAlchemyRestaurantTableRepository(RestaurantTableRepository):
         )
         return result.scalar_one_or_none()
 
+    async def get_by_qr_code(self, qr_code: str) -> RestaurantTableModel | None:
+        result = await self.session.execute(
+            select(RestaurantTableModel).where(
+                RestaurantTableModel.qr_code == qr_code,
+                RestaurantTableModel.is_active.is_(True),
+                RestaurantTableModel.deleted_at.is_(None),
+            )
+        )
+        return result.scalar_one_or_none()
+
     async def list(
         self, *, tenant_id: UUID, branch_id: UUID, floor_id: UUID | None, is_active: bool | None
     ) -> list[RestaurantTableModel]:

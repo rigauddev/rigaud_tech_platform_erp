@@ -6,9 +6,15 @@ from app.modules.restaurant.application.table_use_cases import (
     CreateRestaurantFloor,
     CreateRestaurantTable,
     FloorInput,
+    GenerateRestaurantTableQr,
+    GetRestaurantTableByQrCode,
     TableInput,
 )
-from app.modules.restaurant.domain.exceptions import RestaurantTableNumberAlreadyExistsError
+from app.modules.restaurant.domain.exceptions import (
+    RestaurantInvalidDataError,
+    RestaurantTableNotFoundError,
+    RestaurantTableNumberAlreadyExistsError,
+)
 from app.modules.restaurant.domain.repositories import (
     RestaurantFloorRepository,
     RestaurantTableRepository,
@@ -29,6 +35,57 @@ async def test_table_number_is_unique_inside_the_same_floor() -> None:
     assert created.number == "01"
     with pytest.raises(RestaurantTableNumberAlreadyExistsError):
         await CreateRestaurantTable(floors, tables).execute(table_input)
+
+
+@pytest.mark.asyncio
+async def test_table_qr_code_is_rotated_and_resolved_without_tenant_context() -> None:
+    tenant_id, branch_id = uuid4(), uuid4()
+    floors, tables = _Floors(), _Tables()
+    floor = await CreateRestaurantFloor(floors).execute(
+        FloorInput(tenant_id=tenant_id, branch_id=branch_id, code="SALAO", name="Salão")
+    )
+    table = await CreateRestaurantTable(floors, tables).execute(
+        TableInput(tenant_id=tenant_id, branch_id=branch_id, floor_id=floor.id, number="01")
+    )
+
+    first = await GenerateRestaurantTableQr(tables).execute(
+        table.id, tenant_id=tenant_id, actor_id=uuid4()
+    )
+    first_code = first.qr_code
+    second = await GenerateRestaurantTableQr(tables).execute(
+        table.id, tenant_id=tenant_id, actor_id=uuid4()
+    )
+
+    assert first_code is not None
+    assert second.qr_code is not None
+    assert first_code != second.qr_code
+    resolved = await GetRestaurantTableByQrCode(tables).execute(second.qr_code)
+    assert resolved.id == table.id
+    with pytest.raises(RestaurantTableNotFoundError):
+        await GetRestaurantTableByQrCode(tables).execute(first_code)
+
+
+@pytest.mark.asyncio
+async def test_inactive_table_cannot_receive_qr_code() -> None:
+    tenant_id, branch_id = uuid4(), uuid4()
+    floors, tables = _Floors(), _Tables()
+    floor = await CreateRestaurantFloor(floors).execute(
+        FloorInput(tenant_id=tenant_id, branch_id=branch_id, code="SALAO", name="Salão")
+    )
+    table = await CreateRestaurantTable(floors, tables).execute(
+        TableInput(
+            tenant_id=tenant_id,
+            branch_id=branch_id,
+            floor_id=floor.id,
+            number="01",
+            is_active=False,
+        )
+    )
+
+    with pytest.raises(RestaurantInvalidDataError):
+        await GenerateRestaurantTableQr(tables).execute(
+            table.id, tenant_id=tenant_id, actor_id=uuid4()
+        )
 
 
 class _Floors(RestaurantFloorRepository):
@@ -72,6 +129,16 @@ class _Tables(RestaurantTableRepository):
     async def get_by_id(self, item_id, *, tenant_id):
         item = self.items.get(item_id)
         return item if item and item.tenant_id == tenant_id and item.deleted_at is None else None
+
+    async def get_by_qr_code(self, qr_code):
+        return next(
+            (
+                item
+                for item in self.items.values()
+                if item.qr_code == qr_code and item.is_active and item.deleted_at is None
+            ),
+            None,
+        )
 
     async def list(self, **kwargs):
         return list(self.items.values())

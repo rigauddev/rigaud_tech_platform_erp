@@ -270,6 +270,11 @@ class _RestaurantNavigation extends StatelessWidget {
                   currentPath: currentPath,
                 ),
                 _SubNavigationTile(
+                  route: AppRoutes.restaurantTableQrCodes,
+                  label: strings.tableQrCodes,
+                  currentPath: currentPath,
+                ),
+                _SubNavigationTile(
                   label: strings.orders,
                   currentPath: currentPath,
                 ),

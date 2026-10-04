@@ -4,6 +4,8 @@
 
 ### Added
 
+- RESTAURANT-005: QR Codes rotacionáveis para mesas, endpoint público com contexto mínimo, auditoria, seed demo seguro, tela operacional baseada no canvas aprovado e guia na Central de Ajuda.
+
 - RESTAURANT-004: Menu do Dia e disponibilidade comercial por produto, filial, data, período e canal, com migration `0025_menu_availability`, auditoria, dados demo e tela operacional baseada no canvas aprovado.
 
 - RESTAURANT-003: equipe operacional por filial, CRUD auditado, migration `0024_restaurant_staff`, dados demo e tela de garçons alinhada à referência visual aprovada.

@@ -1,4 +1,44 @@
 tasks:
+  - id: RESTAURANT-005
+    title: QR Codes das Mesas
+    epic: MVP Restaurante
+    module: restaurant
+    status: review
+    dependencies:
+      - RESTAURANT-004
+    started_at: "2026-10-04"
+    completed_at: "2026-10-04"
+    documentation:
+      - docs/restaurant/table-qr-codes.md
+      - docs/help/restaurant/table-qr-codes.md
+      - docs/restaurant/README.md
+      - docs/architecture/product-map.md
+      - erp-blueprint/docs/academy/restaurant/006-qr-codes-das-mesas.md
+      - README.md
+      - CHANGELOG.md
+      - erp-blueprint/mkdocs.yml
+    academy:
+      - erp-blueprint/docs/academy/restaurant/006-qr-codes-das-mesas.md
+    tests:
+      - erp-platform/backend/tests/test_restaurant_tables.py
+      - flutter analyze
+      - flutter test
+      - flutter build web
+      - make demo-restaurant
+      - make check-task TASK=RESTAURANT-005
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: feature/restaurant-005-table-qr-code
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: in_progress
   - id: RESTAURANT-004
     title: Menu do Dia e Disponibilidade Comercial
     epic: MVP Restaurante

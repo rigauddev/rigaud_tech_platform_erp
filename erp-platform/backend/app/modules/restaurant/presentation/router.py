@@ -42,8 +42,10 @@ from app.modules.restaurant.application.table_use_cases import (
     DeleteRestaurantFloor,
     DeleteRestaurantTable,
     FloorInput,
+    GenerateRestaurantTableQr,
     GetRestaurantFloor,
     GetRestaurantTable,
+    GetRestaurantTableByQrCode,
     ListRestaurantFloors,
     ListRestaurantTables,
     TableInput,
@@ -88,6 +90,7 @@ from app.modules.restaurant.presentation.schemas import (
     RestaurantSectorResponse,
     RestaurantStaffRequest,
     RestaurantStaffResponse,
+    RestaurantTablePublicAccessResponse,
     RestaurantTableRequest,
     RestaurantTableResponse,
 )
@@ -827,6 +830,23 @@ async def list_tables(
     )
 
 
+@router.get("/table-access/{qr_code}", response_model=RestaurantTablePublicAccessResponse)
+async def get_table_public_access(
+    qr_code: str,
+    session: AsyncSessionDependency,
+) -> JSONResponse:
+    try:
+        item = await GetRestaurantTableByQrCode(
+            SQLAlchemyRestaurantTableRepository(session)
+        ).execute(qr_code)
+        return success_response(
+            "RESTAURANT_TABLE_PUBLIC_ACCESS_RETRIEVED",
+            data={"number": item.number, "name": item.name, "is_active": item.is_active},
+        )
+    except RestaurantError as exc:
+        return _error(exc)
+
+
 @router.get("/tables/{table_id}", response_model=RestaurantTableResponse)
 async def get_table(
     table_id: UUID, session: AsyncSessionDependency, user: CurrentUserDependency
@@ -866,6 +886,36 @@ async def create_table(
         await session.commit()
         return success_response(
             "RESTAURANT_TABLE_CREATED", data=_table_response(item).model_dump(mode="json")
+        )
+    except RestaurantError as exc:
+        await session.rollback()
+        return _error(exc)
+
+
+@router.post("/tables/{table_id}/qr-code", response_model=RestaurantTableResponse)
+async def generate_table_qr_code(
+    table_id: UUID,
+    request: Request,
+    session: AsyncSessionDependency,
+    user: CurrentUserDependency,
+) -> JSONResponse:
+    try:
+        item = await GenerateRestaurantTableQr(
+            SQLAlchemyRestaurantTableRepository(session)
+        ).execute(table_id, tenant_id=user.tenant_id, actor_id=user.id)
+        await _audit(
+            session,
+            event_name="restaurant.table.qr_code.generated",
+            action="qr_code_generated",
+            item=item,
+            entity_type="restaurant_table",
+            user=user,
+            request=request,
+        )
+        await session.commit()
+        return success_response(
+            "RESTAURANT_TABLE_QR_CODE_GENERATED",
+            data=_table_response(item).model_dump(mode="json"),
         )
     except RestaurantError as exc:
         await session.rollback()

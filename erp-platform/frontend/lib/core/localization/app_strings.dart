@@ -112,6 +112,8 @@ class AppStrings {
       : 'Unable to save the professional.';
   String get tryAgain => isPortuguese ? 'Tentar novamente' : 'Try again';
   String get dailyMenu => isPortuguese ? 'Menu do dia' : 'Daily menu';
+  String get tableQrCodes =>
+      isPortuguese ? 'QR Codes das mesas' : 'Table QR codes';
   String get menuAvailabilityDescription => isPortuguese
       ? 'Publique os itens disponíveis para venda e acompanhe as cotas comerciais da operação.'
       : 'Publish items available for sale and track commercial quotas.';
