@@ -39,6 +39,11 @@ class RouteGuard {
         location.startsWith(AppRoutes.warehouses) ||
         location.startsWith(AppRoutes.warehouseZones) ||
         location.startsWith(AppRoutes.warehouseLocations) ||
+        location.startsWith(AppRoutes.restaurantTables) ||
+        location.startsWith(AppRoutes.restaurantSectors) ||
+        location.startsWith(AppRoutes.restaurantStaff) ||
+        location.startsWith(AppRoutes.restaurantMenuAvailability) ||
+        location.startsWith(AppRoutes.restaurantTableQrCodes) ||
         location.startsWith(AppRoutes.companies) ||
         location.startsWith(AppRoutes.users) ||
         location.startsWith(AppRoutes.audit) ||

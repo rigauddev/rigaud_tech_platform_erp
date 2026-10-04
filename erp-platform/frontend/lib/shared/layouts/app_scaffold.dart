@@ -76,7 +76,7 @@ class AppScaffold extends ConsumerWidget {
               Expanded(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 580),
+                    constraints: const BoxConstraints(maxWidth: 420),
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: strings.searchSystem,
