@@ -110,6 +110,39 @@ class AppStrings {
   String get unableToSaveStaff => isPortuguese
       ? 'Não foi possível salvar o profissional.'
       : 'Unable to save the professional.';
+  String get tryAgain => isPortuguese ? 'Tentar novamente' : 'Try again';
+  String get dailyMenu => isPortuguese ? 'Menu do dia' : 'Daily menu';
+  String get tableQrCodes =>
+      isPortuguese ? 'QR Codes das mesas' : 'Table QR codes';
+  String get menuAvailabilityDescription => isPortuguese
+      ? 'Publique os itens disponíveis para venda e acompanhe as cotas comerciais da operação.'
+      : 'Publish items available for sale and track commercial quotas.';
+  String get addItem => isPortuguese ? 'Adicionar item' : 'Add item';
+  String get publishedItems =>
+      isPortuguese ? 'Itens publicados' : 'Published items';
+  String get availableItems => isPortuguese ? 'Disponíveis' : 'Available';
+  String get limitedQuota => isPortuguese ? 'Cota limitada' : 'Limited quota';
+  String get unavailableItems => isPortuguese ? 'Indisponíveis' : 'Unavailable';
+  String get commercialAvailability =>
+      isPortuguese ? 'Disponibilidade comercial' : 'Commercial availability';
+  String get servicePeriod =>
+      isPortuguese ? 'Período de serviço' : 'Service period';
+  String get channels => isPortuguese ? 'Canais' : 'Channels';
+  String get dailyQuota => isPortuguese ? 'Cota do dia' : 'Daily quota';
+  String get remaining => isPortuguese ? 'Disponível' : 'Remaining';
+  String get searchItem => isPortuguese ? 'Buscar item...' : 'Search item...';
+  String get lunch => isPortuguese ? 'Almoço' : 'Lunch';
+  String get allDay => isPortuguese ? 'Dia todo' : 'All day';
+  String get noMenuItems => isPortuguese
+      ? 'Nenhum item publicado para hoje.'
+      : 'No items published for today.';
+  String get unableToLoadMenu => isPortuguese
+      ? 'Não foi possível carregar o menu do dia.'
+      : 'Unable to load the daily menu.';
+  String get today => isPortuguese ? 'Hoje' : 'Today';
+  String get allChannels => isPortuguese ? 'Todos os canais' : 'All channels';
+  String get unlimited => isPortuguese ? 'Ilimitada' : 'Unlimited';
+  String get soldOut => isPortuguese ? 'Esgotado' : 'Sold out';
 
   String get smartManagement => isPortuguese
       ? 'Gestão inteligente para pequenas e médias empresas'

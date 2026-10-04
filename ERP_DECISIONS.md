@@ -77,6 +77,7 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - KDS e impressão compartilharão a mesma fila por estação. Estados de preparo, tempo médio configurável por item e estimativa baseada na carga da fila serão entregues na task de KDS, sem antecipar Restaurant Production.
 - Disponibilidade comercial diária continua separada de `InventoryBalance` e de Restaurant Production.
 - Receita, produção, consumo, desperdício, custos e forecast continuam restritos à EPIC-RESTAURANT-PRODUCTION.
+- Restaurant Production será opcional por empresa/filial e entitlement: a operação poderá publicar somente o Menu do Dia ou habilitar, no momento adequado, receita, modo de preparo, insumos, produção diária, consumo, desperdício e custo por prato.
 
 ## Segurança E Acesso
 

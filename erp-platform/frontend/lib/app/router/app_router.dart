@@ -27,6 +27,8 @@ import '../../features/restaurant/presentation/restaurant_tables_screen.dart';
 import '../../features/restaurant/presentation/restaurant_sectors_screen.dart';
 import '../../features/restaurant/presentation/restaurant_sector_form_screen.dart';
 import '../../features/restaurant/presentation/restaurant_staff_screen.dart';
+import '../../features/restaurant/presentation/restaurant_menu_availability_screen.dart';
+import '../../features/restaurant/presentation/restaurant_table_qr_codes_screen.dart';
 import '../../features/restaurant/data/restaurant_sector_remote_data_source.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/users/presentation/user_detail_screen.dart';
@@ -163,6 +165,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.restaurantStaff,
         builder: (context, state) => const RestaurantStaffScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.restaurantMenuAvailability,
+        builder: (context, state) => const RestaurantMenuAvailabilityScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.restaurantTableQrCodes,
+        builder: (context, state) => const RestaurantTableQrCodesScreen(),
       ),
       GoRoute(
         path: AppRoutes.restaurantSectorCreate,

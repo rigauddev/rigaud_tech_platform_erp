@@ -12,3 +12,7 @@ Esta feature contém as experiências Flutter do núcleo de Restaurante. As tela
 Setores podem ser listados, criados e editados. Fluxos de garçom, pedidos, KDS, impressão e caixa serão acrescentados somente em suas tasks próprias.
 
 A tela de Garçons e equipe apresenta indicadores, cartões e tabela operacional conectados ao endpoint de equipe da filial.
+
+Menu do Dia publica produtos existentes para a data e período de serviço da
+filial. A tela não exibe saldo físico nem baixa estoque; ela trata somente a
+disponibilidade comercial diária.

@@ -26,6 +26,13 @@ class RestaurantRemoteDataSource {
         .map((item) => RestaurantTable.fromJson(item as Map<String, dynamic>))
         .toList();
   }
+
+  Future<RestaurantTable> generateQrCode(String tableId) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/restaurant/tables/$tableId/qr-code',
+    );
+    return RestaurantTable.fromJson(apiDataObject(response.data));
+  }
 }
 
 final restaurantRemoteDataSourceProvider = Provider<RestaurantRemoteDataSource>(

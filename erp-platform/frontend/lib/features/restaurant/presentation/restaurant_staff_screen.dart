@@ -20,8 +20,20 @@ class RestaurantStaffScreen extends ConsumerWidget {
       title: 'Garçons e equipe',
       body: staff.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) =>
-            Center(child: Text(strings.unableToLoadStaff)),
+        error: (error, stackTrace) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(strings.unableToLoadStaff),
+              const SizedBox(height: AppSpacing.sm),
+              OutlinedButton.icon(
+                onPressed: () => ref.invalidate(restaurantStaffProvider),
+                icon: const Icon(Icons.refresh_outlined),
+                label: Text(strings.tryAgain),
+              ),
+            ],
+          ),
+        ),
         data: (items) {
           final serving = items
               .where((item) => item.status == 'serving')

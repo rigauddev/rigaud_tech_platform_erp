@@ -1,7 +1,9 @@
+from datetime import date
 from decimal import Decimal
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
+    JSON,
     Boolean,
     CheckConstraint,
     Enum,
@@ -18,12 +20,76 @@ from app.database import Base
 from app.database.mixins import AuditMixin, SoftDeleteMixin, TenantMixin, TimestampMixin
 from app.database.types import UUIDType
 from app.modules.restaurant.domain.entities import (
+    RestaurantMenuAvailabilityStatus,
     RestaurantSectorType,
     RestaurantStaffRole,
     RestaurantStaffStatus,
     RestaurantTableShape,
     RestaurantTableStatus,
 )
+
+
+class RestaurantMenuAvailabilityModel(
+    TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base
+):
+    __tablename__ = "restaurant_menu_availabilities"
+    __table_args__ = (
+        Index(
+            "uq_restaurant_menu_availability_scope",
+            "tenant_id",
+            "branch_id",
+            "product_id",
+            "service_date",
+            "service_period",
+            unique=True,
+            postgresql_where=text("deleted_at IS NULL"),
+        ),
+        Index(
+            "ix_restaurant_menu_availability_tenant_branch_date",
+            "tenant_id",
+            "branch_id",
+            "service_date",
+        ),
+        CheckConstraint(
+            "available_quantity IS NULL OR available_quantity >= 0",
+            name="restaurant_menu_availability_quantity_nonnegative",
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(UUIDType(as_uuid=True), primary_key=True, default=uuid4)
+    tenant_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("companies.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    branch_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("branches.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    product_id: Mapped[UUID] = mapped_column(
+        UUIDType(as_uuid=True),
+        ForeignKey("products.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    service_date: Mapped[date] = mapped_column(nullable=False, index=True)
+    service_period: Mapped[str] = mapped_column(String(40), default="all_day", nullable=False)
+    channels: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+    available_quantity: Mapped[int | None] = mapped_column(nullable=True)
+    sold_quantity: Mapped[int] = mapped_column(default=0, nullable=False)
+    status: Mapped[RestaurantMenuAvailabilityStatus] = mapped_column(
+        Enum(
+            RestaurantMenuAvailabilityStatus,
+            name="restaurant_menu_availability_status",
+            values_callable=lambda values: [item.value for item in values],
+        ),
+        default=RestaurantMenuAvailabilityStatus.PUBLISHED,
+        nullable=False,
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
 
 class RestaurantStaffModel(TenantMixin, TimestampMixin, SoftDeleteMixin, AuditMixin, Base):

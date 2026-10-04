@@ -12,3 +12,7 @@ O módulo concentra o núcleo operacional de Restaurante. Nesta fase inclui sal�
 Setores são contextos operacionais (salão, varanda, bar, VIP e balcão); não substituem o mapa visual das mesas. Pedidos, KDS, impressão, PDV e produção permanecem fora deste escopo.
 
 Perfis operacionais de equipe vinculam função, setor padrão e status de atendimento ao contexto da filial. Eles não substituem usuários, permissões ou escalas.
+
+`RESTAURANT-004` publica o Menu do Dia por produto, filial, data, período e
+canal. A cota comercial diária permanece independente de `InventoryBalance`;
+pedidos e consumo de produção continuam em tasks posteriores.

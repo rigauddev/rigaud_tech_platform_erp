@@ -40,3 +40,11 @@ class RestaurantStaffCodeAlreadyExistsError(RestaurantError):
 
 class RestaurantInvalidDataError(RestaurantError):
     pass
+
+
+class RestaurantMenuAvailabilityNotFoundError(RestaurantError):
+    pass
+
+
+class RestaurantMenuAvailabilityAlreadyExistsError(RestaurantError):
+    pass

@@ -38,3 +38,8 @@ class RestaurantStaffStatus(StrEnum):
     SERVING = "serving"
     PAUSED = "paused"
     OFFLINE = "offline"
+
+
+class RestaurantMenuAvailabilityStatus(StrEnum):
+    PUBLISHED = "published"
+    UNAVAILABLE = "unavailable"
