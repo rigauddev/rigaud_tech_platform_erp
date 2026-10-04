@@ -39,6 +39,8 @@
 
 ### Changed
 
+- Correção operacional: rotas de Restaurante exigem sessão autenticada, o campo global de pesquisa foi compactado e erros de renderização passam a apresentar uma mensagem recuperável em vez de uma tela vazia.
+
 - Correção transversal: Transferências passa a incluir a coluna de auditoria ausente pela migration `0027_transfer_audit_fix`; o endpoint deixa de retornar erro ao consultar a lista.
 - Correção transversal: shell fixa tema claro, elimina transições entre páginas e deixa áreas ainda não entregues sem rota, evitando seleção incorreta de Início, Financeiro, Relatórios e Visão geral do Restaurante.
 - Restaurant Production fica registrada como capability opcional por empresa/filial; Menu do Dia continua disponível sem receita, insumos ou custo de produção.
