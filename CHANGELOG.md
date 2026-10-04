@@ -4,6 +4,10 @@
 
 ### Added
 
+- RESTAURANT-005: QR Codes rotacionáveis para mesas, endpoint público com contexto mínimo, auditoria, seed demo seguro, tela operacional baseada no canvas aprovado e guia na Central de Ajuda.
+
+- RESTAURANT-004: Menu do Dia e disponibilidade comercial por produto, filial, data, período e canal, com migration `0025_menu_availability`, auditoria, dados demo e tela operacional baseada no canvas aprovado.
+
 - RESTAURANT-003: equipe operacional por filial, CRUD auditado, migration `0024_restaurant_staff`, dados demo e tela de garçons alinhada à referência visual aprovada.
 
 - RESTAURANT-002: setores e ambientes por filial, CRUD auditado, migration `0023_restaurant_sectors`, dados demo e tela responsiva alinhada ao padrão visual aprovado.
@@ -34,6 +38,12 @@
 - UI-002: adicionados `make restart-backend` e `make restart-frontend` para recarga direcionada dos serviços Docker.
 
 ### Changed
+
+- Correção operacional: rotas de Restaurante exigem sessão autenticada, o campo global de pesquisa foi compactado e erros de renderização passam a apresentar uma mensagem recuperável em vez de uma tela vazia.
+
+- Correção transversal: Transferências passa a incluir a coluna de auditoria ausente pela migration `0027_transfer_audit_fix`; o endpoint deixa de retornar erro ao consultar a lista.
+- Correção transversal: shell fixa tema claro, elimina transições entre páginas e deixa áreas ainda não entregues sem rota, evitando seleção incorreta de Início, Financeiro, Relatórios e Visão geral do Restaurante.
+- Restaurant Production fica registrada como capability opcional por empresa/filial; Menu do Dia continua disponível sem receita, insumos ou custo de produção.
 
 - UI-004/RESTAURANT-003: seletor de idioma do Login passa a usar bandeiras BR/US e persiste a escolha localmente; shell e Garçons e equipe aderem ao catálogo PT/EN.
 - UI-004: Login passa a consumir a variante transparente correta da marca fornecida, corrigindo a ausência da logo no card de acesso.

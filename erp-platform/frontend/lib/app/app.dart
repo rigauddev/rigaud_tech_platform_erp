@@ -23,10 +23,13 @@ class RigaudTechErpApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.light,
       locale: language.locale,
       supportedLocales: AppLanguage.values.map((item) => item.locale),
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       routerConfig: router,
+      themeAnimationDuration: Duration.zero,
+      themeAnimationCurve: Curves.linear,
       builder: (context, child) {
         return ResponsiveBreakpoints.builder(
           child: child ?? const SizedBox.shrink(),

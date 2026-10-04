@@ -76,7 +76,7 @@ class AppScaffold extends ConsumerWidget {
               Expanded(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 580),
+                    constraints: const BoxConstraints(maxWidth: 420),
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: strings.searchSystem,
@@ -192,13 +192,11 @@ class _NavigationItems extends ConsumerWidget {
             currentPath: currentPath,
           ),
           _NavigationTile(
-            route: AppRoutes.dashboard,
             label: strings.finance,
             icon: Icons.account_balance_wallet_outlined,
             currentPath: currentPath,
           ),
           _NavigationTile(
-            route: AppRoutes.dashboard,
             label: strings.reports,
             icon: Icons.bar_chart_outlined,
             currentPath: currentPath,
@@ -248,7 +246,6 @@ class _RestaurantNavigation extends StatelessWidget {
             child: Column(
               children: [
                 _SubNavigationTile(
-                  route: AppRoutes.dashboard,
                   label: strings.restaurantOverview,
                   currentPath: currentPath,
                 ),
@@ -268,7 +265,13 @@ class _RestaurantNavigation extends StatelessWidget {
                   currentPath: currentPath,
                 ),
                 _SubNavigationTile(
-                  label: strings.menu,
+                  route: AppRoutes.restaurantMenuAvailability,
+                  label: strings.dailyMenu,
+                  currentPath: currentPath,
+                ),
+                _SubNavigationTile(
+                  route: AppRoutes.restaurantTableQrCodes,
+                  label: strings.tableQrCodes,
                   currentPath: currentPath,
                 ),
                 _SubNavigationTile(
@@ -289,7 +292,7 @@ class _RestaurantNavigation extends StatelessWidget {
 
 class _NavigationTile extends StatelessWidget {
   const _NavigationTile({
-    required this.route,
+    this.route,
     required this.label,
     required this.icon,
     required this.currentPath,
@@ -297,7 +300,7 @@ class _NavigationTile extends StatelessWidget {
     this.trailing,
   });
 
-  final String route;
+  final String? route;
   final String label;
   final IconData icon;
   final String currentPath;
@@ -306,7 +309,8 @@ class _NavigationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isSelected = selected ?? currentPath == route;
+    final isSelected = selected ?? (route != null && currentPath == route);
+    final isEnabled = route != null;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
       child: Material(
@@ -314,7 +318,7 @@ class _NavigationTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: InkWell(
           borderRadius: BorderRadius.circular(8),
-          onTap: () => _go(context, route),
+          onTap: isEnabled ? () => _go(context, route!) : null,
           child: Container(
             height: 48,
             decoration: BoxDecoration(
@@ -329,16 +333,20 @@ class _NavigationTile extends StatelessWidget {
               children: [
                 Icon(
                   icon,
-                  color: isSelected ? AppColors.brand : const Color(0xFF53627A),
+                  color: isEnabled
+                      ? (isSelected ? AppColors.brand : const Color(0xFF53627A))
+                      : const Color(0xFF98A2B3),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     label,
                     style: TextStyle(
-                      color: isSelected
-                          ? AppColors.brand
-                          : const Color(0xFF3D4B63),
+                      color: isEnabled
+                          ? (isSelected
+                                ? AppColors.brand
+                                : const Color(0xFF3D4B63))
+                          : const Color(0xFF98A2B3),
                       fontWeight: isSelected
                           ? FontWeight.w700
                           : FontWeight.w600,

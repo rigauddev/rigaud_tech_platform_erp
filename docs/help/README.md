@@ -94,3 +94,7 @@ Como cadastrar produto
 ## Limite Atual
 
 DOC-009 nao implementa Help Center no frontend, busca, CMS, suporte online ou agentes de IA.
+
+## Guias disponíveis
+
+- [QR Codes das mesas](restaurant/table-qr-codes.md)

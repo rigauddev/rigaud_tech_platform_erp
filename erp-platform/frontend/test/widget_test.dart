@@ -111,6 +111,17 @@ void main() {
     expect(guard.redirect('/categories'), '/login');
   });
 
+  test('protege rotas operacionais do restaurante sem sessao', () {
+    const guard = RouteGuard(
+      enabled: true,
+      isAuthenticated: false,
+      isSuperuser: false,
+    );
+
+    expect(guard.redirect('/restaurant/staff'), '/login');
+    expect(guard.redirect('/restaurant/table-qr-codes'), '/login');
+  });
+
   test('permite rota de empresas para superuser', () {
     const guard = RouteGuard(
       enabled: true,

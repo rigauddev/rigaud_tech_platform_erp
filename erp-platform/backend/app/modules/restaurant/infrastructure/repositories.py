@@ -3,18 +3,107 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.products.infrastructure.models import ProductModel
 from app.modules.restaurant.domain.repositories import (
     RestaurantFloorRepository,
+    RestaurantMenuAvailabilityRepository,
     RestaurantSectorRepository,
     RestaurantStaffRepository,
     RestaurantTableRepository,
 )
 from app.modules.restaurant.infrastructure.models import (
     RestaurantFloorModel,
+    RestaurantMenuAvailabilityModel,
     RestaurantSectorModel,
     RestaurantStaffModel,
     RestaurantTableModel,
 )
+
+
+class SQLAlchemyRestaurantMenuAvailabilityRepository(RestaurantMenuAvailabilityRepository):
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def add(self, item: RestaurantMenuAvailabilityModel) -> RestaurantMenuAvailabilityModel:
+        self.session.add(item)
+        await self.session.flush()
+        return item
+
+    async def get_by_id(
+        self, item_id: UUID, *, tenant_id: UUID
+    ) -> RestaurantMenuAvailabilityModel | None:
+        result = await self.session.execute(
+            select(RestaurantMenuAvailabilityModel).where(
+                RestaurantMenuAvailabilityModel.id == item_id,
+                RestaurantMenuAvailabilityModel.tenant_id == tenant_id,
+                RestaurantMenuAvailabilityModel.deleted_at.is_(None),
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def list(
+        self,
+        *,
+        tenant_id: UUID,
+        branch_id: UUID,
+        service_date: object | None,
+        service_period: str | None,
+    ) -> list[RestaurantMenuAvailabilityModel]:
+        statement = select(RestaurantMenuAvailabilityModel).where(
+            RestaurantMenuAvailabilityModel.tenant_id == tenant_id,
+            RestaurantMenuAvailabilityModel.branch_id == branch_id,
+            RestaurantMenuAvailabilityModel.deleted_at.is_(None),
+        )
+        if service_date is not None:
+            statement = statement.where(
+                RestaurantMenuAvailabilityModel.service_date == service_date
+            )
+        if service_period:
+            statement = statement.where(
+                RestaurantMenuAvailabilityModel.service_period == service_period
+            )
+        result = await self.session.execute(
+            statement.order_by(
+                RestaurantMenuAvailabilityModel.service_date.desc(),
+                RestaurantMenuAvailabilityModel.service_period,
+            )
+        )
+        return list(result.scalars().all())
+
+    async def exists_in_scope(
+        self,
+        *,
+        tenant_id: UUID,
+        branch_id: UUID,
+        product_id: UUID,
+        service_date: object,
+        service_period: str,
+        exclude_id: UUID | None = None,
+    ) -> bool:
+        statement = select(RestaurantMenuAvailabilityModel.id).where(
+            RestaurantMenuAvailabilityModel.tenant_id == tenant_id,
+            RestaurantMenuAvailabilityModel.branch_id == branch_id,
+            RestaurantMenuAvailabilityModel.product_id == product_id,
+            RestaurantMenuAvailabilityModel.service_date == service_date,
+            RestaurantMenuAvailabilityModel.service_period == service_period,
+            RestaurantMenuAvailabilityModel.deleted_at.is_(None),
+        )
+        if exclude_id:
+            statement = statement.where(RestaurantMenuAvailabilityModel.id != exclude_id)
+        return (await self.session.execute(statement.limit(1))).scalar_one_or_none() is not None
+
+    async def product_exists(self, product_id: UUID, *, tenant_id: UUID) -> bool:
+        return (
+            await self.session.execute(
+                select(ProductModel.id)
+                .where(
+                    ProductModel.id == product_id,
+                    ProductModel.tenant_id == tenant_id,
+                    ProductModel.deleted_at.is_(None),
+                )
+                .limit(1)
+            )
+        ).scalar_one_or_none() is not None
 
 
 class SQLAlchemyRestaurantStaffRepository(RestaurantStaffRepository):
@@ -178,6 +267,16 @@ class SQLAlchemyRestaurantTableRepository(RestaurantTableRepository):
             select(RestaurantTableModel).where(
                 RestaurantTableModel.id == item_id,
                 RestaurantTableModel.tenant_id == tenant_id,
+                RestaurantTableModel.deleted_at.is_(None),
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def get_by_qr_code(self, qr_code: str) -> RestaurantTableModel | None:
+        result = await self.session.execute(
+            select(RestaurantTableModel).where(
+                RestaurantTableModel.qr_code == qr_code,
+                RestaurantTableModel.is_active.is_(True),
                 RestaurantTableModel.deleted_at.is_(None),
             )
         )
