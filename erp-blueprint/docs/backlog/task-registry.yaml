@@ -31,14 +31,15 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/restaurant-005-table-qr-code
-      commits: []
+      commits:
+        - e11bc00 feat(restaurant): add table QR code access
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
-    review_status: in_progress
+    commit: e11bc00 feat(restaurant): add table QR code access
+    review_status: ready
   - id: RESTAURANT-004
     title: Menu do Dia e Disponibilidade Comercial
     epic: MVP Restaurante
