@@ -14,6 +14,10 @@ descrição, foto, preço, período de serviço e disponibilidade do item.
 4. Em `Restaurante > QR Codes das mesas`, gere o código da mesa.
 5. Leia o QR Code com um celular para abrir o cardápio público.
 
+Para conferir pelo ERP antes de imprimir, use `Visualizar cardápio` na mesa
+desejada dentro de `Restaurante > QR Codes das mesas`. Essa prévia usa o token
+da mesa selecionada e abre a mesma experiência pública de consulta.
+
 Os itens exibidos são filtrados pela filial e pela data local da filial. O
 backend só apresenta disponibilidades publicadas, ativas e marcadas para o
 canal `qr`; produtos inativos, removidos ou não disponíveis para venda são

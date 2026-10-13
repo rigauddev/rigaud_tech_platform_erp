@@ -33,6 +33,10 @@ class AppRoutes {
   static const restaurantMenuAvailability = '/restaurant/menu-availability';
   static const restaurantTableQrCodes = '/restaurant/table-qr-codes';
   static const restaurantOnlineMenu = '/restaurant/online-menu';
+  static String restaurantOnlineMenuPreview(String qrCode) => Uri(
+    path: restaurantOnlineMenu,
+    queryParameters: {'qr_code': qrCode},
+  ).toString();
   static const restaurantSectorCreate = '/restaurant/sectors/new';
   static String restaurantSectorEdit(String sectorId) =>
       '/restaurant/sectors/$sectorId/edit';

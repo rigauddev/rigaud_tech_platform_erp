@@ -8,6 +8,9 @@
 4. Veja a descrição, o preço e a disponibilidade.
 5. Para fazer um pedido, fale com um integrante da equipe.
 
+Para pré-visualizar o cardápio no ERP, acesse `Restaurante > QR Codes das mesas`
+e selecione `Visualizar cardápio` na mesa desejada.
+
 O cardápio é atualizado pela equipe do restaurante. Itens esgotados podem
 continuar visíveis com a indicação `Esgotado`.
 

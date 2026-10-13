@@ -1,7 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rigaud_tech_erp/app/router/app_routes.dart';
 import 'package:rigaud_tech_erp/features/restaurant/domain/restaurant_public_menu_url.dart';
 
 void main() {
+  test('creates a menu preview route for a QR code token', () {
+    final route = AppRoutes.restaurantOnlineMenuPreview('qr/token value');
+    final uri = Uri.parse(route);
+
+    expect(uri.path, AppRoutes.restaurantOnlineMenu);
+    expect(uri.queryParameters['qr_code'], 'qr/token value');
+  });
+
   test('creates a public menu link using the browser origin on web', () {
     final uri = restaurantPublicMenuUrl(
       qrCode: 'qr-token',

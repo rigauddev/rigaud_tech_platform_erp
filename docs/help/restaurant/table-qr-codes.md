@@ -9,7 +9,8 @@ O QR Code identifica uma mesa no atendimento digital. Ele prepara o acesso do cl
 1. Entre em `Restaurante`.
 2. Abra `QR Codes das mesas`.
 3. Use `Gerar QR Codes` para criar os que estiverem pendentes ou abra o menu da mesa para renovar apenas um código.
-4. Selecione as mesas desejadas e escolha `Imprimir selecionados`.
+4. Escolha `Visualizar cardápio` para testar a página pública da mesa dentro do ERP.
+5. Selecione as mesas desejadas e escolha `Imprimir selecionados`.
 
 ## Quando renovar
 

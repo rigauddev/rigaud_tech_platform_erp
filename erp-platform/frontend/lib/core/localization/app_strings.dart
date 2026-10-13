@@ -144,6 +144,8 @@ class AppStrings {
   String get unlimited => isPortuguese ? 'Ilimitada' : 'Unlimited';
   String get soldOut => isPortuguese ? 'Esgotado' : 'Sold out';
   String get onlineMenu => isPortuguese ? 'Cardápio online' : 'Online menu';
+  String get previewOnlineMenu =>
+      isPortuguese ? 'Visualizar cardápio' : 'Preview menu';
   String get onlineMenuSubtitle => isPortuguese
       ? 'Escolha seu próximo prato favorito.'
       : 'Find your next favorite dish.';
