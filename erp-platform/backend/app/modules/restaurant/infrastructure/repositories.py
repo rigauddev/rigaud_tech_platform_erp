@@ -1,12 +1,18 @@
+from datetime import date
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.companies.domain.entities import BranchStatus
+from app.modules.companies.infrastructure.models import BranchModel, CompanyModel
+from app.modules.products.domain.entities import ProductStatus
 from app.modules.products.infrastructure.models import ProductModel
+from app.modules.restaurant.domain.entities import RestaurantMenuAvailabilityStatus
 from app.modules.restaurant.domain.repositories import (
     RestaurantFloorRepository,
     RestaurantMenuAvailabilityRepository,
+    RestaurantPublicMenuRepository,
     RestaurantSectorRepository,
     RestaurantStaffRepository,
     RestaurantTableRepository,
@@ -18,6 +24,62 @@ from app.modules.restaurant.infrastructure.models import (
     RestaurantStaffModel,
     RestaurantTableModel,
 )
+
+
+class SQLAlchemyRestaurantPublicMenuRepository(RestaurantPublicMenuRepository):
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def active_branch_context(
+        self, *, tenant_id: UUID, branch_id: UUID
+    ) -> tuple[str, str, str] | None:
+        result = await self.session.execute(
+            select(
+                BranchModel.timezone,
+                CompanyModel.currency,
+                func.coalesce(BranchModel.trade_name, CompanyModel.trade_name),
+            )
+            .join(CompanyModel, CompanyModel.id == BranchModel.tenant_id)
+            .where(
+                CompanyModel.id == tenant_id,
+                CompanyModel.is_active.is_(True),
+                CompanyModel.deleted_at.is_(None),
+                BranchModel.id == branch_id,
+                BranchModel.status == BranchStatus.ACTIVE,
+                BranchModel.deleted_at.is_(None),
+            )
+            .limit(1)
+        )
+        return result.tuples().one_or_none()
+
+    async def list_published_items(
+        self, *, tenant_id: UUID, branch_id: UUID, service_date: date
+    ) -> list[tuple[RestaurantMenuAvailabilityModel, ProductModel]]:
+        result = await self.session.execute(
+            select(RestaurantMenuAvailabilityModel, ProductModel)
+            .join(
+                ProductModel,
+                and_(
+                    ProductModel.id == RestaurantMenuAvailabilityModel.product_id,
+                    ProductModel.tenant_id == RestaurantMenuAvailabilityModel.tenant_id,
+                ),
+            )
+            .where(
+                RestaurantMenuAvailabilityModel.tenant_id == tenant_id,
+                RestaurantMenuAvailabilityModel.branch_id == branch_id,
+                RestaurantMenuAvailabilityModel.service_date == service_date,
+                RestaurantMenuAvailabilityModel.status
+                == RestaurantMenuAvailabilityStatus.PUBLISHED,
+                RestaurantMenuAvailabilityModel.is_active.is_(True),
+                RestaurantMenuAvailabilityModel.deleted_at.is_(None),
+                ProductModel.status == ProductStatus.ACTIVE,
+                ProductModel.is_active.is_(True),
+                ProductModel.is_available_for_sale.is_(True),
+                ProductModel.deleted_at.is_(None),
+            )
+            .order_by(ProductModel.name, RestaurantMenuAvailabilityModel.service_period)
+        )
+        return list(result.tuples().all())
 
 
 class SQLAlchemyRestaurantMenuAvailabilityRepository(RestaurantMenuAvailabilityRepository):

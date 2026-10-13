@@ -4,6 +4,8 @@
 
 ### Added
 
+- RESTAURANT-006: cardápio público responsivo por QR Code, publicado por filial/data/período/canal, com fuso local, filtros, fotos e disponibilidade, sem fluxo de pedidos ou checkout.
+
 - RESTAURANT-005: QR Codes rotacionáveis para mesas, endpoint público com contexto mínimo, auditoria, seed demo seguro, tela operacional baseada no canvas aprovado e guia na Central de Ajuda.
 
 - RESTAURANT-004: Menu do Dia e disponibilidade comercial por produto, filial, data, período e canal, com migration `0025_menu_availability`, auditoria, dados demo e tela operacional baseada no canvas aprovado.

@@ -162,3 +162,21 @@ class RestaurantTablePublicAccessResponse(RestaurantSchema):
     number: str
     name: str | None
     is_active: bool
+
+
+class RestaurantPublicMenuItemResponse(RestaurantSchema):
+    name: str
+    description: str | None
+    sale_price: Decimal
+    image_url: str | None
+    service_period: str
+    is_available: bool
+
+
+class RestaurantPublicMenuResponse(RestaurantSchema):
+    restaurant_name: str
+    currency: str
+    table_number: str
+    table_name: str | None
+    service_date: date
+    items: list[RestaurantPublicMenuItemResponse]

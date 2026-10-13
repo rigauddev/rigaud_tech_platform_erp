@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+from datetime import date
 from uuid import UUID
 
+from app.modules.products.infrastructure.models import ProductModel
 from app.modules.restaurant.infrastructure.models import (
     RestaurantFloorModel,
     RestaurantMenuAvailabilityModel,
@@ -8,6 +10,18 @@ from app.modules.restaurant.infrastructure.models import (
     RestaurantStaffModel,
     RestaurantTableModel,
 )
+
+
+class RestaurantPublicMenuRepository(ABC):
+    @abstractmethod
+    async def active_branch_context(
+        self, *, tenant_id: UUID, branch_id: UUID
+    ) -> tuple[str, str, str] | None: ...
+
+    @abstractmethod
+    async def list_published_items(
+        self, *, tenant_id: UUID, branch_id: UUID, service_date: date
+    ) -> list[tuple[RestaurantMenuAvailabilityModel, ProductModel]]: ...
 
 
 class RestaurantMenuAvailabilityRepository(ABC):

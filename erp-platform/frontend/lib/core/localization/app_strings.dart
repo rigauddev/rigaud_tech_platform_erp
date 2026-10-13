@@ -143,6 +143,31 @@ class AppStrings {
   String get allChannels => isPortuguese ? 'Todos os canais' : 'All channels';
   String get unlimited => isPortuguese ? 'Ilimitada' : 'Unlimited';
   String get soldOut => isPortuguese ? 'Esgotado' : 'Sold out';
+  String get onlineMenu => isPortuguese ? 'Cardápio online' : 'Online menu';
+  String get onlineMenuSubtitle => isPortuguese
+      ? 'Escolha seu próximo prato favorito.'
+      : 'Find your next favorite dish.';
+  String get table => isPortuguese ? 'Mesa' : 'Table';
+  String get menuSearchHint =>
+      isPortuguese ? 'Buscar no cardápio...' : 'Search the menu...';
+  String get allPeriods => isPortuguese ? 'Todos' : 'All';
+  String get dinner => isPortuguese ? 'Jantar' : 'Dinner';
+  String get noItemDescription =>
+      isPortuguese ? 'Sem descrição disponível.' : 'No description available.';
+  String get onlineMenuEmpty => isPortuguese
+      ? 'Ainda não há itens publicados para esta mesa.'
+      : 'There are no items published for this table yet.';
+  String get onlineMenuNotice => isPortuguese
+      ? 'Este cardápio é informativo. Para fazer seu pedido, fale com nossa equipe.'
+      : 'This menu is for browsing. Please ask our team to place an order.';
+  String get invalidMenuLink => isPortuguese
+      ? 'Este link de cardápio não é válido. Peça à equipe para conferir o QR Code.'
+      : 'This menu link is invalid. Please ask our team to check the QR code.';
+  String get configurePublicAppUrl => isPortuguese
+      ? 'Configure PUBLIC_APP_URL para exibir este QR Code em outros dispositivos.'
+      : 'Set PUBLIC_APP_URL to make this QR code available to other devices.';
+  String tableName(String number) =>
+      isPortuguese ? 'Mesa $number' : 'Table $number';
 
   String get smartManagement => isPortuguese
       ? 'Gestão inteligente para pequenas e médias empresas'

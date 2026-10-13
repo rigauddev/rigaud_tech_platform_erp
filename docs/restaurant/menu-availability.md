@@ -23,9 +23,10 @@ remoção é lógica.
 1. Gerente, cozinha ou usuario autorizado abre o Menu do Dia.
 2. Seleciona produto/prato, status e quantidade vendavel opcional.
 3. Publica o cardápio para um ou mais canais de venda.
-4. Cliente acessa o QR Code da mesa e ve somente itens publicados.
-5. Ao enviar o pedido, o sistema associa mesa, cliente e garcom responsavel.
-6. O pedido chega ao garcom responsavel e e roteado para a impressora ou estacao de cozinha configurada.
+4. Cliente acessa o QR Code da mesa e vê somente itens publicados para o canal
+   `qr`.
+5. Para fazer o pedido, o cliente fala com a equipe; registro de pedido,
+   garçom responsável e roteamento pertencem à RESTAURANT-007.
 
 Um item fica indisponível quando estiver inativo, fora do período publicado,
 com a cota comercial esgotada ou bloqueado por regra futura de
