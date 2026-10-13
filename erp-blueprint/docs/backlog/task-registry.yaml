@@ -35,13 +35,15 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: feature/restaurant-006-online-menu-implementation
-      commits: []
+      commits:
+        - 6dfba6c
+        - b79b041
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
+    commit: b79b041
     review_status: ready
   - id: RESTAURANT-005
     title: QR Codes das Mesas
