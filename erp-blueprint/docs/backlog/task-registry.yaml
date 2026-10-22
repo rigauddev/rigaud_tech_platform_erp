@@ -235,13 +235,14 @@ tasks:
     git:
       repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
       branch: docs/doc-012-on-premise-installation-licensing
-      commits: []
+      commits:
+        - b86fe83
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: null
+    commit: b86fe83
     review_status: ready
   - id: DOC-011
     title: Restaurant Operations Core
