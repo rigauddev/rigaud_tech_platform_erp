@@ -4,6 +4,8 @@
 
 ### Added
 
+- DOC-013: guia tecnico e operacional para compilar e testar o cliente Flutter desktop no Windows; registra que ainda nao existe instalador de usuario final.
+
 - RESTAURANT-005: QR Codes rotacionáveis para mesas, endpoint público com contexto mínimo, auditoria, seed demo seguro, tela operacional baseada no canvas aprovado e guia na Central de Ajuda.
 
 - RESTAURANT-004: Menu do Dia e disponibilidade comercial por produto, filial, data, período e canal, com migration `0025_menu_availability`, auditoria, dados demo e tela operacional baseada no canvas aprovado.

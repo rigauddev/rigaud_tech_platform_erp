@@ -1,4 +1,44 @@
 tasks:
+  - id: DOC-013
+    title: Windows Desktop Client Setup and Installation Testing
+    epic: Cross-Platform Client
+    module: frontend
+    status: review
+    dependencies:
+      - DOC-009
+    started_at: "2026-10-13"
+    completed_at: "2026-10-13"
+    documentation:
+      - docs/frontend/windows-desktop-installation.md
+      - docs/frontend/platforms.md
+      - docs/help/windows-desktop-installation.md
+      - docs/help/README.md
+      - erp-blueprint/docs/help/README.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/docs/academy/flutter/002-windows-desktop-installation.md
+      - erp-blueprint/docs/academy/README.md
+      - erp-blueprint/mkdocs.yml
+      - CHANGELOG.md
+    academy:
+      - erp-blueprint/docs/academy/flutter/002-windows-desktop-installation.md
+    tests:
+      - uvx --from mkdocs mkdocs build -f erp-blueprint/mkdocs.yml
+      - python3.13 scripts/check_task_compliance.py --task DOC-013
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: docs/doc-013-windows-desktop-installation
+      commits: []
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: null
+    review_status: ready
+
   - id: RESTAURANT-005
     title: QR Codes das Mesas
     epic: MVP Restaurante

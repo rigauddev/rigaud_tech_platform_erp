@@ -62,6 +62,11 @@ Tasks transversais de suporte:
 - DOC-005 — Inventory Engine Domain.
 - DOC-008 — Deployment & Distribution Architecture.
 - DOC-009 — Product Documentation, Help Center & Knowledge Architecture.
+- DOC-013 — Windows Desktop Client Setup and Installation Testing.
+
+DOC-013 documenta o build local do cliente Windows e deixa explicito que ainda
+nao existe instalador distribuivel. Ela nao altera a proxima task DEV-011 nem
+implementa empacotamento ou servidor Windows On-Premise.
 
 Estratégia Engine-first:
 

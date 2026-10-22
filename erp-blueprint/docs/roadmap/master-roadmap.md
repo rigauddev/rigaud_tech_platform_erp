@@ -39,6 +39,9 @@ Suporte transversal:
 - Inventory Engine Domain antes da implementação REST-003.
 - Deployment & Distribution Architecture antes de ampliar distribuicao Cloud/On-Premise/Hybrid.
 - Product Documentation, Help Center & Knowledge Architecture antes de ampliar funcionalidades operacionais.
+- Windows Desktop Client Setup and Installation Testing (DOC-013) documenta
+  somente o build local de QA; nao cria um instalador distribuivel nem altera a
+  proxima task comercial DEV-011.
 
 Engines planejadas:
 

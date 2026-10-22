@@ -15,6 +15,7 @@ nav:
       - Overview: academy/README.md
       - Product Documentation Help Center: academy/documentation/001-product-documentation-help-center.md
       - Flutter Multiplataforma: academy/flutter/001-flutter-multiplataforma.md
+      - Cliente Windows: academy/flutter/002-windows-desktop-installation.md
       - Login Experience: academy/ui/001-login-experience.md
       - Navegação Por Contexto: academy/ui/002-application-navigation.md
       - Database Core: academy/backend/001-database-core.md
