@@ -10,6 +10,7 @@ tasks:
     completed_at: "2026-10-13"
     documentation:
       - docs/restaurant/online-menu.md
+      - docs/restaurant/order-flow.md
       - docs/help/restaurant/online-menu.md
       - docs/restaurant/README.md
       - docs/restaurant/table-qr-codes.md
@@ -38,13 +39,14 @@ tasks:
       commits:
         - 6dfba6c
         - b79b041
+        - 6ace758
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
       merge_commit_main: null
       tag: null
-    commit: b79b041
-    review_status: ready
+    commit: 6ace758
+    review_status: in_progress
   - id: RESTAURANT-005
     title: QR Codes das Mesas
     epic: MVP Restaurante
