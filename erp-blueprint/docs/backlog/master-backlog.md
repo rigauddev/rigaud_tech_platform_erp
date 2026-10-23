@@ -67,6 +67,10 @@ Tasks transversais de suporte:
 DOC-013 documenta o build local do cliente Windows e deixa explicito que ainda
 nao existe instalador distribuivel. Ela nao altera a proxima task DEV-011 nem
 implementa empacotamento ou servidor Windows On-Premise.
+- DOC-012 — On-Premise Installation Wizard & Licensing Architecture.
+
+DOC-012 e uma task documental transversal adicionada por solicitacao do produto.
+Ela nao altera a proxima task oficial DEV-011 nem reordena a sequencia comercial.
 
 Estratégia Engine-first:
 

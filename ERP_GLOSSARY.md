@@ -42,6 +42,16 @@ Glossário oficial do domínio Rigaud Tech Platform ERP.
 
 `Sync Gateway`: componente futuro responsavel por sincronizar eventos e dados selecionados entre servidor local e cloud.
 
+`Installation Wizard`: assistente futuro que valida pre-requisitos e configura servicos de deployment, modulos licenciados e seguranca de uma instalacao.
+
+`Deployment Installation`: instancia identificavel de um deployment; nao e uma empresa/tenant e nao substitui `Company`.
+
+`License Grant`: concessao de uso assinada, com validade e entitlements associados a uma instalacao.
+
+`Offline Grace Period`: periodo limitado de operacao quando o deployment nao consegue validar ou renovar a licenca online.
+
+`Remote Revocation`: comando autenticado e assinado que suspende o acesso de uma instalacao quando ela recebe e valida o comando.
+
 ## Auth
 
 `JWT`: token assinado usado para autenticação curta.

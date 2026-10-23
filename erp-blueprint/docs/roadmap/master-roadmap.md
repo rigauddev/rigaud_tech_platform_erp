@@ -42,6 +42,9 @@ Suporte transversal:
 - Windows Desktop Client Setup and Installation Testing (DOC-013) documenta
   somente o build local de QA; nao cria um instalador distribuivel nem altera a
   proxima task comercial DEV-011.
+- On-Premise Installation Wizard & Licensing Architecture (DOC-012) prepara uma
+  especificacao futura sem alterar a ordem comercial vigente nem a proxima task
+  oficial DEV-011.
 
 Engines planejadas:
 

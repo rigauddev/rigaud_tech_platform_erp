@@ -38,6 +38,18 @@ Decisões de produto, domínio e arquitetura que não devem ser rediscutidas sem
 - Partner/Reseller nao e tenant.
 - Inadimplencia ou suspensao nunca apaga dados automaticamente.
 - Suspensao bloqueia acesso conforme politica comercial, preservando dados.
+- Wizard On-Premise separa selecao de servicos de deployment da ativacao de
+  modulos comerciais; modulos nao sao instalacoes ou codebases independentes.
+- Se a indisponibilidade do servico de licencas impedir validacao, a instalacao
+  recebe carencia offline maxima de 30 dias desde a ultima validacao. Depois,
+  bloqueia novas escritas, mantendo leitura/exportacao autorizadas.
+- Revogacao remota assinada bloqueia todo acesso ao ERP, inclusive leitura e
+  exportacao, depois de recebida e validada pela instalacao. Nao apaga nem
+  modifica banco ou backups.
+- Uma instalacao desconectada nao pode receber comando remoto; nao prometer
+  revogacao instantanea enquanto offline.
+- Nenhuma protecao de licenca torna software executado em hardware controlado
+  pelo cliente impossivel de copiar ou modificar; nao fazer essa promessa.
 
 ## Produtos E Estoque
 

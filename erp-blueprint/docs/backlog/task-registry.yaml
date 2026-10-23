@@ -243,6 +243,48 @@ tasks:
       tag: null
     commit: 894811f
     review_status: ready
+  - id: DOC-012
+    title: On-Premise Installation Wizard and Licensing Architecture
+    epic: Deployment and Distribution
+    module: deployment
+    status: review
+    dependencies:
+      - DOC-008
+      - DOC-009
+    started_at: "2026-10-13"
+    completed_at: "2026-10-13"
+    documentation:
+      - docs/architecture/deployment/on-premise-installation-and-licensing.md
+      - docs/architecture/deployment/on-premise.md
+      - docs/architecture/deployment/README.md
+      - docs/architecture/product-map.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/adr/0010-on-premise-installation-and-licensing.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/docs/academy/architecture/002-on-premise-installation-and-licensing.md
+      - erp-blueprint/mkdocs.yml
+      - CHANGELOG.md
+    academy:
+      - erp-blueprint/docs/academy/architecture/002-on-premise-installation-and-licensing.md
+    tests:
+      - uvx --from mkdocs mkdocs build -f erp-blueprint/mkdocs.yml
+      - python3.13 scripts/check_task_compliance.py --task DOC-012
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: docs/doc-012-on-premise-installation-licensing
+      commits:
+        - b86fe83
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: b86fe83
+    review_status: ready
   - id: DOC-011
     title: Restaurant Operations Core
     epic: MVP Restaurante
