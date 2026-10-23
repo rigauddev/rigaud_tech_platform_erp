@@ -38,6 +38,10 @@ Windows:
 flutter run -d windows
 ```
 
+O passo a passo de pre-requisitos, API local e build de teste Windows esta em
+[Testando o Cliente Desktop no Windows](./windows-desktop-installation.md).
+Ainda nao ha um instalador Windows para usuarios finais.
+
 Linux:
 
 ```bash

@@ -31,6 +31,32 @@ tasks:
       - flutter test
       - flutter build web
       - make check-task TASK=RESTAURANT-006
+  - id: DOC-013
+    title: Windows Desktop Client Setup and Installation Testing
+    epic: Cross-Platform Client
+    module: frontend
+    status: review
+    dependencies:
+      - DOC-009
+    started_at: "2026-10-13"
+    completed_at: "2026-10-13"
+    documentation:
+      - docs/frontend/windows-desktop-installation.md
+      - docs/frontend/platforms.md
+      - docs/help/windows-desktop-installation.md
+      - docs/help/README.md
+      - erp-blueprint/docs/help/README.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/docs/academy/flutter/002-windows-desktop-installation.md
+      - erp-blueprint/docs/academy/README.md
+      - erp-blueprint/mkdocs.yml
+      - CHANGELOG.md
+    academy:
+      - erp-blueprint/docs/academy/flutter/002-windows-desktop-installation.md
+    tests:
+      - uvx --from mkdocs mkdocs build -f erp-blueprint/mkdocs.yml
+      - python3.13 scripts/check_task_compliance.py --task DOC-013
       - git diff --check
     migration: null
     git:
@@ -40,6 +66,9 @@ tasks:
         - 6dfba6c
         - b79b041
         - 6ace758
+      branch: docs/doc-013-windows-desktop-installation
+      commits:
+        - c360a9c
       pull_request_develop: null
       merge_commit_develop: null
       pull_request_main: null
@@ -47,6 +76,9 @@ tasks:
       tag: null
     commit: 6ace758
     review_status: in_progress
+    commit: c360a9c
+    review_status: ready
+
   - id: RESTAURANT-005
     title: QR Codes das Mesas
     epic: MVP Restaurante
@@ -249,6 +281,48 @@ tasks:
       merge_commit_main: null
       tag: null
     commit: 894811f
+    review_status: ready
+  - id: DOC-012
+    title: On-Premise Installation Wizard and Licensing Architecture
+    epic: Deployment and Distribution
+    module: deployment
+    status: review
+    dependencies:
+      - DOC-008
+      - DOC-009
+    started_at: "2026-10-13"
+    completed_at: "2026-10-13"
+    documentation:
+      - docs/architecture/deployment/on-premise-installation-and-licensing.md
+      - docs/architecture/deployment/on-premise.md
+      - docs/architecture/deployment/README.md
+      - docs/architecture/product-map.md
+      - ERP_DECISIONS.md
+      - ERP_GLOSSARY.md
+      - erp-blueprint/docs/adr/0010-on-premise-installation-and-licensing.md
+      - erp-blueprint/docs/backlog/master-backlog.md
+      - erp-blueprint/docs/roadmap/master-roadmap.md
+      - erp-blueprint/docs/academy/architecture/002-on-premise-installation-and-licensing.md
+      - erp-blueprint/mkdocs.yml
+      - CHANGELOG.md
+    academy:
+      - erp-blueprint/docs/academy/architecture/002-on-premise-installation-and-licensing.md
+    tests:
+      - uvx --from mkdocs mkdocs build -f erp-blueprint/mkdocs.yml
+      - python3.13 scripts/check_task_compliance.py --task DOC-012
+      - git diff --check
+    migration: null
+    git:
+      repository: https://github.com/rigauddev/rigaud_tech_platform_erp.git
+      branch: docs/doc-012-on-premise-installation-licensing
+      commits:
+        - b86fe83
+      pull_request_develop: null
+      merge_commit_develop: null
+      pull_request_main: null
+      merge_commit_main: null
+      tag: null
+    commit: b86fe83
     review_status: ready
   - id: DOC-011
     title: Restaurant Operations Core

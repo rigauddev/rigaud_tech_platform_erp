@@ -80,9 +80,11 @@ RIGAUD TECH PLATFORM ERP
 │
 └── Administração
     ├── Assinatura [Planejado]
-    ├── Módulos [Planejado]
+    ├── Módulos e entitlements [Planejado]
     ├── Integrações [Futuro]
-    └── Deployment [Planejado]
+    ├── Deployment [Planejado]
+    ├── Wizard de instalação On-Premise [Planejado]
+    └── Licenciamento e revogação [Planejado]
 ```
 
 ## Direcoes Congeladas
