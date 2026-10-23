@@ -39,6 +39,9 @@ Suporte transversal:
 - Inventory Engine Domain antes da implementação REST-003.
 - Deployment & Distribution Architecture antes de ampliar distribuicao Cloud/On-Premise/Hybrid.
 - Product Documentation, Help Center & Knowledge Architecture antes de ampliar funcionalidades operacionais.
+- On-Premise Installation Wizard & Licensing Architecture (DOC-012) prepara uma
+  especificacao futura sem alterar a ordem comercial vigente nem a proxima task
+  oficial DEV-011.
 
 Engines planejadas:
 

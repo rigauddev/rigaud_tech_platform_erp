@@ -62,6 +62,10 @@ Tasks transversais de suporte:
 - DOC-005 — Inventory Engine Domain.
 - DOC-008 — Deployment & Distribution Architecture.
 - DOC-009 — Product Documentation, Help Center & Knowledge Architecture.
+- DOC-012 — On-Premise Installation Wizard & Licensing Architecture.
+
+DOC-012 e uma task documental transversal adicionada por solicitacao do produto.
+Ela nao altera a proxima task oficial DEV-011 nem reordena a sequencia comercial.
 
 Estratégia Engine-first:
 

@@ -4,6 +4,8 @@
 
 ### Added
 
+- DOC-012: especificacao On-Premise para wizard de instalacao, separacao entre servicos e modulos licenciados, validade e carencia offline de licenca, revogacao remota assinada, preservacao de dados e limites de protecao contra copia.
+
 - RESTAURANT-005: QR Codes rotacionáveis para mesas, endpoint público com contexto mínimo, auditoria, seed demo seguro, tela operacional baseada no canvas aprovado e guia na Central de Ajuda.
 
 - RESTAURANT-004: Menu do Dia e disponibilidade comercial por produto, filial, data, período e canal, com migration `0025_menu_availability`, auditoria, dados demo e tela operacional baseada no canvas aprovado.

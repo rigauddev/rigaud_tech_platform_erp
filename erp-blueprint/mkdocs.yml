@@ -31,6 +31,7 @@ nav:
       - Put Away: academy/inventory/005-putaway.md
       - Inventory Transactions: academy/inventory/006-inventory-transactions.md
       - Deployment Distribution Architecture: academy/architecture/001-deployment-distribution-architecture.md
+      - On-Premise Installation and Licensing: academy/architecture/002-on-premise-installation-and-licensing.md
       - Warehouse Management: academy/warehouse/001-warehouse-management.md
       - Warehouse Zones: academy/warehouse/002-warehouse-zones.md
       - Warehouse Locations: academy/warehouse/003-warehouse-locations.md
@@ -61,6 +62,7 @@ nav:
       - ADR 0007 Engine First: adr/0007-engine-first-development-strategy.md
       - ADR 0008 Deployment Distribution: adr/0008-deployment-distribution-architecture.md
       - ADR 0009 Restaurant Production: adr/0009-restaurant-production-separated-from-inventory.md
+      - ADR 0010 On-Premise Installation and Licensing: adr/0010-on-premise-installation-and-licensing.md
   - Modules: modules/README.md
   - Help Center:
       - Overview: help/README.md

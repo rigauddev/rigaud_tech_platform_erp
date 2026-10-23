@@ -34,9 +34,17 @@ Quando a internet estiver indisponivel, mas a rede local e o servidor local esti
 
 ## Responsabilidades Futuras
 
+- wizard para selecionar servicos de deployment e modulos comerciais licenciados;
+- ativacao de licenca assinada, prazo, carencia offline de 30 dias e revogacao remota;
 - backup local;
 - restauracao;
 - atualizacao assistida;
 - monitoramento;
 - sincronizacao com cloud quando habilitada;
 - politica de licenca e entitlements offline.
+
+O comportamento aprovado e os limites de seguranca estao em
+[On-Premise Installation Wizard and Licensing](./on-premise-installation-and-licensing.md)
+e [ADR 0010](../../../erp-blueprint/docs/adr/0010-on-premise-installation-and-licensing.md).
+Esses itens continuam planejados; esta documentacao nao afirma que o wizard ou o
+licenciamento ja existam.

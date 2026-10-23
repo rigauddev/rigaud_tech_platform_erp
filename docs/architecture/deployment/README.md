@@ -48,6 +48,16 @@ flowchart TD
     SyncGateway --> RigaudCloud[Rigaud Cloud]
 ```
 
+## Instalacao On-Premise E Licenciamento
+
+O wizard futuro separara servicos de deployment dos modulos ativados por
+entitlement. A especificacao de instalacao, licencas, carencia offline,
+revogacao remota e limites de seguranca esta em
+[On-Premise Installation Wizard and Licensing](./on-premise-installation-and-licensing.md)
+e [ADR 0010](../../../erp-blueprint/docs/adr/0010-on-premise-installation-and-licensing.md).
+
+O instalador e o runtime de licenciamento ainda nao estao implementados.
+
 ## Referencias Consultadas
 
 - Microsoft Azure Architecture Center - Tenancy models for a multitenant solution: https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/tenancy-models
