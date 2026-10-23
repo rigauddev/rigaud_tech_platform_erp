@@ -1,14 +1,18 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../app/config/app_config.dart';
+import '../../../app/router/app_routes.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../shared/components/app_empty_state.dart';
 import '../../../shared/layouts/app_scaffold.dart';
 import '../data/restaurant_remote_data_source.dart';
+import '../domain/restaurant_public_menu_url.dart';
 import '../domain/restaurant_table.dart';
 import 'restaurant_tables_controller.dart';
 
@@ -114,8 +118,11 @@ class _RestaurantTableQrCodesScreenState
                   final access = _AccessByTable(
                     items: filtered,
                     selectedIds: _selectedIds,
+                    publicUrlSetupMessage: strings.configurePublicAppUrl,
+                    previewMenuLabel: strings.previewOnlineMenu,
                     onToggle: _toggle,
                     onGenerate: _generate,
+                    onPreviewMenu: _previewMenu,
                   );
                   final print = _PrintSecurity(
                     showCompanyName: _showCompanyName,
@@ -152,6 +159,8 @@ class _RestaurantTableQrCodesScreenState
                 onToggle: _toggle,
                 onGenerate: _generate,
                 onPrint: _printTable,
+                onPreviewMenu: _previewMenu,
+                previewMenuLabel: strings.previewOnlineMenu,
               ),
             ],
           );
@@ -205,6 +214,14 @@ class _RestaurantTableQrCodesScreenState
         ),
       ),
     );
+  }
+
+  void _previewMenu(RestaurantTable table) {
+    final qrCode = table.qrCode;
+    if (qrCode == null || !table.isActive) {
+      return;
+    }
+    context.go(AppRoutes.restaurantOnlineMenuPreview(qrCode));
   }
 }
 
@@ -285,13 +302,19 @@ class _AccessByTable extends StatelessWidget {
   const _AccessByTable({
     required this.items,
     required this.selectedIds,
+    required this.publicUrlSetupMessage,
+    required this.previewMenuLabel,
     required this.onToggle,
     required this.onGenerate,
+    required this.onPreviewMenu,
   });
   final List<RestaurantTable> items;
   final Set<String> selectedIds;
+  final String publicUrlSetupMessage;
+  final String previewMenuLabel;
   final void Function(String, bool) onToggle;
   final Future<void> Function(RestaurantTable) onGenerate;
+  final ValueChanged<RestaurantTable> onPreviewMenu;
   @override
   Widget build(BuildContext context) => Card(
     child: Padding(
@@ -313,8 +336,11 @@ class _AccessByTable extends StatelessWidget {
                   (table) => _QrCard(
                     table: table,
                     selected: selectedIds.contains(table.id),
+                    publicUrlSetupMessage: publicUrlSetupMessage,
+                    previewMenuLabel: previewMenuLabel,
                     onToggle: onToggle,
                     onGenerate: onGenerate,
+                    onPreviewMenu: onPreviewMenu,
                   ),
                 )
                 .toList(),
@@ -329,16 +355,23 @@ class _QrCard extends StatelessWidget {
   const _QrCard({
     required this.table,
     required this.selected,
+    required this.publicUrlSetupMessage,
+    required this.previewMenuLabel,
     required this.onToggle,
     required this.onGenerate,
+    required this.onPreviewMenu,
   });
   final RestaurantTable table;
   final bool selected;
+  final String publicUrlSetupMessage;
+  final String previewMenuLabel;
   final void Function(String, bool) onToggle;
   final Future<void> Function(RestaurantTable) onGenerate;
+  final ValueChanged<RestaurantTable> onPreviewMenu;
   @override
   Widget build(BuildContext context) {
     final token = table.qrCode;
+    final qrData = token == null ? null : _qrData(token);
     return SizedBox(
       width: 170,
       child: DecoratedBox(
@@ -381,14 +414,37 @@ class _QrCard extends StatelessWidget {
                         size: 76,
                         color: Color(0xFF98A2B3),
                       )
+                    : qrData == null
+                    ? Padding(
+                        padding: const EdgeInsets.all(AppSpacing.xs),
+                        child: Center(
+                          child: Text(
+                            publicUrlSetupMessage,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 10),
+                          ),
+                        ),
+                      )
                     : QrImageView(
-                        data: _qrData(token),
+                        data: qrData,
                         size: 96,
                         padding: EdgeInsets.zero,
                       ),
               ),
               const SizedBox(height: AppSpacing.xs),
               _StatusChip(active: token != null && table.isActive),
+              const SizedBox(height: AppSpacing.xs),
+              TextButton.icon(
+                onPressed: token != null && table.isActive
+                    ? () => onPreviewMenu(table)
+                    : null,
+                icon: const Icon(Icons.restaurant_menu_outlined, size: 16),
+                label: Text(
+                  previewMenuLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),
@@ -483,6 +539,8 @@ class _QrControlTable extends StatelessWidget {
     required this.onToggle,
     required this.onGenerate,
     required this.onPrint,
+    required this.onPreviewMenu,
+    required this.previewMenuLabel,
   });
   final List<RestaurantTable> items;
   final Map<String, String> floorNames;
@@ -492,6 +550,8 @@ class _QrControlTable extends StatelessWidget {
   final void Function(String, bool) onToggle;
   final Future<void> Function(RestaurantTable) onGenerate;
   final ValueChanged<RestaurantTable> onPrint;
+  final ValueChanged<RestaurantTable> onPreviewMenu;
+  final String previewMenuLabel;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -557,10 +617,19 @@ class _QrControlTable extends StatelessWidget {
                         children: [
                           IconButton(
                             tooltip: 'Visualizar QR Code',
-                            onPressed: table.qrCode == null
+                            onPressed:
+                                table.qrCode == null ||
+                                    _qrData(table.qrCode!) == null
                                 ? null
                                 : () => _showQr(context, table),
                             icon: const Icon(Icons.visibility_outlined),
+                          ),
+                          IconButton(
+                            tooltip: previewMenuLabel,
+                            onPressed: table.qrCode == null || !table.isActive
+                                ? null
+                                : () => onPreviewMenu(table),
+                            icon: const Icon(Icons.restaurant_menu_outlined),
                           ),
                           IconButton(
                             tooltip: 'Renovar QR Code',
@@ -569,7 +638,9 @@ class _QrControlTable extends StatelessWidget {
                           ),
                           IconButton(
                             tooltip: 'Imprimir QR Code',
-                            onPressed: table.qrCode == null
+                            onPressed:
+                                table.qrCode == null ||
+                                    _qrData(table.qrCode!) == null
                                 ? null
                                 : () => onPrint(table),
                             icon: const Icon(Icons.print_outlined),
@@ -587,19 +658,25 @@ class _QrControlTable extends StatelessWidget {
     );
   }
 
-  void _showQr(BuildContext context, RestaurantTable table) => showDialog<void>(
-    context: context,
-    builder: (_) => AlertDialog(
-      title: Text('Mesa ${table.number}'),
-      content: QrImageView(data: _qrData(table.qrCode!), size: 220),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Fechar'),
-        ),
-      ],
-    ),
-  );
+  void _showQr(BuildContext context, RestaurantTable table) {
+    final qrData = _qrData(table.qrCode!);
+    if (qrData == null) {
+      return;
+    }
+    showDialog<void>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Mesa ${table.number}'),
+        content: QrImageView(data: qrData, size: 220),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Fechar'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _StatusChip extends StatelessWidget {
@@ -635,5 +712,9 @@ class _StatusChip extends StatelessWidget {
   );
 }
 
-String _qrData(String token) =>
-    '${AppConfig.fromEnvironment().apiBaseUrl}/api/v1/restaurant/table-access/$token';
+String? _qrData(String token) => restaurantPublicMenuUrl(
+  qrCode: token,
+  publicAppUrl: AppConfig.fromEnvironment().publicAppUrl,
+  browserUri: Uri.base,
+  isWeb: kIsWeb,
+)?.toString();

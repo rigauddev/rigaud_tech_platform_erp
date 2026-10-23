@@ -4,6 +4,7 @@ from collections.abc import Iterable
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -950,7 +951,7 @@ class DemoSeeder:
         self, tenant_id: UUID, branches: Iterable[BranchModel], products: Iterable[ProductModel]
     ) -> None:
         branch = next(branch for branch in branches if branch.code == "MATRIZ")
-        service_date = datetime.now(UTC).date()
+        service_date = datetime.now(UTC).astimezone(ZoneInfo(branch.timezone)).date()
         product_by_code = {product.internal_code: product for product in products}
         for product_code, quantity, channels in (
             ("REST-PRD-001", 40, ["dining_room", "qr"]),

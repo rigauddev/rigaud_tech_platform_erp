@@ -98,4 +98,5 @@ DOC-009 nao implementa Help Center no frontend, busca, CMS, suporte online ou ag
 ## Guias disponíveis
 
 - [QR Codes das mesas](restaurant/table-qr-codes.md)
+- [Cardápio Online](restaurant/online-menu.md)
 - [Cliente Windows: disponibilidade e instalacao](windows-desktop-installation.md)

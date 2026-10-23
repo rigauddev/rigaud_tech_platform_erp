@@ -6,6 +6,7 @@ class AppConfig {
     required this.environment,
     required this.apiBaseUrl,
     required this.logLevel,
+    this.publicAppUrl = '',
   });
 
   factory AppConfig.fromEnvironment() {
@@ -21,6 +22,7 @@ class AppConfig {
         'API_BASE_URL',
         defaultValue: 'http://localhost:8000',
       ),
+      publicAppUrl: const String.fromEnvironment('PUBLIC_APP_URL'),
       logLevel: const String.fromEnvironment('LOG_LEVEL', defaultValue: 'INFO'),
     );
   }
@@ -28,6 +30,7 @@ class AppConfig {
   final String appName;
   final AppEnvironment environment;
   final String apiBaseUrl;
+  final String publicAppUrl;
   final String logLevel;
 
   bool get isDevelopment => environment == AppEnvironment.development;

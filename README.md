@@ -22,12 +22,11 @@ RESTAURANT-005 — QR Codes das Mesas
 Task atual:
 
 ```text
-RESTAURANT-005 — QR Codes das Mesas
+RESTAURANT-006 — Cardápio Online
 ```
 
-QR Codes rotacionáveis por mesa, com auditoria e acesso público mínimo, estão
-em desenvolvimento. O Cardápio Online, pedidos, KDS e delivery continuam nas
-tasks posteriores.
+O cardápio público por QR Code está em implementação/review. Pedidos, KDS e
+delivery continuam nas tasks posteriores.
 
 Antes de iniciar novas tasks, leia `erp-blueprint/MASTER_DEVELOPMENT_PROMPT.md`.
 
@@ -129,6 +128,8 @@ Setores e ambientes do restaurante estão documentados em `docs/restaurant/secto
 Garçons e equipe do restaurante estão documentados em `docs/restaurant/staff.md`.
 
 QR Codes das mesas estão documentados em `docs/restaurant/table-qr-codes.md`.
+
+O Cardápio Online está documentado em `docs/restaurant/online-menu.md`.
 
 Transferências internas entre depósitos estão documentadas em `docs/inventory/transfers.md`.
 

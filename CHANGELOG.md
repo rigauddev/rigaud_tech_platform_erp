@@ -4,6 +4,8 @@
 
 ### Added
 
+- RESTAURANT-006: cardápio público responsivo por QR Code, publicado por filial/data/período/canal, com fuso local, filtros, fotos, disponibilidade e pré-visualização pela gestão de QR Codes, sem fluxo de pedidos ou checkout.
+- RESTAURANT-006: fluxo de pedidos documenta a sequência futura 007–011, pedidos de bebidas sem mesa, configuração do PDV por filial e limites de escopo; funcionalidades futuras permanecem identificadas como planejadas.
 - DOC-013: guia tecnico e operacional para compilar e testar o cliente Flutter desktop no Windows; registra que ainda nao existe instalador de usuario final.
 - DOC-012: especificacao On-Premise para wizard de instalacao, separacao entre servicos e modulos licenciados, validade e carencia offline de licenca, revogacao remota assinada, preservacao de dados e limites de protecao contra copia.
 

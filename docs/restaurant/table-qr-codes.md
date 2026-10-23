@@ -9,7 +9,9 @@ RESTAURANT-005 entrega a identificação digital segura de cada mesa. O QR Code 
 3. Selecione as mesas e prepare a impressão em folha A4.
 4. Fixe o código físico na mesa.
 
-Ao apontar a câmera, o endpoint público confirma somente o número, nome opcional e disponibilidade da mesa. O Cardápio Online será conectado na RESTAURANT-006; pedidos, pagamento e dados de cliente não são entregues por esta rota.
+Ao apontar a câmera, o QR abre o Cardápio Online da filial e mesa associadas
+ao token. A página mostra apenas informações comerciais publicadas; pedidos,
+pagamento e dados de cliente não são entregues por esta rota.
 
 ## API
 
@@ -17,13 +19,14 @@ Ao apontar a câmera, o endpoint público confirma somente o número, nome opcio
 | --- | --- | --- | --- |
 | `POST` | `/api/v1/restaurant/tables/{table_id}/qr-code` | necessária | gera ou rotaciona o token da mesa e audita a ação |
 | `GET` | `/api/v1/restaurant/table-access/{qr_code}` | pública | resolve apenas o contexto mínimo da mesa ativa |
+| `GET` | `/api/v1/restaurant/public/menu/{qr_code}` | pública | consulta os itens publicados para o canal `qr` |
 
 Renovar um QR Code invalida imediatamente o token anterior. Mesas inativas e mesas removidas não podem ser resolvidas publicamente.
 
 ## Limites desta task
 
 - A tela apresenta formato de impressão e seleção; integração com impressora física pertence à task de KDS/impressão.
-- Não há leitura por câmera, cardápio público, pedido, pagamento ou KDS nesta entrega.
+- Não há pedido, pagamento ou KDS nesta entrega.
 - O QR não substitui autenticação de operadores no ERP.
 
 ## Ajuda ao usuário

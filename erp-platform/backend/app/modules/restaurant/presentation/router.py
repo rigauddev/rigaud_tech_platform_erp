@@ -20,6 +20,7 @@ from app.modules.restaurant.application.menu_availability_use_cases import (
     MenuAvailabilityInput,
     UpdateRestaurantMenuAvailability,
 )
+from app.modules.restaurant.application.public_menu_use_cases import GetRestaurantPublicMenu
 from app.modules.restaurant.application.sector_use_cases import (
     CreateRestaurantSector,
     DeleteRestaurantSector,
@@ -77,6 +78,7 @@ from app.modules.restaurant.infrastructure.models import (
 from app.modules.restaurant.infrastructure.repositories import (
     SQLAlchemyRestaurantFloorRepository,
     SQLAlchemyRestaurantMenuAvailabilityRepository,
+    SQLAlchemyRestaurantPublicMenuRepository,
     SQLAlchemyRestaurantSectorRepository,
     SQLAlchemyRestaurantStaffRepository,
     SQLAlchemyRestaurantTableRepository,
@@ -86,6 +88,7 @@ from app.modules.restaurant.presentation.schemas import (
     RestaurantFloorResponse,
     RestaurantMenuAvailabilityRequest,
     RestaurantMenuAvailabilityResponse,
+    RestaurantPublicMenuResponse,
     RestaurantSectorRequest,
     RestaurantSectorResponse,
     RestaurantStaffRequest,
@@ -842,6 +845,42 @@ async def get_table_public_access(
         return success_response(
             "RESTAURANT_TABLE_PUBLIC_ACCESS_RETRIEVED",
             data={"number": item.number, "name": item.name, "is_active": item.is_active},
+        )
+    except RestaurantError as exc:
+        return _error(exc)
+
+
+@router.get("/public/menu/{qr_code}", response_model=RestaurantPublicMenuResponse)
+async def get_public_menu(
+    qr_code: str,
+    session: AsyncSessionDependency,
+) -> JSONResponse:
+    try:
+        menu = await GetRestaurantPublicMenu(
+            SQLAlchemyRestaurantTableRepository(session),
+            SQLAlchemyRestaurantPublicMenuRepository(session),
+        ).execute(qr_code)
+        response = RestaurantPublicMenuResponse(
+            restaurant_name=menu.restaurant_name,
+            currency=menu.currency,
+            table_number=menu.table_number,
+            table_name=menu.table_name,
+            service_date=menu.service_date,
+            items=[
+                {
+                    "name": item.name,
+                    "description": item.description,
+                    "sale_price": item.sale_price,
+                    "image_url": item.image_url,
+                    "service_period": item.service_period,
+                    "is_available": item.is_available,
+                }
+                for item in menu.items
+            ],
+        )
+        return success_response(
+            "RESTAURANT_PUBLIC_MENU_RETRIEVED",
+            data=response.model_dump(mode="json"),
         )
     except RestaurantError as exc:
         return _error(exc)
