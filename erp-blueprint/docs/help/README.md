@@ -17,3 +17,8 @@ A documentacao deve servir desenvolvedores, implantadores, suporte, parceiros, g
 ## Limite
 
 Nenhuma tela de Help Center e implementada nesta task.
+
+## Guias operacionais
+
+- Cliente Windows: disponibilidade e instalacao:
+  `docs/help/windows-desktop-installation.md`.
